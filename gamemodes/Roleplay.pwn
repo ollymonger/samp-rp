@@ -8,14 +8,28 @@
 main()
 {
 	print("\n----------------------------------");
-	print(" Blank Gamemode by your name here");
+	print(" Gamemode started... please wait...");
 	print("----------------------------------\n");
 }
 
+/* 1- NEWS -*/
+new MYSQL:db_handle;
+
 public OnGameModeInit()
 {
+	mysql_log(ALL);
 	// Don't use these lines if it's a filterscript
-	SetGameModeText("Blank Script");
+	SetGameModeText("Roleplay | v1");
+	db_handle = mysql_connect_file("mysql.ini");
+	
+	if(mysql_errno(db_handle) != 0){
+	    printf("** [MYSQL] Failed to connect! Exiting gamemode! (%d)", mysql_errno(db_handle));
+	    SendRconCommand("exit");
+	}
+	else {
+	    printf("** [MYSQL] Connected successfully! (%d)", _:db_handle);
+	}
+	
 	AddPlayerClass(0, 1958.3783, 1343.1572, 15.3746, 269.1425, 0, 0, 0, 0, 0, 0);
 	return 1;
 }
