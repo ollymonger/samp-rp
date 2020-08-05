@@ -1,0 +1,144 @@
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[12:29:51] filterscripts = ""  (string)
+[12:29:51] Error: Your password must be changed from the default password, please change it.
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[12:30:01] filterscripts = ""  (string)
+[12:30:01] 
+[12:30:01] Server Plugins
+[12:30:01] --------------
+[12:30:01]  Loading plugin: mysql
+[12:30:01]  >> plugin.mysql: R41-4 successfully loaded.
+[12:30:01]   Loaded.
+[12:30:01]  Loading plugin: streamer
+[12:30:01] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[12:30:01]   Loaded.
+[12:30:01]  Loaded 2 plugins.
+
+[12:30:01] 
+[12:30:01] Filterscripts
+[12:30:01] ---------------
+[12:30:01]   Loaded 0 filterscripts.
+
+[12:30:01] Loaded 3 vehicles from: vehicles/trains.txt
+[12:30:01] Loaded 3 vehicles from: vehicles/pilots.txt
+[12:30:01] Loaded 15 vehicles from: vehicles/lv_law.txt
+[12:30:01] Loaded 39 vehicles from: vehicles/lv_airport.txt
+[12:30:01] Loaded 255 vehicles from: vehicles/lv_gen.txt
+[12:30:01] Loaded 38 vehicles from: vehicles/sf_law.txt
+[12:30:01] Loaded 35 vehicles from: vehicles/sf_airport.txt
+[12:30:01] Loaded 353 vehicles from: vehicles/sf_gen.txt
+[12:30:01] Loaded 24 vehicles from: vehicles/ls_law.txt
+[12:30:01] Loaded 37 vehicles from: vehicles/ls_airport.txt
+[12:30:01] Loaded 98 vehicles from: vehicles/ls_gen_inner.txt
+[12:30:01] Loaded 389 vehicles from: vehicles/ls_gen_outer.txt
+[12:30:01] Loaded 71 vehicles from: vehicles/whetstone.txt
+[12:30:01] Loaded 168 vehicles from: vehicles/bone.txt
+[12:30:01] Loaded 61 vehicles from: vehicles/flint.txt
+[12:30:01] Loaded 96 vehicles from: vehicles/tierra.txt
+[12:30:01] Loaded 96 vehicles from: vehicles/red_county.txt
+[12:30:01] Total vehicles from files: 1781
+[12:30:01] 
+---------------------------------------
+[12:30:01] Running Grand Larceny - by the SA-MP team
+
+[12:30:01] ---------------------------------------
+
+[12:30:01] Number of vehicle models: 173
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[12:30:22] filterscripts = ""  (string)
+[12:30:22] 
+[12:30:22] Server Plugins
+[12:30:22] --------------
+[12:30:22]  Loading plugin: mysql
+[12:30:22]  >> plugin.mysql: R41-4 successfully loaded.
+[12:30:22]   Loaded.
+[12:30:22]  Loading plugin: streamer
+[12:30:22] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[12:30:22]   Loaded.
+[12:30:22]  Loaded 2 plugins.
+
+[12:30:22] 
+[12:30:22] Filterscripts
+[12:30:22] ---------------
+[12:30:22]   Loaded 0 filterscripts.
+
+[12:30:22] ** [MYSQL] Failed to connect! Exiting gamemode! (1049)
+[12:30:22] 
+----------------------------------
+[12:30:22]  Gamemode started... please wait...
+[12:30:22] ----------------------------------
+
+[12:30:22] Number of vehicle models: 0
+[12:30:22] --- Server Shutting Down.
+[12:30:22] plugin.mysql: Unloading plugin...
+[12:30:22] plugin.mysql: Plugin unloaded.
+[12:30:22] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[12:30:46] filterscripts = ""  (string)
+[12:30:46] 
+[12:30:46] Server Plugins
+[12:30:46] --------------
+[12:30:46]  Loading plugin: mysql
+[12:30:46]  >> plugin.mysql: R41-4 successfully loaded.
+[12:30:46]   Loaded.
+[12:30:46]  Loading plugin: streamer
+[12:30:46] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[12:30:46]   Loaded.
+[12:30:46]  Loaded 2 plugins.
+
+[12:30:46] 
+[12:30:46] Filterscripts
+[12:30:46] ---------------
+[12:30:46]   Loaded 0 filterscripts.
+
+[12:30:46] ** [MYSQL] Connected successfully! (1)
+[12:30:46] 
+----------------------------------
+[12:30:46]  Gamemode started... please wait...
+[12:30:46] ----------------------------------
+
+[12:30:46] Number of vehicle models: 0

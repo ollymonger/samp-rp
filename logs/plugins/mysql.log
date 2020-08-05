@@ -1,0 +1,67 @@
+[12:30:22] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[12:30:22] [DEBUG] mysql_connect_file("mysql.ini")
+[12:30:22] [DEBUG] CHandleManager::CreateFromFile(this=0x6668c0, file_path='mysql.ini')
+[12:30:22] [INFO] Options instance with id '1' successfully created.
+[12:30:22] [DEBUG] CHandleManager::CreateFromFile - new options = 0x65ce78 (id '1')
+[12:30:22] [DEBUG] CHandleManager::Create(this=0x6668c0, host='localhost', user='root', pass='****', db='sa-mp', options=0x65ce78)
+[12:30:22] [INFO] Creating new connection handle...
+[12:30:22] [WARNING] mysql_connect_file: no password specified
+[12:30:22] [DEBUG] CConnection::CConnection(this=0x668ed0, host='localhost', user='root', passw='****', db='sa-mp', options=0x65ce78)
+[12:30:22] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #1049 'Unknown database 'sa-mp''
+[12:30:22] [DEBUG] CConnection::CConnection(this=0x3af2020, host='localhost', user='root', passw='****', db='sa-mp', options=0x65ce78)
+[12:30:22] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #1049 'Unknown database 'sa-mp''
+[12:30:22] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3af2020, connection=0x3af2020)
+[12:30:22] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3af2020, connection=0x3af2020)
+[12:30:22] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x668f90)
+[12:30:22] [DEBUG] CConnection::CConnection(this=0x3cc7020, host='localhost', user='root', passw='****', db='sa-mp', options=0x65ce78)
+[12:30:22] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #1049 'Unknown database 'sa-mp''
+[12:30:22] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3cc7020, connection=0x3cc7020)
+[12:30:22] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3cc7020, connection=0x3cc7020)
+[12:30:22] [DEBUG] CConnection::CConnection(this=0x3e9d020, host='localhost', user='root', passw='****', db='sa-mp', options=0x65ce78)
+[12:30:22] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #1049 'Unknown database 'sa-mp''
+[12:30:22] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3e9d020, connection=0x3e9d020)
+[12:30:22] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3e9d020, connection=0x3e9d020)
+[12:30:22] [INFO] Connection handle with id '1' successfully created.
+[12:30:22] [DEBUG] CHandleManager::Create - new handle = 0x679118
+[12:30:22] [DEBUG] mysql_connect_file: return value: '1'
+[12:30:22] [DEBUG] mysql_errno(1)
+[12:30:22] [DEBUG] CHandle::GetErrorId(this=0x679118)
+[12:30:22] [DEBUG] CConnection::GetError(this=0x668ed0, connection=0x679830)
+[12:30:22] [DEBUG] CHandle::GetErrorId - return value: true, error id: '1049', error msg: 'Unknown database 'sa-mp''
+[12:30:22] [DEBUG] mysql_errno: return value: '1049'
+[12:30:22] [DEBUG] mysql_errno(1)
+[12:30:22] [DEBUG] CHandle::GetErrorId(this=0x679118)
+[12:30:22] [DEBUG] CConnection::GetError(this=0x668ed0, connection=0x679830)
+[12:30:22] [DEBUG] CHandle::GetErrorId - return value: true, error id: '1049', error msg: 'Unknown database 'sa-mp''
+[12:30:22] [DEBUG] mysql_errno: return value: '1049'
+[12:30:46] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[12:30:46] [DEBUG] mysql_connect_file("mysql.ini")
+[12:30:46] [DEBUG] CHandleManager::CreateFromFile(this=0x7889c8, file_path='mysql.ini')
+[12:30:46] [INFO] Options instance with id '1' successfully created.
+[12:30:46] [DEBUG] CHandleManager::CreateFromFile - new options = 0x77d230 (id '1')
+[12:30:46] [DEBUG] CHandleManager::Create(this=0x7889c8, host='localhost', user='root', pass='****', db='samp', options=0x77d230)
+[12:30:46] [INFO] Creating new connection handle...
+[12:30:46] [WARNING] mysql_connect_file: no password specified
+[12:30:46] [DEBUG] CConnection::CConnection(this=0x789468, host='localhost', user='root', passw='****', db='samp', options=0x77d230)
+[12:30:46] [DEBUG] CConnection::CConnection - new connection = 0x793f48
+[12:30:46] [DEBUG] CConnection::CConnection(this=0x3a1b020, host='localhost', user='root', passw='****', db='samp', options=0x77d230)
+[12:30:46] [DEBUG] CConnection::CConnection - new connection = 0x79c6a8
+[12:30:46] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3a1b020, connection=0x3a1b020)
+[12:30:46] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3a1b020, connection=0x3a1b020)
+[12:30:46] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x7894a8)
+[12:30:46] [DEBUG] CConnection::CConnection(this=0x3beb020, host='localhost', user='root', passw='****', db='samp', options=0x77d230)
+[12:30:46] [DEBUG] CConnection::CConnection - new connection = 0x7acf00
+[12:30:46] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3beb020, connection=0x3beb020)
+[12:30:46] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3beb020, connection=0x3beb020)
+[12:30:46] [DEBUG] CConnection::CConnection(this=0x3dbb020, host='localhost', user='root', passw='****', db='samp', options=0x77d230)
+[12:30:46] [DEBUG] CConnection::CConnection - new connection = 0x7af758
+[12:30:46] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3dbb020, connection=0x3dbb020)
+[12:30:46] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3dbb020, connection=0x3dbb020)
+[12:30:46] [INFO] Connection handle with id '1' successfully created.
+[12:30:46] [DEBUG] CHandleManager::Create - new handle = 0x799428
+[12:30:46] [DEBUG] mysql_connect_file: return value: '1'
+[12:30:46] [DEBUG] mysql_errno(1)
+[12:30:46] [DEBUG] CHandle::GetErrorId(this=0x799428)
+[12:30:46] [DEBUG] CConnection::GetError(this=0x789468, connection=0x793f48)
+[12:30:46] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[12:30:46] [DEBUG] mysql_errno: return value: '0'
