@@ -51,7 +51,12 @@ public OnPlayerRequestClass(playerid, classid) {
 
 public OnPlayerConnect(playerid) {
 	new query[200];
-	mysql_format(db_handle, query, sizeof(query), "SELECT * FROM `accounts` where `pName` = `%e`", GetPlayerName(playerid)); // Get the player's name
+
+    new name[MAX_PLAYER_NAME + 1];
+    GetPlayerName(playerid, name, sizeof(name));
+
+	mysql_format(db_handle, query, sizeof(query), "SELECT * FROM `accounts` where `pName` = '%s'", name); // Get the player's name
+	printf("connected");
 	mysql_tquery(db_handle, query, "checkIfExists", "d", playerid); // Send to check if exists function
     return 1;
 }
@@ -60,14 +65,17 @@ forward checkIfExists(playerid);
 public checkIfExists(playerid){
 	// Checks to see if the user exists and show them a specific dialog dependant on registration status!
 	new string[500];
-	if(cache_num_rows()){
+
+    new name[MAX_PLAYER_NAME + 1];
+    GetPlayerName(playerid, name, sizeof(name));
+	if(cache_num_rows() > 0){
 		// User exists in the database!
-		format(string, sizeof(string), "{FFFFFF} Welcome back to the server %s! Please input your password below to continue!", GetPlayerName(playerid));
+		format(string, sizeof(string), "{FFFFFF} Welcome back to the server %s!\n\n Please input your password below to continue!", name);
 		ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "Login System", string, "Login", "Quit");
 	} else {
 		// User does not exist in the database!
-		format(string, sizeof(string), "{FFFFFF} You are not registered! Please input a password below to continue!");
-		ShowPlayerDialog(playerid, DIALOG_REGISTER, DIALOG_STYLE_INPUT, "Login System", string, "Login", "Quit");
+		format(string, sizeof(string), "{FFFFFF} This account is not registered!\n\n Please input a password below to continue!");
+		ShowPlayerDialog(playerid, DIALOG_REGISTER, DIALOG_STYLE_INPUT, "Login System", string, "Register", "Quit");
 	}
 }
 

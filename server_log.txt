@@ -178,3 +178,429 @@ v0.3.7-R2, (C)2005-2015 SA-MP Team
 [14:09:33] ----------------------------------
 
 [14:09:33] Number of vehicle models: 0
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[19:47:50] filterscripts = ""  (string)
+[19:47:50] 
+[19:47:50] Server Plugins
+[19:47:50] --------------
+[19:47:50]  Loading plugin: mysql
+[19:47:50]  >> plugin.mysql: R41-4 successfully loaded.
+[19:47:50]   Loaded.
+[19:47:50]  Loading plugin: streamer
+[19:47:51] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[19:47:51]   Loaded.
+[19:47:51]  Loaded 2 plugins.
+
+[19:47:51] 
+[19:47:51] Filterscripts
+[19:47:51] ---------------
+[19:47:51]   Loaded 0 filterscripts.
+
+[19:47:51] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[19:47:51] 
+----------------------------------
+[19:47:51]  Gamemode started... please wait...
+[19:47:51] ----------------------------------
+
+[19:47:51] Number of vehicle models: 0
+[19:49:59] [connection] 127.0.0.1:57365 requests connection cookie.
+[19:50:00] [connection] incoming connection: 127.0.0.1:57365 id: 0
+[19:50:00] [join] yllo has joined the server (0:127.0.0.1)
+[19:50:06] [part] yllo has left the server (0:1)
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[19:51:46] filterscripts = ""  (string)
+[19:51:46] 
+[19:51:46] Server Plugins
+[19:51:46] --------------
+[19:51:46]  Loading plugin: mysql
+[19:51:46]  >> plugin.mysql: R41-4 successfully loaded.
+[19:51:46]   Loaded.
+[19:51:46]  Loading plugin: streamer
+[19:51:46] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[19:51:46]   Loaded.
+[19:51:46]  Loaded 2 plugins.
+
+[19:51:46] 
+[19:51:46] Filterscripts
+[19:51:46] ---------------
+[19:51:46]   Loaded 0 filterscripts.
+
+[19:51:46] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[19:51:46] 
+----------------------------------
+[19:51:46]  Gamemode started... please wait...
+[19:51:46] ----------------------------------
+
+[19:51:46] Number of vehicle models: 0
+[19:52:06] [connection] 127.0.0.1:56956 requests connection cookie.
+[19:52:07] [connection] incoming connection: 127.0.0.1:56956 id: 0
+[19:52:07] [join] yllo has joined the server (0:127.0.0.1)
+[19:52:10] [part] yllo has left the server (0:1)
+[19:53:47] --- Server Shutting Down.
+[19:53:47] plugin.mysql: Unloading plugin...
+[19:53:47] plugin.mysql: Plugin unloaded.
+[19:53:47] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[19:53:49] filterscripts = ""  (string)
+[19:53:49] 
+[19:53:49] Server Plugins
+[19:53:49] --------------
+[19:53:49]  Loading plugin: mysql
+[19:53:49]  >> plugin.mysql: R41-4 successfully loaded.
+[19:53:49]   Loaded.
+[19:53:49]  Loading plugin: streamer
+[19:53:49] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[19:53:49]   Loaded.
+[19:53:49]  Loaded 2 plugins.
+
+[19:53:49] 
+[19:53:49] Filterscripts
+[19:53:49] ---------------
+[19:53:49]   Loaded 0 filterscripts.
+
+[19:53:49] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[19:53:49] 
+----------------------------------
+[19:53:49]  Gamemode started... please wait...
+[19:53:49] ----------------------------------
+
+[19:53:49] Number of vehicle models: 0
+[19:54:10] [connection] 127.0.0.1:63054 requests connection cookie.
+[19:54:11] [connection] incoming connection: 127.0.0.1:63054 id: 0
+[19:54:12] [join] yllo has joined the server (0:127.0.0.1)
+[19:54:16] [part] yllo has left the server (0:1)
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[19:54:54] filterscripts = ""  (string)
+[19:54:54] 
+[19:54:54] Server Plugins
+[19:54:54] --------------
+[19:54:54]  Loading plugin: mysql
+[19:54:55]  >> plugin.mysql: R41-4 successfully loaded.
+[19:54:55]   Loaded.
+[19:54:55]  Loading plugin: streamer
+[19:54:55] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[19:54:55]   Loaded.
+[19:54:55]  Loaded 2 plugins.
+
+[19:54:55] 
+[19:54:55] Filterscripts
+[19:54:55] ---------------
+[19:54:55]   Loaded 0 filterscripts.
+
+[19:54:55] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[19:54:55] 
+----------------------------------
+[19:54:55]  Gamemode started... please wait...
+[19:54:55] ----------------------------------
+
+[19:54:55] Number of vehicle models: 0
+[19:54:57] --- Server Shutting Down.
+[19:54:57] plugin.mysql: Unloading plugin...
+[19:54:57] plugin.mysql: Plugin unloaded.
+[19:54:57] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[19:55:10] filterscripts = ""  (string)
+[19:55:10] 
+[19:55:10] Server Plugins
+[19:55:10] --------------
+[19:55:10]  Loading plugin: mysql
+[19:55:10]  >> plugin.mysql: R41-4 successfully loaded.
+[19:55:10]   Loaded.
+[19:55:10]  Loading plugin: streamer
+[19:55:10] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[19:55:10]   Loaded.
+[19:55:10]  Loaded 2 plugins.
+
+[19:55:10] 
+[19:55:10] Filterscripts
+[19:55:10] ---------------
+[19:55:10]   Loaded 0 filterscripts.
+
+[19:55:10] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[19:55:10] 
+----------------------------------
+[19:55:10]  Gamemode started... please wait...
+[19:55:10] ----------------------------------
+
+[19:55:10] Number of vehicle models: 0
+[19:55:30] [connection] 127.0.0.1:63055 requests connection cookie.
+[19:55:31] [connection] incoming connection: 127.0.0.1:63055 id: 0
+[19:55:31] [join] yllo has joined the server (0:127.0.0.1)
+[19:55:34] [part] yllo has left the server (0:1)
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[19:56:24] filterscripts = ""  (string)
+[19:56:24] 
+[19:56:24] Server Plugins
+[19:56:24] --------------
+[19:56:24]  Loading plugin: mysql
+[19:56:24]  >> plugin.mysql: R41-4 successfully loaded.
+[19:56:24]   Loaded.
+[19:56:24]  Loading plugin: streamer
+[19:56:24] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[19:56:24]   Loaded.
+[19:56:24]  Loaded 2 plugins.
+
+[19:56:24] 
+[19:56:24] Filterscripts
+[19:56:24] ---------------
+[19:56:24]   Loaded 0 filterscripts.
+
+[19:56:24] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[19:56:24] 
+----------------------------------
+[19:56:24]  Gamemode started... please wait...
+[19:56:24] ----------------------------------
+
+[19:56:24] Number of vehicle models: 0
+[19:56:54] [connection] 127.0.0.1:49792 requests connection cookie.
+[19:56:55] [connection] incoming connection: 127.0.0.1:49792 id: 0
+[19:56:55] [join] yllo has joined the server (0:127.0.0.1)
+[19:56:55] connected
+[19:56:57] [part] yllo has left the server (0:1)
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[19:57:17] filterscripts = ""  (string)
+[19:57:17] 
+[19:57:17] Server Plugins
+[19:57:17] --------------
+[19:57:17]  Loading plugin: mysql.dll
+[19:57:17]  >> plugin.mysql: R41-4 successfully loaded.
+[19:57:17]   Loaded.
+[19:57:17]  Loading plugin: streamer
+[19:57:17] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[19:57:17]   Loaded.
+[19:57:17]  Loaded 2 plugins.
+
+[19:57:17] 
+[19:57:17] Filterscripts
+[19:57:17] ---------------
+[19:57:17]   Loaded 0 filterscripts.
+
+[19:57:17] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[19:57:17] 
+----------------------------------
+[19:57:17]  Gamemode started... please wait...
+[19:57:17] ----------------------------------
+
+[19:57:17] Number of vehicle models: 0
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[19:59:36] filterscripts = ""  (string)
+[19:59:36] 
+[19:59:36] Server Plugins
+[19:59:36] --------------
+[19:59:36]  Loading plugin: mysql.dll
+[19:59:36]  >> plugin.mysql: R41-4 successfully loaded.
+[19:59:36]   Loaded.
+[19:59:36]  Loading plugin: streamer
+[19:59:36] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[19:59:36]   Loaded.
+[19:59:36]  Loaded 2 plugins.
+
+[19:59:36] 
+[19:59:36] Filterscripts
+[19:59:36] ---------------
+[19:59:36]   Loaded 0 filterscripts.
+
+[19:59:36] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[19:59:36] 
+----------------------------------
+[19:59:36]  Gamemode started... please wait...
+[19:59:36] ----------------------------------
+
+[19:59:36] Number of vehicle models: 0
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[19:59:41] filterscripts = ""  (string)
+[19:59:41] 
+[19:59:41] Server Plugins
+[19:59:41] --------------
+[19:59:41]  Loading plugin: mysql.dll
+[19:59:41]  >> plugin.mysql: R41-4 successfully loaded.
+[19:59:41]   Loaded.
+[19:59:41]  Loading plugin: streamer
+[19:59:41] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[19:59:41]   Loaded.
+[19:59:41]  Loaded 2 plugins.
+
+[19:59:41] 
+[19:59:41] Filterscripts
+[19:59:41] ---------------
+[19:59:41]   Loaded 0 filterscripts.
+
+[19:59:41] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[19:59:41] 
+----------------------------------
+[19:59:41]  Gamemode started... please wait...
+[19:59:41] ----------------------------------
+
+[19:59:41] Number of vehicle models: 0
+[20:00:01] [connection] 127.0.0.1:63248 requests connection cookie.
+[20:00:02] [connection] incoming connection: 127.0.0.1:63248 id: 0
+[20:00:03] [join] yllo has joined the server (0:127.0.0.1)
+[20:00:03] connected
+[20:00:06] [part] yllo has left the server (0:1)
+[20:00:40] --- Server Shutting Down.
+[20:00:40] plugin.mysql: Unloading plugin...
+[20:00:40] plugin.mysql: Plugin unloaded.
+[20:00:40] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[20:00:44] filterscripts = ""  (string)
+[20:00:44] 
+[20:00:44] Server Plugins
+[20:00:44] --------------
+[20:00:44]  Loading plugin: mysql.dll
+[20:00:44]  >> plugin.mysql: R41-4 successfully loaded.
+[20:00:44]   Loaded.
+[20:00:44]  Loading plugin: streamer
+[20:00:44] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[20:00:44]   Loaded.
+[20:00:44]  Loaded 2 plugins.
+
+[20:00:44] 
+[20:00:44] Filterscripts
+[20:00:44] ---------------
+[20:00:44]   Loaded 0 filterscripts.
+
+[20:00:44] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[20:00:44] 
+----------------------------------
+[20:00:44]  Gamemode started... please wait...
+[20:00:44] ----------------------------------
+
+[20:00:44] Number of vehicle models: 0
+[20:01:06] [connection] 127.0.0.1:54003 requests connection cookie.
+[20:01:07] [connection] incoming connection: 127.0.0.1:54003 id: 0
+[20:01:07] [join] yllo has joined the server (0:127.0.0.1)
+[20:01:07] connected
+[20:01:07] not exists
+[20:01:13] [part] yllo has left the server (0:1)
+[20:02:33] [connection] 127.0.0.1:65064 requests connection cookie.
+[20:02:34] [connection] incoming connection: 127.0.0.1:65064 id: 0
+[20:02:35] [join] yllo has joined the server (0:127.0.0.1)
+[20:02:35] connected
+[20:02:35] exists
+[20:02:40] [part] yllo has left the server (0:1)
+[20:03:51] --- Server Shutting Down.
+[20:03:51] plugin.mysql: Unloading plugin...
+[20:03:51] plugin.mysql: Plugin unloaded.
+[20:03:51] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
