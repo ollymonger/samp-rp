@@ -142,3 +142,39 @@ v0.3.7-R2, (C)2005-2015 SA-MP Team
 [12:30:46] ----------------------------------
 
 [12:30:46] Number of vehicle models: 0
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[14:09:33] filterscripts = ""  (string)
+[14:09:33] 
+[14:09:33] Server Plugins
+[14:09:33] --------------
+[14:09:33]  Loading plugin: mysql
+[14:09:33]  >> plugin.mysql: R41-4 successfully loaded.
+[14:09:33]   Loaded.
+[14:09:33]  Loading plugin: streamer
+[14:09:33] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[14:09:33]   Loaded.
+[14:09:33]  Loaded 2 plugins.
+
+[14:09:33] 
+[14:09:33] Filterscripts
+[14:09:33] ---------------
+[14:09:33]   Loaded 0 filterscripts.
+
+[14:09:33] ** [MYSQL] Connected successfully! (1)
+[14:09:33] 
+----------------------------------
+[14:09:33]  Gamemode started... please wait...
+[14:09:33] ----------------------------------
+
+[14:09:33] Number of vehicle models: 0

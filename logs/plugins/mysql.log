@@ -65,3 +65,34 @@
 [12:30:46] [DEBUG] CConnection::GetError(this=0x789468, connection=0x793f48)
 [12:30:46] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
 [12:30:46] [DEBUG] mysql_errno: return value: '0'
+[14:09:33] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[14:09:33] [DEBUG] mysql_connect_file("mysql.ini")
+[14:09:33] [DEBUG] CHandleManager::CreateFromFile(this=0x5714d0, file_path='mysql.ini')
+[14:09:33] [INFO] Options instance with id '1' successfully created.
+[14:09:33] [DEBUG] CHandleManager::CreateFromFile - new options = 0x56d590 (id '1')
+[14:09:33] [DEBUG] CHandleManager::Create(this=0x5714d0, host='localhost', user='root', pass='****', db='samp', options=0x56d590)
+[14:09:33] [INFO] Creating new connection handle...
+[14:09:33] [WARNING] mysql_connect_file: no password specified
+[14:09:33] [DEBUG] CConnection::CConnection(this=0x5707e8, host='localhost', user='root', passw='****', db='samp', options=0x56d590)
+[14:09:33] [DEBUG] CConnection::CConnection - new connection = 0x54cbf0
+[14:09:33] [DEBUG] CConnection::CConnection(this=0x392c020, host='localhost', user='root', passw='****', db='samp', options=0x56d590)
+[14:09:33] [DEBUG] CConnection::CConnection - new connection = 0x5adb30
+[14:09:33] [DEBUG] CThreadedConnection::WorkerFunc(this=0x392c020, connection=0x392c020)
+[14:09:33] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x392c020, connection=0x392c020)
+[14:09:33] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x570828)
+[14:09:33] [DEBUG] CConnection::CConnection(this=0x3afa020, host='localhost', user='root', passw='****', db='samp', options=0x56d590)
+[14:09:33] [DEBUG] CConnection::CConnection - new connection = 0x5baa98
+[14:09:33] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3afa020, connection=0x3afa020)
+[14:09:33] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3afa020, connection=0x3afa020)
+[14:09:33] [DEBUG] CConnection::CConnection(this=0x3ccc020, host='localhost', user='root', passw='****', db='samp', options=0x56d590)
+[14:09:33] [DEBUG] CConnection::CConnection - new connection = 0x5ba160
+[14:09:33] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3ccc020, connection=0x3ccc020)
+[14:09:33] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3ccc020, connection=0x3ccc020)
+[14:09:33] [INFO] Connection handle with id '1' successfully created.
+[14:09:33] [DEBUG] CHandleManager::Create - new handle = 0x5a3a90
+[14:09:33] [DEBUG] mysql_connect_file: return value: '1'
+[14:09:33] [DEBUG] mysql_errno(1)
+[14:09:33] [DEBUG] CHandle::GetErrorId(this=0x5a3a90)
+[14:09:33] [DEBUG] CConnection::GetError(this=0x5707e8, connection=0x54cbf0)
+[14:09:33] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[14:09:33] [DEBUG] mysql_errno: return value: '0'
