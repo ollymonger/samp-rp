@@ -1,6 +1,6 @@
 # samp-rp
 roleplay script
 
-##needed scripts:
+## needed scripts:
 MYSQL R41-4
 
