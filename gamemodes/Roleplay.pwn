@@ -277,7 +277,7 @@ Dialog:DIALOG_LOGIN(playerid, response, listitem, inputtext[]) {
 
 Dialog:DIALOG_EMAIL(playerid, response, listitem, inputtext[]) {
     if(response) {
-        if(strfind(inputtext, "@")) {
+        if(strfind(inputtext, "@", true) != -1) {
             new query[300];
             mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pEmail` = '%e' WHERE  `pName` = '%e'", inputtext, GetName(playerid));
             mysql_query(db_handle, query);
