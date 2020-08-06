@@ -28,6 +28,7 @@ enum ENUM_PLAYER_DATA {
         pPassword[255],
         HashedPassword[255],
         pEmail[128],
+        pRegion[32],
         Float:pHealth,
         Float:pArmour,
         pBank,
@@ -259,6 +260,7 @@ Dialog:DIALOG_REGISTER(playerid, response, listitem, inputtext[]) {
     } else {
         Kick(playerid);
     }
+    return 1;
 }
 
 Dialog:DIALOG_LOGIN(playerid, response, listitem, inputtext[]) {
@@ -273,21 +275,37 @@ Dialog:DIALOG_LOGIN(playerid, response, listitem, inputtext[]) {
     } else {
         Kick(playerid);
     }
+    return 1;
 }
 
 Dialog:DIALOG_EMAIL(playerid, response, listitem, inputtext[]) {
     if(response) {
         if(strfind(inputtext, "@", true) != -1) {
-            new query[300];
+            new query[300], string[256];
+            format(pInfo[playerid][pEmail], 255, inputtext);
             mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pEmail` = '%e' WHERE  `pName` = '%e'", inputtext, GetName(playerid));
             mysql_query(db_handle, query);
-            SendClientMessage(playerid, -1, inputtext);
+
+            format(string, sizeof(string), "Thanks, your email is: %s\n\nPlease insert your character's country of origin below!", inputtext);
+            Dialog_Show(playerid, DIALOG_REGION, DIALOG_STYLE_INPUT, "Registration System", string, "Continue", "Quit");
         } else {
-                Dialog_Show(playerid, DIALOG_EMAIL, DIALOG_STYLE_INPUT, "Email Registration", "The inputted string does not contain a: @ symbol! Please retry!\n\n Example: 'example@example.com'!", "Continue", "Quit");
+            Dialog_Show(playerid, DIALOG_EMAIL, DIALOG_STYLE_INPUT, "Email Registration", "The inputted string does not contain a: @ symbol! Please retry!\n\n Example: 'example@example.com'!", "Continue", "Quit");
         }
     } else {
         Kick(playerid);
     }
+    return 1;
+}
+
+Dialog:DIALOG_REGION(playerid, response, listitem, inputtext[]) {
+    if(response) {
+        new query[300];
+        mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pRegion` = '%e' WHERE  `pName` = '%e'", inputtext, GetName(playerid));
+        mysql_query(db_handle, query);
+    } else {
+        Kick(playerid);
+    }
+    return 1;
 }
 
 forward OnPasswordChecked(playerid);
@@ -334,7 +352,7 @@ forward HashPlayerPassword(playerid);
 public HashPlayerPassword(playerid) {
     new hash[BCRYPT_HASH_LENGTH], query[300];
     bcrypt_get_hash(hash);
-    mysql_format(db_handle, query, sizeof(query), "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pHealth`, `pArmour`, `pBank`, `pCash`) VALUES ('%e', '%e', 'NULL', 0, 0, 0, 0)", GetName(playerid), hash);
+    mysql_format(db_handle, query, sizeof(query), "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pRegion`, `pHealth`, `pArmour`, `pBank`, `pCash`) VALUES ('%e', '%e', 'NULL', 'NULL', 0, 0, 0, 0)", GetName(playerid), hash);
     mysql_tquery(db_handle, query, "OnPlayerRegister", "d", playerid);
     return 1;
 }
