@@ -19,6 +19,34 @@ main() {
 /* 1- NEWS -*/
 new MySQL:db_handle;
 
+
+new maleSkins[] = {
+    20,
+    23,
+    15,
+    24,
+    25,
+    60,
+    72,
+    73,
+    125,
+    143,
+    170
+};
+
+new femaleSkins[] = {
+    40,
+    11,
+    69,
+    192,
+    150,
+    76,
+    226,
+    233,
+    198,
+    197
+};
+
 new
 bool:LoggedIn[MAX_PLAYERS], tries[MAX_PLAYERS];
 
@@ -62,9 +90,6 @@ public OnGameModeExit() {
 }
 
 public OnPlayerRequestClass(playerid, classid) {
-    SetPlayerPos(playerid, 1958.3783, 1343.1572, 15.3746);
-    SetPlayerCameraPos(playerid, 1958.3783, 1343.1572, 15.3746);
-    SetPlayerCameraLookAt(playerid, 1958.3783, 1343.1572, 15.3746);
     return 1;
 }
 
@@ -73,6 +98,16 @@ public OnPlayerConnect(playerid) {
 
     new name[MAX_PLAYER_NAME + 1];
     GetPlayerName(playerid, name, sizeof(name));
+
+
+    SetPlayerPos(playerid, 163.984863, 1213.388305, 21.501449);
+    SetPlayerSkin(playerid, maleSkins[random(11)]);
+    SetPlayerFacingAngle(playerid, 221.263046);
+    InterpolateCameraPos(playerid, 163.4399, 1179.7891, 23.3623, 178.1042, 1187.0188, 22.1915, 15000, CAMERA_MOVE);
+    InterpolateCameraLookAt(playerid, 163.5655, 1180.7781, 23.2423, 177.8423, 1187.9811, 22.0065, 15000, CAMERA_MOVE);
+
+    ApplyAnimation(playerid, "SMOKING", "M_smklean_loop", 4.0, true, false, false, false, 0, false); // Smoke
+
 
     mysql_format(db_handle, query, sizeof(query), "SELECT * FROM `accounts` where `pName` = '%s'", name); // Get the player's name
     mysql_tquery(db_handle, query, "checkIfExists", "d", playerid); // Send to check if exists function
@@ -255,6 +290,10 @@ public OnVehicleStreamOut(vehicleid, forplayerid) {
 
 /* 3- DIALOGS -*/
 Dialog:DIALOG_REGISTER(playerid, response, listitem, inputtext[]) {
+    SetPlayerPos(playerid, -194.1460, 1262.8966, 49.1071);
+    InterpolateCameraPos(playerid, -194.1460, 1262.8966, 49.1071, -215.3474, 1140.1307, 49.1071, 15000, CAMERA_MOVE);
+    InterpolateCameraLookAt(playerid, -193.2128, 1262.5261, 48.8320, -214.3721, 1140.3693, 48.9320, 15000, CAMERA_MOVE);
+
     if(response) {
         bcrypt_hash(inputtext, BCRYPT_COST, "HashPlayerPassword", "d", playerid);
     } else {
@@ -281,6 +320,10 @@ Dialog:DIALOG_LOGIN(playerid, response, listitem, inputtext[]) {
 Dialog:DIALOG_EMAIL(playerid, response, listitem, inputtext[]) {
     if(response) {
         if(strfind(inputtext, "@", true) != -1) {
+            SetPlayerPos(playerid, -596.0942, 943.0540, 37.5432);
+            InterpolateCameraPos(playerid, -596.0942, 943.0540, 37.5432, -356.9250, 720.8551, 37.5432, 15000, CAMERA_MOVE);
+            InterpolateCameraLookAt(playerid, -595.1951, 943.5001, 37.4531, -356.6473, 721.8198, 37.4981, 15000, CAMERA_MOVE);
+
             new query[300], string[256];
             format(pInfo[playerid][pEmail], 255, inputtext);
             mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pEmail` = '%e' WHERE  `pName` = '%e'", inputtext, GetName(playerid));
