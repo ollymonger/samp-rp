@@ -72,11 +72,11 @@ public checkIfExists(playerid){
     GetPlayerName(playerid, name, sizeof(name));
 	if(cache_num_rows() > 0){
 		// User exists in the database!
-		format(string, sizeof(string), "{FFFFFF} Welcome back to the server %s!\n\n Please input your password below to continue!", name);
+		format(string, sizeof(string), "{FFFFFF} Welcome back to the server {A5EBF6}%s{FFFFFF}!\n\n Please input your password below to continue!", name);
 		Dialog_Show(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "Login System", string, "Login", "Quit");
 	} else {
 		// User does not exist in the database!
-		format(string, sizeof(string), "{FFFFFF} This account is not registered!\n\n Please input a password below to continue!");
+		format(string, sizeof(string), "{FFFFFF} Welcome, {A5EBF6}%s{FFFFFF}!\n\n{FFFFFF} This account is not registered!\n\n Please input a password below to continue!", GetName(playerid));
 		Dialog_Show(playerid, DIALOG_REGISTER, DIALOG_STYLE_PASSWORD, "Login System", string, "Register", "Quit");
 	}
 }
