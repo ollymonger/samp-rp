@@ -1062,3 +1062,2212 @@
 [14:03:08] [DEBUG] cache_get_row_count: return value: '1'
 [14:03:08] [DEBUG] AMX callback executed with error '0'
 [14:03:08] [INFO] Callback successfully executed.
+[22:00:55] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[22:00:55] [DEBUG] mysql_connect_file("mysql.ini")
+[22:00:55] [DEBUG] CHandleManager::CreateFromFile(this=0x696020, file_path='mysql.ini')
+[22:00:55] [INFO] Options instance with id '1' successfully created.
+[22:00:55] [DEBUG] CHandleManager::CreateFromFile - new options = 0x689710 (id '1')
+[22:00:55] [DEBUG] CHandleManager::Create(this=0x696020, host='localhost', user='root', pass='****', db='samp', options=0x689710)
+[22:00:55] [INFO] Creating new connection handle...
+[22:00:55] [WARNING] mysql_connect_file: no password specified
+[22:00:55] [DEBUG] CConnection::CConnection(this=0x65ede8, host='localhost', user='root', passw='****', db='samp', options=0x689710)
+[22:00:55] [DEBUG] CConnection::CConnection - new connection = 0x699728
+[22:00:55] [DEBUG] CConnection::CConnection(this=0x3a0a020, host='localhost', user='root', passw='****', db='samp', options=0x689710)
+[22:00:55] [DEBUG] CConnection::CConnection - new connection = 0x695af0
+[22:00:55] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3a0a020, connection=0x3a0a020)
+[22:00:55] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3a0a020, connection=0x3a0a020)
+[22:00:55] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x65ebe8)
+[22:00:55] [DEBUG] CConnection::CConnection(this=0x3d80020, host='localhost', user='root', passw='****', db='samp', options=0x689710)
+[22:00:55] [DEBUG] CConnection::CConnection - new connection = 0x6ab3b8
+[22:00:55] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3d80020, connection=0x3d80020)
+[22:00:55] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3d80020, connection=0x3d80020)
+[22:00:55] [DEBUG] CConnection::CConnection(this=0x3f10020, host='localhost', user='root', passw='****', db='samp', options=0x689710)
+[22:00:55] [DEBUG] CConnection::CConnection - new connection = 0x6b8bb0
+[22:00:55] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3f10020, connection=0x3f10020)
+[22:00:55] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3f10020, connection=0x3f10020)
+[22:00:55] [INFO] Connection handle with id '1' successfully created.
+[22:00:55] [DEBUG] CHandleManager::Create - new handle = 0x6857d0
+[22:00:55] [DEBUG] mysql_connect_file: return value: '1'
+[22:00:55] [DEBUG] mysql_errno(1)
+[22:00:55] [DEBUG] CHandle::GetErrorId(this=0x6857d0)
+[22:00:55] [DEBUG] CConnection::GetError(this=0x65ede8, connection=0x699728)
+[22:00:55] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[22:00:55] [DEBUG] mysql_errno: return value: '0'
+[22:01:57] [DEBUG] mysql_format(1, 0x039FE354, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:01:57] [DEBUG] mysql_format: return value: '47'
+[22:01:57] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'Olly'", "checkIfExists", "d")
+[22:01:57] [DEBUG] CCallback::Create(amx=0x297af20, name='checkIfExists', format='d', params=0x39fe2d8, param_offset=5)
+[22:01:57] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:01:57] [DEBUG] processing specifier 'd' with parameter index 0
+[22:01:57] [DEBUG] retrieved and pushed value '0'
+[22:01:57] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:01:57] [DEBUG] created delayed callback with 1 parameter
+[22:01:57] [DEBUG] CHandle::Execute(this=0x6857d0, type=1, query=0x65c100)
+[22:01:57] [DEBUG] CHandle::Execute - return value: true
+[22:01:57] [DEBUG] CConnection::Execute(query=0x65c100, this=0x3a0a020, connection=0x695af0)
+[22:01:57] [DEBUG] CQuery::Execute(this=0x65c100, connection=0x695af0)
+[22:01:57] [DEBUG] mysql_tquery: return value: '1'
+[22:01:57] [INFO] query "SELECT * FROM `accounts` where `pName` = 'Olly'" successfully executed within 0.787 milliseconds
+[22:01:57] [DEBUG] CResultSet::Create(connection=0x695af0, query_str='SELECT * FROM `accounts` where `pName` = 'Olly'')
+[22:01:57] [DEBUG] created new resultset '0x697d40'
+[22:01:57] [DEBUG] fetched MySQL result '0x695ec0'
+[22:01:57] [DEBUG] allocated 0 bytes for PAWN result
+[22:01:57] [DEBUG] CCallback::Execute(amx=0x297af20, index=46, num_params=1)
+[22:01:57] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:01:57] [DEBUG] processing internal specifier 'c'
+[22:01:57] [DEBUG] pushed value '0' onto AMX stack
+[22:01:57] [DEBUG] executing AMX callback with index '46'
+[22:01:57] [DEBUG] cache_get_row_count(0x039FDE30)
+[22:01:57] [DEBUG] cache_get_row_count: return value: '1'
+[22:01:57] [DEBUG] AMX callback executed with error '0'
+[22:01:57] [INFO] Callback successfully executed.
+[22:02:00] [DEBUG] mysql_format(1, 0x039FE0D0, 300, "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('%e', '%e', 'NULL', 0, 0)")
+[22:02:00] [DEBUG] CHandle::EscapeString(this=0x6857d0, src='Olly')
+[22:02:00] [DEBUG] CConnection::EscapeString(src='Olly', this=0x65ede8, connection=0x699728)
+[22:02:00] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'Olly'
+[22:02:00] [DEBUG] CHandle::EscapeString(this=0x6857d0, src='$2y$12$YVT0ckPRPDfoOhi0aCj3Z.6x/sW1W/2ew8sCYQWbhswdqqHrAKJuC')
+[22:02:00] [DEBUG] CConnection::EscapeString(src='$2y$12$YVT0ckPRPDfoOhi0aCj3Z.6x/sW1W/2ew8sCYQWbhswdqqHrAKJuC', this=0x65ede8, connection=0x699728)
+[22:02:00] [DEBUG] CHandle::EscapeString - return value: true, escaped string: '$2y$12$YVT0ckPRPDfoOhi0aCj3Z.6x/sW1W/2ew8sCYQWbhswdqqHrAKJuC'
+[22:02:00] [DEBUG] mysql_format: return value: '167'
+[22:02:00] [DEBUG] mysql_tquery(1, "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('Olly', '$2y$12$YVT0ckPRPDfoOhi0aCj3Z.6x/sW1W/2ew8sCYQWbhswdqqHrAKJuC', 'NULL', 0, 0)", "OnPlayerRegister", "d")
+[22:02:00] [DEBUG] CCallback::Create(amx=0x297af20, name='OnPlayerRegister', format='d', params=0x39fe0b8, param_offset=5)
+[22:02:00] [DEBUG] CCallback::Create - callback index for 'OnPlayerRegister': -10035
+[22:02:00] [DEBUG] processing specifier 'd' with parameter index 0
+[22:02:00] [DEBUG] retrieved and pushed value '0'
+[22:02:00] [INFO] Callback 'OnPlayerRegister' set up for delayed execution.
+[22:02:00] [DEBUG] created delayed callback with 1 parameter
+[22:02:00] [DEBUG] CHandle::Execute(this=0x6857d0, type=1, query=0x65bd70)
+[22:02:00] [DEBUG] CHandle::Execute - return value: true
+[22:02:00] [DEBUG] mysql_tquery: return value: '1'
+[22:02:00] [DEBUG] CConnection::Execute(query=0x65bd70, this=0x3a0a020, connection=0x695af0)
+[22:02:00] [DEBUG] CQuery::Execute(this=0x65bd70, connection=0x695af0)
+[22:02:00] [INFO] query "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('Olly', '$2y$12$YVT0ckPRPDfoOhi0aCj3Z.6x/sW1W/2ew8sCYQWbhswdqqHrAKJuC', 'NULL', 0, 0)" successfully executed within 61.19 milliseconds
+[22:02:01] [DEBUG] CResultSet::Create(connection=0x695af0, query_str='INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('Olly', '$2y$12$YVT0ckPRPDfoOhi0aCj3Z.6x/sW1W/2ew8sCYQWbhswdqqHrAKJuC', 'NULL', 0, 0)')
+[22:02:01] [DEBUG] created new resultset '0x6981a0'
+[22:02:01] [DEBUG] fetched MySQL result '0x0'
+[22:02:01] [DEBUG] CCallback::Execute(amx=0x297af20, index=-10035, num_params=1)
+[22:03:03] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[22:03:03] [DEBUG] mysql_connect_file("mysql.ini")
+[22:03:03] [DEBUG] CHandleManager::CreateFromFile(this=0x5abd88, file_path='mysql.ini')
+[22:03:03] [INFO] Options instance with id '1' successfully created.
+[22:03:03] [DEBUG] CHandleManager::CreateFromFile - new options = 0x5d8e68 (id '1')
+[22:03:04] [DEBUG] CHandleManager::Create(this=0x5abd88, host='localhost', user='root', pass='****', db='samp', options=0x5d8e68)
+[22:03:04] [INFO] Creating new connection handle...
+[22:03:04] [WARNING] mysql_connect_file: no password specified
+[22:03:04] [DEBUG] CConnection::CConnection(this=0x5aefe8, host='localhost', user='root', passw='****', db='samp', options=0x5d8e68)
+[22:03:04] [DEBUG] CConnection::CConnection - new connection = 0x5e1a10
+[22:03:04] [DEBUG] CConnection::CConnection(this=0x3c32020, host='localhost', user='root', passw='****', db='samp', options=0x5d8e68)
+[22:03:04] [DEBUG] CConnection::CConnection - new connection = 0x5ef150
+[22:03:04] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3c32020, connection=0x3c32020)
+[22:03:04] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x5af3e8)
+[22:03:04] [DEBUG] CConnection::CConnection(this=0x3e01020, host='localhost', user='root', passw='****', db='samp', options=0x5d8e68)
+[22:03:04] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3c32020, connection=0x3c32020)
+[22:03:04] [DEBUG] CConnection::CConnection - new connection = 0x5f8b40
+[22:03:04] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3e01020, connection=0x3e01020)
+[22:03:04] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3e01020, connection=0x3e01020)
+[22:03:04] [DEBUG] CConnection::CConnection(this=0x3fd3020, host='localhost', user='root', passw='****', db='samp', options=0x5d8e68)
+[22:03:04] [DEBUG] CConnection::CConnection - new connection = 0x601b38
+[22:03:04] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3fd3020, connection=0x3fd3020)
+[22:03:04] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3fd3020, connection=0x3fd3020)
+[22:03:04] [INFO] Connection handle with id '1' successfully created.
+[22:03:04] [DEBUG] CHandleManager::Create - new handle = 0x5d7568
+[22:03:04] [DEBUG] mysql_connect_file: return value: '1'
+[22:03:04] [DEBUG] mysql_errno(1)
+[22:03:04] [DEBUG] CHandle::GetErrorId(this=0x5d7568)
+[22:03:04] [DEBUG] CConnection::GetError(this=0x5aefe8, connection=0x5e1a10)
+[22:03:04] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[22:03:04] [DEBUG] mysql_errno: return value: '0'
+[22:03:25] [DEBUG] mysql_format(1, 0x03AE4354, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:03:25] [DEBUG] mysql_format: return value: '47'
+[22:03:25] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'Olly'", "checkIfExists", "d")
+[22:03:25] [DEBUG] CCallback::Create(amx=0x2a5af20, name='checkIfExists', format='d', params=0x3ae42d8, param_offset=5)
+[22:03:25] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:03:25] [DEBUG] processing specifier 'd' with parameter index 0
+[22:03:25] [DEBUG] retrieved and pushed value '0'
+[22:03:25] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:03:25] [DEBUG] created delayed callback with 1 parameter
+[22:03:25] [DEBUG] CHandle::Execute(this=0x5d7568, type=1, query=0x5adcd8)
+[22:03:25] [DEBUG] CHandle::Execute - return value: true
+[22:03:25] [DEBUG] mysql_tquery: return value: '1'
+[22:03:25] [DEBUG] CConnection::Execute(query=0x5adcd8, this=0x3c32020, connection=0x5ef150)
+[22:03:25] [DEBUG] CQuery::Execute(this=0x5adcd8, connection=0x5ef150)
+[22:03:25] [INFO] query "SELECT * FROM `accounts` where `pName` = 'Olly'" successfully executed within 0.293 milliseconds
+[22:03:25] [DEBUG] CResultSet::Create(connection=0x5ef150, query_str='SELECT * FROM `accounts` where `pName` = 'Olly'')
+[22:03:25] [DEBUG] created new resultset '0x621658'
+[22:03:25] [DEBUG] fetched MySQL result '0x5e2060'
+[22:03:25] [DEBUG] allocated 68 bytes for PAWN result
+[22:03:25] [DEBUG] CCallback::Execute(amx=0x2a5af20, index=46, num_params=1)
+[22:03:25] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:03:25] [DEBUG] processing internal specifier 'c'
+[22:03:25] [DEBUG] pushed value '0' onto AMX stack
+[22:03:25] [DEBUG] executing AMX callback with index '46'
+[22:03:25] [DEBUG] cache_get_row_count(0x03AE3E30)
+[22:03:25] [DEBUG] cache_get_row_count: return value: '1'
+[22:03:25] [DEBUG] AMX callback executed with error '0'
+[22:03:25] [INFO] Callback successfully executed.
+[22:03:27] [DEBUG] mysql_format(1, 0x03AE418C, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:03:27] [DEBUG] CHandle::EscapeString(this=0x5d7568, src='Olly')
+[22:03:27] [DEBUG] CConnection::EscapeString(src='Olly', this=0x5aefe8, connection=0x5e1a10)
+[22:03:27] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'Olly'
+[22:03:27] [DEBUG] mysql_format: return value: '57'
+[22:03:27] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly'", 1)
+[22:03:27] [DEBUG] CHandle::Execute(this=0x5d7568, type=3, query=0x5adf38)
+[22:03:27] [DEBUG] CConnection::Execute(query=0x5adf38, this=0x5aefe8, connection=0x5e1a10)
+[22:03:27] [DEBUG] CQuery::Execute(this=0x5adf38, connection=0x5e1a10)
+[22:03:27] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly'" successfully executed within 0.506 milliseconds
+[22:03:27] [DEBUG] CResultSet::Create(connection=0x5e1a10, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly'')
+[22:03:27] [DEBUG] created new resultset '0x6214d0'
+[22:03:27] [DEBUG] fetched MySQL result '0x5d3980'
+[22:03:27] [DEBUG] allocated 36 bytes for PAWN result
+[22:03:27] [DEBUG] CHandle::Execute - return value: true
+[22:03:27] [DEBUG] mysql_query: return value: '1'
+[22:03:27] [DEBUG] cache_get_value_name(0, "pPassword", 0x03AE4038, 61)
+[22:03:27] [DEBUG] cache_get_value_name: assigned value: '$2y$12$YVT0ckPRP'
+[22:03:27] [DEBUG] cache_get_value_name: return value: '1'
+[22:05:15] [DEBUG] mysql_format(1, 0x03AE4354, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:05:15] [DEBUG] mysql_format: return value: '47'
+[22:05:15] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'Olly'", "checkIfExists", "d")
+[22:05:15] [DEBUG] CCallback::Create(amx=0x2a5af20, name='checkIfExists', format='d', params=0x3ae42d8, param_offset=5)
+[22:05:15] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:05:15] [DEBUG] processing specifier 'd' with parameter index 0
+[22:05:15] [DEBUG] retrieved and pushed value '0'
+[22:05:15] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:05:15] [DEBUG] created delayed callback with 1 parameter
+[22:05:15] [DEBUG] CHandle::Execute(this=0x5d7568, type=1, query=0x5ae198)
+[22:05:15] [DEBUG] CHandle::Execute - return value: true
+[22:05:15] [DEBUG] mysql_tquery: return value: '1'
+[22:05:15] [DEBUG] CConnection::Execute(query=0x5ae198, this=0x3c32020, connection=0x5ef150)
+[22:05:15] [DEBUG] CQuery::Execute(this=0x5ae198, connection=0x5ef150)
+[22:05:15] [INFO] query "SELECT * FROM `accounts` where `pName` = 'Olly'" successfully executed within 0.481 milliseconds
+[22:05:15] [DEBUG] CResultSet::Create(connection=0x5ef150, query_str='SELECT * FROM `accounts` where `pName` = 'Olly'')
+[22:05:15] [DEBUG] created new resultset '0x621620'
+[22:05:15] [DEBUG] fetched MySQL result '0x5d5af8'
+[22:05:15] [DEBUG] allocated 0 bytes for PAWN result
+[22:05:15] [DEBUG] CCallback::Execute(amx=0x2a5af20, index=46, num_params=1)
+[22:05:15] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:05:15] [DEBUG] processing internal specifier 'c'
+[22:05:15] [DEBUG] pushed value '0' onto AMX stack
+[22:05:15] [DEBUG] executing AMX callback with index '46'
+[22:05:15] [DEBUG] cache_get_row_count(0x03AE3E30)
+[22:05:15] [DEBUG] cache_get_row_count: return value: '1'
+[22:05:15] [DEBUG] AMX callback executed with error '0'
+[22:05:15] [INFO] Callback successfully executed.
+[22:05:18] [DEBUG] mysql_format(1, 0x03AE40D0, 300, "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('%e', '%e', 'NULL', 0, 0)")
+[22:05:18] [DEBUG] CHandle::EscapeString(this=0x5d7568, src='Olly')
+[22:05:18] [DEBUG] CConnection::EscapeString(src='Olly', this=0x5aefe8, connection=0x5e1a10)
+[22:05:18] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'Olly'
+[22:05:18] [DEBUG] CHandle::EscapeString(this=0x5d7568, src='$2y$12$aCm2PzXMY1PRaSDpPRHCL.1U8/sxTaSaqtPZDZswKj2ZwcoAXOAI2')
+[22:05:18] [DEBUG] CConnection::EscapeString(src='$2y$12$aCm2PzXMY1PRaSDpPRHCL.1U8/sxTaSaqtPZDZswKj2ZwcoAXOAI2', this=0x5aefe8, connection=0x5e1a10)
+[22:05:18] [DEBUG] CHandle::EscapeString - return value: true, escaped string: '$2y$12$aCm2PzXMY1PRaSDpPRHCL.1U8/sxTaSaqtPZDZswKj2ZwcoAXOAI2'
+[22:05:18] [DEBUG] mysql_format: return value: '167'
+[22:05:18] [DEBUG] mysql_tquery(1, "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('Olly', '$2y$12$aCm2PzXMY1PRaSDpPRHCL.1U8/sxTaSaqtPZDZswKj2ZwcoAXOAI2', 'NULL', 0, 0)", "OnPlayerRegister", "d")
+[22:05:18] [DEBUG] CCallback::Create(amx=0x2a5af20, name='OnPlayerRegister', format='d', params=0x3ae40b8, param_offset=5)
+[22:05:18] [DEBUG] CCallback::Create - callback index for 'OnPlayerRegister': -10036
+[22:05:18] [DEBUG] processing specifier 'd' with parameter index 0
+[22:05:18] [DEBUG] retrieved and pushed value '0'
+[22:05:18] [INFO] Callback 'OnPlayerRegister' set up for delayed execution.
+[22:05:18] [DEBUG] created delayed callback with 1 parameter
+[22:05:18] [DEBUG] CHandle::Execute(this=0x5d7568, type=1, query=0x5ad5b8)
+[22:05:18] [DEBUG] CHandle::Execute - return value: true
+[22:05:18] [DEBUG] mysql_tquery: return value: '1'
+[22:05:18] [DEBUG] CConnection::Execute(query=0x5ad5b8, this=0x3c32020, connection=0x5ef150)
+[22:05:18] [DEBUG] CQuery::Execute(this=0x5ad5b8, connection=0x5ef150)
+[22:05:18] [INFO] query "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('Olly', '$2y$12$aCm2PzXMY1PRaSDpPRHCL.1U8/sxTaSaqtPZDZswKj2ZwcoAXOAI2', 'NULL', 0, 0)" successfully executed within 58.450 milliseconds
+[22:05:18] [DEBUG] CResultSet::Create(connection=0x5ef150, query_str='INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('Olly', '$2y$12$aCm2PzXMY1PRaSDpPRHCL.1U8/sxTaSaqtPZDZswKj2ZwcoAXOAI2', 'NULL', 0, 0)')
+[22:05:18] [DEBUG] created new resultset '0x6216c8'
+[22:05:18] [DEBUG] fetched MySQL result '0x0'
+[22:05:18] [DEBUG] CCallback::Execute(amx=0x2a5af20, index=-10036, num_params=1)
+[22:06:25] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[22:06:25] [DEBUG] mysql_connect_file("mysql.ini")
+[22:06:25] [DEBUG] CHandleManager::CreateFromFile(this=0x7f1be8, file_path='mysql.ini')
+[22:06:25] [INFO] Options instance with id '1' successfully created.
+[22:06:25] [DEBUG] CHandleManager::CreateFromFile - new options = 0x8482e0 (id '1')
+[22:06:25] [DEBUG] CHandleManager::Create(this=0x7f1be8, host='localhost', user='root', pass='****', db='samp', options=0x8482e0)
+[22:06:25] [INFO] Creating new connection handle...
+[22:06:25] [WARNING] mysql_connect_file: no password specified
+[22:06:25] [DEBUG] CConnection::CConnection(this=0x81bd40, host='localhost', user='root', passw='****', db='samp', options=0x8482e0)
+[22:06:25] [DEBUG] CConnection::CConnection - new connection = 0x7f12f8
+[22:06:25] [DEBUG] CConnection::CConnection(this=0x3b35020, host='localhost', user='root', passw='****', db='samp', options=0x8482e0)
+[22:06:25] [DEBUG] CConnection::CConnection - new connection = 0x85a290
+[22:06:25] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3b35020, connection=0x3b35020)
+[22:06:25] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3b35020, connection=0x3b35020)
+[22:06:25] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x81bc00)
+[22:06:25] [DEBUG] CConnection::CConnection(this=0x3d0f020, host='localhost', user='root', passw='****', db='samp', options=0x8482e0)
+[22:06:25] [DEBUG] CConnection::CConnection - new connection = 0x86a030
+[22:06:25] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3d0f020, connection=0x3d0f020)
+[22:06:25] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3d0f020, connection=0x3d0f020)
+[22:06:25] [DEBUG] CConnection::CConnection(this=0x3eee020, host='localhost', user='root', passw='****', db='samp', options=0x8482e0)
+[22:06:25] [DEBUG] CConnection::CConnection - new connection = 0x873a20
+[22:06:25] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3eee020, connection=0x3eee020)
+[22:06:25] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3eee020, connection=0x3eee020)
+[22:06:25] [INFO] Connection handle with id '1' successfully created.
+[22:06:25] [DEBUG] CHandleManager::Create - new handle = 0x8453b0
+[22:06:25] [DEBUG] mysql_connect_file: return value: '1'
+[22:06:25] [DEBUG] mysql_errno(1)
+[22:06:25] [DEBUG] CHandle::GetErrorId(this=0x8453b0)
+[22:06:25] [DEBUG] CConnection::GetError(this=0x81bd40, connection=0x7f12f8)
+[22:06:25] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[22:06:25] [DEBUG] mysql_errno: return value: '0'
+[22:06:48] [DEBUG] mysql_format(1, 0x039DF354, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:06:48] [DEBUG] mysql_format: return value: '50'
+[22:06:48] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'Olly123'", "checkIfExists", "d")
+[22:06:48] [DEBUG] CCallback::Create(amx=0x295af20, name='checkIfExists', format='d', params=0x39df2d8, param_offset=5)
+[22:06:48] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:06:48] [DEBUG] processing specifier 'd' with parameter index 0
+[22:06:48] [DEBUG] retrieved and pushed value '0'
+[22:06:48] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:06:48] [DEBUG] created delayed callback with 1 parameter
+[22:06:48] [DEBUG] CHandle::Execute(this=0x8453b0, type=1, query=0x7f1a48)
+[22:06:48] [DEBUG] CHandle::Execute - return value: true
+[22:06:48] [DEBUG] mysql_tquery: return value: '1'
+[22:06:48] [DEBUG] CConnection::Execute(query=0x7f1a48, this=0x3b35020, connection=0x85a290)
+[22:06:48] [DEBUG] CQuery::Execute(this=0x7f1a48, connection=0x85a290)
+[22:06:48] [INFO] query "SELECT * FROM `accounts` where `pName` = 'Olly123'" successfully executed within 0.411 milliseconds
+[22:06:48] [DEBUG] CResultSet::Create(connection=0x85a290, query_str='SELECT * FROM `accounts` where `pName` = 'Olly123'')
+[22:06:48] [DEBUG] created new resultset '0x8566e0'
+[22:06:48] [DEBUG] fetched MySQL result '0x87cd38'
+[22:06:48] [DEBUG] allocated 0 bytes for PAWN result
+[22:06:48] [DEBUG] CCallback::Execute(amx=0x295af20, index=46, num_params=1)
+[22:06:48] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:06:48] [DEBUG] processing internal specifier 'c'
+[22:06:48] [DEBUG] pushed value '0' onto AMX stack
+[22:06:48] [DEBUG] executing AMX callback with index '46'
+[22:06:48] [DEBUG] cache_get_row_count(0x039DEE30)
+[22:06:48] [DEBUG] cache_get_row_count: return value: '1'
+[22:06:48] [DEBUG] AMX callback executed with error '0'
+[22:06:48] [INFO] Callback successfully executed.
+[22:06:51] [DEBUG] mysql_format(1, 0x039DF0D0, 300, "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('%e', '%e', 'NULL', 0, 0)")
+[22:06:51] [DEBUG] CHandle::EscapeString(this=0x8453b0, src='Olly123')
+[22:06:51] [DEBUG] CConnection::EscapeString(src='Olly123', this=0x81bd40, connection=0x7f12f8)
+[22:06:51] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'Olly123'
+[22:06:51] [DEBUG] CHandle::EscapeString(this=0x8453b0, src='$2y$12$bjHwP0vIMCL1KTjrLFbjRORSbCZAZ2Vlmas16bj7bzcyoUwubKlpu')
+[22:06:51] [DEBUG] CConnection::EscapeString(src='$2y$12$bjHwP0vIMCL1KTjrLFbjRORSbCZAZ2Vlmas16bj7bzcyoUwubKlpu', this=0x81bd40, connection=0x7f12f8)
+[22:06:51] [DEBUG] CHandle::EscapeString - return value: true, escaped string: '$2y$12$bjHwP0vIMCL1KTjrLFbjRORSbCZAZ2Vlmas16bj7bzcyoUwubKlpu'
+[22:06:51] [DEBUG] mysql_format: return value: '170'
+[22:06:51] [DEBUG] mysql_tquery(1, "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('Olly123', '$2y$12$bjHwP0vIMCL1KTjrLFbjRORSbCZAZ2Vlmas16bj7bzcyoUwubKlpu', 'NULL', 0, 0)", "OnPlayerRegister", "d")
+[22:06:51] [DEBUG] CCallback::Create(amx=0x295af20, name='OnPlayerRegister', format='d', params=0x39df0b8, param_offset=5)
+[22:06:51] [DEBUG] CCallback::Create - callback index for 'OnPlayerRegister': -10035
+[22:06:51] [DEBUG] processing specifier 'd' with parameter index 0
+[22:06:51] [DEBUG] retrieved and pushed value '0'
+[22:06:51] [INFO] Callback 'OnPlayerRegister' set up for delayed execution.
+[22:06:51] [DEBUG] created delayed callback with 1 parameter
+[22:06:51] [DEBUG] CHandle::Execute(this=0x8453b0, type=1, query=0x8a20a8)
+[22:06:51] [DEBUG] CHandle::Execute - return value: true
+[22:06:51] [DEBUG] mysql_tquery: return value: '1'
+[22:06:51] [DEBUG] CConnection::Execute(query=0x8a20a8, this=0x3b35020, connection=0x85a290)
+[22:06:51] [DEBUG] CQuery::Execute(this=0x8a20a8, connection=0x85a290)
+[22:06:51] [INFO] query "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('Olly123', '$2y$12$bjHwP0vIMCL1KTjrLFbjRORSbCZAZ2Vlmas16bj7bzcyoUwubKlpu', 'NULL', 0, 0)" successfully executed within 52.114 milliseconds
+[22:06:51] [DEBUG] CResultSet::Create(connection=0x85a290, query_str='INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('Olly123', '$2y$12$bjHwP0vIMCL1KTjrLFbjRORSbCZAZ2Vlmas16bj7bzcyoUwubKlpu', 'NULL', 0, 0)')
+[22:06:51] [DEBUG] created new resultset '0x856638'
+[22:06:51] [DEBUG] fetched MySQL result '0x0'
+[22:06:51] [DEBUG] CCallback::Execute(amx=0x295af20, index=-10035, num_params=1)
+[22:06:51] [INFO] Executing callback '{*' with 1 parameter...
+[22:06:51] [DEBUG] processing internal specifier 'c'
+[22:06:51] [DEBUG] pushed value '0' onto AMX stack
+[22:06:51] [DEBUG] executing AMX callback with index '-10035'
+[22:06:51] [DEBUG] AMX callback executed with error '0'
+[22:06:51] [INFO] Callback successfully executed.
+[22:07:17] [DEBUG] mysql_format(1, 0x039DF354, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:07:17] [DEBUG] mysql_format: return value: '50'
+[22:07:17] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'Olly123'", "checkIfExists", "d")
+[22:07:17] [DEBUG] CCallback::Create(amx=0x295af20, name='checkIfExists', format='d', params=0x39df2d8, param_offset=5)
+[22:07:17] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:07:17] [DEBUG] processing specifier 'd' with parameter index 0
+[22:07:17] [DEBUG] retrieved and pushed value '0'
+[22:07:17] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:07:17] [DEBUG] created delayed callback with 1 parameter
+[22:07:17] [DEBUG] CHandle::Execute(this=0x8453b0, type=1, query=0x87cd48)
+[22:07:17] [DEBUG] CHandle::Execute - return value: true
+[22:07:17] [DEBUG] mysql_tquery: return value: '1'
+[22:07:17] [DEBUG] CConnection::Execute(query=0x87cd48, this=0x3b35020, connection=0x85a290)
+[22:07:17] [DEBUG] CQuery::Execute(this=0x87cd48, connection=0x85a290)
+[22:07:17] [INFO] query "SELECT * FROM `accounts` where `pName` = 'Olly123'" successfully executed within 1.938 milliseconds
+[22:07:17] [DEBUG] CResultSet::Create(connection=0x85a290, query_str='SELECT * FROM `accounts` where `pName` = 'Olly123'')
+[22:07:17] [DEBUG] created new resultset '0x8566a8'
+[22:07:17] [DEBUG] fetched MySQL result '0x855f60'
+[22:07:17] [DEBUG] allocated 76 bytes for PAWN result
+[22:07:17] [DEBUG] CCallback::Execute(amx=0x295af20, index=46, num_params=1)
+[22:07:17] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:07:17] [DEBUG] processing internal specifier 'c'
+[22:07:17] [DEBUG] pushed value '0' onto AMX stack
+[22:07:17] [DEBUG] executing AMX callback with index '46'
+[22:07:17] [DEBUG] cache_get_row_count(0x039DEE30)
+[22:07:17] [DEBUG] cache_get_row_count: return value: '1'
+[22:07:17] [DEBUG] AMX callback executed with error '0'
+[22:07:17] [INFO] Callback successfully executed.
+[22:07:20] [DEBUG] mysql_format(1, 0x039DF18C, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:07:20] [DEBUG] CHandle::EscapeString(this=0x8453b0, src='Olly123')
+[22:07:20] [DEBUG] CConnection::EscapeString(src='Olly123', this=0x81bd40, connection=0x7f12f8)
+[22:07:20] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'Olly123'
+[22:07:20] [DEBUG] mysql_format: return value: '60'
+[22:07:20] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'", 1)
+[22:07:20] [DEBUG] CHandle::Execute(this=0x8453b0, type=3, query=0x87cd48)
+[22:07:20] [DEBUG] CConnection::Execute(query=0x87cd48, this=0x81bd40, connection=0x7f12f8)
+[22:07:20] [DEBUG] CQuery::Execute(this=0x87cd48, connection=0x7f12f8)
+[22:07:20] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'" successfully executed within 0.472 milliseconds
+[22:07:20] [DEBUG] CResultSet::Create(connection=0x7f12f8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'')
+[22:07:20] [DEBUG] created new resultset '0x856280'
+[22:07:20] [DEBUG] fetched MySQL result '0x846ae0'
+[22:07:20] [DEBUG] allocated 36 bytes for PAWN result
+[22:07:20] [DEBUG] CHandle::Execute - return value: true
+[22:07:20] [DEBUG] mysql_query: return value: '1'
+[22:07:20] [DEBUG] cache_get_value_name(0, "pPassword", 0x039DF038, 61)
+[22:07:20] [DEBUG] cache_get_value_name: assigned value: '$2y$12$bjHwP0vIM'
+[22:07:20] [DEBUG] cache_get_value_name: return value: '1'
+[22:09:03] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[22:09:03] [DEBUG] mysql_connect_file("mysql.ini")
+[22:09:03] [DEBUG] CHandleManager::CreateFromFile(this=0x75abc8, file_path='mysql.ini')
+[22:09:03] [INFO] Options instance with id '1' successfully created.
+[22:09:03] [DEBUG] CHandleManager::CreateFromFile - new options = 0x788448 (id '1')
+[22:09:03] [DEBUG] CHandleManager::Create(this=0x75abc8, host='localhost', user='root', pass='****', db='samp', options=0x788448)
+[22:09:03] [INFO] Creating new connection handle...
+[22:09:03] [WARNING] mysql_connect_file: no password specified
+[22:09:03] [DEBUG] CConnection::CConnection(this=0x75cdc0, host='localhost', user='root', passw='****', db='samp', options=0x788448)
+[22:09:03] [DEBUG] CConnection::CConnection - new connection = 0x7319c8
+[22:09:03] [DEBUG] CConnection::CConnection(this=0x3b22020, host='localhost', user='root', passw='****', db='samp', options=0x788448)
+[22:09:03] [DEBUG] CConnection::CConnection - new connection = 0x79f178
+[22:09:03] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3b22020, connection=0x3b22020)
+[22:09:03] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3b22020, connection=0x3b22020)
+[22:09:03] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x75cd00)
+[22:09:03] [DEBUG] CConnection::CConnection(this=0x3cf0020, host='localhost', user='root', passw='****', db='samp', options=0x788448)
+[22:09:03] [DEBUG] CConnection::CConnection - new connection = 0x7a7fd0
+[22:09:03] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3cf0020, connection=0x3cf0020)
+[22:09:03] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3cf0020, connection=0x3cf0020)
+[22:09:04] [DEBUG] CConnection::CConnection(this=0x3ecb020, host='localhost', user='root', passw='****', db='samp', options=0x788448)
+[22:09:04] [DEBUG] CConnection::CConnection - new connection = 0x7b8280
+[22:09:04] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3ecb020, connection=0x3ecb020)
+[22:09:04] [INFO] Connection handle with id '1' successfully created.
+[22:09:04] [DEBUG] CHandleManager::Create - new handle = 0x785568
+[22:09:04] [DEBUG] mysql_connect_file: return value: '1'
+[22:09:04] [DEBUG] mysql_errno(1)
+[22:09:04] [DEBUG] CHandle::GetErrorId(this=0x785568)
+[22:09:04] [DEBUG] CConnection::GetError(this=0x75cdc0, connection=0x7319c8)
+[22:09:04] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[22:09:04] [DEBUG] mysql_errno: return value: '0'
+[22:09:04] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3ecb020, connection=0x3ecb020)
+[22:09:33] [DEBUG] mysql_format(1, 0x039DC35C, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:09:33] [DEBUG] mysql_format: return value: '50'
+[22:09:33] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'Olly123'", "checkIfExists", "d")
+[22:09:33] [DEBUG] CCallback::Create(amx=0x299af20, name='checkIfExists', format='d', params=0x39dc2e0, param_offset=5)
+[22:09:33] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:09:33] [DEBUG] processing specifier 'd' with parameter index 0
+[22:09:33] [DEBUG] retrieved and pushed value '0'
+[22:09:33] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:09:33] [DEBUG] created delayed callback with 1 parameter
+[22:09:33] [DEBUG] CHandle::Execute(this=0x785568, type=1, query=0x7a5630)
+[22:09:33] [DEBUG] CHandle::Execute - return value: true
+[22:09:33] [DEBUG] mysql_tquery: return value: '1'
+[22:09:33] [DEBUG] CConnection::Execute(query=0x7a5630, this=0x3b22020, connection=0x79f178)
+[22:09:33] [DEBUG] CQuery::Execute(this=0x7a5630, connection=0x79f178)
+[22:09:33] [INFO] query "SELECT * FROM `accounts` where `pName` = 'Olly123'" successfully executed within 0.410 milliseconds
+[22:09:33] [DEBUG] CResultSet::Create(connection=0x79f178, query_str='SELECT * FROM `accounts` where `pName` = 'Olly123'')
+[22:09:33] [DEBUG] created new resultset '0x732460'
+[22:09:33] [DEBUG] fetched MySQL result '0x731f30'
+[22:09:33] [DEBUG] allocated 76 bytes for PAWN result
+[22:09:33] [DEBUG] CCallback::Execute(amx=0x299af20, index=46, num_params=1)
+[22:09:33] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:09:33] [DEBUG] processing internal specifier 'c'
+[22:09:33] [DEBUG] pushed value '0' onto AMX stack
+[22:09:33] [DEBUG] executing AMX callback with index '46'
+[22:09:33] [DEBUG] cache_get_row_count(0x039DBE38)
+[22:09:33] [DEBUG] cache_get_row_count: return value: '1'
+[22:09:33] [DEBUG] AMX callback executed with error '0'
+[22:09:33] [INFO] Callback successfully executed.
+[22:09:35] [DEBUG] mysql_format(1, 0x039DC194, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:09:35] [DEBUG] CHandle::EscapeString(this=0x785568, src='Olly123')
+[22:09:35] [DEBUG] CConnection::EscapeString(src='Olly123', this=0x75cdc0, connection=0x7319c8)
+[22:09:35] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'Olly123'
+[22:09:35] [DEBUG] mysql_format: return value: '60'
+[22:09:35] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'", 1)
+[22:09:35] [DEBUG] CHandle::Execute(this=0x785568, type=3, query=0x7a5630)
+[22:09:35] [DEBUG] CConnection::Execute(query=0x7a5630, this=0x75cdc0, connection=0x7319c8)
+[22:09:35] [DEBUG] CQuery::Execute(this=0x7a5630, connection=0x7319c8)
+[22:09:35] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'" successfully executed within 0.995 milliseconds
+[22:09:35] [DEBUG] CResultSet::Create(connection=0x7319c8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'')
+[22:09:35] [DEBUG] created new resultset '0x7323f0'
+[22:09:35] [DEBUG] fetched MySQL result '0x785c50'
+[22:09:35] [DEBUG] allocated 36 bytes for PAWN result
+[22:09:35] [DEBUG] CHandle::Execute - return value: true
+[22:09:35] [DEBUG] mysql_query: return value: '1'
+[22:09:35] [DEBUG] cache_get_value_name(0, "pPassword", 0x039DC040, 61)
+[22:09:35] [DEBUG] cache_get_value_name: assigned value: '$2y$12$bjHwP0vIM'
+[22:09:35] [DEBUG] cache_get_value_name: return value: '1'
+[22:09:38] [DEBUG] mysql_format(1, 0x039DC194, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:09:38] [DEBUG] CHandle::EscapeString(this=0x785568, src='Olly123')
+[22:09:38] [DEBUG] CConnection::EscapeString(src='Olly123', this=0x75cdc0, connection=0x7319c8)
+[22:09:38] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'Olly123'
+[22:09:38] [DEBUG] mysql_format: return value: '60'
+[22:09:38] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'", 1)
+[22:09:38] [DEBUG] CHandle::Execute(this=0x785568, type=3, query=0x7a5630)
+[22:09:38] [DEBUG] CConnection::Execute(query=0x7a5630, this=0x75cdc0, connection=0x7319c8)
+[22:09:38] [DEBUG] CQuery::Execute(this=0x7a5630, connection=0x7319c8)
+[22:09:38] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'" successfully executed within 0.531 milliseconds
+[22:09:38] [DEBUG] CResultSet::Create(connection=0x7319c8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'')
+[22:09:38] [DEBUG] created new resultset '0x7326c8'
+[22:09:38] [DEBUG] fetched MySQL result '0x785b90'
+[22:09:38] [DEBUG] allocated 36 bytes for PAWN result
+[22:09:38] [DEBUG] CHandle::Execute - return value: true
+[22:09:38] [DEBUG] mysql_query: return value: '2'
+[22:09:38] [DEBUG] cache_get_value_name(0, "pPassword", 0x039DC040, 61)
+[22:09:38] [DEBUG] cache_get_value_name: assigned value: '$2y$12$bjHwP0vIM'
+[22:09:38] [DEBUG] cache_get_value_name: return value: '1'
+[22:09:41] [DEBUG] mysql_format(1, 0x039DC194, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:09:41] [DEBUG] CHandle::EscapeString(this=0x785568, src='Olly123')
+[22:09:41] [DEBUG] CConnection::EscapeString(src='Olly123', this=0x75cdc0, connection=0x7319c8)
+[22:09:41] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'Olly123'
+[22:09:41] [DEBUG] mysql_format: return value: '60'
+[22:09:41] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'", 1)
+[22:09:41] [DEBUG] CHandle::Execute(this=0x785568, type=3, query=0x7a5630)
+[22:09:41] [DEBUG] CConnection::Execute(query=0x7a5630, this=0x75cdc0, connection=0x7319c8)
+[22:09:41] [DEBUG] CQuery::Execute(this=0x7a5630, connection=0x7319c8)
+[22:09:41] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'" successfully executed within 0.463 milliseconds
+[22:09:41] [DEBUG] CResultSet::Create(connection=0x7319c8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'')
+[22:09:41] [DEBUG] created new resultset '0x732230'
+[22:09:41] [DEBUG] fetched MySQL result '0x786130'
+[22:09:41] [DEBUG] allocated 36 bytes for PAWN result
+[22:09:41] [DEBUG] CHandle::Execute - return value: true
+[22:09:41] [DEBUG] mysql_query: return value: '3'
+[22:09:41] [DEBUG] cache_get_value_name(0, "pPassword", 0x039DC040, 61)
+[22:09:41] [DEBUG] cache_get_value_name: assigned value: '$2y$12$bjHwP0vIM'
+[22:09:41] [DEBUG] cache_get_value_name: return value: '1'
+[22:09:43] [DEBUG] mysql_format(1, 0x039DC194, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:09:43] [DEBUG] CHandle::EscapeString(this=0x785568, src='Olly123')
+[22:09:43] [DEBUG] CConnection::EscapeString(src='Olly123', this=0x75cdc0, connection=0x7319c8)
+[22:09:43] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'Olly123'
+[22:09:43] [DEBUG] mysql_format: return value: '60'
+[22:09:43] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'", 1)
+[22:09:43] [DEBUG] CHandle::Execute(this=0x785568, type=3, query=0x7a5630)
+[22:09:43] [DEBUG] CConnection::Execute(query=0x7a5630, this=0x75cdc0, connection=0x7319c8)
+[22:09:43] [DEBUG] CQuery::Execute(this=0x7a5630, connection=0x7319c8)
+[22:09:43] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'" successfully executed within 0.428 milliseconds
+[22:09:43] [DEBUG] CResultSet::Create(connection=0x7319c8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'')
+[22:09:43] [DEBUG] created new resultset '0x732188'
+[22:09:43] [DEBUG] fetched MySQL result '0x785c50'
+[22:09:43] [DEBUG] allocated 36 bytes for PAWN result
+[22:09:43] [DEBUG] CHandle::Execute - return value: true
+[22:09:43] [DEBUG] mysql_query: return value: '4'
+[22:09:43] [DEBUG] cache_get_value_name(0, "pPassword", 0x039DC040, 61)
+[22:09:43] [DEBUG] cache_get_value_name: assigned value: '$2y$12$bjHwP0vIM'
+[22:09:43] [DEBUG] cache_get_value_name: return value: '1'
+[22:09:44] [DEBUG] mysql_format(1, 0x039DC194, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:09:44] [DEBUG] CHandle::EscapeString(this=0x785568, src='Olly123')
+[22:09:44] [DEBUG] CConnection::EscapeString(src='Olly123', this=0x75cdc0, connection=0x7319c8)
+[22:09:44] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'Olly123'
+[22:09:44] [DEBUG] mysql_format: return value: '60'
+[22:09:44] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'", 1)
+[22:09:44] [DEBUG] CHandle::Execute(this=0x785568, type=3, query=0x7a5630)
+[22:09:44] [DEBUG] CConnection::Execute(query=0x7a5630, this=0x75cdc0, connection=0x7319c8)
+[22:09:44] [DEBUG] CQuery::Execute(this=0x7a5630, connection=0x7319c8)
+[22:09:44] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'" successfully executed within 0.366 milliseconds
+[22:09:44] [DEBUG] CResultSet::Create(connection=0x7319c8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly123'')
+[22:09:44] [DEBUG] created new resultset '0x75f5f8'
+[22:09:44] [DEBUG] fetched MySQL result '0x786130'
+[22:09:44] [DEBUG] allocated 36 bytes for PAWN result
+[22:09:44] [DEBUG] CHandle::Execute - return value: true
+[22:09:44] [DEBUG] mysql_query: return value: '5'
+[22:09:44] [DEBUG] cache_get_value_name(0, "pPassword", 0x039DC040, 61)
+[22:09:44] [DEBUG] cache_get_value_name: assigned value: '$2y$12$bjHwP0vIM'
+[22:09:44] [DEBUG] cache_get_value_name: return value: '1'
+[22:10:38] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[22:10:38] [DEBUG] mysql_connect_file("mysql.ini")
+[22:10:38] [DEBUG] CHandleManager::CreateFromFile(this=0x7330e8, file_path='mysql.ini')
+[22:10:38] [INFO] Options instance with id '1' successfully created.
+[22:10:38] [DEBUG] CHandleManager::CreateFromFile - new options = 0x728008 (id '1')
+[22:10:38] [DEBUG] CHandleManager::Create(this=0x7330e8, host='localhost', user='root', pass='****', db='samp', options=0x728008)
+[22:10:38] [INFO] Creating new connection handle...
+[22:10:38] [WARNING] mysql_connect_file: no password specified
+[22:10:38] [DEBUG] CConnection::CConnection(this=0x6f4590, host='localhost', user='root', passw='****', db='samp', options=0x728008)
+[22:10:38] [DEBUG] CConnection::CConnection - new connection = 0x7326b8
+[22:10:38] [DEBUG] CConnection::CConnection(this=0x3b9b020, host='localhost', user='root', passw='****', db='samp', options=0x728008)
+[22:10:38] [DEBUG] CConnection::CConnection - new connection = 0x7402a0
+[22:10:38] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3b9b020, connection=0x3b9b020)
+[22:10:38] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3b9b020, connection=0x3b9b020)
+[22:10:38] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x6f4310)
+[22:10:38] [DEBUG] CConnection::CConnection(this=0x3d68020, host='localhost', user='root', passw='****', db='samp', options=0x728008)
+[22:10:38] [DEBUG] CConnection::CConnection - new connection = 0x749688
+[22:10:38] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3d68020, connection=0x3d68020)
+[22:10:38] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3d68020, connection=0x3d68020)
+[22:10:38] [DEBUG] CConnection::CConnection(this=0x3f30020, host='localhost', user='root', passw='****', db='samp', options=0x728008)
+[22:10:38] [DEBUG] CConnection::CConnection - new connection = 0x790748
+[22:10:39] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3f30020, connection=0x3f30020)
+[22:10:39] [INFO] Connection handle with id '1' successfully created.
+[22:10:39] [DEBUG] CHandleManager::Create - new handle = 0x724db8
+[22:10:39] [DEBUG] mysql_connect_file: return value: '1'
+[22:10:39] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3f30020, connection=0x3f30020)
+[22:10:39] [DEBUG] mysql_errno(1)
+[22:10:39] [DEBUG] CHandle::GetErrorId(this=0x724db8)
+[22:10:39] [DEBUG] CConnection::GetError(this=0x6f4590, connection=0x7326b8)
+[22:10:39] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[22:10:39] [DEBUG] mysql_errno: return value: '0'
+[22:10:43] [DEBUG] mysql_format(1, 0x03A7F35C, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:10:43] [DEBUG] mysql_format: return value: '48'
+[22:10:43] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'Olly1'", "checkIfExists", "d")
+[22:10:43] [DEBUG] CCallback::Create(amx=0x2a3af20, name='checkIfExists', format='d', params=0x3a7f2e0, param_offset=5)
+[22:10:43] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:10:43] [DEBUG] processing specifier 'd' with parameter index 0
+[22:10:43] [DEBUG] retrieved and pushed value '0'
+[22:10:43] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:10:43] [DEBUG] created delayed callback with 1 parameter
+[22:10:43] [DEBUG] CHandle::Execute(this=0x724db8, type=1, query=0x733fd0)
+[22:10:43] [DEBUG] CHandle::Execute - return value: true
+[22:10:43] [DEBUG] mysql_tquery: return value: '1'
+[22:10:43] [DEBUG] CConnection::Execute(query=0x733fd0, this=0x3b9b020, connection=0x7402a0)
+[22:10:43] [DEBUG] CQuery::Execute(this=0x733fd0, connection=0x7402a0)
+[22:10:43] [INFO] query "SELECT * FROM `accounts` where `pName` = 'Olly1'" successfully executed within 0.303 milliseconds
+[22:10:43] [DEBUG] CResultSet::Create(connection=0x7402a0, query_str='SELECT * FROM `accounts` where `pName` = 'Olly1'')
+[22:10:43] [DEBUG] created new resultset '0x733668'
+[22:10:43] [DEBUG] fetched MySQL result '0x7af828'
+[22:10:43] [DEBUG] allocated 0 bytes for PAWN result
+[22:10:43] [DEBUG] CCallback::Execute(amx=0x2a3af20, index=46, num_params=1)
+[22:10:43] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:10:43] [DEBUG] processing internal specifier 'c'
+[22:10:43] [DEBUG] pushed value '0' onto AMX stack
+[22:10:43] [DEBUG] executing AMX callback with index '46'
+[22:10:43] [DEBUG] cache_get_row_count(0x03A7EE38)
+[22:10:43] [DEBUG] cache_get_row_count: return value: '1'
+[22:10:43] [DEBUG] AMX callback executed with error '0'
+[22:10:43] [INFO] Callback successfully executed.
+[22:10:49] [DEBUG] mysql_format(1, 0x03A7F0D8, 300, "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('%e', '%e', 'NULL', 0, 0)")
+[22:10:49] [DEBUG] CHandle::EscapeString(this=0x724db8, src='Olly1')
+[22:10:49] [DEBUG] CConnection::EscapeString(src='Olly1', this=0x6f4590, connection=0x7326b8)
+[22:10:49] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'Olly1'
+[22:10:49] [DEBUG] CHandle::EscapeString(this=0x724db8, src='$2y$12$PyPsXVbAb0XIPUrHay7yTOokLu/aGjgCIyOTWPFYyEzB95RPpXZvq')
+[22:10:49] [DEBUG] CConnection::EscapeString(src='$2y$12$PyPsXVbAb0XIPUrHay7yTOokLu/aGjgCIyOTWPFYyEzB95RPpXZvq', this=0x6f4590, connection=0x7326b8)
+[22:10:49] [DEBUG] CHandle::EscapeString - return value: true, escaped string: '$2y$12$PyPsXVbAb0XIPUrHay7yTOokLu/aGjgCIyOTWPFYyEzB95RPpXZvq'
+[22:10:49] [DEBUG] mysql_format: return value: '168'
+[22:10:49] [DEBUG] mysql_tquery(1, "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('Olly1', '$2y$12$PyPsXVbAb0XIPUrHay7yTOokLu/aGjgCIyOTWPFYyEzB95RPpXZvq', 'NULL', 0, 0)", "OnPlayerRegister", "d")
+[22:10:49] [DEBUG] CCallback::Create(amx=0x2a3af20, name='OnPlayerRegister', format='d', params=0x3a7f0c0, param_offset=5)
+[22:10:49] [DEBUG] CCallback::Create - callback index for 'OnPlayerRegister': -10035
+[22:10:49] [DEBUG] processing specifier 'd' with parameter index 0
+[22:10:49] [DEBUG] retrieved and pushed value '0'
+[22:10:49] [INFO] Callback 'OnPlayerRegister' set up for delayed execution.
+[22:10:49] [DEBUG] created delayed callback with 1 parameter
+[22:10:49] [DEBUG] CHandle::Execute(this=0x724db8, type=1, query=0x7b20f0)
+[22:10:49] [DEBUG] CHandle::Execute - return value: true
+[22:10:49] [DEBUG] mysql_tquery: return value: '1'
+[22:10:49] [DEBUG] CConnection::Execute(query=0x7b20f0, this=0x3b9b020, connection=0x7402a0)
+[22:10:49] [DEBUG] CQuery::Execute(this=0x7b20f0, connection=0x7402a0)
+[22:10:49] [INFO] query "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('Olly1', '$2y$12$PyPsXVbAb0XIPUrHay7yTOokLu/aGjgCIyOTWPFYyEzB95RPpXZvq', 'NULL', 0, 0)" successfully executed within 91.142 milliseconds
+[22:10:49] [DEBUG] CResultSet::Create(connection=0x7402a0, query_str='INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('Olly1', '$2y$12$PyPsXVbAb0XIPUrHay7yTOokLu/aGjgCIyOTWPFYyEzB95RPpXZvq', 'NULL', 0, 0)')
+[22:10:49] [DEBUG] created new resultset '0x733ba8'
+[22:10:49] [DEBUG] fetched MySQL result '0x0'
+[22:10:49] [DEBUG] CCallback::Execute(amx=0x2a3af20, index=-10035, num_params=1)
+[22:10:49] [INFO] Executing callback '*' with 1 parameter...
+[22:10:49] [DEBUG] processing internal specifier 'c'
+[22:10:49] [DEBUG] pushed value '0' onto AMX stack
+[22:10:49] [DEBUG] executing AMX callback with index '-10035'
+[22:10:49] [DEBUG] AMX callback executed with error '0'
+[22:10:49] [INFO] Callback successfully executed.
+[22:11:17] [DEBUG] mysql_format(1, 0x03A7F35C, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:11:17] [DEBUG] mysql_format: return value: '48'
+[22:11:17] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'Olly1'", "checkIfExists", "d")
+[22:11:17] [DEBUG] CCallback::Create(amx=0x2a3af20, name='checkIfExists', format='d', params=0x3a7f2e0, param_offset=5)
+[22:11:17] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:11:17] [DEBUG] processing specifier 'd' with parameter index 0
+[22:11:17] [DEBUG] retrieved and pushed value '0'
+[22:11:17] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:11:17] [DEBUG] created delayed callback with 1 parameter
+[22:11:17] [DEBUG] CHandle::Execute(this=0x724db8, type=1, query=0x723288)
+[22:11:17] [DEBUG] CHandle::Execute - return value: true
+[22:11:17] [DEBUG] mysql_tquery: return value: '1'
+[22:11:17] [DEBUG] CConnection::Execute(query=0x723288, this=0x3b9b020, connection=0x7402a0)
+[22:11:17] [DEBUG] CQuery::Execute(this=0x723288, connection=0x7402a0)
+[22:11:17] [INFO] query "SELECT * FROM `accounts` where `pName` = 'Olly1'" successfully executed within 0.738 milliseconds
+[22:11:17] [DEBUG] CResultSet::Create(connection=0x7402a0, query_str='SELECT * FROM `accounts` where `pName` = 'Olly1'')
+[22:11:17] [DEBUG] created new resultset '0x733710'
+[22:11:17] [DEBUG] fetched MySQL result '0x74a600'
+[22:11:17] [DEBUG] allocated 68 bytes for PAWN result
+[22:11:17] [DEBUG] CCallback::Execute(amx=0x2a3af20, index=46, num_params=1)
+[22:11:17] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:11:17] [DEBUG] processing internal specifier 'c'
+[22:11:17] [DEBUG] pushed value '0' onto AMX stack
+[22:11:17] [DEBUG] executing AMX callback with index '46'
+[22:11:17] [DEBUG] cache_get_row_count(0x03A7EE38)
+[22:11:17] [DEBUG] cache_get_row_count: return value: '1'
+[22:11:17] [DEBUG] AMX callback executed with error '0'
+[22:11:17] [INFO] Callback successfully executed.
+[22:11:20] [DEBUG] mysql_format(1, 0x03A7F194, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:11:20] [DEBUG] CHandle::EscapeString(this=0x724db8, src='Olly1')
+[22:11:20] [DEBUG] CConnection::EscapeString(src='Olly1', this=0x6f4590, connection=0x7326b8)
+[22:11:20] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'Olly1'
+[22:11:20] [DEBUG] mysql_format: return value: '58'
+[22:11:20] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly1'", 1)
+[22:11:20] [DEBUG] CHandle::Execute(this=0x724db8, type=3, query=0x723288)
+[22:11:20] [DEBUG] CConnection::Execute(query=0x723288, this=0x6f4590, connection=0x7326b8)
+[22:11:20] [DEBUG] CQuery::Execute(this=0x723288, connection=0x7326b8)
+[22:11:20] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly1'" successfully executed within 0.455 milliseconds
+[22:11:20] [DEBUG] CResultSet::Create(connection=0x7326b8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly1'')
+[22:11:20] [DEBUG] created new resultset '0x733710'
+[22:11:20] [DEBUG] fetched MySQL result '0x725980'
+[22:11:20] [DEBUG] allocated 36 bytes for PAWN result
+[22:11:20] [DEBUG] CHandle::Execute - return value: true
+[22:11:20] [DEBUG] mysql_query: return value: '1'
+[22:11:20] [DEBUG] cache_get_value_name(0, "pPassword", 0x03A7F040, 61)
+[22:11:20] [DEBUG] cache_get_value_name: assigned value: '$2y$12$PyPsXVbAb'
+[22:11:20] [DEBUG] cache_get_value_name: return value: '1'
+[22:11:22] [DEBUG] mysql_format(1, 0x03A7F194, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:11:22] [DEBUG] CHandle::EscapeString(this=0x724db8, src='Olly1')
+[22:11:22] [DEBUG] CConnection::EscapeString(src='Olly1', this=0x6f4590, connection=0x7326b8)
+[22:11:22] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'Olly1'
+[22:11:22] [DEBUG] mysql_format: return value: '58'
+[22:11:22] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly1'", 1)
+[22:11:22] [DEBUG] CHandle::Execute(this=0x724db8, type=3, query=0x723288)
+[22:11:22] [DEBUG] CConnection::Execute(query=0x723288, this=0x6f4590, connection=0x7326b8)
+[22:11:22] [DEBUG] CQuery::Execute(this=0x723288, connection=0x7326b8)
+[22:11:22] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly1'" successfully executed within 0.363 milliseconds
+[22:11:22] [DEBUG] CResultSet::Create(connection=0x7326b8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly1'')
+[22:11:22] [DEBUG] created new resultset '0x733908'
+[22:11:22] [DEBUG] fetched MySQL result '0x725980'
+[22:11:22] [DEBUG] allocated 36 bytes for PAWN result
+[22:11:22] [DEBUG] CHandle::Execute - return value: true
+[22:11:22] [DEBUG] mysql_query: return value: '2'
+[22:11:22] [DEBUG] cache_get_value_name(0, "pPassword", 0x03A7F040, 61)
+[22:11:22] [DEBUG] cache_get_value_name: assigned value: '$2y$12$PyPsXVbAb'
+[22:11:22] [DEBUG] cache_get_value_name: return value: '1'
+[22:13:05] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[22:13:05] [DEBUG] mysql_connect_file("mysql.ini")
+[22:13:05] [DEBUG] CHandleManager::CreateFromFile(this=0x6a9ec8, file_path='mysql.ini')
+[22:13:05] [INFO] Options instance with id '1' successfully created.
+[22:13:05] [DEBUG] CHandleManager::CreateFromFile - new options = 0x6d7d08 (id '1')
+[22:13:05] [DEBUG] CHandleManager::Create(this=0x6a9ec8, host='localhost', user='root', pass='****', db='samp', options=0x6d7d08)
+[22:13:05] [INFO] Creating new connection handle...
+[22:13:05] [WARNING] mysql_connect_file: no password specified
+[22:13:05] [DEBUG] CConnection::CConnection(this=0x6aab18, host='localhost', user='root', passw='****', db='samp', options=0x6d7d08)
+[22:13:05] [DEBUG] CConnection::CConnection - new connection = 0x6eb440
+[22:13:05] [DEBUG] CConnection::CConnection(this=0x3de3020, host='localhost', user='root', passw='****', db='samp', options=0x6d7d08)
+[22:13:05] [DEBUG] CConnection::CConnection - new connection = 0x6f5b28
+[22:13:05] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3de3020, connection=0x3de3020)
+[22:13:05] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3de3020, connection=0x3de3020)
+[22:13:05] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x6aa918)
+[22:13:05] [DEBUG] CConnection::CConnection(this=0x3e76020, host='localhost', user='root', passw='****', db='samp', options=0x6d7d08)
+[22:13:05] [DEBUG] CConnection::CConnection - new connection = 0x6e4500
+[22:13:06] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3e76020, connection=0x3e76020)
+[22:13:06] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3e76020, connection=0x3e76020)
+[22:13:06] [DEBUG] CConnection::CConnection(this=0x4041020, host='localhost', user='root', passw='****', db='samp', options=0x6d7d08)
+[22:13:06] [DEBUG] CConnection::CConnection - new connection = 0x708df8
+[22:13:06] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x4041020, connection=0x4041020)
+[22:13:06] [DEBUG] CThreadedConnection::WorkerFunc(this=0x4041020, connection=0x4041020)
+[22:13:06] [INFO] Connection handle with id '1' successfully created.
+[22:13:06] [DEBUG] CHandleManager::Create - new handle = 0x6d6740
+[22:13:06] [DEBUG] mysql_connect_file: return value: '1'
+[22:13:06] [DEBUG] mysql_errno(1)
+[22:13:06] [DEBUG] CHandle::GetErrorId(this=0x6d6740)
+[22:13:06] [DEBUG] CConnection::GetError(this=0x6aab18, connection=0x6eb440)
+[22:13:06] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[22:13:06] [DEBUG] mysql_errno: return value: '0'
+[22:13:27] [DEBUG] mysql_format(1, 0x03B4F35C, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:13:27] [DEBUG] mysql_format: return value: '48'
+[22:13:27] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'Olly1'", "checkIfExists", "d")
+[22:13:27] [DEBUG] CCallback::Create(amx=0x2abaf20, name='checkIfExists', format='d', params=0x3b4f2e0, param_offset=5)
+[22:13:27] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:13:27] [DEBUG] processing specifier 'd' with parameter index 0
+[22:13:27] [DEBUG] retrieved and pushed value '0'
+[22:13:27] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:13:27] [DEBUG] created delayed callback with 1 parameter
+[22:13:27] [DEBUG] CHandle::Execute(this=0x6d6740, type=1, query=0x6e2d18)
+[22:13:27] [DEBUG] CHandle::Execute - return value: true
+[22:13:27] [DEBUG] mysql_tquery: return value: '1'
+[22:13:27] [DEBUG] CConnection::Execute(query=0x6e2d18, this=0x3de3020, connection=0x6f5b28)
+[22:13:27] [DEBUG] CQuery::Execute(this=0x6e2d18, connection=0x6f5b28)
+[22:13:27] [INFO] query "SELECT * FROM `accounts` where `pName` = 'Olly1'" successfully executed within 0.396 milliseconds
+[22:13:27] [DEBUG] CResultSet::Create(connection=0x6f5b28, query_str='SELECT * FROM `accounts` where `pName` = 'Olly1'')
+[22:13:27] [DEBUG] created new resultset '0x7265a0'
+[22:13:27] [DEBUG] fetched MySQL result '0x6827a0'
+[22:13:27] [DEBUG] allocated 68 bytes for PAWN result
+[22:13:28] [DEBUG] CCallback::Execute(amx=0x2abaf20, index=46, num_params=1)
+[22:13:28] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:13:28] [DEBUG] processing internal specifier 'c'
+[22:13:28] [DEBUG] pushed value '0' onto AMX stack
+[22:13:28] [DEBUG] executing AMX callback with index '46'
+[22:13:28] [DEBUG] cache_get_row_count(0x03B4EE38)
+[22:13:28] [DEBUG] cache_get_row_count: return value: '1'
+[22:13:28] [DEBUG] AMX callback executed with error '0'
+[22:13:28] [INFO] Callback successfully executed.
+[22:13:30] [DEBUG] mysql_format(1, 0x03B4F194, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:13:30] [DEBUG] CHandle::EscapeString(this=0x6d6740, src='Olly1')
+[22:13:30] [DEBUG] CConnection::EscapeString(src='Olly1', this=0x6aab18, connection=0x6eb440)
+[22:13:30] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'Olly1'
+[22:13:30] [DEBUG] mysql_format: return value: '58'
+[22:13:30] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly1'", 1)
+[22:13:30] [DEBUG] CHandle::Execute(this=0x6d6740, type=3, query=0x6e2d18)
+[22:13:30] [DEBUG] CConnection::Execute(query=0x6e2d18, this=0x6aab18, connection=0x6eb440)
+[22:13:30] [DEBUG] CQuery::Execute(this=0x6e2d18, connection=0x6eb440)
+[22:13:30] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly1'" successfully executed within 0.378 milliseconds
+[22:13:30] [DEBUG] CResultSet::Create(connection=0x6eb440, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly1'')
+[22:13:30] [DEBUG] created new resultset '0x726610'
+[22:13:30] [DEBUG] fetched MySQL result '0x6d25b8'
+[22:13:30] [DEBUG] allocated 36 bytes for PAWN result
+[22:13:30] [DEBUG] CHandle::Execute - return value: true
+[22:13:30] [DEBUG] mysql_query: return value: '1'
+[22:13:30] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B4F040, 61)
+[22:13:30] [DEBUG] cache_get_value_name: assigned value: '$2y$12$PyPsXVbAb'
+[22:13:30] [DEBUG] cache_get_value_name: return value: '1'
+[22:13:32] [DEBUG] mysql_format(1, 0x03B4F194, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:13:32] [DEBUG] CHandle::EscapeString(this=0x6d6740, src='Olly1')
+[22:13:32] [DEBUG] CConnection::EscapeString(src='Olly1', this=0x6aab18, connection=0x6eb440)
+[22:13:32] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'Olly1'
+[22:13:32] [DEBUG] mysql_format: return value: '58'
+[22:13:32] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly1'", 1)
+[22:13:32] [DEBUG] CHandle::Execute(this=0x6d6740, type=3, query=0x6e2d18)
+[22:13:32] [DEBUG] CConnection::Execute(query=0x6e2d18, this=0x6aab18, connection=0x6eb440)
+[22:13:32] [DEBUG] CQuery::Execute(this=0x6e2d18, connection=0x6eb440)
+[22:13:32] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly1'" successfully executed within 1.34 milliseconds
+[22:13:32] [DEBUG] CResultSet::Create(connection=0x6eb440, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'Olly1'')
+[22:13:32] [DEBUG] created new resultset '0x7284d0'
+[22:13:32] [DEBUG] fetched MySQL result '0x6d2678'
+[22:13:32] [DEBUG] allocated 36 bytes for PAWN result
+[22:13:32] [DEBUG] CHandle::Execute - return value: true
+[22:13:32] [DEBUG] mysql_query: return value: '2'
+[22:13:32] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B4F040, 61)
+[22:13:32] [DEBUG] cache_get_value_name: assigned value: '$2y$12$PyPsXVbAb'
+[22:13:32] [DEBUG] cache_get_value_name: return value: '1'
+[22:16:26] [DEBUG] mysql_format(1, 0x03B4F35C, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:16:26] [DEBUG] mysql_format: return value: '49'
+[22:16:26] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'Olly12'", "checkIfExists", "d")
+[22:16:26] [DEBUG] CCallback::Create(amx=0x2abaf20, name='checkIfExists', format='d', params=0x3b4f2e0, param_offset=5)
+[22:16:26] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:16:26] [DEBUG] processing specifier 'd' with parameter index 0
+[22:16:26] [DEBUG] retrieved and pushed value '0'
+[22:16:26] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:16:26] [DEBUG] created delayed callback with 1 parameter
+[22:16:26] [DEBUG] CHandle::Execute(this=0x6d6740, type=1, query=0x6d4a28)
+[22:16:26] [DEBUG] CHandle::Execute - return value: true
+[22:16:26] [DEBUG] mysql_tquery: return value: '1'
+[22:16:26] [DEBUG] CConnection::Execute(query=0x6d4a28, this=0x3de3020, connection=0x6f5b28)
+[22:16:26] [DEBUG] CQuery::Execute(this=0x6d4a28, connection=0x6f5b28)
+[22:16:26] [INFO] query "SELECT * FROM `accounts` where `pName` = 'Olly12'" successfully executed within 0.820 milliseconds
+[22:16:26] [DEBUG] CResultSet::Create(connection=0x6f5b28, query_str='SELECT * FROM `accounts` where `pName` = 'Olly12'')
+[22:16:26] [DEBUG] created new resultset '0x6e6e70'
+[22:16:26] [DEBUG] fetched MySQL result '0x68e068'
+[22:16:26] [DEBUG] allocated 0 bytes for PAWN result
+[22:16:26] [DEBUG] CCallback::Execute(amx=0x2abaf20, index=46, num_params=1)
+[22:16:26] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:16:26] [DEBUG] processing internal specifier 'c'
+[22:16:26] [DEBUG] pushed value '0' onto AMX stack
+[22:16:26] [DEBUG] executing AMX callback with index '46'
+[22:16:26] [DEBUG] cache_get_row_count(0x03B4EE38)
+[22:16:26] [DEBUG] cache_get_row_count: return value: '1'
+[22:16:26] [DEBUG] AMX callback executed with error '0'
+[22:16:26] [INFO] Callback successfully executed.
+[22:16:28] [DEBUG] mysql_format(1, 0x03B4F0D8, 300, "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('%e', '%e', 'NULL', 0, 0)")
+[22:16:28] [DEBUG] CHandle::EscapeString(this=0x6d6740, src='Olly12')
+[22:16:28] [DEBUG] CConnection::EscapeString(src='Olly12', this=0x6aab18, connection=0x6eb440)
+[22:16:28] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'Olly12'
+[22:16:28] [DEBUG] CHandle::EscapeString(this=0x6d6740, src='$2y$12$OhDsThPvZ1biQiH3Z1POL.ekkARyH1Okgc2DVWZsRvVx64Bj5M0v2')
+[22:16:28] [DEBUG] CConnection::EscapeString(src='$2y$12$OhDsThPvZ1biQiH3Z1POL.ekkARyH1Okgc2DVWZsRvVx64Bj5M0v2', this=0x6aab18, connection=0x6eb440)
+[22:16:28] [DEBUG] CHandle::EscapeString - return value: true, escaped string: '$2y$12$OhDsThPvZ1biQiH3Z1POL.ekkARyH1Okgc2DVWZsRvVx64Bj5M0v2'
+[22:16:28] [DEBUG] mysql_format: return value: '169'
+[22:16:28] [DEBUG] mysql_tquery(1, "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('Olly12', '$2y$12$OhDsThPvZ1biQiH3Z1POL.ekkARyH1Okgc2DVWZsRvVx64Bj5M0v2', 'NULL', 0, 0)", "OnPlayerRegister", "d")
+[22:16:28] [DEBUG] CCallback::Create(amx=0x2abaf20, name='OnPlayerRegister', format='d', params=0x3b4f0c0, param_offset=5)
+[22:16:28] [DEBUG] CCallback::Create - callback index for 'OnPlayerRegister': -10035
+[22:16:28] [DEBUG] processing specifier 'd' with parameter index 0
+[22:16:28] [DEBUG] retrieved and pushed value '0'
+[22:16:28] [INFO] Callback 'OnPlayerRegister' set up for delayed execution.
+[22:16:28] [DEBUG] created delayed callback with 1 parameter
+[22:16:28] [DEBUG] CHandle::Execute(this=0x6d6740, type=1, query=0x72a910)
+[22:16:28] [DEBUG] CHandle::Execute - return value: true
+[22:16:28] [DEBUG] mysql_tquery: return value: '1'
+[22:16:28] [DEBUG] CConnection::Execute(query=0x72a910, this=0x3de3020, connection=0x6f5b28)
+[22:16:28] [DEBUG] CQuery::Execute(this=0x72a910, connection=0x6f5b28)
+[22:16:28] [INFO] query "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('Olly12', '$2y$12$OhDsThPvZ1biQiH3Z1POL.ekkARyH1Okgc2DVWZsRvVx64Bj5M0v2', 'NULL', 0, 0)" successfully executed within 38.87 milliseconds
+[22:16:28] [DEBUG] CResultSet::Create(connection=0x6f5b28, query_str='INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('Olly12', '$2y$12$OhDsThPvZ1biQiH3Z1POL.ekkARyH1Okgc2DVWZsRvVx64Bj5M0v2', 'NULL', 0, 0)')
+[22:16:28] [DEBUG] created new resultset '0x728508'
+[22:16:28] [DEBUG] fetched MySQL result '0x0'
+[22:16:28] [DEBUG] CCallback::Execute(amx=0x2abaf20, index=-10035, num_params=1)
+[22:16:28] [INFO] Executing callback '*' with 1 parameter...
+[22:16:28] [DEBUG] processing internal specifier 'c'
+[22:16:28] [DEBUG] pushed value '0' onto AMX stack
+[22:16:28] [DEBUG] executing AMX callback with index '-10035'
+[22:16:28] [DEBUG] AMX callback executed with error '0'
+[22:16:28] [INFO] Callback successfully executed.
+[22:17:51] [DEBUG] mysql_format(1, 0x03B4F35C, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:17:51] [DEBUG] mysql_format: return value: '48'
+[22:17:51] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'test1'", "checkIfExists", "d")
+[22:17:51] [DEBUG] CCallback::Create(amx=0x2abaf20, name='checkIfExists', format='d', params=0x3b4f2e0, param_offset=5)
+[22:17:51] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:17:51] [DEBUG] processing specifier 'd' with parameter index 0
+[22:17:51] [DEBUG] retrieved and pushed value '0'
+[22:17:51] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:17:51] [DEBUG] created delayed callback with 1 parameter
+[22:17:51] [DEBUG] CHandle::Execute(this=0x6d6740, type=1, query=0x727268)
+[22:17:51] [DEBUG] CHandle::Execute - return value: true
+[22:17:51] [DEBUG] mysql_tquery: return value: '1'
+[22:17:51] [DEBUG] CConnection::Execute(query=0x727268, this=0x3de3020, connection=0x6f5b28)
+[22:17:51] [DEBUG] CQuery::Execute(this=0x727268, connection=0x6f5b28)
+[22:17:51] [INFO] query "SELECT * FROM `accounts` where `pName` = 'test1'" successfully executed within 1.970 milliseconds
+[22:17:51] [DEBUG] CResultSet::Create(connection=0x6f5b28, query_str='SELECT * FROM `accounts` where `pName` = 'test1'')
+[22:17:51] [DEBUG] created new resultset '0x6e6ff8'
+[22:17:51] [DEBUG] fetched MySQL result '0x6daed8'
+[22:17:51] [DEBUG] allocated 0 bytes for PAWN result
+[22:17:51] [DEBUG] CCallback::Execute(amx=0x2abaf20, index=46, num_params=1)
+[22:17:51] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:17:51] [DEBUG] processing internal specifier 'c'
+[22:17:51] [DEBUG] pushed value '0' onto AMX stack
+[22:17:51] [DEBUG] executing AMX callback with index '46'
+[22:17:51] [DEBUG] cache_get_row_count(0x03B4EE38)
+[22:17:51] [DEBUG] cache_get_row_count: return value: '1'
+[22:17:51] [DEBUG] AMX callback executed with error '0'
+[22:17:51] [INFO] Callback successfully executed.
+[22:17:55] [DEBUG] mysql_format(1, 0x03B4F0D8, 300, "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('%e', '%e', 'NULL', 0, 0)")
+[22:17:55] [DEBUG] CHandle::EscapeString(this=0x6d6740, src='test1')
+[22:17:55] [DEBUG] CConnection::EscapeString(src='test1', this=0x6aab18, connection=0x6eb440)
+[22:17:55] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:17:55] [DEBUG] CHandle::EscapeString(this=0x6d6740, src='$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui')
+[22:17:55] [DEBUG] CConnection::EscapeString(src='$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui', this=0x6aab18, connection=0x6eb440)
+[22:17:55] [DEBUG] CHandle::EscapeString - return value: true, escaped string: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:17:55] [DEBUG] mysql_format: return value: '168'
+[22:17:55] [DEBUG] mysql_tquery(1, "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('test1', '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui', 'NULL', 0, 0)", "OnPlayerRegister", "d")
+[22:17:55] [DEBUG] CCallback::Create(amx=0x2abaf20, name='OnPlayerRegister', format='d', params=0x3b4f0c0, param_offset=5)
+[22:17:55] [DEBUG] CCallback::Create - callback index for 'OnPlayerRegister': -10035
+[22:17:55] [DEBUG] processing specifier 'd' with parameter index 0
+[22:17:55] [DEBUG] retrieved and pushed value '0'
+[22:17:55] [INFO] Callback 'OnPlayerRegister' set up for delayed execution.
+[22:17:55] [DEBUG] created delayed callback with 1 parameter
+[22:17:55] [DEBUG] CHandle::Execute(this=0x6d6740, type=1, query=0x72a910)
+[22:17:55] [DEBUG] CHandle::Execute - return value: true
+[22:17:55] [DEBUG] mysql_tquery: return value: '1'
+[22:17:55] [DEBUG] CConnection::Execute(query=0x72a910, this=0x3de3020, connection=0x6f5b28)
+[22:17:55] [DEBUG] CQuery::Execute(this=0x72a910, connection=0x6f5b28)
+[22:17:55] [INFO] query "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('test1', '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui', 'NULL', 0, 0)" successfully executed within 48.305 milliseconds
+[22:17:55] [DEBUG] CResultSet::Create(connection=0x6f5b28, query_str='INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('test1', '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui', 'NULL', 0, 0)')
+[22:17:55] [DEBUG] created new resultset '0x6e6ee0'
+[22:17:55] [DEBUG] fetched MySQL result '0x0'
+[22:17:55] [DEBUG] CCallback::Execute(amx=0x2abaf20, index=-10035, num_params=1)
+[22:17:55] [INFO] Executing callback '*' with 1 parameter...
+[22:17:55] [DEBUG] processing internal specifier 'c'
+[22:17:55] [DEBUG] pushed value '0' onto AMX stack
+[22:17:55] [DEBUG] executing AMX callback with index '-10035'
+[22:17:55] [DEBUG] AMX callback executed with error '0'
+[22:17:55] [INFO] Callback successfully executed.
+[22:18:33] [DEBUG] mysql_format(1, 0x03B4F35C, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:18:33] [DEBUG] mysql_format: return value: '48'
+[22:18:33] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'test1'", "checkIfExists", "d")
+[22:18:33] [DEBUG] CCallback::Create(amx=0x2abaf20, name='checkIfExists', format='d', params=0x3b4f2e0, param_offset=5)
+[22:18:33] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:18:33] [DEBUG] processing specifier 'd' with parameter index 0
+[22:18:33] [DEBUG] retrieved and pushed value '0'
+[22:18:33] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:18:33] [DEBUG] created delayed callback with 1 parameter
+[22:18:33] [DEBUG] CHandle::Execute(this=0x6d6740, type=1, query=0x727268)
+[22:18:33] [DEBUG] CHandle::Execute - return value: true
+[22:18:33] [DEBUG] mysql_tquery: return value: '1'
+[22:18:33] [DEBUG] CConnection::Execute(query=0x727268, this=0x3de3020, connection=0x6f5b28)
+[22:18:33] [DEBUG] CQuery::Execute(this=0x727268, connection=0x6f5b28)
+[22:18:33] [INFO] query "SELECT * FROM `accounts` where `pName` = 'test1'" successfully executed within 0.377 milliseconds
+[22:18:33] [DEBUG] CResultSet::Create(connection=0x6f5b28, query_str='SELECT * FROM `accounts` where `pName` = 'test1'')
+[22:18:33] [DEBUG] created new resultset '0x6e7180'
+[22:18:33] [DEBUG] fetched MySQL result '0x6daed8'
+[22:18:33] [DEBUG] allocated 116 bytes for PAWN result
+[22:18:33] [DEBUG] CCallback::Execute(amx=0x2abaf20, index=46, num_params=1)
+[22:18:33] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:18:33] [DEBUG] processing internal specifier 'c'
+[22:18:33] [DEBUG] pushed value '0' onto AMX stack
+[22:18:33] [DEBUG] executing AMX callback with index '46'
+[22:18:33] [DEBUG] cache_get_row_count(0x03B4EE38)
+[22:18:33] [DEBUG] cache_get_row_count: return value: '1'
+[22:18:33] [DEBUG] AMX callback executed with error '0'
+[22:18:33] [INFO] Callback successfully executed.
+[22:18:35] [DEBUG] mysql_format(1, 0x03B4F194, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:18:35] [DEBUG] CHandle::EscapeString(this=0x6d6740, src='test1')
+[22:18:35] [DEBUG] CConnection::EscapeString(src='test1', this=0x6aab18, connection=0x6eb440)
+[22:18:35] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:18:35] [DEBUG] mysql_format: return value: '58'
+[22:18:35] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:18:35] [DEBUG] CHandle::Execute(this=0x6d6740, type=3, query=0x727268)
+[22:18:35] [DEBUG] CConnection::Execute(query=0x727268, this=0x6aab18, connection=0x6eb440)
+[22:18:35] [DEBUG] CQuery::Execute(this=0x727268, connection=0x6eb440)
+[22:18:35] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.397 milliseconds
+[22:18:35] [DEBUG] CResultSet::Create(connection=0x6eb440, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:18:35] [DEBUG] created new resultset '0x6e6c08'
+[22:18:35] [DEBUG] fetched MySQL result '0x6d2678'
+[22:18:35] [DEBUG] allocated 76 bytes for PAWN result
+[22:18:35] [DEBUG] CHandle::Execute - return value: true
+[22:18:35] [DEBUG] mysql_query: return value: '3'
+[22:18:35] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B4F040, 61)
+[22:18:35] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:18:35] [DEBUG] cache_get_value_name: return value: '1'
+[22:18:35] [DEBUG] mysql_format(1, 0x03B4F1C8, 300, "SELECT * from `accounts` WHERE `pName` = '%e'")
+[22:18:35] [DEBUG] CHandle::EscapeString(this=0x6d6740, src='test1')
+[22:18:35] [DEBUG] CConnection::EscapeString(src='test1', this=0x6aab18, connection=0x6eb440)
+[22:18:35] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:18:35] [DEBUG] mysql_format: return value: '48'
+[22:18:35] [DEBUG] mysql_tquery(1, "SELECT * from `accounts` WHERE `pName` = 'test1'", "OnPlayerLoad", "d")
+[22:18:35] [DEBUG] CCallback::Create(amx=0x2abaf20, name='OnPlayerLoad', format='d', params=0x3b4f1b0, param_offset=5)
+[22:18:35] [DEBUG] CCallback::Create - callback index for 'OnPlayerLoad': 25
+[22:18:35] [DEBUG] processing specifier 'd' with parameter index 0
+[22:18:35] [DEBUG] retrieved and pushed value '0'
+[22:18:35] [INFO] Callback 'OnPlayerLoad' set up for delayed execution.
+[22:18:35] [DEBUG] created delayed callback with 1 parameter
+[22:18:35] [DEBUG] CHandle::Execute(this=0x6d6740, type=1, query=0x727268)
+[22:18:35] [DEBUG] CHandle::Execute - return value: true
+[22:18:35] [DEBUG] mysql_tquery: return value: '1'
+[22:18:35] [DEBUG] CConnection::Execute(query=0x727268, this=0x3de3020, connection=0x6f5b28)
+[22:18:35] [DEBUG] CQuery::Execute(this=0x727268, connection=0x6f5b28)
+[22:18:35] [INFO] query "SELECT * from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.306 milliseconds
+[22:18:35] [DEBUG] CResultSet::Create(connection=0x6f5b28, query_str='SELECT * from `accounts` WHERE `pName` = 'test1'')
+[22:18:35] [DEBUG] created new resultset '0x6e7180'
+[22:18:35] [DEBUG] fetched MySQL result '0x6d4a18'
+[22:18:35] [DEBUG] allocated 116 bytes for PAWN result
+[22:18:35] [DEBUG] CCallback::Execute(amx=0x2abaf20, index=25, num_params=1)
+[22:18:35] [INFO] Executing callback 'OnPlayerLoad' with 1 parameter...
+[22:18:35] [DEBUG] processing internal specifier 'c'
+[22:18:35] [DEBUG] pushed value '0' onto AMX stack
+[22:18:35] [DEBUG] executing AMX callback with index '25'
+[22:18:35] [DEBUG] cache_get_value_name_int(0, "ID", 0x0395C480)
+[22:18:35] [DEBUG] cache_get_value_name_int: assigned value: '7'
+[22:18:35] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:18:35] [DEBUG] cache_get_value_name(0, "pName", 0x0395C500, 128)
+[22:18:35] [DEBUG] cache_get_value_name: assigned value: 'test1'
+[22:18:35] [DEBUG] cache_get_value_name: return value: '1'
+[22:18:35] [DEBUG] cache_get_value_name(0, "pEmail", 0x0395CA60, 128)
+[22:18:35] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[22:18:35] [DEBUG] cache_get_value_name: return value: '1'
+[22:18:35] [DEBUG] cache_get_value_name_int(0, "pBank", 0x0395CC60)
+[22:18:35] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[22:18:35] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:18:35] [DEBUG] cache_get_value_name_int(0, "pCash", 0x0395CC64)
+[22:18:35] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[22:18:35] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:18:35] [DEBUG] AMX callback executed with error '0'
+[22:18:35] [INFO] Callback successfully executed.
+[22:22:44] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[22:22:44] [DEBUG] mysql_connect_file("mysql.ini")
+[22:22:44] [DEBUG] CHandleManager::CreateFromFile(this=0x61be98, file_path='mysql.ini')
+[22:22:44] [INFO] Options instance with id '1' successfully created.
+[22:22:44] [DEBUG] CHandleManager::CreateFromFile - new options = 0x648f60 (id '1')
+[22:22:44] [DEBUG] CHandleManager::Create(this=0x61be98, host='localhost', user='root', pass='****', db='samp', options=0x648f60)
+[22:22:44] [INFO] Creating new connection handle...
+[22:22:44] [WARNING] mysql_connect_file: no password specified
+[22:22:44] [DEBUG] CConnection::CConnection(this=0x61df98, host='localhost', user='root', passw='****', db='samp', options=0x648f60)
+[22:22:44] [DEBUG] CConnection::CConnection - new connection = 0x5f22c8
+[22:22:44] [DEBUG] CConnection::CConnection(this=0x3c74020, host='localhost', user='root', passw='****', db='samp', options=0x648f60)
+[22:22:44] [DEBUG] CConnection::CConnection - new connection = 0x66db68
+[22:22:44] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3c74020, connection=0x3c74020)
+[22:22:44] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3c74020, connection=0x3c74020)
+[22:22:44] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x61e118)
+[22:22:44] [DEBUG] CConnection::CConnection(this=0x3e49020, host='localhost', user='root', passw='****', db='samp', options=0x648f60)
+[22:22:44] [DEBUG] CConnection::CConnection - new connection = 0x677960
+[22:22:44] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3e49020, connection=0x3e49020)
+[22:22:44] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3e49020, connection=0x3e49020)
+[22:22:44] [DEBUG] CConnection::CConnection(this=0x401c020, host='localhost', user='root', passw='****', db='samp', options=0x648f60)
+[22:22:44] [DEBUG] CConnection::CConnection - new connection = 0x680b48
+[22:22:45] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x401c020, connection=0x401c020)
+[22:22:45] [INFO] Connection handle with id '1' successfully created.
+[22:22:45] [DEBUG] CHandleManager::Create - new handle = 0x647248
+[22:22:45] [DEBUG] CThreadedConnection::WorkerFunc(this=0x401c020, connection=0x401c020)
+[22:22:45] [DEBUG] mysql_connect_file: return value: '1'
+[22:22:45] [DEBUG] mysql_errno(1)
+[22:22:45] [DEBUG] CHandle::GetErrorId(this=0x647248)
+[22:22:45] [DEBUG] CConnection::GetError(this=0x61df98, connection=0x5f22c8)
+[22:22:45] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[22:22:45] [DEBUG] mysql_errno: return value: '0'
+[22:23:04] [DEBUG] mysql_format(1, 0x03B1FE50, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:23:04] [DEBUG] mysql_format: return value: '48'
+[22:23:04] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'test1'", "checkIfExists", "d")
+[22:23:04] [DEBUG] CCallback::Create(amx=0x29eaf20, name='checkIfExists', format='d', params=0x3b1fdd4, param_offset=5)
+[22:23:04] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:23:04] [DEBUG] processing specifier 'd' with parameter index 0
+[22:23:04] [DEBUG] retrieved and pushed value '0'
+[22:23:04] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:23:04] [DEBUG] created delayed callback with 1 parameter
+[22:23:04] [DEBUG] CHandle::Execute(this=0x647248, type=1, query=0x651868)
+[22:23:04] [DEBUG] CHandle::Execute - return value: true
+[22:23:04] [DEBUG] mysql_tquery: return value: '1'
+[22:23:04] [DEBUG] CConnection::Execute(query=0x651868, this=0x3c74020, connection=0x66db68)
+[22:23:04] [DEBUG] CQuery::Execute(this=0x651868, connection=0x66db68)
+[22:23:04] [INFO] query "SELECT * FROM `accounts` where `pName` = 'test1'" successfully executed within 0.399 milliseconds
+[22:23:04] [DEBUG] CResultSet::Create(connection=0x66db68, query_str='SELECT * FROM `accounts` where `pName` = 'test1'')
+[22:23:04] [DEBUG] created new resultset '0x653230'
+[22:23:04] [DEBUG] fetched MySQL result '0x654498'
+[22:23:04] [DEBUG] allocated 116 bytes for PAWN result
+[22:23:04] [DEBUG] CCallback::Execute(amx=0x29eaf20, index=46, num_params=1)
+[22:23:04] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:23:04] [DEBUG] processing internal specifier 'c'
+[22:23:04] [DEBUG] pushed value '0' onto AMX stack
+[22:23:04] [DEBUG] executing AMX callback with index '46'
+[22:23:04] [DEBUG] cache_get_row_count(0x03B1F92C)
+[22:23:04] [DEBUG] cache_get_row_count: return value: '1'
+[22:23:04] [DEBUG] AMX callback executed with error '0'
+[22:23:04] [INFO] Callback successfully executed.
+[22:23:07] [DEBUG] mysql_format(1, 0x03B1FC88, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:23:07] [DEBUG] CHandle::EscapeString(this=0x647248, src='test1')
+[22:23:07] [DEBUG] CConnection::EscapeString(src='test1', this=0x61df98, connection=0x5f22c8)
+[22:23:07] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:23:07] [DEBUG] mysql_format: return value: '58'
+[22:23:07] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:23:07] [DEBUG] CHandle::Execute(this=0x647248, type=3, query=0x651868)
+[22:23:07] [DEBUG] CConnection::Execute(query=0x651868, this=0x61df98, connection=0x5f22c8)
+[22:23:07] [DEBUG] CQuery::Execute(this=0x651868, connection=0x5f22c8)
+[22:23:07] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.469 milliseconds
+[22:23:07] [DEBUG] CResultSet::Create(connection=0x5f22c8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:23:07] [DEBUG] created new resultset '0x652e08'
+[22:23:07] [DEBUG] fetched MySQL result '0x647850'
+[22:23:07] [DEBUG] allocated 76 bytes for PAWN result
+[22:23:07] [DEBUG] CHandle::Execute - return value: true
+[22:23:07] [DEBUG] mysql_query: return value: '1'
+[22:23:07] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B1FB34, 61)
+[22:23:07] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:23:07] [DEBUG] cache_get_value_name: return value: '1'
+[22:23:13] [DEBUG] mysql_format(1, 0x03B1FC88, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:23:13] [DEBUG] CHandle::EscapeString(this=0x647248, src='test1')
+[22:23:13] [DEBUG] CConnection::EscapeString(src='test1', this=0x61df98, connection=0x5f22c8)
+[22:23:13] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:23:13] [DEBUG] mysql_format: return value: '58'
+[22:23:13] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:23:13] [DEBUG] CHandle::Execute(this=0x647248, type=3, query=0x6544a8)
+[22:23:13] [DEBUG] CConnection::Execute(query=0x6544a8, this=0x61df98, connection=0x5f22c8)
+[22:23:13] [DEBUG] CQuery::Execute(this=0x6544a8, connection=0x5f22c8)
+[22:23:13] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.431 milliseconds
+[22:23:13] [DEBUG] CResultSet::Create(connection=0x5f22c8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:23:13] [DEBUG] created new resultset '0x652dd0'
+[22:23:13] [DEBUG] fetched MySQL result '0x647b50'
+[22:23:13] [DEBUG] allocated 76 bytes for PAWN result
+[22:23:13] [DEBUG] CHandle::Execute - return value: true
+[22:23:13] [DEBUG] mysql_query: return value: '2'
+[22:23:13] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B1FB34, 61)
+[22:23:13] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:23:13] [DEBUG] cache_get_value_name: return value: '1'
+[22:23:15] [DEBUG] mysql_format(1, 0x03B1FC88, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:23:15] [DEBUG] CHandle::EscapeString(this=0x647248, src='test1')
+[22:23:15] [DEBUG] CConnection::EscapeString(src='test1', this=0x61df98, connection=0x5f22c8)
+[22:23:15] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:23:15] [DEBUG] mysql_format: return value: '58'
+[22:23:15] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:23:15] [DEBUG] CHandle::Execute(this=0x647248, type=3, query=0x6454d8)
+[22:23:15] [DEBUG] CConnection::Execute(query=0x6454d8, this=0x61df98, connection=0x5f22c8)
+[22:23:15] [DEBUG] CQuery::Execute(this=0x6454d8, connection=0x5f22c8)
+[22:23:15] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.308 milliseconds
+[22:23:15] [DEBUG] CResultSet::Create(connection=0x5f22c8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:23:15] [DEBUG] created new resultset '0x653428'
+[22:23:15] [DEBUG] fetched MySQL result '0x647b50'
+[22:23:15] [DEBUG] allocated 76 bytes for PAWN result
+[22:23:15] [DEBUG] CHandle::Execute - return value: true
+[22:23:15] [DEBUG] mysql_query: return value: '3'
+[22:23:15] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B1FB34, 61)
+[22:23:15] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:23:15] [DEBUG] cache_get_value_name: return value: '1'
+[22:23:16] [DEBUG] mysql_format(1, 0x03B1FC88, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:23:16] [DEBUG] CHandle::EscapeString(this=0x647248, src='test1')
+[22:23:16] [DEBUG] CConnection::EscapeString(src='test1', this=0x61df98, connection=0x5f22c8)
+[22:23:16] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:23:16] [DEBUG] mysql_format: return value: '58'
+[22:23:16] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:23:16] [DEBUG] CHandle::Execute(this=0x647248, type=3, query=0x69ea90)
+[22:23:16] [DEBUG] CConnection::Execute(query=0x69ea90, this=0x61df98, connection=0x5f22c8)
+[22:23:16] [DEBUG] CQuery::Execute(this=0x69ea90, connection=0x5f22c8)
+[22:23:16] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.422 milliseconds
+[22:23:16] [DEBUG] CResultSet::Create(connection=0x5f22c8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:23:16] [DEBUG] created new resultset '0x652e78'
+[22:23:16] [DEBUG] fetched MySQL result '0x647850'
+[22:23:16] [DEBUG] allocated 76 bytes for PAWN result
+[22:23:16] [DEBUG] CHandle::Execute - return value: true
+[22:23:16] [DEBUG] mysql_query: return value: '4'
+[22:23:16] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B1FB34, 61)
+[22:23:16] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:23:16] [DEBUG] cache_get_value_name: return value: '1'
+[22:23:17] [DEBUG] mysql_format(1, 0x03B1FC88, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:23:17] [DEBUG] CHandle::EscapeString(this=0x647248, src='test1')
+[22:23:17] [DEBUG] CConnection::EscapeString(src='test1', this=0x61df98, connection=0x5f22c8)
+[22:23:17] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:23:17] [DEBUG] mysql_format: return value: '58'
+[22:23:17] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:23:17] [DEBUG] CHandle::Execute(this=0x647248, type=3, query=0x6a2c78)
+[22:23:17] [DEBUG] CConnection::Execute(query=0x6a2c78, this=0x61df98, connection=0x5f22c8)
+[22:23:17] [DEBUG] CQuery::Execute(this=0x6a2c78, connection=0x5f22c8)
+[22:23:17] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.460 milliseconds
+[22:23:17] [DEBUG] CResultSet::Create(connection=0x5f22c8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:23:17] [DEBUG] created new resultset '0x6531f8'
+[22:23:17] [DEBUG] fetched MySQL result '0x647b50'
+[22:23:17] [DEBUG] allocated 76 bytes for PAWN result
+[22:23:17] [DEBUG] CHandle::Execute - return value: true
+[22:23:17] [DEBUG] mysql_query: return value: '5'
+[22:23:17] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B1FB34, 61)
+[22:23:17] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:23:17] [DEBUG] cache_get_value_name: return value: '1'
+[22:23:19] [DEBUG] mysql_format(1, 0x03B1FC88, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:23:19] [DEBUG] CHandle::EscapeString(this=0x647248, src='test1')
+[22:23:19] [DEBUG] CConnection::EscapeString(src='test1', this=0x61df98, connection=0x5f22c8)
+[22:23:19] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:23:19] [DEBUG] mysql_format: return value: '58'
+[22:23:19] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:23:19] [DEBUG] CHandle::Execute(this=0x647248, type=3, query=0x6a2428)
+[22:23:19] [DEBUG] CConnection::Execute(query=0x6a2428, this=0x61df98, connection=0x5f22c8)
+[22:23:19] [DEBUG] CQuery::Execute(this=0x6a2428, connection=0x5f22c8)
+[22:23:19] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.307 milliseconds
+[22:23:20] [DEBUG] CResultSet::Create(connection=0x5f22c8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:23:20] [DEBUG] created new resultset '0x652eb0'
+[22:23:20] [DEBUG] fetched MySQL result '0x647850'
+[22:23:20] [DEBUG] allocated 76 bytes for PAWN result
+[22:23:20] [DEBUG] CHandle::Execute - return value: true
+[22:23:20] [DEBUG] mysql_query: return value: '6'
+[22:23:20] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B1FB34, 61)
+[22:23:20] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:23:20] [DEBUG] cache_get_value_name: return value: '1'
+[22:23:20] [DEBUG] mysql_format(1, 0x03B1FCBC, 300, "SELECT * from `accounts` WHERE `pName` = '%e'")
+[22:23:20] [DEBUG] CHandle::EscapeString(this=0x647248, src='test1')
+[22:23:20] [DEBUG] CConnection::EscapeString(src='test1', this=0x61df98, connection=0x5f22c8)
+[22:23:20] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:23:20] [DEBUG] mysql_format: return value: '48'
+[22:23:20] [DEBUG] mysql_tquery(1, "SELECT * from `accounts` WHERE `pName` = 'test1'", "OnPlayerLoad", "d")
+[22:23:20] [DEBUG] CCallback::Create(amx=0x29eaf20, name='OnPlayerLoad', format='d', params=0x3b1fca4, param_offset=5)
+[22:23:20] [DEBUG] CCallback::Create - callback index for 'OnPlayerLoad': 25
+[22:23:20] [DEBUG] processing specifier 'd' with parameter index 0
+[22:23:20] [DEBUG] retrieved and pushed value '0'
+[22:23:20] [INFO] Callback 'OnPlayerLoad' set up for delayed execution.
+[22:23:20] [DEBUG] created delayed callback with 1 parameter
+[22:23:20] [DEBUG] CHandle::Execute(this=0x647248, type=1, query=0x6a2428)
+[22:23:20] [DEBUG] CHandle::Execute - return value: true
+[22:23:20] [DEBUG] mysql_tquery: return value: '1'
+[22:23:20] [DEBUG] CConnection::Execute(query=0x6a2428, this=0x3c74020, connection=0x66db68)
+[22:23:20] [DEBUG] CQuery::Execute(this=0x6a2428, connection=0x66db68)
+[22:23:20] [INFO] query "SELECT * from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.759 milliseconds
+[22:23:20] [DEBUG] CResultSet::Create(connection=0x66db68, query_str='SELECT * from `accounts` WHERE `pName` = 'test1'')
+[22:23:20] [DEBUG] created new resultset '0x653000'
+[22:23:20] [DEBUG] fetched MySQL result '0x61ebd0'
+[22:23:20] [DEBUG] allocated 116 bytes for PAWN result
+[22:23:20] [DEBUG] CCallback::Execute(amx=0x29eaf20, index=25, num_params=1)
+[22:23:20] [INFO] Executing callback 'OnPlayerLoad' with 1 parameter...
+[22:23:20] [DEBUG] processing internal specifier 'c'
+[22:23:20] [DEBUG] pushed value '0' onto AMX stack
+[22:23:20] [DEBUG] executing AMX callback with index '25'
+[22:23:20] [DEBUG] cache_get_value_name_int(0, "ID", 0x0387353C)
+[22:23:20] [DEBUG] cache_get_value_name_int: assigned value: '7'
+[22:23:20] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:23:20] [DEBUG] cache_get_value_name(0, "pName", 0x038735BC, 128)
+[22:23:20] [DEBUG] cache_get_value_name: assigned value: 'test1'
+[22:23:20] [DEBUG] cache_get_value_name: return value: '1'
+[22:23:20] [DEBUG] cache_get_value_name(0, "pEmail", 0x03873E14, 128)
+[22:23:20] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[22:23:20] [DEBUG] cache_get_value_name: return value: '1'
+[22:23:20] [DEBUG] cache_get_value_name_int(0, "pBank", 0x03874014)
+[22:23:20] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[22:23:20] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:23:20] [DEBUG] cache_get_value_name_int(0, "pCash", 0x03874018)
+[22:23:20] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[22:23:20] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:23:20] [DEBUG] AMX callback executed with error '0'
+[22:23:20] [INFO] Callback successfully executed.
+[22:24:45] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[22:24:45] [DEBUG] mysql_connect_file("mysql.ini")
+[22:24:45] [DEBUG] CHandleManager::CreateFromFile(this=0x584250, file_path='mysql.ini')
+[22:24:45] [INFO] Options instance with id '1' successfully created.
+[22:24:45] [DEBUG] CHandleManager::CreateFromFile - new options = 0x5c8be8 (id '1')
+[22:24:45] [DEBUG] CHandleManager::Create(this=0x584250, host='localhost', user='root', pass='****', db='samp', options=0x5c8be8)
+[22:24:45] [INFO] Creating new connection handle...
+[22:24:45] [WARNING] mysql_connect_file: no password specified
+[22:24:45] [DEBUG] CConnection::CConnection(this=0x59c620, host='localhost', user='root', passw='****', db='samp', options=0x5c8be8)
+[22:24:45] [DEBUG] CConnection::CConnection - new connection = 0x5d5268
+[22:24:45] [DEBUG] CConnection::CConnection(this=0x3bff020, host='localhost', user='root', passw='****', db='samp', options=0x5c8be8)
+[22:24:45] [DEBUG] CConnection::CConnection - new connection = 0x5dec58
+[22:24:46] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3bff020, connection=0x3bff020)
+[22:24:46] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x59bf60)
+[22:24:46] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3bff020, connection=0x3bff020)
+[22:24:46] [DEBUG] CConnection::CConnection(this=0x3dde020, host='localhost', user='root', passw='****', db='samp', options=0x5c8be8)
+[22:24:46] [DEBUG] CConnection::CConnection - new connection = 0x5e7f78
+[22:24:46] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3dde020, connection=0x3dde020)
+[22:24:46] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3dde020, connection=0x3dde020)
+[22:24:46] [DEBUG] CConnection::CConnection(this=0x3fa4020, host='localhost', user='root', passw='****', db='samp', options=0x5c8be8)
+[22:24:46] [DEBUG] CConnection::CConnection - new connection = 0x5f1f30
+[22:24:46] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3fa4020, connection=0x3fa4020)
+[22:24:46] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3fa4020, connection=0x3fa4020)
+[22:24:46] [INFO] Connection handle with id '1' successfully created.
+[22:24:46] [DEBUG] CHandleManager::Create - new handle = 0x5c4e18
+[22:24:46] [DEBUG] mysql_connect_file: return value: '1'
+[22:24:46] [DEBUG] mysql_errno(1)
+[22:24:46] [DEBUG] CHandle::GetErrorId(this=0x5c4e18)
+[22:24:46] [DEBUG] CConnection::GetError(this=0x59c620, connection=0x5d5268)
+[22:24:46] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[22:24:46] [DEBUG] mysql_errno: return value: '0'
+[22:25:12] [DEBUG] mysql_format(1, 0x03AA1E80, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:25:12] [DEBUG] mysql_format: return value: '48'
+[22:25:12] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'test1'", "checkIfExists", "d")
+[22:25:12] [DEBUG] CCallback::Create(amx=0x295af20, name='checkIfExists', format='d', params=0x3aa1e04, param_offset=5)
+[22:25:12] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:25:12] [DEBUG] processing specifier 'd' with parameter index 0
+[22:25:12] [DEBUG] retrieved and pushed value '0'
+[22:25:12] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:25:12] [DEBUG] created delayed callback with 1 parameter
+[22:25:12] [DEBUG] CHandle::Execute(this=0x5c4e18, type=1, query=0x610a10)
+[22:25:12] [DEBUG] CHandle::Execute - return value: true
+[22:25:12] [DEBUG] mysql_tquery: return value: '1'
+[22:25:12] [DEBUG] CConnection::Execute(query=0x610a10, this=0x3bff020, connection=0x5dec58)
+[22:25:12] [DEBUG] CQuery::Execute(this=0x610a10, connection=0x5dec58)
+[22:25:12] [INFO] query "SELECT * FROM `accounts` where `pName` = 'test1'" successfully executed within 0.380 milliseconds
+[22:25:12] [DEBUG] CResultSet::Create(connection=0x5dec58, query_str='SELECT * FROM `accounts` where `pName` = 'test1'')
+[22:25:12] [DEBUG] created new resultset '0x5d0400'
+[22:25:12] [DEBUG] fetched MySQL result '0x616cb0'
+[22:25:12] [DEBUG] allocated 116 bytes for PAWN result
+[22:25:12] [DEBUG] CCallback::Execute(amx=0x295af20, index=46, num_params=1)
+[22:25:12] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:25:12] [DEBUG] processing internal specifier 'c'
+[22:25:12] [DEBUG] pushed value '0' onto AMX stack
+[22:25:12] [DEBUG] executing AMX callback with index '46'
+[22:25:12] [DEBUG] cache_get_row_count(0x03AA195C)
+[22:25:12] [DEBUG] cache_get_row_count: return value: '1'
+[22:25:12] [DEBUG] AMX callback executed with error '0'
+[22:25:12] [INFO] Callback successfully executed.
+[22:25:14] [DEBUG] mysql_format(1, 0x03AA1CB8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:25:14] [DEBUG] CHandle::EscapeString(this=0x5c4e18, src='test1')
+[22:25:14] [DEBUG] CConnection::EscapeString(src='test1', this=0x59c620, connection=0x5d5268)
+[22:25:14] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:25:14] [DEBUG] mysql_format: return value: '58'
+[22:25:14] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:25:14] [DEBUG] CHandle::Execute(this=0x5c4e18, type=3, query=0x610a10)
+[22:25:14] [DEBUG] CConnection::Execute(query=0x610a10, this=0x59c620, connection=0x5d5268)
+[22:25:14] [DEBUG] CQuery::Execute(this=0x610a10, connection=0x5d5268)
+[22:25:14] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.685 milliseconds
+[22:25:15] [DEBUG] CResultSet::Create(connection=0x5d5268, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:25:15] [DEBUG] created new resultset '0x5d00f0'
+[22:25:15] [DEBUG] fetched MySQL result '0x5c6828'
+[22:25:15] [DEBUG] allocated 76 bytes for PAWN result
+[22:25:15] [DEBUG] CHandle::Execute - return value: true
+[22:25:15] [DEBUG] mysql_query: return value: '1'
+[22:25:15] [DEBUG] cache_get_value_name(0, "pPassword", 0x03AA1B64, 61)
+[22:25:15] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:25:15] [DEBUG] cache_get_value_name: return value: '1'
+[22:25:17] [DEBUG] mysql_format(1, 0x03AA1CB8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:25:17] [DEBUG] CHandle::EscapeString(this=0x5c4e18, src='test1')
+[22:25:17] [DEBUG] CConnection::EscapeString(src='test1', this=0x59c620, connection=0x5d5268)
+[22:25:17] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:25:17] [DEBUG] mysql_format: return value: '58'
+[22:25:17] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:25:17] [DEBUG] CHandle::Execute(this=0x5c4e18, type=3, query=0x610a10)
+[22:25:17] [DEBUG] CConnection::Execute(query=0x610a10, this=0x59c620, connection=0x5d5268)
+[22:25:17] [DEBUG] CQuery::Execute(this=0x610a10, connection=0x5d5268)
+[22:25:17] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.563 milliseconds
+[22:25:17] [DEBUG] CResultSet::Create(connection=0x5d5268, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:25:17] [DEBUG] created new resultset '0x5cfd38'
+[22:25:17] [DEBUG] fetched MySQL result '0x5c6b28'
+[22:25:17] [DEBUG] allocated 76 bytes for PAWN result
+[22:25:17] [DEBUG] CHandle::Execute - return value: true
+[22:25:17] [DEBUG] mysql_query: return value: '2'
+[22:25:17] [DEBUG] cache_get_value_name(0, "pPassword", 0x03AA1B64, 61)
+[22:25:17] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:25:17] [DEBUG] cache_get_value_name: return value: '1'
+[22:25:19] [DEBUG] mysql_format(1, 0x03AA1CB8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:25:19] [DEBUG] CHandle::EscapeString(this=0x5c4e18, src='test1')
+[22:25:19] [DEBUG] CConnection::EscapeString(src='test1', this=0x59c620, connection=0x5d5268)
+[22:25:19] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:25:19] [DEBUG] mysql_format: return value: '58'
+[22:25:19] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:25:19] [DEBUG] CHandle::Execute(this=0x5c4e18, type=3, query=0x610a10)
+[22:25:19] [DEBUG] CConnection::Execute(query=0x610a10, this=0x59c620, connection=0x5d5268)
+[22:25:19] [DEBUG] CQuery::Execute(this=0x610a10, connection=0x5d5268)
+[22:25:19] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.304 milliseconds
+[22:25:19] [DEBUG] CResultSet::Create(connection=0x5d5268, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:25:19] [DEBUG] created new resultset '0x5d0358'
+[22:25:19] [DEBUG] fetched MySQL result '0x5c68e8'
+[22:25:19] [DEBUG] allocated 76 bytes for PAWN result
+[22:25:19] [DEBUG] CHandle::Execute - return value: true
+[22:25:19] [DEBUG] mysql_query: return value: '3'
+[22:25:19] [DEBUG] cache_get_value_name(0, "pPassword", 0x03AA1B64, 61)
+[22:25:19] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:25:19] [DEBUG] cache_get_value_name: return value: '1'
+[22:25:21] [DEBUG] mysql_format(1, 0x03AA1CB8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:25:21] [DEBUG] CHandle::EscapeString(this=0x5c4e18, src='test1')
+[22:25:21] [DEBUG] CConnection::EscapeString(src='test1', this=0x59c620, connection=0x5d5268)
+[22:25:21] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:25:21] [DEBUG] mysql_format: return value: '58'
+[22:25:21] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:25:21] [DEBUG] CHandle::Execute(this=0x5c4e18, type=3, query=0x610a10)
+[22:25:21] [DEBUG] CConnection::Execute(query=0x610a10, this=0x59c620, connection=0x5d5268)
+[22:25:21] [DEBUG] CQuery::Execute(this=0x610a10, connection=0x5d5268)
+[22:25:21] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.649 milliseconds
+[22:25:21] [DEBUG] CResultSet::Create(connection=0x5d5268, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:25:21] [DEBUG] created new resultset '0x5cfde0'
+[22:25:21] [DEBUG] fetched MySQL result '0x5c6b28'
+[22:25:21] [DEBUG] allocated 76 bytes for PAWN result
+[22:25:21] [DEBUG] CHandle::Execute - return value: true
+[22:25:21] [DEBUG] mysql_query: return value: '4'
+[22:25:21] [DEBUG] cache_get_value_name(0, "pPassword", 0x03AA1B64, 61)
+[22:25:21] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:25:21] [DEBUG] cache_get_value_name: return value: '1'
+[22:25:22] [DEBUG] mysql_format(1, 0x03AA1CB8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:25:22] [DEBUG] CHandle::EscapeString(this=0x5c4e18, src='test1')
+[22:25:22] [DEBUG] CConnection::EscapeString(src='test1', this=0x59c620, connection=0x5d5268)
+[22:25:22] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:25:22] [DEBUG] mysql_format: return value: '58'
+[22:25:22] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:25:22] [DEBUG] CHandle::Execute(this=0x5c4e18, type=3, query=0x610a10)
+[22:25:22] [DEBUG] CConnection::Execute(query=0x610a10, this=0x59c620, connection=0x5d5268)
+[22:25:22] [DEBUG] CQuery::Execute(this=0x610a10, connection=0x5d5268)
+[22:25:22] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 13.347 milliseconds
+[22:25:22] [DEBUG] CResultSet::Create(connection=0x5d5268, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:25:22] [DEBUG] created new resultset '0x5d02b0'
+[22:25:22] [DEBUG] fetched MySQL result '0x5c6b28'
+[22:25:22] [DEBUG] allocated 76 bytes for PAWN result
+[22:25:22] [DEBUG] CHandle::Execute - return value: true
+[22:25:22] [DEBUG] mysql_query: return value: '5'
+[22:25:22] [DEBUG] cache_get_value_name(0, "pPassword", 0x03AA1B64, 61)
+[22:25:22] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:25:22] [DEBUG] cache_get_value_name: return value: '1'
+[22:25:25] [DEBUG] mysql_format(1, 0x03AA1CB8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:25:25] [DEBUG] CHandle::EscapeString(this=0x5c4e18, src='test1')
+[22:25:25] [DEBUG] CConnection::EscapeString(src='test1', this=0x59c620, connection=0x5d5268)
+[22:25:25] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:25:25] [DEBUG] mysql_format: return value: '58'
+[22:25:25] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:25:25] [DEBUG] CHandle::Execute(this=0x5c4e18, type=3, query=0x610a10)
+[22:25:25] [DEBUG] CConnection::Execute(query=0x610a10, this=0x59c620, connection=0x5d5268)
+[22:25:25] [DEBUG] CQuery::Execute(this=0x610a10, connection=0x5d5268)
+[22:25:25] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.264 milliseconds
+[22:25:25] [DEBUG] CResultSet::Create(connection=0x5d5268, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:25:25] [DEBUG] created new resultset '0x5d03c8'
+[22:25:25] [DEBUG] fetched MySQL result '0x5c6b28'
+[22:25:25] [DEBUG] allocated 76 bytes for PAWN result
+[22:25:25] [DEBUG] CHandle::Execute - return value: true
+[22:25:25] [DEBUG] mysql_query: return value: '6'
+[22:25:25] [DEBUG] cache_get_value_name(0, "pPassword", 0x03AA1B64, 61)
+[22:25:25] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:25:25] [DEBUG] cache_get_value_name: return value: '1'
+[22:25:25] [DEBUG] mysql_format(1, 0x03AA1CE8, 300, "SELECT * from `accounts` WHERE `pName` = '%e'")
+[22:25:25] [DEBUG] CHandle::EscapeString(this=0x5c4e18, src='test1')
+[22:25:25] [DEBUG] CConnection::EscapeString(src='test1', this=0x59c620, connection=0x5d5268)
+[22:25:25] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:25:25] [DEBUG] mysql_format: return value: '48'
+[22:25:25] [DEBUG] mysql_tquery(1, "SELECT * from `accounts` WHERE `pName` = 'test1'", "OnPlayerLoad", "d")
+[22:25:25] [DEBUG] CCallback::Create(amx=0x295af20, name='OnPlayerLoad', format='d', params=0x3aa1cd0, param_offset=5)
+[22:25:25] [DEBUG] CCallback::Create - callback index for 'OnPlayerLoad': 25
+[22:25:25] [DEBUG] processing specifier 'd' with parameter index 0
+[22:25:25] [DEBUG] retrieved and pushed value '0'
+[22:25:25] [INFO] Callback 'OnPlayerLoad' set up for delayed execution.
+[22:25:25] [DEBUG] created delayed callback with 1 parameter
+[22:25:25] [DEBUG] CHandle::Execute(this=0x5c4e18, type=1, query=0x610a10)
+[22:25:25] [DEBUG] CHandle::Execute - return value: true
+[22:25:25] [DEBUG] mysql_tquery: return value: '1'
+[22:25:25] [DEBUG] CConnection::Execute(query=0x610a10, this=0x3bff020, connection=0x5dec58)
+[22:25:25] [DEBUG] CQuery::Execute(this=0x610a10, connection=0x5dec58)
+[22:25:25] [INFO] query "SELECT * from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.522 milliseconds
+[22:25:25] [DEBUG] CResultSet::Create(connection=0x5dec58, query_str='SELECT * from `accounts` WHERE `pName` = 'test1'')
+[22:25:25] [DEBUG] created new resultset '0x5d0400'
+[22:25:25] [DEBUG] fetched MySQL result '0x5d3c00'
+[22:25:25] [DEBUG] allocated 116 bytes for PAWN result
+[22:25:25] [DEBUG] CCallback::Execute(amx=0x295af20, index=25, num_params=1)
+[22:25:26] [INFO] Executing callback 'OnPlayerLoad' with 1 parameter...
+[22:25:26] [DEBUG] processing internal specifier 'c'
+[22:25:26] [DEBUG] pushed value '0' onto AMX stack
+[22:25:26] [DEBUG] executing AMX callback with index '25'
+[22:25:26] [DEBUG] cache_get_value_name_int(0, "ID", 0x037F5560)
+[22:25:26] [DEBUG] cache_get_value_name_int: assigned value: '7'
+[22:25:26] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:25:26] [DEBUG] cache_get_value_name(0, "pName", 0x037F55E0, 128)
+[22:25:26] [DEBUG] cache_get_value_name: assigned value: 'test1'
+[22:25:26] [DEBUG] cache_get_value_name: return value: '1'
+[22:25:26] [DEBUG] cache_get_value_name(0, "pEmail", 0x037F5E38, 128)
+[22:25:26] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[22:25:26] [DEBUG] cache_get_value_name: return value: '1'
+[22:25:26] [DEBUG] cache_get_value_name_int(0, "pBank", 0x037F6038)
+[22:25:26] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[22:25:26] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:25:26] [DEBUG] cache_get_value_name_int(0, "pCash", 0x037F603C)
+[22:25:26] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[22:25:26] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:25:26] [DEBUG] AMX callback executed with error '0'
+[22:25:26] [INFO] Callback successfully executed.
+[22:26:14] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[22:26:14] [DEBUG] mysql_connect_file("mysql.ini")
+[22:26:14] [DEBUG] CHandleManager::CreateFromFile(this=0x584520, file_path='mysql.ini')
+[22:26:14] [INFO] Options instance with id '1' successfully created.
+[22:26:14] [DEBUG] CHandleManager::CreateFromFile - new options = 0x596760 (id '1')
+[22:26:15] [DEBUG] CHandleManager::Create(this=0x584520, host='localhost', user='root', pass='****', db='samp', options=0x596760)
+[22:26:15] [INFO] Creating new connection handle...
+[22:26:15] [WARNING] mysql_connect_file: no password specified
+[22:26:15] [DEBUG] CConnection::CConnection(this=0x59d5a0, host='localhost', user='root', passw='****', db='samp', options=0x596760)
+[22:26:15] [DEBUG] CConnection::CConnection - new connection = 0x5722c8
+[22:26:15] [DEBUG] CConnection::CConnection(this=0x3cfa020, host='localhost', user='root', passw='****', db='samp', options=0x596760)
+[22:26:15] [DEBUG] CConnection::CConnection - new connection = 0x5e1948
+[22:26:15] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3cfa020, connection=0x3cfa020)
+[22:26:15] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3cfa020, connection=0x3cfa020)
+[22:26:15] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x59d1e0)
+[22:26:15] [DEBUG] CConnection::CConnection(this=0x3ecf020, host='localhost', user='root', passw='****', db='samp', options=0x596760)
+[22:26:15] [DEBUG] CConnection::CConnection - new connection = 0x5ead38
+[22:26:15] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3ecf020, connection=0x3ecf020)
+[22:26:15] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3ecf020, connection=0x3ecf020)
+[22:26:15] [DEBUG] CConnection::CConnection(this=0x40ae020, host='localhost', user='root', passw='****', db='samp', options=0x596760)
+[22:26:15] [DEBUG] CConnection::CConnection - new connection = 0x5f53c0
+[22:26:15] [DEBUG] CThreadedConnection::WorkerFunc(this=0x40ae020, connection=0x40ae020)
+[22:26:15] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x40ae020, connection=0x40ae020)
+[22:26:15] [INFO] Connection handle with id '1' successfully created.
+[22:26:15] [DEBUG] CHandleManager::Create - new handle = 0x5c6488
+[22:26:15] [DEBUG] mysql_connect_file: return value: '1'
+[22:26:15] [DEBUG] mysql_errno(1)
+[22:26:15] [DEBUG] CHandle::GetErrorId(this=0x5c6488)
+[22:26:15] [DEBUG] CConnection::GetError(this=0x59d5a0, connection=0x5722c8)
+[22:26:15] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[22:26:15] [DEBUG] mysql_errno: return value: '0'
+[22:26:35] [DEBUG] mysql_format(1, 0x03B9EE90, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:26:35] [DEBUG] mysql_format: return value: '48'
+[22:26:35] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'test1'", "checkIfExists", "d")
+[22:26:35] [DEBUG] CCallback::Create(amx=0x2a5af20, name='checkIfExists', format='d', params=0x3b9ee14, param_offset=5)
+[22:26:35] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:26:35] [DEBUG] processing specifier 'd' with parameter index 0
+[22:26:35] [DEBUG] retrieved and pushed value '0'
+[22:26:35] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:26:35] [DEBUG] created delayed callback with 1 parameter
+[22:26:35] [DEBUG] CHandle::Execute(this=0x5c6488, type=1, query=0x5c3448)
+[22:26:35] [DEBUG] CHandle::Execute - return value: true
+[22:26:35] [DEBUG] mysql_tquery: return value: '1'
+[22:26:35] [DEBUG] CConnection::Execute(query=0x5c3448, this=0x3cfa020, connection=0x5e1948)
+[22:26:35] [DEBUG] CQuery::Execute(this=0x5c3448, connection=0x5e1948)
+[22:26:35] [INFO] query "SELECT * FROM `accounts` where `pName` = 'test1'" successfully executed within 0.380 milliseconds
+[22:26:35] [DEBUG] CResultSet::Create(connection=0x5e1948, query_str='SELECT * FROM `accounts` where `pName` = 'test1'')
+[22:26:35] [DEBUG] created new resultset '0x5d7858'
+[22:26:35] [DEBUG] fetched MySQL result '0x5cc238'
+[22:26:35] [DEBUG] allocated 116 bytes for PAWN result
+[22:26:35] [DEBUG] CCallback::Execute(amx=0x2a5af20, index=46, num_params=1)
+[22:26:35] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:26:35] [DEBUG] processing internal specifier 'c'
+[22:26:35] [DEBUG] pushed value '0' onto AMX stack
+[22:26:35] [DEBUG] executing AMX callback with index '46'
+[22:26:35] [DEBUG] cache_get_row_count(0x03B9E96C)
+[22:26:35] [DEBUG] cache_get_row_count: return value: '1'
+[22:26:35] [DEBUG] AMX callback executed with error '0'
+[22:26:35] [INFO] Callback successfully executed.
+[22:26:38] [DEBUG] mysql_format(1, 0x03B9ECC8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:26:38] [DEBUG] CHandle::EscapeString(this=0x5c6488, src='test1')
+[22:26:38] [DEBUG] CConnection::EscapeString(src='test1', this=0x59d5a0, connection=0x5722c8)
+[22:26:38] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:26:38] [DEBUG] mysql_format: return value: '58'
+[22:26:38] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:26:38] [DEBUG] CHandle::Execute(this=0x5c6488, type=3, query=0x5c3448)
+[22:26:38] [DEBUG] CConnection::Execute(query=0x5c3448, this=0x59d5a0, connection=0x5722c8)
+[22:26:38] [DEBUG] CQuery::Execute(this=0x5c3448, connection=0x5722c8)
+[22:26:38] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.345 milliseconds
+[22:26:38] [DEBUG] CResultSet::Create(connection=0x5722c8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:26:38] [DEBUG] created new resultset '0x5d7660'
+[22:26:38] [DEBUG] fetched MySQL result '0x5c7678'
+[22:26:38] [DEBUG] allocated 76 bytes for PAWN result
+[22:26:38] [DEBUG] CHandle::Execute - return value: true
+[22:26:38] [DEBUG] mysql_query: return value: '1'
+[22:26:38] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B9EB74, 61)
+[22:26:38] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:26:38] [DEBUG] cache_get_value_name: return value: '1'
+[22:26:39] [DEBUG] mysql_format(1, 0x03B9ECC8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:26:39] [DEBUG] CHandle::EscapeString(this=0x5c6488, src='test1')
+[22:26:39] [DEBUG] CConnection::EscapeString(src='test1', this=0x59d5a0, connection=0x5722c8)
+[22:26:39] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:26:39] [DEBUG] mysql_format: return value: '58'
+[22:26:39] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:26:39] [DEBUG] CHandle::Execute(this=0x5c6488, type=3, query=0x5c3448)
+[22:26:39] [DEBUG] CConnection::Execute(query=0x5c3448, this=0x59d5a0, connection=0x5722c8)
+[22:26:39] [DEBUG] CQuery::Execute(this=0x5c3448, connection=0x5722c8)
+[22:26:39] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.368 milliseconds
+[22:26:39] [DEBUG] CResultSet::Create(connection=0x5722c8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:26:39] [DEBUG] created new resultset '0x5d78c8'
+[22:26:39] [DEBUG] fetched MySQL result '0x5c7198'
+[22:26:39] [DEBUG] allocated 76 bytes for PAWN result
+[22:26:39] [DEBUG] CHandle::Execute - return value: true
+[22:26:39] [DEBUG] mysql_query: return value: '2'
+[22:26:39] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B9EB74, 61)
+[22:26:39] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:26:39] [DEBUG] cache_get_value_name: return value: '1'
+[22:26:42] [DEBUG] mysql_format(1, 0x03B9ECC8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:26:42] [DEBUG] CHandle::EscapeString(this=0x5c6488, src='test1')
+[22:26:42] [DEBUG] CConnection::EscapeString(src='test1', this=0x59d5a0, connection=0x5722c8)
+[22:26:42] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:26:42] [DEBUG] mysql_format: return value: '58'
+[22:26:42] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:26:42] [DEBUG] CHandle::Execute(this=0x5c6488, type=3, query=0x5c3448)
+[22:26:42] [DEBUG] CConnection::Execute(query=0x5c3448, this=0x59d5a0, connection=0x5722c8)
+[22:26:42] [DEBUG] CQuery::Execute(this=0x5c3448, connection=0x5722c8)
+[22:26:42] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.379 milliseconds
+[22:26:42] [DEBUG] CResultSet::Create(connection=0x5722c8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:26:42] [DEBUG] created new resultset '0x5d7708'
+[22:26:42] [DEBUG] fetched MySQL result '0x5c7678'
+[22:26:42] [DEBUG] allocated 76 bytes for PAWN result
+[22:26:42] [DEBUG] CHandle::Execute - return value: true
+[22:26:42] [DEBUG] mysql_query: return value: '3'
+[22:26:42] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B9EB74, 61)
+[22:26:42] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:26:42] [DEBUG] cache_get_value_name: return value: '1'
+[22:26:44] [DEBUG] mysql_format(1, 0x03B9ECC8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:26:44] [DEBUG] CHandle::EscapeString(this=0x5c6488, src='test1')
+[22:26:44] [DEBUG] CConnection::EscapeString(src='test1', this=0x59d5a0, connection=0x5722c8)
+[22:26:44] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:26:44] [DEBUG] mysql_format: return value: '58'
+[22:26:44] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:26:44] [DEBUG] CHandle::Execute(this=0x5c6488, type=3, query=0x617558)
+[22:26:44] [DEBUG] CConnection::Execute(query=0x617558, this=0x59d5a0, connection=0x5722c8)
+[22:26:44] [DEBUG] CQuery::Execute(this=0x617558, connection=0x5722c8)
+[22:26:44] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.688 milliseconds
+[22:26:44] [DEBUG] CResultSet::Create(connection=0x5722c8, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:26:44] [DEBUG] created new resultset '0x5d79a8'
+[22:26:44] [DEBUG] fetched MySQL result '0x5c7678'
+[22:26:44] [DEBUG] allocated 76 bytes for PAWN result
+[22:26:44] [DEBUG] CHandle::Execute - return value: true
+[22:26:44] [DEBUG] mysql_query: return value: '4'
+[22:26:44] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B9EB74, 61)
+[22:26:44] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:26:44] [DEBUG] cache_get_value_name: return value: '1'
+[22:26:45] [DEBUG] mysql_format(1, 0x03B9ECF8, 300, "SELECT * from `accounts` WHERE `pName` = '%e'")
+[22:26:45] [DEBUG] CHandle::EscapeString(this=0x5c6488, src='test1')
+[22:26:45] [DEBUG] CConnection::EscapeString(src='test1', this=0x59d5a0, connection=0x5722c8)
+[22:26:45] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:26:45] [DEBUG] mysql_format: return value: '48'
+[22:26:45] [DEBUG] mysql_tquery(1, "SELECT * from `accounts` WHERE `pName` = 'test1'", "OnPlayerLoad", "d")
+[22:26:45] [DEBUG] CCallback::Create(amx=0x2a5af20, name='OnPlayerLoad', format='d', params=0x3b9ece0, param_offset=5)
+[22:26:45] [DEBUG] CCallback::Create - callback index for 'OnPlayerLoad': 25
+[22:26:45] [DEBUG] processing specifier 'd' with parameter index 0
+[22:26:45] [DEBUG] retrieved and pushed value '0'
+[22:26:45] [INFO] Callback 'OnPlayerLoad' set up for delayed execution.
+[22:26:45] [DEBUG] created delayed callback with 1 parameter
+[22:26:45] [DEBUG] CHandle::Execute(this=0x5c6488, type=1, query=0x5c5d18)
+[22:26:45] [DEBUG] CHandle::Execute - return value: true
+[22:26:45] [DEBUG] mysql_tquery: return value: '1'
+[22:26:45] [DEBUG] CConnection::Execute(query=0x5c5d18, this=0x3cfa020, connection=0x5e1948)
+[22:26:45] [DEBUG] CQuery::Execute(this=0x5c5d18, connection=0x5e1948)
+[22:26:45] [INFO] query "SELECT * from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.578 milliseconds
+[22:26:45] [DEBUG] CResultSet::Create(connection=0x5e1948, query_str='SELECT * from `accounts` WHERE `pName` = 'test1'')
+[22:26:45] [DEBUG] created new resultset '0x61c190'
+[22:26:45] [DEBUG] fetched MySQL result '0x61a368'
+[22:26:45] [DEBUG] allocated 116 bytes for PAWN result
+[22:26:45] [DEBUG] CCallback::Execute(amx=0x2a5af20, index=25, num_params=1)
+[22:26:45] [INFO] Executing callback 'OnPlayerLoad' with 1 parameter...
+[22:26:45] [DEBUG] processing internal specifier 'c'
+[22:26:45] [DEBUG] pushed value '0' onto AMX stack
+[22:26:45] [DEBUG] executing AMX callback with index '25'
+[22:26:45] [DEBUG] cache_get_value_name_int(0, "ID", 0x038F2570)
+[22:26:45] [DEBUG] cache_get_value_name_int: assigned value: '7'
+[22:26:45] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:26:45] [DEBUG] cache_get_value_name(0, "pName", 0x038F25F0, 128)
+[22:26:45] [DEBUG] cache_get_value_name: assigned value: 'test1'
+[22:26:45] [DEBUG] cache_get_value_name: return value: '1'
+[22:26:45] [DEBUG] cache_get_value_name(0, "pEmail", 0x038F2E48, 128)
+[22:26:45] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[22:26:45] [DEBUG] cache_get_value_name: return value: '1'
+[22:26:45] [DEBUG] cache_get_value_name_int(0, "pBank", 0x038F3048)
+[22:26:45] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[22:26:45] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:26:45] [DEBUG] cache_get_value_name_int(0, "pCash", 0x038F304C)
+[22:26:45] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[22:26:45] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:26:45] [DEBUG] AMX callback executed with error '0'
+[22:26:45] [INFO] Callback successfully executed.
+[22:27:08] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[22:27:08] [DEBUG] mysql_connect_file("mysql.ini")
+[22:27:08] [DEBUG] CHandleManager::CreateFromFile(this=0x879cc0, file_path='mysql.ini')
+[22:27:08] [INFO] Options instance with id '1' successfully created.
+[22:27:08] [DEBUG] CHandleManager::CreateFromFile - new options = 0x8a7d38 (id '1')
+[22:27:08] [DEBUG] CHandleManager::Create(this=0x879cc0, host='localhost', user='root', pass='****', db='samp', options=0x8a7d38)
+[22:27:08] [INFO] Creating new connection handle...
+[22:27:08] [WARNING] mysql_connect_file: no password specified
+[22:27:08] [DEBUG] CConnection::CConnection(this=0x87ba00, host='localhost', user='root', passw='****', db='samp', options=0x8a7d38)
+[22:27:08] [DEBUG] CConnection::CConnection - new connection = 0x8b5f28
+[22:27:08] [DEBUG] CConnection::CConnection(this=0x3b5d020, host='localhost', user='root', passw='****', db='samp', options=0x8a7d38)
+[22:27:08] [DEBUG] CConnection::CConnection - new connection = 0x8b21c8
+[22:27:08] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3b5d020, connection=0x3b5d020)
+[22:27:08] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3b5d020, connection=0x3b5d020)
+[22:27:09] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x87bbc0)
+[22:27:09] [DEBUG] CConnection::CConnection(this=0x3e5f020, host='localhost', user='root', passw='****', db='samp', options=0x8a7d38)
+[22:27:09] [DEBUG] CConnection::CConnection - new connection = 0x8c7bb8
+[22:27:09] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3e5f020, connection=0x3e5f020)
+[22:27:09] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3e5f020, connection=0x3e5f020)
+[22:27:09] [DEBUG] CConnection::CConnection(this=0x3ffd020, host='localhost', user='root', passw='****', db='samp', options=0x8a7d38)
+[22:27:09] [DEBUG] CConnection::CConnection - new connection = 0x8d19b0
+[22:27:09] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3ffd020, connection=0x3ffd020)
+[22:27:09] [INFO] Connection handle with id '1' successfully created.
+[22:27:09] [DEBUG] CHandleManager::Create - new handle = 0x8a5fc0
+[22:27:09] [DEBUG] mysql_connect_file: return value: '1'
+[22:27:09] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3ffd020, connection=0x3ffd020)
+[22:27:09] [DEBUG] mysql_errno(1)
+[22:27:09] [DEBUG] CHandle::GetErrorId(this=0x8a5fc0)
+[22:27:09] [DEBUG] CConnection::GetError(this=0x87ba00, connection=0x8b5f28)
+[22:27:09] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[22:27:09] [DEBUG] mysql_errno: return value: '0'
+[22:27:29] [DEBUG] mysql_format(1, 0x03B4BE80, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:27:29] [DEBUG] mysql_format: return value: '48'
+[22:27:29] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'test1'", "checkIfExists", "d")
+[22:27:29] [DEBUG] CCallback::Create(amx=0x2a4af20, name='checkIfExists', format='d', params=0x3b4be04, param_offset=5)
+[22:27:29] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:27:29] [DEBUG] processing specifier 'd' with parameter index 0
+[22:27:29] [DEBUG] retrieved and pushed value '0'
+[22:27:29] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:27:29] [DEBUG] created delayed callback with 1 parameter
+[22:27:29] [DEBUG] CHandle::Execute(this=0x8a5fc0, type=1, query=0x8b1d38)
+[22:27:29] [DEBUG] CHandle::Execute - return value: true
+[22:27:29] [DEBUG] mysql_tquery: return value: '1'
+[22:27:29] [DEBUG] CConnection::Execute(query=0x8b1d38, this=0x3b5d020, connection=0x8b21c8)
+[22:27:29] [DEBUG] CQuery::Execute(this=0x8b1d38, connection=0x8b21c8)
+[22:27:29] [INFO] query "SELECT * FROM `accounts` where `pName` = 'test1'" successfully executed within 0.312 milliseconds
+[22:27:29] [DEBUG] CResultSet::Create(connection=0x8b21c8, query_str='SELECT * FROM `accounts` where `pName` = 'test1'')
+[22:27:29] [DEBUG] created new resultset '0x8b5998'
+[22:27:29] [DEBUG] fetched MySQL result '0x8b2148'
+[22:27:29] [DEBUG] allocated 116 bytes for PAWN result
+[22:27:29] [DEBUG] CCallback::Execute(amx=0x2a4af20, index=46, num_params=1)
+[22:27:29] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:27:29] [DEBUG] processing internal specifier 'c'
+[22:27:29] [DEBUG] pushed value '0' onto AMX stack
+[22:27:29] [DEBUG] executing AMX callback with index '46'
+[22:27:29] [DEBUG] cache_get_row_count(0x03B4B95C)
+[22:27:29] [DEBUG] cache_get_row_count: return value: '1'
+[22:27:29] [DEBUG] AMX callback executed with error '0'
+[22:27:29] [INFO] Callback successfully executed.
+[22:27:31] [DEBUG] mysql_format(1, 0x03B4BCB8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:27:31] [DEBUG] CHandle::EscapeString(this=0x8a5fc0, src='test1')
+[22:27:31] [DEBUG] CConnection::EscapeString(src='test1', this=0x87ba00, connection=0x8b5f28)
+[22:27:31] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:27:31] [DEBUG] mysql_format: return value: '58'
+[22:27:31] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:27:31] [DEBUG] CHandle::Execute(this=0x8a5fc0, type=3, query=0x8b44d8)
+[22:27:31] [DEBUG] CConnection::Execute(query=0x8b44d8, this=0x87ba00, connection=0x8b5f28)
+[22:27:31] [DEBUG] CQuery::Execute(this=0x8b44d8, connection=0x8b5f28)
+[22:27:31] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 1.238 milliseconds
+[22:27:31] [DEBUG] CResultSet::Create(connection=0x8b5f28, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:27:31] [DEBUG] created new resultset '0x8b5928'
+[22:27:31] [DEBUG] fetched MySQL result '0x8a69a8'
+[22:27:31] [DEBUG] allocated 76 bytes for PAWN result
+[22:27:31] [DEBUG] CHandle::Execute - return value: true
+[22:27:31] [DEBUG] mysql_query: return value: '1'
+[22:27:31] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B4BB64, 61)
+[22:27:31] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:27:31] [DEBUG] cache_get_value_name: return value: '1'
+[22:27:33] [DEBUG] mysql_format(1, 0x03B4BCB8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:27:33] [DEBUG] CHandle::EscapeString(this=0x8a5fc0, src='test1')
+[22:27:33] [DEBUG] CConnection::EscapeString(src='test1', this=0x87ba00, connection=0x8b5f28)
+[22:27:33] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:27:33] [DEBUG] mysql_format: return value: '58'
+[22:27:33] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:27:33] [DEBUG] CHandle::Execute(this=0x8a5fc0, type=3, query=0x8b44d8)
+[22:27:33] [DEBUG] CConnection::Execute(query=0x8b44d8, this=0x87ba00, connection=0x8b5f28)
+[22:27:33] [DEBUG] CQuery::Execute(this=0x8b44d8, connection=0x8b5f28)
+[22:27:33] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.574 milliseconds
+[22:27:33] [DEBUG] CResultSet::Create(connection=0x8b5f28, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:27:33] [DEBUG] created new resultset '0x8b5bc8'
+[22:27:33] [DEBUG] fetched MySQL result '0x8a6828'
+[22:27:33] [DEBUG] allocated 76 bytes for PAWN result
+[22:27:33] [DEBUG] CHandle::Execute - return value: true
+[22:27:33] [DEBUG] mysql_query: return value: '2'
+[22:27:33] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B4BB64, 61)
+[22:27:33] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:27:33] [DEBUG] cache_get_value_name: return value: '1'
+[22:27:35] [DEBUG] mysql_format(1, 0x03B4BCB8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:27:35] [DEBUG] CHandle::EscapeString(this=0x8a5fc0, src='test1')
+[22:27:35] [DEBUG] CConnection::EscapeString(src='test1', this=0x87ba00, connection=0x8b5f28)
+[22:27:35] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:27:35] [DEBUG] mysql_format: return value: '58'
+[22:27:35] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:27:35] [DEBUG] CHandle::Execute(this=0x8a5fc0, type=3, query=0x8b1d38)
+[22:27:35] [DEBUG] CConnection::Execute(query=0x8b1d38, this=0x87ba00, connection=0x8b5f28)
+[22:27:35] [DEBUG] CQuery::Execute(this=0x8b1d38, connection=0x8b5f28)
+[22:27:35] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.476 milliseconds
+[22:27:35] [DEBUG] CResultSet::Create(connection=0x8b5f28, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:27:35] [DEBUG] created new resultset '0x8b5a78'
+[22:27:35] [DEBUG] fetched MySQL result '0x8a6408'
+[22:27:35] [DEBUG] allocated 76 bytes for PAWN result
+[22:27:35] [DEBUG] CHandle::Execute - return value: true
+[22:27:35] [DEBUG] mysql_query: return value: '3'
+[22:27:35] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B4BB64, 61)
+[22:27:35] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:27:35] [DEBUG] cache_get_value_name: return value: '1'
+[22:29:00] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[22:29:00] [DEBUG] mysql_connect_file("mysql.ini")
+[22:29:00] [DEBUG] CHandleManager::CreateFromFile(this=0x65b3a8, file_path='mysql.ini')
+[22:29:00] [INFO] Options instance with id '1' successfully created.
+[22:29:00] [DEBUG] CHandleManager::CreateFromFile - new options = 0x6898b8 (id '1')
+[22:29:00] [DEBUG] CHandleManager::Create(this=0x65b3a8, host='localhost', user='root', pass='****', db='samp', options=0x6898b8)
+[22:29:00] [INFO] Creating new connection handle...
+[22:29:00] [WARNING] mysql_connect_file: no password specified
+[22:29:00] [DEBUG] CConnection::CConnection(this=0x65f398, host='localhost', user='root', passw='****', db='samp', options=0x6898b8)
+[22:29:00] [DEBUG] CConnection::CConnection - new connection = 0x632360
+[22:29:00] [DEBUG] CConnection::CConnection(this=0x3a95020, host='localhost', user='root', passw='****', db='samp', options=0x6898b8)
+[22:29:00] [DEBUG] CConnection::CConnection - new connection = 0x697bc0
+[22:29:00] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3a95020, connection=0x3a95020)
+[22:29:00] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3a95020, connection=0x3a95020)
+[22:29:01] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x65f458)
+[22:29:01] [DEBUG] CConnection::CConnection(this=0x3e18020, host='localhost', user='root', passw='****', db='samp', options=0x6898b8)
+[22:29:01] [DEBUG] CConnection::CConnection - new connection = 0x6ab268
+[22:29:01] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3e18020, connection=0x3e18020)
+[22:29:01] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3e18020, connection=0x3e18020)
+[22:29:01] [DEBUG] CConnection::CConnection(this=0x3faa020, host='localhost', user='root', passw='****', db='samp', options=0x6898b8)
+[22:29:01] [DEBUG] CConnection::CConnection - new connection = 0x6b3718
+[22:29:01] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3faa020, connection=0x3faa020)
+[22:29:01] [INFO] Connection handle with id '1' successfully created.
+[22:29:01] [DEBUG] CHandleManager::Create - new handle = 0x686658
+[22:29:01] [DEBUG] mysql_connect_file: return value: '1'
+[22:29:01] [DEBUG] mysql_errno(1)
+[22:29:01] [DEBUG] CHandle::GetErrorId(this=0x686658)
+[22:29:01] [DEBUG] CConnection::GetError(this=0x65f398, connection=0x632360)
+[22:29:01] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[22:29:01] [DEBUG] mysql_errno: return value: '0'
+[22:29:01] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3faa020, connection=0x3faa020)
+[22:29:22] [DEBUG] mysql_format(1, 0x03A88EB8, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:29:22] [DEBUG] mysql_format: return value: '48'
+[22:29:22] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'test1'", "checkIfExists", "d")
+[22:29:22] [DEBUG] CCallback::Create(amx=0x295af20, name='checkIfExists', format='d', params=0x3a88e3c, param_offset=5)
+[22:29:22] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:29:22] [DEBUG] processing specifier 'd' with parameter index 0
+[22:29:22] [DEBUG] retrieved and pushed value '0'
+[22:29:22] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:29:22] [DEBUG] created delayed callback with 1 parameter
+[22:29:22] [DEBUG] CHandle::Execute(this=0x686658, type=1, query=0x6d4230)
+[22:29:22] [DEBUG] CHandle::Execute - return value: true
+[22:29:22] [DEBUG] mysql_tquery: return value: '1'
+[22:29:22] [DEBUG] CConnection::Execute(query=0x6d4230, this=0x3a95020, connection=0x697bc0)
+[22:29:22] [DEBUG] CQuery::Execute(this=0x6d4230, connection=0x697bc0)
+[22:29:22] [INFO] query "SELECT * FROM `accounts` where `pName` = 'test1'" successfully executed within 0.381 milliseconds
+[22:29:22] [DEBUG] CResultSet::Create(connection=0x697bc0, query_str='SELECT * FROM `accounts` where `pName` = 'test1'')
+[22:29:22] [DEBUG] created new resultset '0x6985e0'
+[22:29:22] [DEBUG] fetched MySQL result '0x632920'
+[22:29:22] [DEBUG] allocated 116 bytes for PAWN result
+[22:29:22] [DEBUG] CCallback::Execute(amx=0x295af20, index=46, num_params=1)
+[22:29:22] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:29:22] [DEBUG] processing internal specifier 'c'
+[22:29:22] [DEBUG] pushed value '0' onto AMX stack
+[22:29:22] [DEBUG] executing AMX callback with index '46'
+[22:29:22] [DEBUG] cache_get_row_count(0x03A88994)
+[22:29:22] [DEBUG] cache_get_row_count: return value: '1'
+[22:29:22] [DEBUG] AMX callback executed with error '0'
+[22:29:22] [INFO] Callback successfully executed.
+[22:29:25] [DEBUG] mysql_format(1, 0x03A88CF0, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:29:25] [DEBUG] CHandle::EscapeString(this=0x686658, src='test1')
+[22:29:25] [DEBUG] CConnection::EscapeString(src='test1', this=0x65f398, connection=0x632360)
+[22:29:25] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:29:25] [DEBUG] mysql_format: return value: '58'
+[22:29:25] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:29:25] [DEBUG] CHandle::Execute(this=0x686658, type=3, query=0x685fa0)
+[22:29:25] [DEBUG] CConnection::Execute(query=0x685fa0, this=0x65f398, connection=0x632360)
+[22:29:25] [DEBUG] CQuery::Execute(this=0x685fa0, connection=0x632360)
+[22:29:25] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.330 milliseconds
+[22:29:25] [DEBUG] CResultSet::Create(connection=0x632360, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:29:25] [DEBUG] created new resultset '0x698500'
+[22:29:25] [DEBUG] fetched MySQL result '0x687500'
+[22:29:25] [DEBUG] allocated 76 bytes for PAWN result
+[22:29:25] [DEBUG] CHandle::Execute - return value: true
+[22:29:25] [DEBUG] mysql_query: return value: '1'
+[22:29:25] [DEBUG] cache_get_value_name(0, "pPassword", 0x03A88B9C, 61)
+[22:29:25] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:29:25] [DEBUG] cache_get_value_name: return value: '1'
+[22:29:27] [DEBUG] mysql_format(1, 0x03A88CF0, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:29:27] [DEBUG] CHandle::EscapeString(this=0x686658, src='test1')
+[22:29:27] [DEBUG] CConnection::EscapeString(src='test1', this=0x65f398, connection=0x632360)
+[22:29:27] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:29:27] [DEBUG] mysql_format: return value: '58'
+[22:29:27] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:29:27] [DEBUG] CHandle::Execute(this=0x686658, type=3, query=0x6d4be8)
+[22:29:27] [DEBUG] CConnection::Execute(query=0x6d4be8, this=0x65f398, connection=0x632360)
+[22:29:27] [DEBUG] CQuery::Execute(this=0x6d4be8, connection=0x632360)
+[22:29:27] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.312 milliseconds
+[22:29:27] [DEBUG] CResultSet::Create(connection=0x632360, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:29:27] [DEBUG] created new resultset '0x698420'
+[22:29:27] [DEBUG] fetched MySQL result '0x686fc0'
+[22:29:27] [DEBUG] allocated 76 bytes for PAWN result
+[22:29:27] [DEBUG] CHandle::Execute - return value: true
+[22:29:27] [DEBUG] mysql_query: return value: '2'
+[22:29:27] [DEBUG] cache_get_value_name(0, "pPassword", 0x03A88B9C, 61)
+[22:29:27] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:29:27] [DEBUG] cache_get_value_name: return value: '1'
+[22:29:29] [DEBUG] mysql_format(1, 0x03A88CF0, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:29:29] [DEBUG] CHandle::EscapeString(this=0x686658, src='test1')
+[22:29:29] [DEBUG] CConnection::EscapeString(src='test1', this=0x65f398, connection=0x632360)
+[22:29:29] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:29:29] [DEBUG] mysql_format: return value: '58'
+[22:29:29] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:29:29] [DEBUG] CHandle::Execute(this=0x686658, type=3, query=0x6d4be8)
+[22:29:29] [DEBUG] CConnection::Execute(query=0x6d4be8, this=0x65f398, connection=0x632360)
+[22:29:29] [DEBUG] CQuery::Execute(this=0x6d4be8, connection=0x632360)
+[22:29:29] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.417 milliseconds
+[22:29:29] [DEBUG] CResultSet::Create(connection=0x632360, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:29:29] [DEBUG] created new resultset '0x698570'
+[22:29:29] [DEBUG] fetched MySQL result '0x686fc0'
+[22:29:29] [DEBUG] allocated 76 bytes for PAWN result
+[22:29:29] [DEBUG] CHandle::Execute - return value: true
+[22:29:29] [DEBUG] mysql_query: return value: '3'
+[22:29:29] [DEBUG] cache_get_value_name(0, "pPassword", 0x03A88B9C, 61)
+[22:29:29] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:29:29] [DEBUG] cache_get_value_name: return value: '1'
+[22:29:30] [DEBUG] mysql_format(1, 0x03A88CF0, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:29:30] [DEBUG] CHandle::EscapeString(this=0x686658, src='test1')
+[22:29:30] [DEBUG] CConnection::EscapeString(src='test1', this=0x65f398, connection=0x632360)
+[22:29:30] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:29:30] [DEBUG] mysql_format: return value: '58'
+[22:29:30] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:29:30] [DEBUG] CHandle::Execute(this=0x686658, type=3, query=0x6d4be8)
+[22:29:30] [DEBUG] CConnection::Execute(query=0x6d4be8, this=0x65f398, connection=0x632360)
+[22:29:30] [DEBUG] CQuery::Execute(this=0x6d4be8, connection=0x632360)
+[22:29:30] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.333 milliseconds
+[22:29:30] [DEBUG] CResultSet::Create(connection=0x632360, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:29:30] [DEBUG] created new resultset '0x698458'
+[22:29:30] [DEBUG] fetched MySQL result '0x6872c0'
+[22:29:31] [DEBUG] allocated 76 bytes for PAWN result
+[22:29:31] [DEBUG] CHandle::Execute - return value: true
+[22:29:31] [DEBUG] mysql_query: return value: '4'
+[22:29:31] [DEBUG] cache_get_value_name(0, "pPassword", 0x03A88B9C, 61)
+[22:29:31] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:29:31] [DEBUG] cache_get_value_name: return value: '1'
+[22:29:34] [DEBUG] mysql_format(1, 0x03A88CF0, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:29:34] [DEBUG] CHandle::EscapeString(this=0x686658, src='test1')
+[22:29:34] [DEBUG] CConnection::EscapeString(src='test1', this=0x65f398, connection=0x632360)
+[22:29:34] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:29:34] [DEBUG] mysql_format: return value: '58'
+[22:29:34] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:29:34] [DEBUG] CHandle::Execute(this=0x686658, type=3, query=0x685fa0)
+[22:29:34] [DEBUG] CConnection::Execute(query=0x685fa0, this=0x65f398, connection=0x632360)
+[22:29:34] [DEBUG] CQuery::Execute(this=0x685fa0, connection=0x632360)
+[22:29:34] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.783 milliseconds
+[22:29:34] [DEBUG] CResultSet::Create(connection=0x632360, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:29:34] [DEBUG] created new resultset '0x698148'
+[22:29:34] [DEBUG] fetched MySQL result '0x6870e0'
+[22:29:34] [DEBUG] allocated 76 bytes for PAWN result
+[22:29:34] [DEBUG] CHandle::Execute - return value: true
+[22:29:34] [DEBUG] mysql_query: return value: '5'
+[22:29:34] [DEBUG] cache_get_value_name(0, "pPassword", 0x03A88B9C, 61)
+[22:29:34] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:29:34] [DEBUG] cache_get_value_name: return value: '1'
+[22:29:34] [DEBUG] mysql_format(1, 0x03A88D20, 300, "SELECT * from `accounts` WHERE `pName` = '%e'")
+[22:29:34] [DEBUG] CHandle::EscapeString(this=0x686658, src='test1')
+[22:29:34] [DEBUG] CConnection::EscapeString(src='test1', this=0x65f398, connection=0x632360)
+[22:29:34] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:29:34] [DEBUG] mysql_format: return value: '48'
+[22:29:34] [DEBUG] mysql_tquery(1, "SELECT * from `accounts` WHERE `pName` = 'test1'", "OnPlayerLoad", "d")
+[22:29:34] [DEBUG] CCallback::Create(amx=0x295af20, name='OnPlayerLoad', format='d', params=0x3a88d08, param_offset=5)
+[22:29:34] [DEBUG] CCallback::Create - callback index for 'OnPlayerLoad': 25
+[22:29:34] [DEBUG] processing specifier 'd' with parameter index 0
+[22:29:34] [DEBUG] retrieved and pushed value '0'
+[22:29:34] [INFO] Callback 'OnPlayerLoad' set up for delayed execution.
+[22:29:34] [DEBUG] created delayed callback with 1 parameter
+[22:29:34] [DEBUG] CHandle::Execute(this=0x686658, type=1, query=0x6d6ea8)
+[22:29:34] [DEBUG] CHandle::Execute - return value: true
+[22:29:34] [DEBUG] mysql_tquery: return value: '1'
+[22:29:34] [DEBUG] CConnection::Execute(query=0x6d6ea8, this=0x3a95020, connection=0x697bc0)
+[22:29:34] [DEBUG] CQuery::Execute(this=0x6d6ea8, connection=0x697bc0)
+[22:29:34] [INFO] query "SELECT * from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.580 milliseconds
+[22:29:34] [DEBUG] CResultSet::Create(connection=0x697bc0, query_str='SELECT * from `accounts` WHERE `pName` = 'test1'')
+[22:29:34] [DEBUG] created new resultset '0x698068'
+[22:29:34] [DEBUG] fetched MySQL result '0x685f90'
+[22:29:34] [DEBUG] allocated 116 bytes for PAWN result
+[22:29:34] [DEBUG] CCallback::Execute(amx=0x295af20, index=25, num_params=1)
+[22:29:34] [INFO] Executing callback 'OnPlayerLoad' with 1 parameter...
+[22:29:34] [DEBUG] processing internal specifier 'c'
+[22:29:34] [DEBUG] pushed value '0' onto AMX stack
+[22:29:34] [DEBUG] executing AMX callback with index '25'
+[22:29:34] [DEBUG] cache_get_value_name_int(0, "ID", 0x037DC58C)
+[22:29:34] [DEBUG] cache_get_value_name_int: assigned value: '7'
+[22:29:34] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:29:34] [DEBUG] cache_get_value_name(0, "pName", 0x037DC60C, 128)
+[22:29:34] [DEBUG] cache_get_value_name: assigned value: 'test1'
+[22:29:34] [DEBUG] cache_get_value_name: return value: '1'
+[22:29:34] [DEBUG] cache_get_value_name(0, "pEmail", 0x037DCE64, 128)
+[22:29:34] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[22:29:34] [DEBUG] cache_get_value_name: return value: '1'
+[22:29:34] [DEBUG] cache_get_value_name_int(0, "pBank", 0x037DD064)
+[22:29:34] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[22:29:34] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:29:34] [DEBUG] cache_get_value_name_int(0, "pCash", 0x037DD068)
+[22:29:34] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[22:29:34] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:29:34] [DEBUG] AMX callback executed with error '0'
+[22:29:34] [INFO] Callback successfully executed.
+[22:32:35] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[22:32:35] [DEBUG] mysql_connect_file("mysql.ini")
+[22:32:35] [DEBUG] CHandleManager::CreateFromFile(this=0x699d40, file_path='mysql.ini')
+[22:32:35] [INFO] Options instance with id '1' successfully created.
+[22:32:35] [DEBUG] CHandleManager::CreateFromFile - new options = 0x6c84d8 (id '1')
+[22:32:35] [DEBUG] CHandleManager::Create(this=0x699d40, host='localhost', user='root', pass='****', db='samp', options=0x6c84d8)
+[22:32:35] [INFO] Creating new connection handle...
+[22:32:35] [WARNING] mysql_connect_file: no password specified
+[22:32:35] [DEBUG] CConnection::CConnection(this=0x69d900, host='localhost', user='root', passw='****', db='samp', options=0x6c84d8)
+[22:32:35] [DEBUG] CConnection::CConnection - new connection = 0x6d9a18
+[22:32:35] [DEBUG] CConnection::CConnection(this=0x3b12020, host='localhost', user='root', passw='****', db='samp', options=0x6c84d8)
+[22:32:35] [DEBUG] CConnection::CConnection - new connection = 0x6d3860
+[22:32:35] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3b12020, connection=0x3b12020)
+[22:32:35] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x69dcc0)
+[22:32:35] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3b12020, connection=0x3b12020)
+[22:32:35] [DEBUG] CConnection::CConnection(this=0x3e59020, host='localhost', user='root', passw='****', db='samp', options=0x6c84d8)
+[22:32:35] [DEBUG] CConnection::CConnection - new connection = 0x6ef1a8
+[22:32:35] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3e59020, connection=0x3e59020)
+[22:32:35] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3e59020, connection=0x3e59020)
+[22:32:35] [DEBUG] CConnection::CConnection(this=0x3fef020, host='localhost', user='root', passw='****', db='samp', options=0x6c84d8)
+[22:32:35] [DEBUG] CConnection::CConnection - new connection = 0x6fb838
+[22:32:35] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3fef020, connection=0x3fef020)
+[22:32:35] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3fef020, connection=0x3fef020)
+[22:32:35] [INFO] Connection handle with id '1' successfully created.
+[22:32:35] [DEBUG] CHandleManager::Create - new handle = 0x6d9460
+[22:32:35] [DEBUG] mysql_connect_file: return value: '1'
+[22:32:35] [DEBUG] mysql_errno(1)
+[22:32:35] [DEBUG] CHandle::GetErrorId(this=0x6d9460)
+[22:32:35] [DEBUG] CConnection::GetError(this=0x69d900, connection=0x6d9a18)
+[22:32:35] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[22:32:35] [DEBUG] mysql_errno: return value: '0'
+[22:32:56] [DEBUG] mysql_format(1, 0x03B0CEB0, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:32:56] [DEBUG] mysql_format: return value: '48'
+[22:32:56] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'test1'", "checkIfExists", "d")
+[22:32:56] [DEBUG] CCallback::Create(amx=0x29faf20, name='checkIfExists', format='d', params=0x3b0ce34, param_offset=5)
+[22:32:56] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:32:56] [DEBUG] processing specifier 'd' with parameter index 0
+[22:32:56] [DEBUG] retrieved and pushed value '0'
+[22:32:56] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:32:56] [DEBUG] created delayed callback with 1 parameter
+[22:32:56] [DEBUG] CHandle::Execute(this=0x6d9460, type=1, query=0x6d4f48)
+[22:32:56] [DEBUG] CHandle::Execute - return value: true
+[22:32:56] [DEBUG] mysql_tquery: return value: '1'
+[22:32:56] [DEBUG] CConnection::Execute(query=0x6d4f48, this=0x3b12020, connection=0x6d3860)
+[22:32:56] [DEBUG] CQuery::Execute(this=0x6d4f48, connection=0x6d3860)
+[22:32:56] [INFO] query "SELECT * FROM `accounts` where `pName` = 'test1'" successfully executed within 0.416 milliseconds
+[22:32:56] [DEBUG] CResultSet::Create(connection=0x6d3860, query_str='SELECT * FROM `accounts` where `pName` = 'test1'')
+[22:32:56] [DEBUG] created new resultset '0x672618'
+[22:32:56] [DEBUG] fetched MySQL result '0x6fb7c8'
+[22:32:56] [DEBUG] allocated 116 bytes for PAWN result
+[22:32:56] [DEBUG] CCallback::Execute(amx=0x29faf20, index=46, num_params=1)
+[22:32:56] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:32:56] [DEBUG] processing internal specifier 'c'
+[22:32:56] [DEBUG] pushed value '0' onto AMX stack
+[22:32:56] [DEBUG] executing AMX callback with index '46'
+[22:32:56] [DEBUG] cache_get_row_count(0x03B0C98C)
+[22:32:56] [DEBUG] cache_get_row_count: return value: '1'
+[22:32:56] [DEBUG] AMX callback executed with error '0'
+[22:32:56] [INFO] Callback successfully executed.
+[22:32:58] [DEBUG] mysql_format(1, 0x03B0CCE8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:32:58] [DEBUG] CHandle::EscapeString(this=0x6d9460, src='test1')
+[22:32:58] [DEBUG] CConnection::EscapeString(src='test1', this=0x69d900, connection=0x6d9a18)
+[22:32:58] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:32:58] [DEBUG] mysql_format: return value: '58'
+[22:32:58] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:32:58] [DEBUG] CHandle::Execute(this=0x6d9460, type=3, query=0x6d4f48)
+[22:32:58] [DEBUG] CConnection::Execute(query=0x6d4f48, this=0x69d900, connection=0x6d9a18)
+[22:32:58] [DEBUG] CQuery::Execute(this=0x6d4f48, connection=0x6d9a18)
+[22:32:58] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.691 milliseconds
+[22:32:58] [DEBUG] CResultSet::Create(connection=0x6d9a18, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:32:58] [DEBUG] created new resultset '0x71bcd0'
+[22:32:58] [DEBUG] fetched MySQL result '0x6c6e48'
+[22:32:58] [DEBUG] allocated 76 bytes for PAWN result
+[22:32:58] [DEBUG] CHandle::Execute - return value: true
+[22:32:58] [DEBUG] mysql_query: return value: '1'
+[22:32:58] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B0CB94, 61)
+[22:32:58] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:32:58] [DEBUG] cache_get_value_name: return value: '1'
+[22:33:00] [DEBUG] mysql_format(1, 0x03B0CCE8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:33:00] [DEBUG] CHandle::EscapeString(this=0x6d9460, src='test1')
+[22:33:00] [DEBUG] CConnection::EscapeString(src='test1', this=0x69d900, connection=0x6d9a18)
+[22:33:00] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:33:00] [DEBUG] mysql_format: return value: '58'
+[22:33:00] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:33:00] [DEBUG] CHandle::Execute(this=0x6d9460, type=3, query=0x6d4f48)
+[22:33:00] [DEBUG] CConnection::Execute(query=0x6d4f48, this=0x69d900, connection=0x6d9a18)
+[22:33:00] [DEBUG] CQuery::Execute(this=0x6d4f48, connection=0x6d9a18)
+[22:33:00] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.332 milliseconds
+[22:33:00] [DEBUG] CResultSet::Create(connection=0x6d9a18, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:33:00] [DEBUG] created new resultset '0x71bdb0'
+[22:33:00] [DEBUG] fetched MySQL result '0x6c6e48'
+[22:33:00] [DEBUG] allocated 76 bytes for PAWN result
+[22:33:00] [DEBUG] CHandle::Execute - return value: true
+[22:33:00] [DEBUG] mysql_query: return value: '2'
+[22:33:00] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B0CB94, 61)
+[22:33:00] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:33:00] [DEBUG] cache_get_value_name: return value: '1'
+[22:33:02] [DEBUG] mysql_format(1, 0x03B0CCE8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:33:02] [DEBUG] CHandle::EscapeString(this=0x6d9460, src='test1')
+[22:33:02] [DEBUG] CConnection::EscapeString(src='test1', this=0x69d900, connection=0x6d9a18)
+[22:33:02] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:33:02] [DEBUG] mysql_format: return value: '58'
+[22:33:02] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:33:02] [DEBUG] CHandle::Execute(this=0x6d9460, type=3, query=0x6d4f48)
+[22:33:02] [DEBUG] CConnection::Execute(query=0x6d4f48, this=0x69d900, connection=0x6d9a18)
+[22:33:02] [DEBUG] CQuery::Execute(this=0x6d4f48, connection=0x6d9a18)
+[22:33:02] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.644 milliseconds
+[22:33:02] [DEBUG] CResultSet::Create(connection=0x6d9a18, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:33:02] [DEBUG] created new resultset '0x71bd78'
+[22:33:02] [DEBUG] fetched MySQL result '0x6c7148'
+[22:33:02] [DEBUG] allocated 76 bytes for PAWN result
+[22:33:02] [DEBUG] CHandle::Execute - return value: true
+[22:33:02] [DEBUG] mysql_query: return value: '3'
+[22:33:02] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B0CB94, 61)
+[22:33:02] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:33:02] [DEBUG] cache_get_value_name: return value: '1'
+[22:33:04] [DEBUG] mysql_format(1, 0x03B0CCE8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:33:04] [DEBUG] CHandle::EscapeString(this=0x6d9460, src='test1')
+[22:33:04] [DEBUG] CConnection::EscapeString(src='test1', this=0x69d900, connection=0x6d9a18)
+[22:33:04] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:33:04] [DEBUG] mysql_format: return value: '58'
+[22:33:04] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:33:04] [DEBUG] CHandle::Execute(this=0x6d9460, type=3, query=0x6d4f48)
+[22:33:04] [DEBUG] CConnection::Execute(query=0x6d4f48, this=0x69d900, connection=0x6d9a18)
+[22:33:04] [DEBUG] CQuery::Execute(this=0x6d4f48, connection=0x6d9a18)
+[22:33:04] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 1.584 milliseconds
+[22:33:04] [DEBUG] CResultSet::Create(connection=0x6d9a18, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:33:04] [DEBUG] created new resultset '0x71eb48'
+[22:33:04] [DEBUG] fetched MySQL result '0x6c7148'
+[22:33:04] [DEBUG] allocated 76 bytes for PAWN result
+[22:33:04] [DEBUG] CHandle::Execute - return value: true
+[22:33:04] [DEBUG] mysql_query: return value: '4'
+[22:33:04] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B0CB94, 61)
+[22:33:04] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:33:04] [DEBUG] cache_get_value_name: return value: '1'
+[22:33:06] [DEBUG] mysql_format(1, 0x03B0CCE8, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:33:06] [DEBUG] CHandle::EscapeString(this=0x6d9460, src='test1')
+[22:33:06] [DEBUG] CConnection::EscapeString(src='test1', this=0x69d900, connection=0x6d9a18)
+[22:33:06] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:33:06] [DEBUG] mysql_format: return value: '58'
+[22:33:06] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:33:06] [DEBUG] CHandle::Execute(this=0x6d9460, type=3, query=0x6d9170)
+[22:33:06] [DEBUG] CConnection::Execute(query=0x6d9170, this=0x69d900, connection=0x6d9a18)
+[22:33:06] [DEBUG] CQuery::Execute(this=0x6d9170, connection=0x6d9a18)
+[22:33:06] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.594 milliseconds
+[22:33:06] [DEBUG] CResultSet::Create(connection=0x6d9a18, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:33:06] [DEBUG] created new resultset '0x71ea68'
+[22:33:06] [DEBUG] fetched MySQL result '0x6c7148'
+[22:33:06] [DEBUG] allocated 76 bytes for PAWN result
+[22:33:06] [DEBUG] CHandle::Execute - return value: true
+[22:33:06] [DEBUG] mysql_query: return value: '5'
+[22:33:06] [DEBUG] cache_get_value_name(0, "pPassword", 0x03B0CB94, 61)
+[22:33:06] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:33:06] [DEBUG] cache_get_value_name: return value: '1'
+[22:35:46] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[22:35:46] [DEBUG] mysql_connect_file("mysql.ini")
+[22:35:46] [DEBUG] CHandleManager::CreateFromFile(this=0x6742b0, file_path='mysql.ini')
+[22:35:46] [INFO] Options instance with id '1' successfully created.
+[22:35:46] [DEBUG] CHandleManager::CreateFromFile - new options = 0x6682d8 (id '1')
+[22:35:46] [DEBUG] CHandleManager::Create(this=0x6742b0, host='localhost', user='root', pass='****', db='samp', options=0x6682d8)
+[22:35:46] [INFO] Creating new connection handle...
+[22:35:46] [WARNING] mysql_connect_file: no password specified
+[22:35:46] [DEBUG] CConnection::CConnection(this=0x63b468, host='localhost', user='root', passw='****', db='samp', options=0x6682d8)
+[22:35:46] [DEBUG] CConnection::CConnection - new connection = 0x675d70
+[22:35:47] [DEBUG] CConnection::CConnection(this=0x3bd8020, host='localhost', user='root', passw='****', db='samp', options=0x6682d8)
+[22:35:47] [DEBUG] CConnection::CConnection - new connection = 0x611ef8
+[22:35:47] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3bd8020, connection=0x3bd8020)
+[22:35:47] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3bd8020, connection=0x3bd8020)
+[22:35:47] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x63b8e8)
+[22:35:47] [DEBUG] CConnection::CConnection(this=0x3da1020, host='localhost', user='root', passw='****', db='samp', options=0x6682d8)
+[22:35:47] [DEBUG] CConnection::CConnection - new connection = 0x68cf30
+[22:35:47] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3da1020, connection=0x3da1020)
+[22:35:47] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3da1020, connection=0x3da1020)
+[22:35:47] [DEBUG] CConnection::CConnection(this=0x3f79020, host='localhost', user='root', passw='****', db='samp', options=0x6682d8)
+[22:35:47] [DEBUG] CConnection::CConnection - new connection = 0x698160
+[22:35:47] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3f79020, connection=0x3f79020)
+[22:35:47] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3f79020, connection=0x3f79020)
+[22:35:47] [INFO] Connection handle with id '1' successfully created.
+[22:35:47] [DEBUG] CHandleManager::Create - new handle = 0x666210
+[22:35:47] [DEBUG] mysql_connect_file: return value: '1'
+[22:35:47] [DEBUG] mysql_errno(1)
+[22:35:47] [DEBUG] CHandle::GetErrorId(this=0x666210)
+[22:35:47] [DEBUG] CConnection::GetError(this=0x63b468, connection=0x675d70)
+[22:35:47] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[22:35:47] [DEBUG] mysql_errno: return value: '0'
+[22:36:08] [DEBUG] mysql_format(1, 0x03A8BE24, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[22:36:08] [DEBUG] mysql_format: return value: '48'
+[22:36:08] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'test1'", "checkIfExists", "d")
+[22:36:08] [DEBUG] CCallback::Create(amx=0x295af20, name='checkIfExists', format='d', params=0x3a8bda8, param_offset=5)
+[22:36:08] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 46
+[22:36:08] [DEBUG] processing specifier 'd' with parameter index 0
+[22:36:08] [DEBUG] retrieved and pushed value '0'
+[22:36:08] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[22:36:08] [DEBUG] created delayed callback with 1 parameter
+[22:36:08] [DEBUG] CHandle::Execute(this=0x666210, type=1, query=0x6b73e8)
+[22:36:08] [DEBUG] CHandle::Execute - return value: true
+[22:36:08] [DEBUG] mysql_tquery: return value: '1'
+[22:36:08] [DEBUG] CConnection::Execute(query=0x6b73e8, this=0x3bd8020, connection=0x611ef8)
+[22:36:08] [DEBUG] CQuery::Execute(this=0x6b73e8, connection=0x611ef8)
+[22:36:08] [INFO] query "SELECT * FROM `accounts` where `pName` = 'test1'" successfully executed within 0.437 milliseconds
+[22:36:08] [DEBUG] CResultSet::Create(connection=0x611ef8, query_str='SELECT * FROM `accounts` where `pName` = 'test1'')
+[22:36:08] [DEBUG] created new resultset '0x676a58'
+[22:36:08] [DEBUG] fetched MySQL result '0x6b72e8'
+[22:36:08] [DEBUG] allocated 116 bytes for PAWN result
+[22:36:08] [DEBUG] CCallback::Execute(amx=0x295af20, index=46, num_params=1)
+[22:36:08] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[22:36:08] [DEBUG] processing internal specifier 'c'
+[22:36:08] [DEBUG] pushed value '0' onto AMX stack
+[22:36:08] [DEBUG] executing AMX callback with index '46'
+[22:36:08] [DEBUG] cache_get_row_count(0x03A8B900)
+[22:36:08] [DEBUG] cache_get_row_count: return value: '1'
+[22:36:08] [DEBUG] AMX callback executed with error '0'
+[22:36:08] [INFO] Callback successfully executed.
+[22:36:11] [DEBUG] mysql_format(1, 0x03A8BC5C, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:36:11] [DEBUG] CHandle::EscapeString(this=0x666210, src='test1')
+[22:36:11] [DEBUG] CConnection::EscapeString(src='test1', this=0x63b468, connection=0x675d70)
+[22:36:11] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:36:11] [DEBUG] mysql_format: return value: '58'
+[22:36:11] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:36:11] [DEBUG] CHandle::Execute(this=0x666210, type=3, query=0x6644c8)
+[22:36:11] [DEBUG] CConnection::Execute(query=0x6644c8, this=0x63b468, connection=0x675d70)
+[22:36:11] [DEBUG] CQuery::Execute(this=0x6644c8, connection=0x675d70)
+[22:36:11] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.457 milliseconds
+[22:36:11] [DEBUG] CResultSet::Create(connection=0x675d70, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:36:11] [DEBUG] created new resultset '0x676b38'
+[22:36:11] [DEBUG] fetched MySQL result '0x6668b8'
+[22:36:11] [DEBUG] allocated 76 bytes for PAWN result
+[22:36:11] [DEBUG] CHandle::Execute - return value: true
+[22:36:11] [DEBUG] mysql_query: return value: '1'
+[22:36:11] [DEBUG] cache_get_value_name(0, "pPassword", 0x03A8BB08, 61)
+[22:36:11] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:36:11] [DEBUG] cache_get_value_name: return value: '1'
+[22:36:13] [DEBUG] mysql_format(1, 0x03A8BC5C, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:36:13] [DEBUG] CHandle::EscapeString(this=0x666210, src='test1')
+[22:36:13] [DEBUG] CConnection::EscapeString(src='test1', this=0x63b468, connection=0x675d70)
+[22:36:13] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:36:13] [DEBUG] mysql_format: return value: '58'
+[22:36:13] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:36:13] [DEBUG] CHandle::Execute(this=0x666210, type=3, query=0x6644c8)
+[22:36:13] [DEBUG] CConnection::Execute(query=0x6644c8, this=0x63b468, connection=0x675d70)
+[22:36:13] [DEBUG] CQuery::Execute(this=0x6644c8, connection=0x675d70)
+[22:36:13] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.642 milliseconds
+[22:36:13] [DEBUG] CResultSet::Create(connection=0x675d70, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:36:13] [DEBUG] created new resultset '0x6765f8'
+[22:36:13] [DEBUG] fetched MySQL result '0x666a38'
+[22:36:13] [DEBUG] allocated 76 bytes for PAWN result
+[22:36:13] [DEBUG] CHandle::Execute - return value: true
+[22:36:13] [DEBUG] mysql_query: return value: '2'
+[22:36:13] [DEBUG] cache_get_value_name(0, "pPassword", 0x03A8BB08, 61)
+[22:36:13] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:36:13] [DEBUG] cache_get_value_name: return value: '1'
+[22:36:15] [DEBUG] mysql_format(1, 0x03A8BC5C, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[22:36:15] [DEBUG] CHandle::EscapeString(this=0x666210, src='test1')
+[22:36:15] [DEBUG] CConnection::EscapeString(src='test1', this=0x63b468, connection=0x675d70)
+[22:36:15] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:36:15] [DEBUG] mysql_format: return value: '58'
+[22:36:15] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'", 1)
+[22:36:15] [DEBUG] CHandle::Execute(this=0x666210, type=3, query=0x6644c8)
+[22:36:15] [DEBUG] CConnection::Execute(query=0x6644c8, this=0x63b468, connection=0x675d70)
+[22:36:15] [DEBUG] CQuery::Execute(this=0x6644c8, connection=0x675d70)
+[22:36:15] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.886 milliseconds
+[22:36:16] [DEBUG] CResultSet::Create(connection=0x675d70, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'test1'')
+[22:36:16] [DEBUG] created new resultset '0x676a90'
+[22:36:16] [DEBUG] fetched MySQL result '0x666a38'
+[22:36:16] [DEBUG] allocated 76 bytes for PAWN result
+[22:36:16] [DEBUG] CHandle::Execute - return value: true
+[22:36:16] [DEBUG] mysql_query: return value: '3'
+[22:36:16] [DEBUG] cache_get_value_name(0, "pPassword", 0x03A8BB08, 61)
+[22:36:16] [DEBUG] cache_get_value_name: assigned value: '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui'
+[22:36:16] [DEBUG] cache_get_value_name: return value: '1'
+[22:36:16] [DEBUG] mysql_format(1, 0x03A8B7E0, 300, "SELECT * from `accounts` WHERE `pName` = '%e'")
+[22:36:16] [DEBUG] CHandle::EscapeString(this=0x666210, src='test1')
+[22:36:16] [DEBUG] CConnection::EscapeString(src='test1', this=0x63b468, connection=0x675d70)
+[22:36:16] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'test1'
+[22:36:16] [DEBUG] mysql_format: return value: '48'
+[22:36:16] [DEBUG] mysql_tquery(1, "SELECT * from `accounts` WHERE `pName` = 'test1'", "OnPlayerLoad", "d")
+[22:36:16] [DEBUG] CCallback::Create(amx=0x295af20, name='OnPlayerLoad', format='d', params=0x3a8b7c8, param_offset=5)
+[22:36:16] [DEBUG] CCallback::Create - callback index for 'OnPlayerLoad': 25
+[22:36:16] [DEBUG] processing specifier 'd' with parameter index 0
+[22:36:16] [DEBUG] retrieved and pushed value '0'
+[22:36:16] [INFO] Callback 'OnPlayerLoad' set up for delayed execution.
+[22:36:16] [DEBUG] created delayed callback with 1 parameter
+[22:36:16] [DEBUG] CHandle::Execute(this=0x666210, type=1, query=0x664538)
+[22:36:16] [DEBUG] CHandle::Execute - return value: true
+[22:36:16] [DEBUG] mysql_tquery: return value: '1'
+[22:36:16] [DEBUG] CConnection::Execute(query=0x664538, this=0x3bd8020, connection=0x611ef8)
+[22:36:16] [DEBUG] CQuery::Execute(this=0x664538, connection=0x611ef8)
+[22:36:16] [INFO] query "SELECT * from `accounts` WHERE `pName` = 'test1'" successfully executed within 0.430 milliseconds
+[22:36:16] [DEBUG] CResultSet::Create(connection=0x611ef8, query_str='SELECT * from `accounts` WHERE `pName` = 'test1'')
+[22:36:16] [DEBUG] created new resultset '0x676710'
+[22:36:16] [DEBUG] fetched MySQL result '0x6c0400'
+[22:36:16] [DEBUG] allocated 116 bytes for PAWN result
+[22:36:16] [DEBUG] CCallback::Execute(amx=0x295af20, index=25, num_params=1)
+[22:36:16] [INFO] Executing callback 'OnPlayerLoad' with 1 parameter...
+[22:36:16] [DEBUG] processing internal specifier 'c'
+[22:36:16] [DEBUG] pushed value '0' onto AMX stack
+[22:36:16] [DEBUG] executing AMX callback with index '25'
+[22:36:16] [DEBUG] cache_get_value_name_int(0, "ID", 0x037DF510)
+[22:36:16] [DEBUG] cache_get_value_name_int: assigned value: '7'
+[22:36:16] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:36:16] [DEBUG] cache_get_value_name(0, "pName", 0x037DF590, 128)
+[22:36:16] [DEBUG] cache_get_value_name: assigned value: 'test1'
+[22:36:16] [DEBUG] cache_get_value_name: return value: '1'
+[22:36:16] [DEBUG] cache_get_value_name(0, "pEmail", 0x037DFDE8, 128)
+[22:36:16] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[22:36:16] [DEBUG] cache_get_value_name: return value: '1'
+[22:36:16] [DEBUG] cache_get_value_name_int(0, "pBank", 0x037DFFE8)
+[22:36:16] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[22:36:16] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:36:16] [DEBUG] cache_get_value_name_int(0, "pCash", 0x037DFFEC)
+[22:36:16] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[22:36:16] [DEBUG] cache_get_value_name_int: return value: '1'
+[22:36:16] [DEBUG] AMX callback executed with error '0'
+[22:36:16] [INFO] Callback successfully executed.

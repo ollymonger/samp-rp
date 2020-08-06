@@ -19,6 +19,20 @@ main() {
 /* 1- NEWS -*/
 new MySQL:db_handle;
 
+new
+bool:LoggedIn[MAX_PLAYERS], tries[MAX_PLAYERS];
+
+enum ENUM_PLAYER_DATA {
+    ID[32],
+        pName[MAX_PLAYER_NAME],
+        pPassword[255],
+        HashedPassword[255],
+        pEmail[128],
+        pBank,
+        pCash
+}
+new pInfo[MAX_PLAYERS][ENUM_PLAYER_DATA];
+
 /* 2- DIALOGS -*/
 
 public OnGameModeInit() {
@@ -26,10 +40,10 @@ public OnGameModeInit() {
     // Don't use these lines if it's a filterscript
     SetGameModeText("Roleplay | v1");
 
-	/* MySQL info */
+    /* MySQL info */
     db_handle = mysql_connect_file("mysql.ini"); // Database info!
- 
-    if(db_handle == MYSQL_INVALID_HANDLE || mysql_errno(db_handle) != 0) { 
+
+    if(db_handle == MYSQL_INVALID_HANDLE || mysql_errno(db_handle) != 0) {
         printf("** [MYSQL] Failed to connect! Exiting gamemode!");
         SendRconCommand("exit");
         return 1;
@@ -52,33 +66,32 @@ public OnPlayerRequestClass(playerid, classid) {
 }
 
 public OnPlayerConnect(playerid) {
-	new query[200];
+    new query[200];
 
     new name[MAX_PLAYER_NAME + 1];
     GetPlayerName(playerid, name, sizeof(name));
 
-	mysql_format(db_handle, query, sizeof(query), "SELECT * FROM `accounts` where `pName` = '%s'", name); // Get the player's name
-	printf("connected");
-	mysql_tquery(db_handle, query, "checkIfExists", "d", playerid); // Send to check if exists function
+    mysql_format(db_handle, query, sizeof(query), "SELECT * FROM `accounts` where `pName` = '%s'", name); // Get the player's name
+    mysql_tquery(db_handle, query, "checkIfExists", "d", playerid); // Send to check if exists function
     return 1;
 }
 
 forward checkIfExists(playerid);
-public checkIfExists(playerid){
-	// Checks to see if the user exists and show them a specific dialog dependant on registration status!
-	new string[500];
+public checkIfExists(playerid) {
+    // Checks to see if the user exists and show them a specific dialog dependant on registration status!
+    new string[500];
 
     new name[MAX_PLAYER_NAME + 1];
     GetPlayerName(playerid, name, sizeof(name));
-	if(cache_num_rows() > 0){
-		// User exists in the database!
-		format(string, sizeof(string), "{FFFFFF} Welcome back to the server %s!\n\n Please input your password below to continue!", name);
-		Dialog_Show(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "Login System", string, "Login", "Quit");
-	} else {
-		// User does not exist in the database!
-		format(string, sizeof(string), "{FFFFFF} This account is not registered!\n\n Please input a password below to continue!");
-		Dialog_Show(playerid, DIALOG_REGISTER, DIALOG_STYLE_PASSWORD, "Login System", string, "Register", "Quit");
-	}
+    if(cache_num_rows() > 0) {
+        // User exists in the database!
+        format(string, sizeof(string), "{FFFFFF} Welcome back to the server {A5EBF6}%s{FFFFFF}!\n\n Please input your password below to continue!", name);
+        Dialog_Show(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "Login System", string, "Login", "Quit");
+    } else {
+        // User does not exist in the database!
+        format(string, sizeof(string), "{FFFFFF} Welcome, {A5EBF6}%s{FFFFFF}!\n\n{FFFFFF} This account is not registered!\n\n Please input a password below to continue!", GetName(playerid));
+        Dialog_Show(playerid, DIALOG_REGISTER, DIALOG_STYLE_PASSWORD, "Login System", string, "Register", "Quit");
+    }
 }
 
 public OnPlayerDisconnect(playerid, reason) {
@@ -214,29 +227,78 @@ public OnVehicleStreamOut(vehicleid, forplayerid) {
 }
 
 /* 3- DIALOGS -*/
-Dialog:DIALOG_REGISTER(playerid, response, listitem, inputtext[]){
-    if(response){
+Dialog:DIALOG_REGISTER(playerid, response, listitem, inputtext[]) {
+    if(response) {
         bcrypt_hash(inputtext, BCRYPT_COST, "HashPlayerPassword", "d", playerid);
     } else {
         Kick(playerid);
     }
 }
 
+Dialog:DIALOG_LOGIN(playerid, response, listitem, inputtext[]) {
+    if(response) {
+        new query[256], playerName[MAX_PLAYER_NAME], password[BCRYPT_HASH_LENGTH];
+        GetPlayerName(playerid, playerName, sizeof(playerName));
+
+        mysql_format(db_handle, query, sizeof(query), "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'", GetName(playerid));
+        mysql_query(db_handle, query);
+        cache_get_value(0, "pPassword", password, BCRYPT_HASH_LENGTH);
+        bcrypt_check(inputtext, password, "OnPasswordChecked", "d", playerid);
+    } else {
+        Kick(playerid);
+    }
+}
+
+forward OnPasswordChecked(playerid);
+public OnPasswordChecked(playerid) {
+    new bool:match = bcrypt_is_equal();
+    new string[300];
+
+    if(match) {
+        new query[300];
+        mysql_format(db_handle, query, sizeof(query), "SELECT * from `accounts` WHERE `pName` = '%e'", GetName(playerid));
+        mysql_tquery(db_handle, query, "OnPlayerLoad", "d", playerid);
+    } else {
+        if(tries[playerid] < 3) {
+            tries[playerid]++;
+            format(string, sizeof(string), "{FFFFFF} Welcome back to the server {A5EBF6}%s{FFFFFF}!\n\n That password was incorrect, please try again (%d/3)!", GetName(playerid), tries);
+            Dialog_Show(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "Login System", string, "Login", "Quit");
+        } else {
+            Dialog_Show(playerid, DIALOG_TOOMANYTRIES, DIALOG_STYLE_MSGBOX, "Login System", "Too many login attempts!\n\n Try again later!", "Continue", "");
+        }
+    }
+    return 1;
+}
+
+forward OnPlayerLoad(playerid);
+public OnPlayerLoad(playerid) {
+    cache_get_value_int(0, "ID", pInfo[playerid][ID]);
+    cache_get_value(0, "pName", pInfo[playerid][pName], 128);
+    cache_get_value(0, "pEmail", pInfo[playerid][pEmail], 128);
+    cache_get_value_int(0, "pBank", pInfo[playerid][pBank]);
+    cache_get_value_int(0, "pCash", pInfo[playerid][pCash]);
+
+    LoggedIn[playerid] = true;
+    SendClientMessage(playerid, -1, "Logged in");
+    SpawnPlayer(playerid);
+    return 1;
+}
+
 forward HashPlayerPassword(playerid);
-public HashPlayerPassword(playerid){
+public HashPlayerPassword(playerid) {
     new hash[BCRYPT_HASH_LENGTH], query[300];
     bcrypt_get_hash(hash);
     mysql_format(db_handle, query, sizeof(query), "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('%e', '%e', 'NULL', 0, 0)", GetName(playerid), hash);
     mysql_tquery(db_handle, query, "OnPlayerRegister", "d", playerid);
-	return 1;
+    return 1;
 }
 
-stock GetName(playerid)
-{
-	new name[MAX_PLAYER_NAME];
-	GetPlayerName(playerid, name, sizeof(name));
-	return name;
+stock GetName(playerid) {
+    new name[MAX_PLAYER_NAME];
+    GetPlayerName(playerid, name, sizeof(name));
+    return name;
 }
+
 public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
     return 1;
 }
@@ -244,4 +306,3 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 public OnPlayerClickPlayer(playerid, clickedplayerid, source) {
     return 1;
 }
-
