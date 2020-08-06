@@ -5,6 +5,10 @@
 
 #include <a_samp>
 #include <a_mysql>
+#include <easyDialog>
+#include <bcrypt>
+
+#define BCRYPT_COST 12
 
 main() {
     print("\n----------------------------------");
@@ -16,8 +20,6 @@ main() {
 new MySQL:db_handle;
 
 /* 2- DIALOGS -*/
-#define DIALOG_LOGIN 0
-#define DIALOG_REGISTER 1
 
 public OnGameModeInit() {
     mysql_log(ALL);
@@ -71,11 +73,11 @@ public checkIfExists(playerid){
 	if(cache_num_rows() > 0){
 		// User exists in the database!
 		format(string, sizeof(string), "{FFFFFF} Welcome back to the server %s!\n\n Please input your password below to continue!", name);
-		ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_INPUT, "Login System", string, "Login", "Quit");
+		Dialog_Show(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "Login System", string, "Login", "Quit");
 	} else {
 		// User does not exist in the database!
 		format(string, sizeof(string), "{FFFFFF} This account is not registered!\n\n Please input a password below to continue!");
-		ShowPlayerDialog(playerid, DIALOG_REGISTER, DIALOG_STYLE_INPUT, "Login System", string, "Register", "Quit");
+		Dialog_Show(playerid, DIALOG_REGISTER, DIALOG_STYLE_PASSWORD, "Login System", string, "Register", "Quit");
 	}
 }
 
@@ -211,6 +213,30 @@ public OnVehicleStreamOut(vehicleid, forplayerid) {
     return 1;
 }
 
+/* 3- DIALOGS -*/
+Dialog:DIALOG_REGISTER(playerid, response, listitem, inputtext[]){
+    if(response){
+        bcrypt_hash(inputtext, BCRYPT_COST, "HashPlayerPassword", "d", playerid);
+    } else {
+        Kick(playerid);
+    }
+}
+
+forward HashPlayerPassword(playerid);
+public HashPlayerPassword(playerid){
+    new hash[BCRYPT_HASH_LENGTH], query[300];
+    bcrypt_get_hash(hash);
+    mysql_format(db_handle, query, sizeof(query), "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('%e', '%e', 'NULL', 0, 0)", GetName(playerid), hash);
+    mysql_tquery(db_handle, query, "OnPlayerRegister", "d", playerid);
+	return 1;
+}
+
+stock GetName(playerid)
+{
+	new name[MAX_PLAYER_NAME];
+	GetPlayerName(playerid, name, sizeof(name));
+	return name;
+}
 public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
     return 1;
 }
@@ -218,3 +244,4 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 public OnPlayerClickPlayer(playerid, clickedplayerid, source) {
     return 1;
 }
+

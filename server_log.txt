@@ -604,3 +604,580 @@ v0.3.7-R2, (C)2005-2015 SA-MP Team
 
 *** Streamer Plugin v2.9.4 by Incognito unloaded ***
 
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[13:52:24] filterscripts = ""  (string)
+[13:52:24] 
+[13:52:24] Server Plugins
+[13:52:24] --------------
+[13:52:24]  Loading plugin: mysql.dll
+[13:52:24]  >> plugin.mysql: R41-4 successfully loaded.
+[13:52:24]   Loaded.
+[13:52:24]  Loading plugin: streamer
+[13:52:24] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[13:52:24]   Loaded.
+[13:52:24]  Loading plugin: hash.dll
+[13:52:24]   Failed.
+[13:52:24]  Loaded 2 plugins.
+
+[13:52:24] 
+[13:52:24] Filterscripts
+[13:52:24] ---------------
+[13:52:24]   Loaded 0 filterscripts.
+
+[13:52:25] Script[gamemodes/Roleplay.amx]: Run time error 19: "File or function is not found"
+[13:52:25] Number of vehicle models: 0
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[13:52:38] filterscripts = ""  (string)
+[13:52:38] 
+[13:52:38] Server Plugins
+[13:52:38] --------------
+[13:52:38]  Loading plugin: mysql.dll
+[13:52:38]  >> plugin.mysql: R41-4 successfully loaded.
+[13:52:38]   Loaded.
+[13:52:38]  Loading plugin: streamer
+[13:52:38] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[13:52:38]   Loaded.
+[13:52:38]  Loading plugin: hash.dll
+[13:52:38]   Failed.
+[13:52:38]  Loaded 2 plugins.
+
+[13:52:38] 
+[13:52:38] Filterscripts
+[13:52:38] ---------------
+[13:52:38]   Loaded 0 filterscripts.
+
+[13:52:38] Script[gamemodes/Roleplay.amx]: Run time error 19: "File or function is not found"
+[13:52:38] Number of vehicle models: 0
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[13:53:51] filterscripts = ""  (string)
+[13:53:51] 
+[13:53:51] Server Plugins
+[13:53:51] --------------
+[13:53:51]  Loading plugin: mysql.dll
+[13:53:51]  >> plugin.mysql: R41-4 successfully loaded.
+[13:53:51]   Loaded.
+[13:53:51]  Loading plugin: streamer
+[13:53:51] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[13:53:51]   Loaded.
+[13:53:51]  Loading plugin: hash.dll
+[13:53:51]   Failed.
+[13:53:51]  Loaded 2 plugins.
+
+[13:53:51] 
+[13:53:51] Filterscripts
+[13:53:51] ---------------
+[13:53:51]   Loaded 0 filterscripts.
+
+[13:53:51] Script[gamemodes/Roleplay.amx]: Run time error 19: "File or function is not found"
+[13:53:51] Number of vehicle models: 0
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[13:55:23] filterscripts = ""  (string)
+[13:55:23] 
+[13:55:23] Server Plugins
+[13:55:23] --------------
+[13:55:23]  Loading plugin: mysql.dll
+[13:55:23]  >> plugin.mysql: R41-4 successfully loaded.
+[13:55:23]   Loaded.
+[13:55:23]  Loading plugin: streamer
+[13:55:23] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[13:55:23]   Loaded.
+[13:55:23]  Loaded 2 plugins.
+
+[13:55:23] 
+[13:55:23] Filterscripts
+[13:55:23] ---------------
+[13:55:23]   Loaded 0 filterscripts.
+
+[13:55:23] Script[gamemodes/Roleplay.amx]: Run time error 19: "File or function is not found"
+[13:55:23] Number of vehicle models: 0
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[13:56:11] filterscripts = ""  (string)
+[13:56:11] 
+[13:56:11] Server Plugins
+[13:56:11] --------------
+[13:56:11]  Loading plugin: mysql.dll
+[13:56:11]  >> plugin.mysql: R41-4 successfully loaded.
+[13:56:11]   Loaded.
+[13:56:11]  Loading plugin: streamer
+[13:56:11] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[13:56:11]   Loaded.
+[13:56:11]  Loading plugin: crashdetect
+[13:56:12]   CrashDetect must be loaded before 'streamer.DLL'
+[13:56:12]   Failed.
+[13:56:12]  Loaded 2 plugins.
+
+[13:56:12] 
+[13:56:12] Filterscripts
+[13:56:12] ---------------
+[13:56:12]   Loaded 0 filterscripts.
+
+[13:56:12] Script[gamemodes/Roleplay.amx]: Run time error 19: "File or function is not found"
+[13:56:12] Number of vehicle models: 0
+[13:56:23] --- Server Shutting Down.
+[13:56:23] plugin.mysql: Unloading plugin...
+[13:56:23] plugin.mysql: Plugin unloaded.
+[13:56:23] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[13:56:24] filterscripts = ""  (string)
+[13:56:24] 
+[13:56:24] Server Plugins
+[13:56:24] --------------
+[13:56:24]  Loading plugin: mysql.dll
+[13:56:25]  >> plugin.mysql: R41-4 successfully loaded.
+[13:56:25]   Loaded.
+[13:56:25]  Loading plugin: crashdetect
+[13:56:25]   CrashDetect plugin 4.20
+[13:56:25]   Loaded.
+[13:56:25]  Loading plugin: streamer
+[13:56:25] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[13:56:25]   Loaded.
+[13:56:25]  Loaded 3 plugins.
+
+[13:56:25] 
+[13:56:25] Filterscripts
+[13:56:25] ---------------
+[13:56:25]   Loaded 0 filterscripts.
+
+[13:56:25] [debug] Run time error 19: "File or function is not found"
+[13:56:25] [debug]  bcrypt_hash
+[13:56:25] [debug]  bcrypt_get_hash
+[13:56:25] [debug] Run time error 19: "File or function is not found"
+[13:56:25] [debug]  bcrypt_hash
+[13:56:25] [debug]  bcrypt_get_hash
+[13:56:25] Script[gamemodes/Roleplay.amx]: Run time error 19: "File or function is not found"
+[13:56:25] Number of vehicle models: 0
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[13:56:59] filterscripts = ""  (string)
+[13:56:59] 
+[13:56:59] Server Plugins
+[13:56:59] --------------
+[13:56:59]  Loading plugin: mysql.dll
+[13:56:59]  >> plugin.mysql: R41-4 successfully loaded.
+[13:56:59]   Loaded.
+[13:56:59]  Loading plugin: crashdetect
+[13:56:59]   CrashDetect plugin 4.20
+[13:56:59]   Loaded.
+[13:56:59]  Loading plugin: streamer
+[13:56:59] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[13:56:59]   Loaded.
+[13:56:59]  Loading plugin: bcrypt_samp.dll
+[13:56:59]   Failed.
+[13:56:59]  Loaded 3 plugins.
+
+[13:56:59] 
+[13:56:59] Filterscripts
+[13:56:59] ---------------
+[13:56:59]   Loaded 0 filterscripts.
+
+[13:56:59] [debug] Run time error 19: "File or function is not found"
+[13:56:59] [debug]  bcrypt_hash
+[13:56:59] [debug]  bcrypt_get_hash
+[13:56:59] [debug] Run time error 19: "File or function is not found"
+[13:56:59] [debug]  bcrypt_hash
+[13:56:59] [debug]  bcrypt_get_hash
+[13:56:59] Script[gamemodes/Roleplay.amx]: Run time error 19: "File or function is not found"
+[13:56:59] Number of vehicle models: 0
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[13:57:07] filterscripts = ""  (string)
+[13:57:07] 
+[13:57:07] Server Plugins
+[13:57:07] --------------
+[13:57:07]  Loading plugin: mysql.dll
+[13:57:07]  >> plugin.mysql: R41-4 successfully loaded.
+[13:57:07]   Loaded.
+[13:57:07]  Loading plugin: crashdetect
+[13:57:07]   CrashDetect plugin 4.20
+[13:57:07]   Loaded.
+[13:57:07]  Loading plugin: streamer
+[13:57:07] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[13:57:07]   Loaded.
+[13:57:07]  Loading plugin: bcrypt_samp
+[13:57:07]   Failed.
+[13:57:07]  Loaded 3 plugins.
+
+[13:57:07] 
+[13:57:07] Filterscripts
+[13:57:07] ---------------
+[13:57:07]   Loaded 0 filterscripts.
+
+[13:57:07] [debug] Run time error 19: "File or function is not found"
+[13:57:07] [debug]  bcrypt_hash
+[13:57:07] [debug]  bcrypt_get_hash
+[13:57:07] [debug] Run time error 19: "File or function is not found"
+[13:57:07] [debug]  bcrypt_hash
+[13:57:07] [debug]  bcrypt_get_hash
+[13:57:07] Script[gamemodes/Roleplay.amx]: Run time error 19: "File or function is not found"
+[13:57:07] Number of vehicle models: 0
+[13:57:15] [debug] Server received interrupt signal
+[13:57:15] [debug] Native backtrace:
+[13:57:15] [debug] #0 7719216c in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[13:57:15] [debug] #1 7589f56f in ?? () in C:\WINDOWS\System32\KERNELBASE.dll
+[13:57:15] [debug] #2 0048d53c in ?? () in samp-server.exe
+[13:57:15] [debug] #3 0049b4a1 in ?? () in samp-server.exe
+[13:57:15] [debug] #4 0049b4b1 in ?? () in samp-server.exe
+[13:57:15] --- Server Shutting Down.
+[13:57:15] [debug] Run time error 19: "File or function is not found"
+[13:57:15] [debug]  bcrypt_hash
+[13:57:15] [debug]  bcrypt_get_hash
+[13:57:16] plugin.mysql: Unloading plugin...
+[13:57:16] plugin.mysql: Plugin unloaded.
+[13:57:16] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[13:57:17] filterscripts = ""  (string)
+[13:57:17] 
+[13:57:17] Server Plugins
+[13:57:17] --------------
+[13:57:17]  Loading plugin: mysql.dll
+[13:57:17]  >> plugin.mysql: R41-4 successfully loaded.
+[13:57:17]   Loaded.
+[13:57:17]  Loading plugin: bcrypt_samp.dll
+[13:57:17]   Failed.
+[13:57:17]  Loading plugin: crashdetect
+[13:57:17]   CrashDetect plugin 4.20
+[13:57:17]   Loaded.
+[13:57:17]  Loading plugin: streamer
+[13:57:17] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[13:57:17]   Loaded.
+[13:57:17]  Loaded 3 plugins.
+
+[13:57:17] 
+[13:57:17] Filterscripts
+[13:57:17] ---------------
+[13:57:17]   Loaded 0 filterscripts.
+
+[13:57:17] [debug] Run time error 19: "File or function is not found"
+[13:57:17] [debug]  bcrypt_hash
+[13:57:17] [debug]  bcrypt_get_hash
+[13:57:17] [debug] Run time error 19: "File or function is not found"
+[13:57:17] [debug]  bcrypt_hash
+[13:57:17] [debug]  bcrypt_get_hash
+[13:57:17] Script[gamemodes/Roleplay.amx]: Run time error 19: "File or function is not found"
+[13:57:17] Number of vehicle models: 0
+[13:57:30] [debug] Server received interrupt signal
+[13:57:30] [debug] Native backtrace:
+[13:57:30] [debug] #0 7719216c in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[13:57:30] [debug] #1 7589f56f in ?? () in C:\WINDOWS\System32\KERNELBASE.dll
+[13:57:30] [debug] #2 0048d53c in ?? () in samp-server.exe
+[13:57:30] [debug] #3 0049b4a1 in ?? () in samp-server.exe
+[13:57:30] [debug] #4 0049b4b1 in ?? () in samp-server.exe
+[13:57:30] --- Server Shutting Down.
+[13:57:30] [debug] Run time error 19: "File or function is not found"
+[13:57:30] [debug]  bcrypt_hash
+[13:57:30] [debug]  bcrypt_get_hash
+[13:57:30] plugin.mysql: Unloading plugin...
+[13:57:30] plugin.mysql: Plugin unloaded.
+[13:57:30] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[13:57:32] filterscripts = ""  (string)
+[13:57:32] 
+[13:57:32] Server Plugins
+[13:57:32] --------------
+[13:57:32]  Loading plugin: mysql.dll
+[13:57:32]  >> plugin.mysql: R41-4 successfully loaded.
+[13:57:32]   Loaded.
+[13:57:32]  Loading plugin: crashdetect
+[13:57:32]   CrashDetect plugin 4.20
+[13:57:32]   Loaded.
+[13:57:32]  Loading plugin: streamer
+[13:57:32] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[13:57:32]   Loaded.
+[13:57:32]  Loading plugin: bcrypt_samp.dll
+[13:57:32]   Failed.
+[13:57:32]  Loaded 3 plugins.
+
+[13:57:32] 
+[13:57:32] Filterscripts
+[13:57:32] ---------------
+[13:57:32]   Loaded 0 filterscripts.
+
+[13:57:32] [debug] Run time error 19: "File or function is not found"
+[13:57:32] [debug]  bcrypt_hash
+[13:57:32] [debug]  bcrypt_get_hash
+[13:57:32] [debug] Run time error 19: "File or function is not found"
+[13:57:32] [debug]  bcrypt_hash
+[13:57:32] [debug]  bcrypt_get_hash
+[13:57:32] Script[gamemodes/Roleplay.amx]: Run time error 19: "File or function is not found"
+[13:57:32] Number of vehicle models: 0
+[13:57:56] [debug] Server received interrupt signal
+[13:57:56] [debug] Native backtrace:
+[13:57:56] [debug] #0 7719216c in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[13:57:56] [debug] #1 7589f56f in ?? () in C:\WINDOWS\System32\KERNELBASE.dll
+[13:57:56] [debug] #2 0048d53c in ?? () in samp-server.exe
+[13:57:56] [debug] #3 0049b4a1 in ?? () in samp-server.exe
+[13:57:56] [debug] #4 0049b4b1 in ?? () in samp-server.exe
+[13:57:56] --- Server Shutting Down.
+[13:57:56] [debug] Run time error 19: "File or function is not found"
+[13:57:56] [debug]  bcrypt_hash
+[13:57:56] [debug]  bcrypt_get_hash
+[13:57:56] plugin.mysql: Unloading plugin...
+[13:57:56] plugin.mysql: Plugin unloaded.
+[13:57:56] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[13:57:58] filterscripts = ""  (string)
+[13:57:58] 
+[13:57:58] Server Plugins
+[13:57:58] --------------
+[13:57:58]  Loading plugin: mysql.dll
+[13:57:58]  >> plugin.mysql: R41-4 successfully loaded.
+[13:57:58]   Loaded.
+[13:57:58]  Loading plugin: crashdetect
+[13:57:58]   CrashDetect plugin 4.20
+[13:57:58]   Loaded.
+[13:57:58]  Loading plugin: streamer
+[13:57:58] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[13:57:58]   Loaded.
+[13:57:58]  Loading plugin: bcrypt-samp.dll
+[13:57:59]   plugin.bcrypt v2.2.3 was loaded.
+[13:57:59]   plugin.bcrypt: 8 cores detected, 7 threads will be used.
+[13:57:59]   Loaded.
+[13:57:59]  Loaded 4 plugins.
+
+[13:57:59] 
+[13:57:59] Filterscripts
+[13:57:59] ---------------
+[13:57:59]   Loaded 0 filterscripts.
+
+[13:57:59] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[13:57:59] 
+----------------------------------
+[13:57:59]  Gamemode started... please wait...
+[13:57:59] ----------------------------------
+
+[13:57:59] Number of vehicle models: 0
+[13:57:59] plugin.bcrypt: Version check failed.
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[13:58:29] filterscripts = ""  (string)
+[13:58:29] 
+[13:58:29] Server Plugins
+[13:58:29] --------------
+[13:58:29]  Loading plugin: mysql.dll
+[13:58:29]  >> plugin.mysql: R41-4 successfully loaded.
+[13:58:29]   Loaded.
+[13:58:29]  Loading plugin: crashdetect
+[13:58:29]   CrashDetect plugin 4.20
+[13:58:29]   Loaded.
+[13:58:29]  Loading plugin: streamer
+[13:58:29] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[13:58:29]   Loaded.
+[13:58:29]  Loading plugin: bcrypt-samp.dll
+[13:58:29]   plugin.bcrypt v2.2.3 was loaded.
+[13:58:29]   plugin.bcrypt: 8 cores detected, 7 threads will be used.
+[13:58:29]   Loaded.
+[13:58:29]  Loaded 4 plugins.
+
+[13:58:29] 
+[13:58:29] Filterscripts
+[13:58:29] ---------------
+[13:58:29]   Loaded 0 filterscripts.
+
+[13:58:29] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[13:58:29] 
+----------------------------------
+[13:58:29]  Gamemode started... please wait...
+[13:58:29] ----------------------------------
+
+[13:58:29] Number of vehicle models: 0
+[13:58:29] plugin.bcrypt: Version check failed.
+[14:00:34] [connection] 127.0.0.1:50197 requests connection cookie.
+[14:00:35] [connection] incoming connection: 127.0.0.1:50197 id: 0
+[14:00:36] [join] Olly has joined the server (0:127.0.0.1)
+[14:00:36] connected
+[14:00:42] [part] Olly has left the server (0:1)
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[14:01:44] filterscripts = ""  (string)
+[14:01:44] 
+[14:01:44] Server Plugins
+[14:01:44] --------------
+[14:01:44]  Loading plugin: mysql.dll
+[14:01:44]  >> plugin.mysql: R41-4 successfully loaded.
+[14:01:44]   Loaded.
+[14:01:44]  Loading plugin: crashdetect
+[14:01:44]   CrashDetect plugin 4.20
+[14:01:44]   Loaded.
+[14:01:44]  Loading plugin: streamer
+[14:01:44] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[14:01:44]   Loaded.
+[14:01:44]  Loading plugin: bcrypt-samp.dll
+[14:01:44]   plugin.bcrypt v2.2.3 was loaded.
+[14:01:44]   plugin.bcrypt: 8 cores detected, 7 threads will be used.
+[14:01:44]   Loaded.
+[14:01:44]  Loaded 4 plugins.
+
+[14:01:44] 
+[14:01:44] Filterscripts
+[14:01:44] ---------------
+[14:01:44]   Loaded 0 filterscripts.
+
+[14:01:44] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[14:01:44] 
+----------------------------------
+[14:01:44]  Gamemode started... please wait...
+[14:01:44] ----------------------------------
+
+[14:01:44] Number of vehicle models: 0
+[14:01:44] plugin.bcrypt: Version check failed.
+[14:02:04] [connection] 127.0.0.1:54260 requests connection cookie.
+[14:02:05] [connection] incoming connection: 127.0.0.1:54260 id: 0
+[14:02:06] [join] Olly has joined the server (0:127.0.0.1)
+[14:02:06] connected
+[14:02:12] [part] Olly has left the server (0:1)
+[14:03:06] [connection] 127.0.0.1:59272 requests connection cookie.
+[14:03:07] [connection] incoming connection: 127.0.0.1:59272 id: 0
+[14:03:08] [join] Olly has joined the server (0:127.0.0.1)
+[14:03:08] connected
+[14:03:11] [part] Olly has left the server (0:1)
