@@ -19,8 +19,8 @@ main() {
 /* 1- NEWS -*/
 new MySQL:db_handle;
 
-new 
-	bool:LoggedIn[MAX_PLAYERS];
+new
+bool:LoggedIn[MAX_PLAYERS], tries[MAX_PLAYERS];
 
 enum ENUM_PLAYER_DATA {
     ID[32],
@@ -251,14 +251,20 @@ Dialog:DIALOG_LOGIN(playerid, response, listitem, inputtext[]) {
 forward OnPasswordChecked(playerid);
 public OnPasswordChecked(playerid) {
     new bool:match = bcrypt_is_equal();
+    new string[300];
+
     if(match) {
         new query[300];
         mysql_format(db_handle, query, sizeof(query), "SELECT * from `accounts` WHERE `pName` = '%e'", GetName(playerid));
         mysql_tquery(db_handle, query, "OnPlayerLoad", "d", playerid);
     } else {
-        new string[100];
-        format(string, sizeof(string), "{FFFFFF} Welcome back to the server {A5EBF6}%s{FFFFFF}!\n\n That password was incorrect, please try again!", GetName(playerid));
-        Dialog_Show(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "Login System", string, "Login", "Quit");
+        if(tries[playerid] < 3) {
+            tries[playerid]++;
+            format(string, sizeof(string), "{FFFFFF} Welcome back to the server {A5EBF6}%s{FFFFFF}!\n\n That password was incorrect, please try again (%d/3)!", GetName(playerid), tries);
+            Dialog_Show(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "Login System", string, "Login", "Quit");
+        } else {
+            Dialog_Show(playerid, DIALOG_TOOMANYTRIES, DIALOG_STYLE_MSGBOX, "Login System", "Too many login attempts!\n\n Try again later!", "Continue", "");
+        }
     }
     return 1;
 }
@@ -270,8 +276,8 @@ public OnPlayerLoad(playerid) {
     cache_get_value(0, "pEmail", pInfo[playerid][pEmail], 128);
     cache_get_value_int(0, "pBank", pInfo[playerid][pBank]);
     cache_get_value_int(0, "pCash", pInfo[playerid][pCash]);
-    
-	LoggedIn[playerid] = true;
+
+    LoggedIn[playerid] = true;
     SendClientMessage(playerid, -1, "Logged in");
     return 1;
 }
