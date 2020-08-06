@@ -28,6 +28,8 @@ enum ENUM_PLAYER_DATA {
         pPassword[255],
         HashedPassword[255],
         pEmail[128],
+        Float:pHealth,
+        Float:pArmour,
         pBank,
         pCash
 }
@@ -95,6 +97,30 @@ public checkIfExists(playerid) {
 }
 
 public OnPlayerDisconnect(playerid, reason) {
+    if(LoggedIn[playerid] == true) {
+        SavePlayerData(playerid);
+        LoggedIn[playerid] = false;
+    }
+    return 1;
+}
+
+/*- SAVING PLAYER DATA -*/
+
+forward SavePlayerData(playerid);
+public SavePlayerData(playerid) {
+    new query[300], Float:armour, Float:health;
+
+    /* get player stats*/
+    pInfo[playerid][pCash] = GetPlayerMoney(playerid);
+    GetPlayerHealth(playerid, health);
+    pInfo[playerid][pHealth] = health;
+
+    GetPlayerArmour(playerid, armour);
+    pInfo[playerid][pArmour] = armour;
+
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pHealth` = '%f', `pArmour` = '%f', `pCash` = '%d', `pBank` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pHealth], pInfo[playerid][pArmour], pInfo[playerid][pCash], pInfo[playerid][pBank], GetName(playerid));
+    mysql_query(db_handle, query);
+    printf("** [MYSQL] Player: %s data has been saved! Disconnecting user...", GetName(playerid));
     return 1;
 }
 
@@ -275,11 +301,16 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "ID", pInfo[playerid][ID]);
     cache_get_value(0, "pName", pInfo[playerid][pName], 128);
     cache_get_value(0, "pEmail", pInfo[playerid][pEmail], 128);
+    cache_get_value_float(0, "pHealth", pInfo[playerid][pHealth]);
+    cache_get_value_float(0, "pArmour", pInfo[playerid][pArmour]);
     cache_get_value_int(0, "pBank", pInfo[playerid][pBank]);
     cache_get_value_int(0, "pCash", pInfo[playerid][pCash]);
 
     LoggedIn[playerid] = true;
     SendClientMessage(playerid, -1, "Logged in");
+    SetPlayerHealth(playerid, pInfo[playerid][pHealth]);
+    SetPlayerArmour(playerid, pInfo[playerid][pArmour]);
+    GivePlayerMoney(playerid, pInfo[playerid][pCash]);
     SpawnPlayer(playerid);
     return 1;
 }
@@ -288,7 +319,7 @@ forward HashPlayerPassword(playerid);
 public HashPlayerPassword(playerid) {
     new hash[BCRYPT_HASH_LENGTH], query[300];
     bcrypt_get_hash(hash);
-    mysql_format(db_handle, query, sizeof(query), "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('%e', '%e', 'NULL', 0, 0)", GetName(playerid), hash);
+    mysql_format(db_handle, query, sizeof(query), "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('%e', '%e', 'NULL', 0, 0, 0, 0)", GetName(playerid), hash);
     mysql_tquery(db_handle, query, "OnPlayerRegister", "d", playerid);
     return 1;
 }
