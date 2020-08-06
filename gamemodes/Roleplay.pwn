@@ -25,7 +25,7 @@ new
 enum ENUM_PLAYER_DATA {
     ID[32],
         pName[MAX_PLAYER_NAME],
-        pPassword[65],
+        pPassword[255],
         HashedPassword[255],
         pEmail[128],
         pBank,
@@ -242,8 +242,8 @@ Dialog:DIALOG_LOGIN(playerid, response, listitem, inputtext[]) {
 
         mysql_format(db_handle, query, sizeof(query), "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'", GetName(playerid));
         mysql_query(db_handle, query);
-        cache_get_value_name(0, "pPassword", password, BCRYPT_HASH_LENGTH);
-        bcrypt_check(inputtext, password, "OnPasswordCheck", "d", playerid);
+        cache_get_value(0, "pPassword", password, BCRYPT_HASH_LENGTH);
+        bcrypt_check(inputtext, password, "OnPasswordChecked", "d", playerid);
     } else {
         Kick(playerid);
     }
