@@ -275,6 +275,21 @@ Dialog:DIALOG_LOGIN(playerid, response, listitem, inputtext[]) {
     }
 }
 
+Dialog:DIALOG_EMAIL(playerid, response, listitem, inputtext[]) {
+    if(response) {
+        if(strfind(inputtext, "@")) {
+            new query[300];
+            mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pEmail` = '%e' WHERE  `pName` = '%e'", inputtext, GetName(playerid));
+            mysql_query(db_handle, query);
+            SendClientMessage(playerid, -1, inputtext);
+        } else {
+                Dialog_Show(playerid, DIALOG_EMAIL, DIALOG_STYLE_INPUT, "Email Registration", "The inputted string does not contain a: @ symbol! Please retry!\n\n Example: 'example@example.com'!", "Continue", "Quit");
+        }
+    } else {
+        Kick(playerid);
+    }
+}
+
 forward OnPasswordChecked(playerid);
 public OnPasswordChecked(playerid) {
     new bool:match = bcrypt_is_equal();
@@ -319,10 +334,17 @@ forward HashPlayerPassword(playerid);
 public HashPlayerPassword(playerid) {
     new hash[BCRYPT_HASH_LENGTH], query[300];
     bcrypt_get_hash(hash);
-    mysql_format(db_handle, query, sizeof(query), "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pBank`, `pCash`) VALUES ('%e', '%e', 'NULL', 0, 0, 0, 0)", GetName(playerid), hash);
+    mysql_format(db_handle, query, sizeof(query), "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pHealth`, `pArmour`, `pBank`, `pCash`) VALUES ('%e', '%e', 'NULL', 0, 0, 0, 0)", GetName(playerid), hash);
     mysql_tquery(db_handle, query, "OnPlayerRegister", "d", playerid);
     return 1;
 }
+
+forward OnPlayerRegister(playerid);
+public OnPlayerRegister(playerid) {
+    Dialog_Show(playerid, DIALOG_EMAIL, DIALOG_STYLE_INPUT, "Email Registration", "Please insert your email below, this is used to link your account to our website!\n\n Example: 'example@example.com'!", "Continue", "Quit");
+    return 1;
+}
+
 
 stock GetName(playerid) {
     new name[MAX_PLAYER_NAME];
