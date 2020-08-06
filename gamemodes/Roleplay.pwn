@@ -72,7 +72,6 @@ public OnPlayerConnect(playerid) {
     GetPlayerName(playerid, name, sizeof(name));
 
     mysql_format(db_handle, query, sizeof(query), "SELECT * FROM `accounts` where `pName` = '%s'", name); // Get the player's name
-    printf("connected");
     mysql_tquery(db_handle, query, "checkIfExists", "d", playerid); // Send to check if exists function
     return 1;
 }
@@ -235,6 +234,7 @@ Dialog:DIALOG_REGISTER(playerid, response, listitem, inputtext[]) {
         Kick(playerid);
     }
 }
+
 Dialog:DIALOG_LOGIN(playerid, response, listitem, inputtext[]) {
     if(response) {
         new query[256], playerName[MAX_PLAYER_NAME], password[BCRYPT_HASH_LENGTH];
@@ -248,6 +248,7 @@ Dialog:DIALOG_LOGIN(playerid, response, listitem, inputtext[]) {
         Kick(playerid);
     }
 }
+
 forward OnPasswordChecked(playerid);
 public OnPasswordChecked(playerid) {
     new bool:match = bcrypt_is_equal();
@@ -279,6 +280,7 @@ public OnPlayerLoad(playerid) {
 
     LoggedIn[playerid] = true;
     SendClientMessage(playerid, -1, "Logged in");
+    SpawnPlayer(playerid);
     return 1;
 }
 
@@ -296,6 +298,7 @@ stock GetName(playerid) {
     GetPlayerName(playerid, name, sizeof(name));
     return name;
 }
+
 public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
     return 1;
 }
