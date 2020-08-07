@@ -3136,3 +3136,377 @@ v0.3.7-R2, (C)2005-2015 SA-MP Team
 *** Streamer Plugin v2.9.4 by Incognito unloaded ***
 
 [00:47:19] plugin.bcrypt: Plugin unloaded.
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[14:25:16] filterscripts = ""  (string)
+[14:25:16] 
+[14:25:16] Server Plugins
+[14:25:16] --------------
+[14:25:16]  Loading plugin: mysql.dll
+[14:25:16]  >> plugin.mysql: R41-4 successfully loaded.
+[14:25:16]   Loaded.
+[14:25:16]  Loading plugin: crashdetect
+[14:25:17]   CrashDetect plugin 4.20
+[14:25:17]   Loaded.
+[14:25:17]  Loading plugin: streamer
+[14:25:17] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[14:25:17]   Loaded.
+[14:25:17]  Loading plugin: bcrypt-samp.dll
+[14:25:17]   plugin.bcrypt v2.2.3 was loaded.
+[14:25:17]   plugin.bcrypt: 8 cores detected, 7 threads will be used.
+[14:25:17]   Loaded.
+[14:25:17]  Loaded 4 plugins.
+
+[14:25:17] 
+[14:25:17] Filterscripts
+[14:25:17] ---------------
+[14:25:17]   Loaded 0 filterscripts.
+
+[14:25:17] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[14:25:17] 
+----------------------------------
+[14:25:17]  Gamemode started... please wait...
+[14:25:17] ----------------------------------
+
+[14:25:17] Number of vehicle models: 0
+[14:25:17] plugin.bcrypt: Version check failed.
+[14:26:42] [connection] 127.0.0.1:50229 requests connection cookie.
+[14:26:43] [connection] incoming connection: 127.0.0.1:50229 id: 0
+[14:26:44] [join] testdialog11 has joined the server (0:127.0.0.1)
+[14:26:57] [part] testdialog11 has left the server (0:1)
+[14:27:18] [connection] 127.0.0.1:56561 requests connection cookie.
+[14:27:19] [connection] incoming connection: 127.0.0.1:56561 id: 0
+[14:27:19] [join] testdialog11 has joined the server (0:127.0.0.1)
+[14:27:25] [part] testdialog11 has left the server (0:1)
+[14:29:07] [debug] Server received interrupt signal
+[14:29:07] [debug] Native backtrace:
+[14:29:07] [debug] #0 7719216c in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[14:29:07] [debug] #1 7589f56f in ?? () in C:\WINDOWS\System32\KERNELBASE.dll
+[14:29:07] [debug] #2 0048d53c in ?? () in samp-server.exe
+[14:29:07] [debug] #3 0049b4a1 in ?? () in samp-server.exe
+[14:29:07] [debug] #4 0049b4b1 in ?? () in samp-server.exe
+[14:29:07] --- Server Shutting Down.
+[14:29:07] plugin.mysql: Unloading plugin...
+[14:29:07] plugin.mysql: Plugin unloaded.
+[14:29:07] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[14:29:07] plugin.bcrypt: Plugin unloaded.
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[14:29:09] filterscripts = ""  (string)
+[14:29:09] 
+[14:29:09] Server Plugins
+[14:29:09] --------------
+[14:29:09]  Loading plugin: mysql.dll
+[14:29:10]  >> plugin.mysql: R41-4 successfully loaded.
+[14:29:10]   Loaded.
+[14:29:10]  Loading plugin: crashdetect
+[14:29:10]   CrashDetect plugin 4.20
+[14:29:10]   Loaded.
+[14:29:10]  Loading plugin: streamer
+[14:29:10] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[14:29:10]   Loaded.
+[14:29:10]  Loading plugin: bcrypt-samp.dll
+[14:29:10]   plugin.bcrypt v2.2.3 was loaded.
+[14:29:10]   plugin.bcrypt: 8 cores detected, 7 threads will be used.
+[14:29:10]   Loaded.
+[14:29:10]  Loaded 4 plugins.
+
+[14:29:10] 
+[14:29:10] Filterscripts
+[14:29:10] ---------------
+[14:29:10]   Loaded 0 filterscripts.
+
+[14:29:10] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[14:29:10] 
+----------------------------------
+[14:29:10]  Gamemode started... please wait...
+[14:29:10] ----------------------------------
+
+[14:29:10] Number of vehicle models: 0
+[14:29:10] plugin.bcrypt: Version check failed.
+[14:29:29] [connection] 127.0.0.1:58107 requests connection cookie.
+[14:29:30] [connection] incoming connection: 127.0.0.1:58107 id: 0
+[14:29:30] [join] testdialog11 has joined the server (0:127.0.0.1)
+[14:29:36] [part] testdialog11 has left the server (0:2)
+[14:30:19] [debug] Server received interrupt signal
+[14:30:20] [debug] Native backtrace:
+[14:30:20] [debug] #0 7719216c in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[14:30:20] [debug] #1 7589f56f in ?? () in C:\WINDOWS\System32\KERNELBASE.dll
+[14:30:20] [debug] #2 0048d53c in ?? () in samp-server.exe
+[14:30:20] [debug] #3 0049b4a1 in ?? () in samp-server.exe
+[14:30:20] [debug] #4 0049b4b1 in ?? () in samp-server.exe
+[14:30:20] --- Server Shutting Down.
+[14:30:20] plugin.mysql: Unloading plugin...
+[14:30:20] plugin.mysql: Plugin unloaded.
+[14:30:20] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[14:30:20] plugin.bcrypt: Plugin unloaded.
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[14:30:23] filterscripts = ""  (string)
+[14:30:23] 
+[14:30:23] Server Plugins
+[14:30:23] --------------
+[14:30:23]  Loading plugin: mysql.dll
+[14:30:23]  >> plugin.mysql: R41-4 successfully loaded.
+[14:30:23]   Loaded.
+[14:30:23]  Loading plugin: crashdetect
+[14:30:23]   CrashDetect plugin 4.20
+[14:30:23]   Loaded.
+[14:30:23]  Loading plugin: streamer
+[14:30:23] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[14:30:23]   Loaded.
+[14:30:23]  Loading plugin: bcrypt-samp.dll
+[14:30:23]   plugin.bcrypt v2.2.3 was loaded.
+[14:30:23]   plugin.bcrypt: 8 cores detected, 7 threads will be used.
+[14:30:23]   Loaded.
+[14:30:23]  Loaded 4 plugins.
+
+[14:30:23] 
+[14:30:23] Filterscripts
+[14:30:23] ---------------
+[14:30:23]   Loaded 0 filterscripts.
+
+[14:30:23] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[14:30:23] 
+----------------------------------
+[14:30:23]  Gamemode started... please wait...
+[14:30:23] ----------------------------------
+
+[14:30:23] Number of vehicle models: 0
+[14:30:23] plugin.bcrypt: Version check failed.
+[14:30:42] [connection] 127.0.0.1:54730 requests connection cookie.
+[14:30:43] [connection] incoming connection: 127.0.0.1:54730 id: 0
+[14:30:43] [join] testdialog11 has joined the server (0:127.0.0.1)
+[14:30:47] [part] testdialog11 has left the server (0:2)
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[14:38:39] filterscripts = ""  (string)
+[14:38:39] 
+[14:38:39] Server Plugins
+[14:38:39] --------------
+[14:38:39]  Loading plugin: mysql.dll
+[14:38:39]  >> plugin.mysql: R41-4 successfully loaded.
+[14:38:39]   Loaded.
+[14:38:39]  Loading plugin: crashdetect
+[14:38:39]   CrashDetect plugin 4.20
+[14:38:39]   Loaded.
+[14:38:39]  Loading plugin: streamer
+[14:38:39] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[14:38:39]   Loaded.
+[14:38:39]  Loading plugin: bcrypt-samp.dll
+[14:38:39]   plugin.bcrypt v2.2.3 was loaded.
+[14:38:39]   plugin.bcrypt: 8 cores detected, 7 threads will be used.
+[14:38:39]   Loaded.
+[14:38:39]  Loaded 4 plugins.
+
+[14:38:39] 
+[14:38:39] Filterscripts
+[14:38:39] ---------------
+[14:38:39]   Loaded 0 filterscripts.
+
+[14:38:40] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[14:38:40] 
+----------------------------------
+[14:38:40]  Gamemode started... please wait...
+[14:38:40] ----------------------------------
+
+[14:38:40] Number of vehicle models: 0
+[14:38:40] plugin.bcrypt: Version check failed.
+[14:39:16] [connection] 127.0.0.1:59948 requests connection cookie.
+[14:39:17] [connection] incoming connection: 127.0.0.1:59948 id: 0
+[14:39:18] [join] testdialoga has joined the server (0:127.0.0.1)
+[14:41:46] [part] testdialoga has left the server (0:2)
+[14:55:38] [debug] Server received interrupt signal
+[14:55:38] [debug] Native backtrace:
+[14:55:38] [debug] #0 7719216c in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[14:55:38] [debug] #1 7589f56f in ?? () in C:\WINDOWS\System32\KERNELBASE.dll
+[14:55:38] [debug] #2 0048d53c in ?? () in samp-server.exe
+[14:55:38] [debug] #3 0049b4a1 in ?? () in samp-server.exe
+[14:55:38] [debug] #4 0049b4b1 in ?? () in samp-server.exe
+[14:55:38] --- Server Shutting Down.
+[14:55:38] plugin.mysql: Unloading plugin...
+[14:55:38] plugin.mysql: Plugin unloaded.
+[14:55:38] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[14:55:38] plugin.bcrypt: Plugin unloaded.
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[14:55:41] filterscripts = ""  (string)
+[14:55:41] 
+[14:55:41] Server Plugins
+[14:55:41] --------------
+[14:55:41]  Loading plugin: mysql.dll
+[14:55:41]  >> plugin.mysql: R41-4 successfully loaded.
+[14:55:41]   Loaded.
+[14:55:41]  Loading plugin: crashdetect
+[14:55:41]   CrashDetect plugin 4.20
+[14:55:41]   Loaded.
+[14:55:41]  Loading plugin: streamer
+[14:55:41] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[14:55:41]   Loaded.
+[14:55:41]  Loading plugin: bcrypt-samp.dll
+[14:55:41]   plugin.bcrypt v2.2.3 was loaded.
+[14:55:41]   plugin.bcrypt: 8 cores detected, 7 threads will be used.
+[14:55:41]   Loaded.
+[14:55:41]  Loaded 4 plugins.
+
+[14:55:41] 
+[14:55:41] Filterscripts
+[14:55:41] ---------------
+[14:55:41]   Loaded 0 filterscripts.
+
+[14:55:42] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[14:55:42] 
+----------------------------------
+[14:55:42]  Gamemode started... please wait...
+[14:55:42] ----------------------------------
+
+[14:55:42] Number of vehicle models: 0
+[14:55:42] plugin.bcrypt: Version check failed.
+[14:56:05] [connection] 127.0.0.1:55918 requests connection cookie.
+[14:56:06] [connection] incoming connection: 127.0.0.1:55918 id: 0
+[14:56:06] [join] testdialogb has joined the server (0:127.0.0.1)
+[14:58:43] [debug] Long callback execution detected (hang or performance issue)
+[14:58:43] [debug] AMX backtrace:
+[14:58:43] [debug] #0 00006e24 in ?? (0) in Roleplay.amx
+[14:58:43] [debug] #1 000054f8 in public SavePlayerData (0) in Roleplay.amx
+[14:58:43] [debug] #2 00005198 in public OnPlayerDisconnect (0, 1) in Roleplay.amx
+[14:58:43] ** [MYSQL] Player: testdialogb data has been saved! Disconnecting user...
+[14:58:43] [part] testdialogb has left the server (0:1)
+[15:09:53] [debug] Server received interrupt signal
+[15:09:53] [debug] Native backtrace:
+[15:09:53] [debug] #0 7719216c in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[15:09:53] [debug] #1 7589f56f in ?? () in C:\WINDOWS\System32\KERNELBASE.dll
+[15:09:53] [debug] #2 0048d53c in ?? () in samp-server.exe
+[15:09:53] [debug] #3 0049b4a1 in ?? () in samp-server.exe
+[15:09:53] [debug] #4 0049b4b1 in ?? () in samp-server.exe
+[15:09:53] --- Server Shutting Down.
+[15:09:53] plugin.mysql: Unloading plugin...
+[15:09:53] plugin.mysql: Plugin unloaded.
+[15:09:53] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[15:09:53] plugin.bcrypt: Plugin unloaded.
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[15:09:53] filterscripts = ""  (string)
+[15:09:53] 
+[15:09:53] Server Plugins
+[15:09:53] --------------
+[15:09:53]  Loading plugin: mysql.dll
+[15:09:53]  >> plugin.mysql: R41-4 successfully loaded.
+[15:09:53]   Loaded.
+[15:09:53]  Loading plugin: crashdetect
+[15:09:53]   CrashDetect plugin 4.20
+[15:09:53]   Loaded.
+[15:09:53]  Loading plugin: streamer
+[15:09:53] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[15:09:53]   Loaded.
+[15:09:53]  Loading plugin: bcrypt-samp.dll
+[15:09:53]   plugin.bcrypt v2.2.3 was loaded.
+[15:09:53]   plugin.bcrypt: 8 cores detected, 7 threads will be used.
+[15:09:53]   Loaded.
+[15:09:53]  Loaded 4 plugins.
+
+[15:09:53] 
+[15:09:53] Filterscripts
+[15:09:53] ---------------
+[15:09:53]   Loaded 0 filterscripts.
+
+[15:09:54] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[15:09:54] 
+----------------------------------
+[15:09:54]  Gamemode started... please wait...
+[15:09:54] ----------------------------------
+
+[15:09:54] Number of vehicle models: 0
+[15:09:54] plugin.bcrypt: Version check failed.
+[15:11:12] [connection] 127.0.0.1:64476 requests connection cookie.
+[15:11:13] [connection] incoming connection: 127.0.0.1:64476 id: 0
+[15:11:13] [join] testdialogc has joined the server (0:127.0.0.1)
+[15:13:46] ** [MYSQL] Player:testdialogc data has been saved! Disconnecting user...
+[15:13:47] [part] testdialogc has left the server (0:1)
+[15:15:33] [debug] Server received interrupt signal
+[15:15:33] [debug] Native backtrace:
+[15:15:33] [debug] #0 7719216c in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[15:15:33] [debug] #1 7589f56f in ?? () in C:\WINDOWS\System32\KERNELBASE.dll
+[15:15:33] [debug] #2 0048d53c in ?? () in samp-server.exe
+[15:15:33] [debug] #3 0049b4a1 in ?? () in samp-server.exe
+[15:15:33] [debug] #4 0049b4b1 in ?? () in samp-server.exe
+[15:15:33] --- Server Shutting Down.
+[15:15:33] plugin.mysql: Unloading plugin...
+[15:15:34] plugin.mysql: Plugin unloaded.
+[15:15:34] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[15:15:34] plugin.bcrypt: Plugin unloaded.
