@@ -60,13 +60,13 @@ new femaleSkins[] = {
     197
 };
 
-new tries[MAX_PLAYERS];
+new tries[MAX_PLAYERS],passwordForFinalReg[MAX_PLAYERS][BCRYPT_HASH_LENGTH];
 
 enum ENUM_PLAYER_DATA {
     ID[32],
         pName[MAX_PLAYER_NAME],
         pPassword[255],
-        HashedPassword[255],
+        HashedPassword[BCRYPT_HASH_LENGTH],
         pEmail[128],
         pRegion[32],
         Float:pHealth,
@@ -446,7 +446,23 @@ public OnPlayerDisconnect(playerid, reason) {
 }
 
 /*- SAVING PLAYER DATA -*/
+forward SaveNewPlayerData(playerid, hashed[BCRYPT_HASH_LENGTH]);
+public SaveNewPlayerData(playerid, hashed[BCRYPT_HASH_LENGTH]){
+    new query[500];
+    printf("** [MYSQL] Inserting new user account for: %s....", GetName(playerid));
+    mysql_format(db_handle, query, sizeof(query), "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pRegion`, `pHealth`, `pArmour`, `pBank`, `pCash`) VALUES ('%e', '%e', 'NULL', 'NULL', 100, 5, 0, 0)", GetName(playerid), hashed);
+    mysql_query(db_handle, query);
+    printf("** [MYSQL] Updating new account records...");    
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pEmail` = '%e' WHERE  `pName` = '%e'", pInfo[playerid][pEmail], GetName(playerid));
+    mysql_query(db_handle, query);
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pSkin` = '%d', `pGender` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pSkin], pInfo[playerid][pGender], GetName(playerid));
+    mysql_query(db_handle, query);    
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAge` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pAge], GetName(playerid));
+    mysql_query(db_handle, query);
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pRegion` = '%e' WHERE  `pName` = '%e'", pInfo[playerid][pRegion], GetName(playerid));
+    mysql_query(db_handle, query);
 
+}
 forward SavePlayerData(playerid);
 public SavePlayerData(playerid) {
     new query[300], Float:armour, Float:health;
@@ -633,10 +649,8 @@ Dialog:DIALOG_EMAIL(playerid, response, listitem, inputtext[]) {
             InterpolateCameraPos(playerid, -596.0942, 943.0540, 37.5432, -356.9250, 720.8551, 37.5432, 15000, CAMERA_MOVE);
             InterpolateCameraLookAt(playerid, -595.1951, 943.5001, 37.4531, -356.6473, 721.8198, 37.4981, 15000, CAMERA_MOVE);
 
-            new query[300], string[256];
+            new string[256];
             format(pInfo[playerid][pEmail], 255, inputtext);
-            mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pEmail` = '%e' WHERE  `pName` = '%e'", inputtext, GetName(playerid));
-            mysql_query(db_handle, query);
 
             format(string, sizeof(string), "Thanks, your email is:%s\n\nPlease insert your character's country of origin below!", inputtext);
             Dialog_Show(playerid, DIALOG_GENDER, DIALOG_STYLE_LIST, "Character Creation", "Male\nFemale", "Confirm", "");
@@ -650,7 +664,6 @@ Dialog:DIALOG_EMAIL(playerid, response, listitem, inputtext[]) {
 }
 
 Dialog:DIALOG_GENDER(playerid, response, listitem, inputtext[]) {
-    new query[256];
     if(response) {
         if(listitem == 0) {
             pInfo[playerid][pGender] = 1;
@@ -661,10 +674,6 @@ Dialog:DIALOG_GENDER(playerid, response, listitem, inputtext[]) {
 
             SetPlayerSkin(playerid, maleSkins[random(11)]);
             pInfo[playerid][pSkin] = GetPlayerSkin(playerid);
-
-
-            mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pSkin` = '%d', `pGender` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pSkin], pInfo[playerid][pGender], GetName(playerid));
-            mysql_query(db_handle, query);
         }
         if(listitem == 1) {
             pInfo[playerid][pGender] = 2;
@@ -674,9 +683,6 @@ Dialog:DIALOG_GENDER(playerid, response, listitem, inputtext[]) {
             Dialog_Show(playerid, DIALOG_AGE, DIALOG_STYLE_INPUT, "Character Creation", genderString, "Register", "Leave");
             SetPlayerSkin(playerid, femaleSkins[random(10)]);
             pInfo[playerid][pSkin] = GetPlayerSkin(playerid);
-
-            mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pSkin` = '%d', `pGender` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pSkin], pInfo[playerid][pGender], GetName(playerid));
-            mysql_query(db_handle, query);
         }
 
     } else {
@@ -694,8 +700,6 @@ Dialog:DIALOG_AGE(playerid, response, listitem, inputtext[]) {
         format(String, sizeof(String), "{ABCDEF}Wow, your character is old! You are a:%d year old!\n\
 	 				{ABCDEF}Lastly, tell us where your character comes from. (eg:Los Santos or America)\n\n", pInfo[playerid][pAge]);
 
-        mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAge` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pAge], GetName(playerid));
-        mysql_query(db_handle, query);
         Dialog_Show(playerid, DIALOG_REGION, DIALOG_STYLE_INPUT, "Character Creation", String, "Register", "Leave");
     }
 
@@ -717,10 +721,8 @@ Dialog:DIALOG_REGION(playerid, response, listitem, inputtext[]) {
             format(string, sizeof(string), "The inputted text was empty, please input a region below!", inputtext);
             Dialog_Show(playerid, DIALOG_REGION, DIALOG_STYLE_INPUT, "Registration System", string, "Continue", "Quit");
         } else {
-            new query[300];
             format(pInfo[playerid][pRegion], 32, "%s", inputtext);
-            mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pRegion` = '%e' WHERE  `pName` = '%e'", inputtext, GetName(playerid));
-            mysql_query(db_handle, query);
+            SaveNewPlayerData(playerid, passwordForFinalReg[playerid]);
             BeginTutorial(playerid);
 
             SendClientMessage(playerid, 0x00FF00FF, "{99c0da}[SERVER]: {ABCDEF}You are now registered and logged in!");
@@ -788,10 +790,10 @@ public OnPlayerLoad(playerid) {
 
 forward HashPlayerPassword(playerid);
 public HashPlayerPassword(playerid) {
-    new hash[BCRYPT_HASH_LENGTH], query[300];
+    new hash[BCRYPT_HASH_LENGTH];
     bcrypt_get_hash(hash);
-    mysql_format(db_handle, query, sizeof(query), "INSERT INTO `accounts` (`pName`, `pPassword`, `pEmail`, `pRegion`, `pHealth`, `pArmour`, `pBank`, `pCash`) VALUES ('%e', '%e', 'NULL', 'NULL', 0, 0, 0, 0)", GetName(playerid), hash);
-    mysql_tquery(db_handle, query, "OnPlayerRegister", "d", playerid);
+    format(passwordForFinalReg[playerid], BCRYPT_HASH_LENGTH, hash);
+    OnPlayerRegister(playerid);
     return 1;
 }
 
