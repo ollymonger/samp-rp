@@ -11,6 +11,8 @@
 #define BCRYPT_COST 12
 #define lenull(%1) \
 ((!( % 1[0])) || ((( % 1[0]) == '\1') && (!( % 1[1]))))
+#define MAX_JOBS 50
+
 
 #define GREY 			0xCECECEFF
 
@@ -78,11 +80,22 @@ enum ENUM_PLAYER_DATA {
         pAge,
         pBank,
         pCash,
+        pJobId,
 
         bool:LoggedIn,
         pMuted
 }
 new pInfo[MAX_PLAYERS][ENUM_PLAYER_DATA];
+
+enum ENUM_JOB_DATA {
+    jID[32],
+    jName[32],
+    jPay,
+    Float:jobIX,
+    Float:jobIY,
+    Float:jobIZ
+}
+new jInfo[MAX_JOBS][ENUM_JOB_DATA];
 
 /* 2- DIALOGS -*/
 

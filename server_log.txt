@@ -4193,3 +4193,54 @@ v0.3.7-R2, (C)2005-2015 SA-MP Team
 *** Streamer Plugin v2.9.4 by Incognito unloaded ***
 
 [23:12:39] plugin.bcrypt: Plugin unloaded.
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[23:13:14] filterscripts = ""  (string)
+[23:13:14] 
+[23:13:14] Server Plugins
+[23:13:14] --------------
+[23:13:14]  Loading plugin: mysql.dll
+[23:13:14]  >> plugin.mysql: R41-4 successfully loaded.
+[23:13:14]   Loaded.
+[23:13:14]  Loading plugin: crashdetect
+[23:13:14]   CrashDetect plugin 4.20
+[23:13:14]   Loaded.
+[23:13:14]  Loading plugin: streamer
+[23:13:14] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[23:13:14]   Loaded.
+[23:13:14]  Loading plugin: bcrypt-samp.dll
+[23:13:14]   plugin.bcrypt v2.2.3 was loaded.
+[23:13:14]   plugin.bcrypt: 8 cores detected, 7 threads will be used.
+[23:13:14]   Loaded.
+[23:13:14]  Loaded 4 plugins.
+
+[23:13:14] 
+[23:13:14] Filterscripts
+[23:13:14] ---------------
+[23:13:14]   Loaded 0 filterscripts.
+
+[23:13:14] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[23:13:14] 
+----------------------------------
+[23:13:14]  Gamemode started... please wait...
+[23:13:14] ----------------------------------
+
+[23:13:14] Number of vehicle models: 0
+[23:13:14] plugin.bcrypt: Version check failed.
+[23:13:56] [connection] 127.0.0.1:57371 requests connection cookie.
+[23:13:57] [connection] incoming connection: 127.0.0.1:57371 id: 0
+[23:13:58] [join] testaccounts_1 has joined the server (0:127.0.0.1)
+[23:14:45] ** [MYSQL] Inserting new user account for:testaccounts_1....
+[23:14:45] ** [MYSQL] Updating new account records...
+[23:18:13] ** [MYSQL] Player:testaccounts_1 data has been saved! Disconnecting user...
+[23:18:13] [part] testaccounts_1 has left the server (0:1)
