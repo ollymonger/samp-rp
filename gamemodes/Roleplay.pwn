@@ -7,6 +7,7 @@
 #include <a_mysql>
 #include <easyDialog>
 #include <bcrypt>
+#include <zcmd>
 
 #define BCRYPT_COST 12
 #define lenull(%1) \
@@ -15,6 +16,8 @@
 
 
 #define GREY 			0xCECECEFF
+#define SPECIALORANGE   0xFFCC00FF // CRP Orange 0xFF8000FF
+
 
 main() {
     print("\n----------------------------------");
@@ -72,6 +75,8 @@ enum ENUM_PLAYER_DATA {
         pPassword[255],
         HashedPassword[BCRYPT_HASH_LENGTH],
         pEmail[128],
+        pLevel,
+        pExp,
         pRegion[32],
         Float:pHealth,
         Float:pArmour,
@@ -80,7 +85,9 @@ enum ENUM_PLAYER_DATA {
         pAge,
         pBank,
         pCash,
+        pPayTimer,
         pJobId,
+        pJobPay,
 
         bool:LoggedIn,
         pMuted
@@ -89,11 +96,11 @@ new pInfo[MAX_PLAYERS][ENUM_PLAYER_DATA];
 
 enum ENUM_JOB_DATA {
     jID[32],
-    jName[32],
-    jPay,
-    Float:jobIX,
-    Float:jobIY,
-    Float:jobIZ
+        jName[32],
+        jPay,
+        Float:jobIX,
+        Float:jobIY,
+        Float:jobIZ
 }
 new jInfo[MAX_JOBS][ENUM_JOB_DATA];
 
@@ -477,6 +484,8 @@ public SaveNewPlayerData(playerid, hashed[BCRYPT_HASH_LENGTH]) {
     mysql_query(db_handle, query);
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pRegion` = '%e' WHERE  `pName` = '%e'", pInfo[playerid][pRegion], GetName(playerid));
     mysql_query(db_handle, query);
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pLevel` = 1, `pExp` = 1, `pPayTimer` = 60, `pJobId` = 0, `pJobPay` = 0,  WHERE  `pName` = '%e'", GetName(playerid));
+    mysql_query(db_handle, query);
 
     SendClientMessage(playerid, 0x00FF00FF, "{99c0da}[SERVER]:{ABCDEF}You are now registered and logged in!");
     pInfo[playerid][LoggedIn] = true;
@@ -485,6 +494,11 @@ public SaveNewPlayerData(playerid, hashed[BCRYPT_HASH_LENGTH]) {
     pInfo[playerid][pArmour] = 5;
     pInfo[playerid][pCash] = 1000;
     pInfo[playerid][pBank] = 0;
+    pInfo[playerid][pLevel] = 1;
+    pInfo[playerid][pExp] = 1;
+    pInfo[playerid][pJobId] = 0;
+    pInfo[playerid][pJobPay] = 0;
+    pInfo[playerid][pPayTimer] = 60;
 
     SetPlayerScore(playerid, 1);
     GivePlayerMoney(playerid, pInfo[playerid][pCash]);
@@ -506,11 +520,22 @@ public SavePlayerData(playerid) {
 
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pHealth` = '%f', `pArmour` = '%f', `pCash` = '%d', `pBank` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pHealth], pInfo[playerid][pArmour], pInfo[playerid][pCash], pInfo[playerid][pBank], GetName(playerid));
     mysql_query(db_handle, query);
+
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pLevel` = '%d', `pExp` = '%d', `pSkin` = '%d', `pPayTimer` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pLevel], pInfo[playerid][pExp], pInfo[playerid][pSkin], pInfo[playerid][pPayTimer], GetName(playerid));
+    mysql_query(db_handle, query);
+
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pJobId` = '%f', `pJobPay` = '%f', WHERE `pName` = '%e'", pInfo[playerid][pJobId], pInfo[playerid][pJobPay], GetName(playerid));
+    mysql_query(db_handle, query);
+
     printf("** [MYSQL] Player:%s data has been saved! Disconnecting user...", GetName(playerid));
     return 1;
 }
 
 public OnPlayerSpawn(playerid) {
+    if(pInfo[playerid][LoggedIn] == true) {
+        SetTimerEx("SavePlayerStats", 3000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
+        SetTimerEx("payPlayerTimer", 10000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
+    }
     return 1;
 }
 
@@ -538,6 +563,12 @@ public OnPlayerText(playerid, text[]) {
         SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
     }
     return 0;
+}
+
+/* COMMANDS */
+CMD:stats(playerid, params[]) {
+    ReturnStats(playerid, playerid);
+    return 1;
 }
 
 public OnPlayerCommandText(playerid, cmdtext[]) {
@@ -1020,6 +1051,8 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "ID", pInfo[playerid][ID]);
     cache_get_value(0, "pName", pInfo[playerid][pName], 128);
     cache_get_value(0, "pEmail", pInfo[playerid][pEmail], 128);
+    cache_get_value_int(0, "pLevel", pInfo[playerid][pLevel]);
+    cache_get_value_int(0, "pExp", pInfo[playerid][pExp]);
     cache_get_value_float(0, "pHealth", pInfo[playerid][pHealth]);
     cache_get_value_float(0, "pArmour", pInfo[playerid][pArmour]);
     cache_get_value(0, "pRegion", pInfo[playerid][pRegion], 32);
@@ -1028,6 +1061,9 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pAge", pInfo[playerid][pAge]);
     cache_get_value_int(0, "pBank", pInfo[playerid][pBank]);
     cache_get_value_int(0, "pCash", pInfo[playerid][pCash]);
+    cache_get_value_int(0, "pPayTimer", pInfo[playerid][pPayTimer]);
+    cache_get_value_int(0, "pJobId", pInfo[playerid][pJobId]);
+    cache_get_value_int(0, "pJobPay", pInfo[playerid][pJobPay]);
 
     pInfo[playerid][LoggedIn] = true;
     SendClientMessage(playerid, -1, "Logged in");
@@ -1185,6 +1221,59 @@ public nearByMessage(playerid, color, string[], Float:Distance) {
     return 1;
 }
 
+/* paying players */
+forward public payPlayerTimer(playerid);
+public payPlayerTimer(playerid) {
+    if(pInfo[playerid][LoggedIn] == true) {
+        if(pInfo[playerid][pPayTimer] < 61) {
+            if(pInfo[playerid][pPayTimer] == 0) {
+
+                new string[256];
+                format(string, sizeof(string), "[SERVER]:**-------- PAYCHECK --------**");
+                payPlayer(playerid);
+            } else {
+                pInfo[playerid][pPayTimer] -= 1;
+                SetTimerEx("payPlayerTimer", 60000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
+
+            }
+        }
+    }
+    return 1;
+}
+
+forward public payPlayer(playerid);
+public payPlayer(playerid) {
+    new tax, salary, totalpay, string[256];
+    salary += 250; // base salary for all players.
+    if(pInfo[playerid][pJobId] >= 1) {
+        format(string, sizeof(string), "[SERVER]:{ABCDEF}Job Pay: +$%d", pInfo[playerid][pJobPay]);
+        SendClientMessage(playerid, SPECIALORANGE, string);
+        salary += pInfo[playerid][pJobPay]; // adding up their job's pay
+    }
+    //if(pInfo[playerid][pFac] > 1){ start faction pay here}
+    tax = (salary / 500) * 100;
+    totalpay = salary - tax; // taxing their job's pay
+    format(string, sizeof(string), "[SERVER]:{ABCDEF}Income:$%d | Tax:-$%d | Total Pay:+$%d", salary, tax, totalpay);
+    SendClientMessage(playerid, SPECIALORANGE, string);
+    pInfo[playerid][pPayTimer] = 60;
+    pInfo[playerid][pBank] += totalpay;
+    SetTimerEx("payPlayerTimer", 60000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
+
+    if(pInfo[playerid][pExp] >= 8) {
+        pInfo[playerid][pExp] = 0;
+        pInfo[playerid][pLevel]++;
+        format(string, sizeof(string), "[SERVER]:{ABCDEF}You have levelled up! (Level:%d)", pInfo[playerid][pLevel]);
+        SendClientMessage(playerid, SPECIALORANGE, string);
+    }
+    if(pInfo[playerid][pExp] <= 8) {
+        pInfo[playerid][pExp]++;
+        format(string, sizeof(string), "[SERVER]:{ABCDEF}You have gained an experience point! (Exp:%d)", pInfo[playerid][pExp]);
+        SendClientMessage(playerid, SPECIALORANGE, string);
+    }
+
+    return 1;
+}
+
 stock RPName(playerid) {
     new
     szName[MAX_PLAYER_NAME],
@@ -1194,6 +1283,18 @@ stock RPName(playerid) {
     stringPos = strfind(szName, "_");
     szName[stringPos] = ' ';
     return szName;
+}
+
+
+stock ReturnStats(playerid, target) {
+    new string[256];
+    format(string, sizeof(string), "[SERVER]:**-------- %s's STATISTICS --------**", RPName(target));
+    SendClientMessage(playerid, SPECIALORANGE, string);
+    format(string, sizeof(string), "[SERVER]:{ABCDEF} Level:%d (%dexp/8) | Bank:$%d | Cash:$%d | Payment in:%dmins", pInfo[target][pLevel], pInfo[target][pExp], pInfo[target][pBank], pInfo[target][pCash], pInfo[target][pPayTimer]);
+    SendClientMessage(playerid, SPECIALORANGE, string);
+    format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID:%d | ", pInfo[target][pJobId]);
+    SendClientMessage(playerid, SPECIALORANGE, string);
+    return 1;
 }
 
 public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
