@@ -4142,3 +4142,54 @@ v0.3.7-R2, (C)2005-2015 SA-MP Team
 *** Streamer Plugin v2.9.4 by Incognito unloaded ***
 
 [15:45:03] plugin.bcrypt: Plugin unloaded.
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[23:12:22] filterscripts = ""  (string)
+[23:12:22] 
+[23:12:22] Server Plugins
+[23:12:22] --------------
+[23:12:22]  Loading plugin: mysql.dll
+[23:12:22]  >> plugin.mysql: R41-4 successfully loaded.
+[23:12:22]   Loaded.
+[23:12:22]  Loading plugin: crashdetect
+[23:12:22]   CrashDetect plugin 4.20
+[23:12:22]   Loaded.
+[23:12:22]  Loading plugin: streamer
+[23:12:22] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[23:12:22]   Loaded.
+[23:12:22]  Loading plugin: bcrypt-samp.dll
+[23:12:22]   plugin.bcrypt v2.2.3 was loaded.
+[23:12:22]   plugin.bcrypt: 8 cores detected, 7 threads will be used.
+[23:12:22]   Loaded.
+[23:12:22]  Loaded 4 plugins.
+
+[23:12:22] 
+[23:12:22] Filterscripts
+[23:12:22] ---------------
+[23:12:22]   Loaded 0 filterscripts.
+
+[23:12:39] ** [MYSQL] Failed to connect! Exiting gamemode!
+[23:12:39] 
+----------------------------------
+[23:12:39]  Gamemode started... please wait...
+[23:12:39] ----------------------------------
+
+[23:12:39] Number of vehicle models: 0
+[23:12:39] --- Server Shutting Down.
+[23:12:39] plugin.mysql: Unloading plugin...
+[23:12:39] plugin.mysql: Plugin unloaded.
+[23:12:39] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[23:12:39] plugin.bcrypt: Plugin unloaded.

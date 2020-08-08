@@ -12,6 +12,8 @@
 #define lenull(%1) \
 ((!( % 1[0])) || ((( % 1[0]) == '\1') && (!( % 1[1]))))
 
+#define GREY 			0xCECECEFF
+
 main() {
     print("\n----------------------------------");
     print(" Gamemode started... please wait...");
@@ -78,6 +80,7 @@ enum ENUM_PLAYER_DATA {
         pCash,
 
         bool:LoggedIn,
+        pMuted
 }
 new pInfo[MAX_PLAYERS][ENUM_PLAYER_DATA];
 
@@ -510,8 +513,18 @@ public OnVehicleDeath(vehicleid, killerid) {
     return 1;
 }
 
+
 public OnPlayerText(playerid, text[]) {
-    return 1;
+    if(pInfo[playerid][pMuted] == 0) {
+        new string[256];
+
+        format(string, sizeof(string), "%s[%i] says:%s", RPName(playerid), playerid, text);
+        nearByMessage(playerid, -1, string, 12.0);
+    } else {
+        TextDrawShowForPlayer(playerid, PMuted);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 0;
 }
 
 public OnPlayerCommandText(playerid, cmdtext[]) {
@@ -1138,6 +1151,36 @@ public KickPublic(playerid) { Kick(playerid); }
 stock KickWithMessage(playerid, message[]) {
     SendClientMessage(playerid, 0xFF4444FF, message);
     SetTimerEx("KickPublic", 1000, 0, "d", playerid);
+}
+
+/*Text formatting*/
+
+forward public nearByMessage(playerid, color, string[], Float:Distance);
+public nearByMessage(playerid, color, string[], Float:Distance) {
+    new
+    Float:nbCoords[3]; // Variable to store the position of the main player
+
+    GetPlayerPos(playerid, nbCoords[0], nbCoords[1], nbCoords[2]); // Getting the main position
+
+    for (new i = 0; i < MAX_PLAYERS; i++) {
+        if(IsPlayerInRangeOfPoint(i, Distance, nbCoords[0], nbCoords[1], nbCoords[2]) && (GetPlayerVirtualWorld(i) == GetPlayerVirtualWorld(playerid))) { // Confirming if the player being looped is within range and is in the same virtual world and interior as the main player
+            SendClientMessage(i, color, string); // Sending them the message if all checks out
+        } else if(IsPlayerInRangeOfPoint(i, 16, nbCoords[0], nbCoords[1], nbCoords[2]) && (GetPlayerVirtualWorld(i) == GetPlayerVirtualWorld(playerid))) { // Confirming if the player being looped is within range and is in the same virtual world and interior as the main player
+            SendClientMessage(i, GREY, string); // Sending them the message if all checks out
+        }
+    }
+    return 1;
+}
+
+stock RPName(playerid) {
+    new
+    szName[MAX_PLAYER_NAME],
+        stringPos;
+
+    GetPlayerName(playerid, szName, sizeof(szName));
+    stringPos = strfind(szName, "_");
+    szName[stringPos] = ' ';
+    return szName;
 }
 
 public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
