@@ -102,7 +102,7 @@ enum ENUM_JOB_DATA {
         Float:jobIY,
         Float:jobIZ
 }
-new jInfo[MAX_JOBS][ENUM_JOB_DATA];
+new jInfo[MAX_JOBS][ENUM_JOB_DATA], loadedJob;
 
 /* 2- DIALOGS -*/
 
@@ -121,6 +121,8 @@ public OnGameModeInit() {
     }
     printf("** [MYSQL] Connected successfully! Proceeding to load the gamemode!");
 
+
+    LoadJobData();
 
     PMuted = TextDrawCreate(230.000000, 366.000000, "You are muted!");
     TextDrawBackgroundColor(PMuted, 255);
@@ -416,6 +418,33 @@ public OnGameModeInit() {
     return 1;
 }
 
+// load server data
+forward public LoadJobData();
+public LoadJobData() {
+    new DB_Query[900];
+
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `jobs`");
+    mysql_tquery(db_handle, DB_Query, "JobsReceived");
+}
+
+forward JobsReceived();
+public JobsReceived() {
+    if(cache_num_rows() == 0) print("No jobs have been created!");
+    else {
+        for (new i = 0; i < cache_num_rows(); i++) {
+            cache_get_value_int(i, "jId", jInfo[loadedJob][jID]);
+            cache_get_value(i, "jName", jInfo[loadedJob][jName], 32);
+            cache_get_value_int(i, "jPay", jInfo[loadedJob][jPay]);
+            cache_get_value_float(i, "jobIX", jInfo[loadedJob][jobIX]);
+            cache_get_value_float(i, "jobIY", jInfo[loadedJob][jobIY]);
+            cache_get_value_float(i, "jobIZ", jInfo[loadedJob][jobIZ]);
+            loadedJob++;
+        }
+        printf("** [MYSQL]:Loaded %d jobs from the database.", cache_num_rows());
+
+    }
+    return 1;
+}
 public OnGameModeExit() {
     return 1;
 }
@@ -1292,7 +1321,7 @@ stock ReturnStats(playerid, target) {
     SendClientMessage(playerid, SPECIALORANGE, string);
     format(string, sizeof(string), "[SERVER]:{ABCDEF} Level:%d (%dexp/8) | Bank:$%d | Cash:$%d | Payment in:%dmins", pInfo[target][pLevel], pInfo[target][pExp], pInfo[target][pBank], pInfo[target][pCash], pInfo[target][pPayTimer]);
     SendClientMessage(playerid, SPECIALORANGE, string);
-    format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID:%d | ", pInfo[target][pJobId]);
+    format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID:%d | Job name: %s", pInfo[target][pJobId]);
     SendClientMessage(playerid, SPECIALORANGE, string);
     return 1;
 }
