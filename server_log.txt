@@ -4076,3 +4076,69 @@ v0.3.7-R2, (C)2005-2015 SA-MP Team
 *** Streamer Plugin v2.9.4 by Incognito unloaded ***
 
 [15:36:19] plugin.bcrypt: Plugin unloaded.
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[15:36:22] filterscripts = ""  (string)
+[15:36:22] 
+[15:36:22] Server Plugins
+[15:36:22] --------------
+[15:36:22]  Loading plugin: mysql.dll
+[15:36:22]  >> plugin.mysql: R41-4 successfully loaded.
+[15:36:22]   Loaded.
+[15:36:22]  Loading plugin: crashdetect
+[15:36:22]   CrashDetect plugin 4.20
+[15:36:22]   Loaded.
+[15:36:22]  Loading plugin: streamer
+[15:36:22] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[15:36:22]   Loaded.
+[15:36:22]  Loading plugin: bcrypt-samp.dll
+[15:36:22]   plugin.bcrypt v2.2.3 was loaded.
+[15:36:22]   plugin.bcrypt: 8 cores detected, 7 threads will be used.
+[15:36:22]   Loaded.
+[15:36:22]  Loaded 4 plugins.
+
+[15:36:22] 
+[15:36:22] Filterscripts
+[15:36:22] ---------------
+[15:36:22]   Loaded 0 filterscripts.
+
+[15:36:23] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[15:36:23] 
+----------------------------------
+[15:36:23]  Gamemode started... please wait...
+[15:36:23] ----------------------------------
+
+[15:36:23] Number of vehicle models: 0
+[15:36:23] plugin.bcrypt: Version check failed.
+[15:36:41] [connection] 127.0.0.1:59350 requests connection cookie.
+[15:36:42] [connection] incoming connection: 127.0.0.1:59350 id: 0
+[15:36:42] [join] quiztest1 has joined the server (0:127.0.0.1)
+[15:37:27] ** [MYSQL] Inserting new user account for:quiztest1....
+[15:37:27] ** [MYSQL] Updating new account records...
+[15:39:48] ** [MYSQL] Player:quiztest1 data has been saved! Disconnecting user...
+[15:39:48] [part] quiztest1 has left the server (0:1)
+[15:45:03] [debug] Server received interrupt signal
+[15:45:03] [debug] Native backtrace:
+[15:45:03] [debug] #0 76fd216c in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[15:45:03] [debug] #1 74b3f56f in ?? () in C:\WINDOWS\System32\KERNELBASE.dll
+[15:45:03] [debug] #2 0048d53c in ?? () in samp-server.exe
+[15:45:03] [debug] #3 0049b4a1 in ?? () in samp-server.exe
+[15:45:03] [debug] #4 0049b4b1 in ?? () in samp-server.exe
+[15:45:03] --- Server Shutting Down.
+[15:45:03] plugin.mysql: Unloading plugin...
+[15:45:03] plugin.mysql: Plugin unloaded.
+[15:45:03] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[15:45:03] plugin.bcrypt: Plugin unloaded.

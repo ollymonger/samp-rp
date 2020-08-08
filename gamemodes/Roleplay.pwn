@@ -628,18 +628,18 @@ Dialog:DIALOG_QUIZ1(playerid, response, listitem, inputtext[]) {
     if(response) {
         if(listitem == 0) { // incorrect
             quizAttempts[playerid]++;
-            SendClientMessage(playerid, -1, "[SERVER]:Wrong answer!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Wrong answer!");
             Dialog_Show(playerid, DIALOG_QUIZ2, DIALOG_STYLE_LIST, "What does 'OOC' stand for?", "Out of Character\nOut of control\nOcassionally Original Character", "Continue", "Quit");
         }
 
         if(listitem == 1) { // correct
-            SendClientMessage(playerid, -1, "[SERVER]:Correct! 'RP' stands for Roleplay!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Correct! 'RP' stands for Roleplay!");
             Dialog_Show(playerid, DIALOG_QUIZ2, DIALOG_STYLE_LIST, "What does 'OOC' stand for?", "Out of Character\nOut of control\nOcassionally Original Character", "Continue", "Quit");
         }
 
         if(listitem == 2) { // incorrect
             quizAttempts[playerid]++;
-            SendClientMessage(playerid, -1, "[SERVER]:Wrong answer!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Wrong answer!");
             Dialog_Show(playerid, DIALOG_QUIZ2, DIALOG_STYLE_LIST, "What does 'OOC' stand for?", "Out of Character\nOut of control\nOcassionally Original Character", "Continue", "Quit");
         }
     } else {
@@ -652,19 +652,19 @@ Dialog:DIALOG_QUIZ1(playerid, response, listitem, inputtext[]) {
 Dialog:DIALOG_QUIZ2(playerid, response, listitem, inputtext[]) {
     if(response) {
         if(listitem == 0) { // correct
-            SendClientMessage(playerid, -1, "[SERVER]:Correct, 'OOC' stands for Out of Character!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Correct, 'OOC' stands for Out of Character!");
             Dialog_Show(playerid, DIALOG_QUIZ3, DIALOG_STYLE_LIST, "You see a police officer being shot at by a group of masked people, what do you do?", "Easy! Pull out a gun and begin firing at them.\nI would cautiously move back, to a safe location, and phone the police.\nQuickly steal their car and get away!", "Continue", "Quit");
         }
 
         if(listitem == 1) { // incorrect        
             quizAttempts[playerid]++;
-            SendClientMessage(playerid, -1, "[SERVER]:Wrong answer!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Wrong answer!");
             Dialog_Show(playerid, DIALOG_QUIZ3, DIALOG_STYLE_LIST, "You see a police officer being shot at by a group of masked people, what do you do?", "Easy! Pull out a gun and begin firing at them.\nI would cautiously move back, to a safe location, and phone the police.\nQuickly steal their car and get away!", "Continue", "Quit");
         }
 
         if(listitem == 2) { // incorrect
             quizAttempts[playerid]++;
-            SendClientMessage(playerid, -1, "[SERVER]:Wrong answer!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Wrong answer!");
             Dialog_Show(playerid, DIALOG_QUIZ3, DIALOG_STYLE_LIST, "You see a police officer being shot at by a group of masked people, what do you do?", "Easy! Pull out a gun and begin firing at them.\nI would cautiously move back, to a safe location, and phone the police.\nQuickly steal their car and get away!", "Continue", "Quit");
         }
     } else {
@@ -677,18 +677,18 @@ Dialog:DIALOG_QUIZ3(playerid, response, listitem, inputtext[]) {
     if(response) {
         if(listitem == 0) { // incorrect    
             quizAttempts[playerid]++;
-            SendClientMessage(playerid, -1, "[SERVER]:Wrong answer!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Wrong answer!");
             Dialog_Show(playerid, DIALOG_QUIZ4, DIALOG_STYLE_LIST, "What is bunnyhopping?", "When you roleplay a bunny!\nKilling other players randomly.\nTapping shift to get to places quicker.", "Continue", "Quit");
         }
 
         if(listitem == 1) { // correct    
-            SendClientMessage(playerid, -1, "[SERVER]:Correct, any other option would've be called:Power Gaming!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Correct, any other option would've be called:Power Gaming!");
             Dialog_Show(playerid, DIALOG_QUIZ4, DIALOG_STYLE_LIST, "What is bunnyhopping?", "When you roleplay a bunny!\nKilling other players randomly.\nTapping shift to get to places quicker.", "Continue", "Quit");
         }
 
         if(listitem == 2) { // incorrect
             quizAttempts[playerid]++;
-            SendClientMessage(playerid, -1, "[SERVER]:Wrong answer!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Wrong answer!");
             Dialog_Show(playerid, DIALOG_QUIZ4, DIALOG_STYLE_LIST, "What is bunnyhopping?", "When you roleplay a bunny!\nKilling other players randomly.\nTapping shift to get to places quicker.", "Continue", "Quit");
         }
     } else {
@@ -702,20 +702,19 @@ Dialog:DIALOG_QUIZ4(playerid, response, listitem, inputtext[]) {
     if(response) {
         if(listitem == 0) { // incorrect    
             quizAttempts[playerid]++;
-            SendClientMessage(playerid, -1, "[SERVER]:Wrong answer!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Wrong answer!");
             Dialog_Show(playerid, DIALOG_QUIZ5, DIALOG_STYLE_LIST, "What is deathmatching?", "Killing other players randomly; and in some cases, killig others repeatedly for no reason.\nRoleplaying a sucessful murder.\nTalking to the administrators about a bug.", "Continue", "Quit");
         }
 
         if(listitem == 1) { // incorrect  
             quizAttempts[playerid]++;
-
-            SendClientMessage(playerid, -1, "[SERVER]:Wrong answer!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Wrong answer!");
             Dialog_Show(playerid, DIALOG_QUIZ5, DIALOG_STYLE_LIST, "What is deathmatching?", "Killing other players randomly; and in some cases, killig others repeatedly for no reason.\nRoleplaying a sucessful murder.\nTalking to the administrators about a bug.", "Continue", "Quit");
         }
 
         if(listitem == 2) { // correct
-            SendClientMessage(playerid, -1, "[SERVER]:Correct, bunny hopping is hitting the shift key to jump and get places quicker! This is against the rules!");
-            Dialog_Show(playerid, DIALOG_QUIZ5, DIALOG_STYLE_LIST,"What is deathmatching?", "Killing other players randomly; and in some cases, killig others repeatedly for no reason.\nRoleplaying a sucessful murder.\nTalking to the administrators about a bug.", "Continue", "Quit");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Correct, bunny hopping is hitting the shift key to jump and get places quicker! This is against the rules!");
+            Dialog_Show(playerid, DIALOG_QUIZ5, DIALOG_STYLE_LIST, "What is deathmatching?", "Killing other players randomly; and in some cases, killig others repeatedly for no reason.\nRoleplaying a sucessful murder.\nTalking to the administrators about a bug.", "Continue", "Quit");
         }
     } else {
         Kick(playerid);
@@ -727,20 +726,19 @@ Dialog:DIALOG_QUIZ4(playerid, response, listitem, inputtext[]) {
 Dialog:DIALOG_QUIZ5(playerid, response, listitem, inputtext[]) {
     if(response) {
         if(listitem == 0) { // correct    
-            SendClientMessage(playerid, -1, "[SERVER]:Correct, deathmatching is killing another player, without any reason to do so!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Correct, deathmatching is killing another player, without any reason to do so!");
             Dialog_Show(playerid, DIALOG_QUIZ6, DIALOG_STYLE_LIST, "What can /report be used for?", "Reporting another player, without a valid reason.\nReporting a in character crime.\nReporting a player, with a valid reason. For example:reporting a cheater, or bug exploiter.", "Continue", "Quit");
         }
 
         if(listitem == 1) { // incorrect  
             quizAttempts[playerid]++;
-
-            SendClientMessage(playerid, -1, "[SERVER]:Wrong answer!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Wrong answer!");
             Dialog_Show(playerid, DIALOG_QUIZ6, DIALOG_STYLE_LIST, "What can /report be used for?", "Reporting another player, without a valid reason.\nReporting a in character crime.\nReporting a player, with a valid reason. For example:reporting a cheater, or bug exploiter.", "Continue", "Quit");
         }
 
         if(listitem == 2) { // incorrect
             quizAttempts[playerid]++;
-            SendClientMessage(playerid, -1, "[SERVER]:Wrong answer!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Wrong answer!");
             Dialog_Show(playerid, DIALOG_QUIZ6, DIALOG_STYLE_LIST, "What can /report be used for?", "Reporting another player, without a valid reason.\nReporting a in character crime.\nReporting a player, with a valid reason. For example:reporting a cheater, or bug exploiter.", "Continue", "Quit");
         }
     } else {
@@ -754,19 +752,18 @@ Dialog:DIALOG_QUIZ6(playerid, response, listitem, inputtext[]) {
     if(response) {
         if(listitem == 0) { // incorrect  
             quizAttempts[playerid]++;
-            SendClientMessage(playerid, -1, "[SERVER]:Wrong answer!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Wrong answer!");
             Dialog_Show(playerid, DIALOG_QUIZ7, DIALOG_STYLE_LIST, "Where can I get help for OOC reasons (and talk to the helper team)?", "The command is:/helpme\nThe command is:/pm.\nThe command is:/global.", "Continue", "Quit");
         }
 
         if(listitem == 1) { // incorrect  
             quizAttempts[playerid]++;
-
-            SendClientMessage(playerid, -1, "[SERVER]:Wrong answer!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Wrong answer!");
             Dialog_Show(playerid, DIALOG_QUIZ7, DIALOG_STYLE_LIST, "Where can I get help for OOC reasons (and talk to the helper team)?", "The command is:/helpme\nThe command is:/pm.\nThe command is:/global.", "Continue", "Quit");
         }
 
         if(listitem == 2) { // correct
-            SendClientMessage(playerid, -1, "[SERVER]:Correct, The correct usage of /report is to report a player with a valid reason, such as:deathmatching, cheating, bug exploiting ect!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Correct, The correct usage of /report is to report a player with a valid reason, such as:deathmatching, cheating, bug exploiting ect!");
             Dialog_Show(playerid, DIALOG_QUIZ7, DIALOG_STYLE_LIST, "Where can I get help for OOC reasons (and talk to the helper team)?", "The command is:/helpme\nThe command is:/pm.\nThe command is:/global.", "Continue", "Quit");
         }
     } else {
@@ -780,20 +777,19 @@ Dialog:DIALOG_QUIZ6(playerid, response, listitem, inputtext[]) {
 Dialog:DIALOG_QUIZ7(playerid, response, listitem, inputtext[]) {
     if(response) {
         if(listitem == 0) { // correct  
-            SendClientMessage(playerid, -1, "[SERVER]:Correct, if you need help with something in game, please use /helpme to talk to the team!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Correct, if you need help with something in game, please use /helpme to talk to the team!");
             Dialog_Show(playerid, DIALOG_QUIZ8, DIALOG_STYLE_LIST, "What is a bannable offense", "Roleplaying a normal citizen.\nUsing known exploits to gain an advantage.\nFollowing a police officers orders, and pulling over.", "Continue", "Quit");
         }
 
         if(listitem == 1) { // incorrect  
             quizAttempts[playerid]++;
-
-            SendClientMessage(playerid, -1, "[SERVER]:Wrong answer!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Wrong answer!");
             Dialog_Show(playerid, DIALOG_QUIZ8, DIALOG_STYLE_LIST, "What is a bannable offense", "Roleplaying a normal citizen.\nUsing known exploits to gain an advantage.\nFollowing a police officers orders, and pulling over.", "Continue", "Quit");
         }
 
         if(listitem == 2) { // correct
             quizAttempts[playerid]++;
-            SendClientMessage(playerid, -1, "[SERVER]:Wrong answer!");
+            SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Wrong answer!");
             Dialog_Show(playerid, DIALOG_QUIZ8, DIALOG_STYLE_LIST, "What is a bannable offense", "Roleplaying a normal citizen.\nUsing known exploits to gain an advantage.\nFollowing a police officers orders, and pulling over.", "Continue", "Quit");
         }
     } else {
@@ -806,11 +802,11 @@ Dialog:DIALOG_QUIZ8(playerid, response, listitem, inputtext[]) {
     if(response) {
         if(listitem == 0) { // correct 
             if(quizAttempts[playerid] >= 3) {
-                KickWithMessage(playerid, "[SERVER]:You have failed the roleplay test, please visit our site and check the rules for help!");
+                KickWithMessage(playerid, "{99c0da}[SERVER]:{ABCDEF}You have failed the roleplay test, please visit our site and check the rules for help!");
 
                 return 1;
             } else {
-                SendClientMessage(playerid, -1, "[SERVER]:Congratulations, you passed the roleplay test! Please watch the following tutorial to begin!");
+                SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Congratulations, you passed the roleplay test! Please watch the following tutorial to begin!");
                 SaveNewPlayerData(playerid, passwordForFinalReg[playerid]);
             }
         }
@@ -818,11 +814,11 @@ Dialog:DIALOG_QUIZ8(playerid, response, listitem, inputtext[]) {
         if(listitem == 1) { // incorrect  
             quizAttempts[playerid]++;
             if(quizAttempts[playerid] >= 3) {
-                KickWithMessage(playerid, "[SERVER]:You have failed the roleplay test, please visit our site and check the rules for help!");
+                KickWithMessage(playerid, "{99c0da}[SERVER]:{ABCDEF}You have failed the roleplay test, please visit our site and check the rules for help!");
 
                 return 1;
             } else {
-                SendClientMessage(playerid, -1, "[SERVER]:Congratulations, you passed the roleplay test! Please watch the following tutorial to begin!");
+                SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Congratulations, you passed the roleplay test! Please watch the following tutorial to begin!");
                 SaveNewPlayerData(playerid, passwordForFinalReg[playerid]);
             }
         }
@@ -830,10 +826,11 @@ Dialog:DIALOG_QUIZ8(playerid, response, listitem, inputtext[]) {
         if(listitem == 2) { // correct
             quizAttempts[playerid]++;
             if(quizAttempts[playerid] >= 3) {
-                KickWithMessage(playerid, "[SERVER]:You have failed the roleplay test, please visit our site and check the rules for help!");
+                KickWithMessage(playerid, "{99c0da}[SERVER]:{ABCDEF}You have failed the roleplay test, please visit our site and check the rules for help!");
+
                 return 1;
             } else {
-                SendClientMessage(playerid, -1, "[SERVER]:Congratulations, you passed the roleplay test! Please watch the following tutorial to begin!");
+                SendClientMessage(playerid, -1, "{99c0da}[SERVER]:{ABCDEF}Congratulations, you passed the roleplay test! Please watch the following tutorial to begin!");
                 SaveNewPlayerData(playerid, passwordForFinalReg[playerid]);
             }
         }
@@ -1138,10 +1135,9 @@ public FinishTutorialSpawn(playerid) {
 forward KickPublic(playerid);
 public KickPublic(playerid) { Kick(playerid); }
 
-stock KickWithMessage(playerid, message[])
-{
+stock KickWithMessage(playerid, message[]) {
     SendClientMessage(playerid, 0xFF4444FF, message);
-    SetTimerEx("KickPublic", 1000, 0, "d", playerid);   
+    SetTimerEx("KickPublic", 1000, 0, "d", playerid);
 }
 
 public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
