@@ -446,7 +446,7 @@ public newJob() {
     if(cache_num_rows() == 0) print("Job does not exist");
     else {
         for (new i = 0; i < cache_num_rows(); i++) {
-            cache_get_value_int(i, "jId", jInfo[loadedJob][jID]);
+            cache_get_value_int(i, "jID", jInfo[loadedJob][jID]);
             cache_get_value(i, "jName", jInfo[loadedJob][jName], 32);
             cache_get_value_int(i, "jPay", jInfo[loadedJob][jPay]);
             cache_get_value_float(i, "jobIX", jInfo[loadedJob][jobIX]);
@@ -466,7 +466,7 @@ public JobsReceived() {
     if(cache_num_rows() == 0) print("No jobs have been created!");
     else {
         for (new i = 0; i < cache_num_rows(); i++) {
-            cache_get_value_int(i, "jId", jInfo[loadedJob][jID]);
+            cache_get_value_int(i, "jID", jInfo[loadedJob][jID]);
             cache_get_value(i, "jName", jInfo[loadedJob][jName], 32);
             cache_get_value_int(i, "jPay", jInfo[loadedJob][jPay]);
             cache_get_value_float(i, "jobIX", jInfo[loadedJob][jobIX]);
@@ -480,6 +480,7 @@ public JobsReceived() {
     }
     return 1;
 }
+
 public OnGameModeExit() {
     return 1;
 }
@@ -600,7 +601,7 @@ public SavePlayerData(playerid) {
 
 public OnPlayerSpawn(playerid) {
     if(pInfo[playerid][LoggedIn] == true) {
-        SetTimerEx("SavePlayerStats", 3000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
+        SetTimerEx("SavePlayerData", 3000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
         SetTimerEx("payPlayerTimer", 10000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
     }
     return 1;
@@ -640,14 +641,30 @@ CMD:stats(playerid, params[]) {
 
 CMD:createjob(playerid, params[]) {
     if(pInfo[playerid][pAdminLevel] == 6) {
-        new Float:infX, Float:infY, Float:infZ, query[1000], fPay, joName[32];
-        if(sscanf(params, "sd", joName, fPay)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createjob [JOB NAME] [JOB PAY]"); {
+        new Float:infX, Float:infY, Float:infZ, query[1000], joPay, joName[32];
+        if(sscanf(params, "sd", joName, joPay)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createjob [JOB NAME] [JOB PAY]"); {
             GetPlayerPos(playerid, infX, infY, infZ);
             CreateDynamicPickup(1239, 1, infX, infY, infZ, -1);
 
-            mysql_format(db_handle, query, sizeof(query), "INSERT INTO `jobs` (`jName`,`jPay`, `jobIX`,`jobIY`,`jobIZ`) VALUES ('%s', '%d','%f','%f','%f')", joName, fPay, infX, infY, infZ);
+            mysql_format(db_handle, query, sizeof(query), "INSERT INTO `jobs` (`jName`,`jPay`, `jobIX`,`jobIY`,`jobIZ`) VALUES ('%s', '%d','%f','%f','%f')", joName, joPay, infX, infY, infZ);
             mysql_tquery(db_handle, query, "OnJobCreated", "ds", playerid, joName);
         }
+    }
+    return 1;
+}
+
+CMD:takejob(playerid, params[]) {
+    for (new i = 0; i < loadedJob; i++) {
+        if(IsPlayerInRangeOfPoint(playerid, 5, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ])) {
+            if(pInfo[playerid][pJobId] == 0) {
+                pInfo[playerid][pJobId] = jInfo[i][jID];
+                new string[256];
+                format(string, sizeof(string), "[SERVER]:{FFFFFF} You have started working as a:{FFFFFF} %s", jInfo[i][jName]);
+                SendClientMessage(playerid, SERVERCOLOR, string);
+                return 1;
+            }
+        }
+        return 1;
     }
     return 1;
 }
@@ -1385,8 +1402,18 @@ stock ReturnStats(playerid, target) {
     SendClientMessage(playerid, SPECIALORANGE, string);
     format(string, sizeof(string), "[SERVER]:{ABCDEF} Level:%d (%dexp/8) | Bank:$%d | Cash:$%d | Payment in:%dmins", pInfo[target][pLevel], pInfo[target][pExp], pInfo[target][pBank], pInfo[target][pCash], pInfo[target][pPayTimer]);
     SendClientMessage(playerid, SPECIALORANGE, string);
-    format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID:%d | Job name: %s", pInfo[target][pJobId]);
-    SendClientMessage(playerid, SPECIALORANGE, string);
+    for (new i = 0; i < loadedJob; i++) {
+        if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
+            if(pInfo[playerid][pJobId] >= 1) {
+                format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID: %d | Job name: %s", pInfo[target][pJobId], jInfo[i][jName]);
+                SendClientMessage(playerid, SPECIALORANGE, string);
+            } else {
+                format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID: N/A | Job name: N/A", pInfo[target][pJobId]);
+                SendClientMessage(playerid, SPECIALORANGE, string);
+            }
+            return 1;
+        }
+    }
     return 1;
 }
 
