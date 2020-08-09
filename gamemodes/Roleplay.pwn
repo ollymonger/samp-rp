@@ -104,6 +104,8 @@ enum ENUM_PLAYER_DATA {
         pJobPay,
 
         pAdminLevel,
+        pModerator,
+        pHelper,
 
         bool:LoggedIn,
         pMuted,
@@ -665,6 +667,44 @@ CMD:stats(playerid, params[]) {
     return 1;
 }
 
+
+CMD:help(playerid, params[]) {
+    new Usage[128];
+    if(sscanf(params, "s[128]", Usage)) {
+        if(pInfo[playerid][pAdminLevel] >= 1) {
+            SendClientMessage(playerid, SERVERCOLOR, "[SYNTAX]:{FFFFFF} /help [Usage]");
+            SendClientMessage(playerid, SERVERCOLOR, "[USAGES]:{FFFFFF} General, Chat, Faction, Job, Business, House, Phone");
+            SendClientMessage(playerid, SERVERCOLOR, "[USAGES]:{FFFFFF} Helper, Moderator, Admin");
+        } else if(pInfo[playerid][pModerator] >= 1) {
+            SendClientMessage(playerid, SERVERCOLOR, "[SYNTAX]:{FFFFFF} /help [Usage]");
+            SendClientMessage(playerid, SERVERCOLOR, "[USAGES]:{FFFFFF} General, Chat, Faction, Job, Business, House, Phone");
+            SendClientMessage(playerid, SERVERCOLOR, "[USAGES]:{FFFFFF} Helper, Moderator");
+        } else if(pInfo[playerid][pHelper] >= 1) {
+            SendClientMessage(playerid, SERVERCOLOR, "[SYNTAX]:{FFFFFF} /help [Usage]");
+            SendClientMessage(playerid, SERVERCOLOR, "[USAGES]:{FFFFFF} General, Chat, Faction, Job, Business, House, Phone");
+            SendClientMessage(playerid, SERVERCOLOR, "[USAGES]:{FFFFFF} Helper");
+        } else {
+            SendClientMessage(playerid, SERVERCOLOR, "[SYNTAX]:{FFFFFF} /help [Usage]");
+            SendClientMessage(playerid, SERVERCOLOR, "[USAGES]:{FFFFFF} General, Chat Faction, Job, Business, House, Phone");
+        }
+        return 1;
+    } else {
+        if(strcmp(Usage, "General", true) == 0) {
+            SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} General Commands ::.");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/help, /admins, /mods, /helpers, /staff");
+        } else if(strcmp(Usage, "Job", true) == 0) {
+            SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
+            if(pInfo[playerid][pJobId] == 1) {
+                SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /quitjob, /takepost");
+            } else if(pInfo[playerid][pJobId] == 0) {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /takejob");
+            }
+        }
+    }
+    return 1;
+}
+
 CMD:createjob(playerid, params[]) {
     if(pInfo[playerid][pAdminLevel] == 6) {
         new Float:infX, Float:infY, Float:infZ, query[1000], joPay, joName[32];
@@ -703,12 +743,34 @@ CMD:takejob(playerid, params[]) {
     return 1;
 }
 
-CMD:listjobs(playerid, params[])
-{
+CMD:quitjob(playerid, params[]) {
+    if(pInfo[playerid][pJobId] >= 1) {
+        for (new i = 0; i < loadedJob; i++) {
+            if(IsPlayerInRangeOfPoint(playerid, 10, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ])) {
+                if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have quit your job!");
+                    pInfo[playerid][pJobId] = 0;
+                    return 1;
+                }
+            } else {
+                TextDrawShowForPlayer(playerid, CantCommand);
+                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+            }
+        }
+    } else {
+
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+
+    }
+    return 1;
+}
+
+CMD:listjobs(playerid, params[]) {
     //if(IsPlayerInRangeOfPoint)
     new jobList[256], string[256];
-    for(new i = 0; i < loadedJob; i++){
-        format(string,sizeof(string), "JOB: %s {FFFFFF}(%d)\n", jInfo[i][jName], jInfo[i][jID]);
+    for (new i = 0; i < loadedJob; i++) {
+        format(string, sizeof(string), "JOB:%s {FFFFFF}(%d)\n", jInfo[i][jName], jInfo[i][jID]);
         strcat(jobList, string);
     }
     Dialog_Show(playerid, DIALOG_JOB_LIST, DIALOG_STYLE_LIST, "Available Jobs", jobList, "Accept", "Decline");
@@ -794,7 +856,7 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
         }
         return 1;
     }
-    if(checkpointid == JobCheckpoint[0]){
+    if(checkpointid == JobCheckpoint[0]) {
         GameTextForPlayer(playerid, "/takejob", 3000, 5);
         DestroyDynamicCP(JobCheckpoint[0]);
     }
@@ -887,10 +949,12 @@ public OnVehicleStreamOut(vehicleid, forplayerid) {
 
 /* 3- DIALOGS -*/
 
-Dialog:DIALOG_JOB_LIST(playerid, response, listitem, inputtext[]){
-    for(new i = 0; i < loadedJob; i++){
-        if(listitem == jInfo[i][jID]-1){
+Dialog:DIALOG_JOB_LIST(playerid, response, listitem, inputtext[]) {
+    for (new i = 0; i < loadedJob; i++) {
+        if(listitem == jInfo[i][jID] - 1) {
             JobCheckpoint[0] = CreateDynamicCP(jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ], 2, -1, -1, -1, 10000);
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Go to the checkpoint on your minimap to find this job!");
+            return 1;
         }
     }
     return 1;
@@ -903,7 +967,6 @@ Dialog:DIALOG_TAKEPOST(playerid, response, listitem, inputtext[]) {
 }
 
 Dialog:DIALOG_DELIVERPOST(playerid, response, listitem, inputtext[]) {
-
     DestroyDynamicCP(PostCheckpoint[0]);
     return 1;
 }
