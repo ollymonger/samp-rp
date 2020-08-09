@@ -792,15 +792,10 @@ CMD:takejob(playerid, params[]) {
 CMD:quitjob(playerid, params[]) {
     if(pInfo[playerid][pJobId] >= 1) {
         for (new i = 0; i < loadedJob; i++) {
-            if(IsPlayerInRangeOfPoint(playerid, 10, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ])) {
-                if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
-                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have quit your job!");
-                    pInfo[playerid][pJobId] = 0;
-                    return 1;
-                }
-            } else {
-                TextDrawShowForPlayer(playerid, CantCommand);
-                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+            if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have quit your job!");
+                pInfo[playerid][pJobId] = 0;
+                return 1;
             }
         }
     } else {
