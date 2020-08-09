@@ -9271,3 +9271,70 @@ v0.3.7-R2, (C)2005-2015 SA-MP Team
 
 [16:06:50]  ===============================
 
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[16:06:51] filterscripts = ""  (string)
+[16:06:51] 
+[16:06:51] Server Plugins
+[16:06:51] --------------
+[16:06:51]  Loading plugin: mysql.dll
+[16:06:51]  >> plugin.mysql: R41-4 successfully loaded.
+[16:06:51]   Loaded.
+[16:06:51]  Loading plugin: crashdetect
+[16:06:51]   CrashDetect plugin 4.20
+[16:06:51]   Loaded.
+[16:06:51]  Loading plugin: streamer
+[16:06:51] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[16:06:51]   Loaded.
+[16:06:51]  Loading plugin: bcrypt-samp.dll
+[16:06:51]   plugin.bcrypt v2.2.3 was loaded.
+[16:06:51]   plugin.bcrypt: 8 cores detected, 7 threads will be used.
+[16:06:51]   Loaded.
+[16:06:51]  Loading plugin: sscanf
+[16:06:51] 
+
+[16:06:51]  ===============================
+
+[16:06:51]       sscanf plugin loaded.     
+
+[16:06:51]          Version:  2.8.3        
+
+[16:06:51]   (c) 2018 Alex "Y_Less" Cole  
+
+[16:06:51]  ===============================
+
+[16:06:51]   Loaded.
+[16:06:51]  Loaded 5 plugins.
+
+[16:06:51] 
+[16:06:51] Filterscripts
+[16:06:51] ---------------
+[16:06:51]   Loaded 0 filterscripts.
+
+[16:06:52] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[16:06:52] [debug] Long callback execution detected (hang or performance issue)
+[16:06:52] [debug] AMX backtrace:
+[16:06:52] [debug] #0 00008acc in public SSCANF_OnGameModeInit () in Roleplay.amx
+[16:06:52] [debug] #1 00001624 in public zcmd_OnGameModeInit () in Roleplay.amx
+[16:06:52] [debug] #2 native CallLocalFunction () in samp-server.exe
+[16:06:52] [debug] #3 00000e24 in public BCRYPT_OnGameModeInit () in Roleplay.amx
+[16:06:52] [debug] #4 native CallLocalFunction () in samp-server.exe
+[16:06:52] [debug] #5 0000084c in public OnGameModeInit () in Roleplay.amx
+[16:06:52] 
+----------------------------------
+[16:06:52]  Gamemode started... please wait...
+[16:06:52] ----------------------------------
+
+[16:06:52] Number of vehicle models: 0
+[16:06:52] plugin.bcrypt: Version check failed.
+[16:06:52] ** [MYSQL]:Loaded 2 jobs from the database.

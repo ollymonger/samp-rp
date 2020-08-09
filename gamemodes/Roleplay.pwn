@@ -882,6 +882,9 @@ public OnPlayerEnterCheckpoint(playerid) {
 }
 
 public OnPlayerEnterDynamicCP(playerid, checkpointid) {
+    if(checkpointid == GarbageCheckpoint[0]){
+        DestroyDynamicCP(GarbageCheckpoint[0]);
+    }
     if(checkpointid == PostCheckpoint[0]) //This checks what checkpoint it is before it continues
     {
         for (new i = 0; i < loadedJob; i++) {
