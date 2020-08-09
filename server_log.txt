@@ -11578,3 +11578,195 @@ v0.3.7-R2, (C)2005-2015 SA-MP Team
 
 [00:42:57]  ===============================
 
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[00:42:58] 
+[00:42:58] Server Plugins
+[00:42:58] --------------
+[00:42:58]  Loading plugin: mysql.dll
+[00:42:58]  >> plugin.mysql: R41-4 successfully loaded.
+[00:42:58]   Loaded.
+[00:42:58]  Loading plugin: crashdetect
+[00:42:58]   CrashDetect plugin 4.20
+[00:42:58]   Loaded.
+[00:42:58]  Loading plugin: streamer
+[00:42:58] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[00:42:58]   Loaded.
+[00:42:58]  Loading plugin: bcrypt-samp.dll
+[00:42:58]   plugin.bcrypt v2.2.3 was loaded.
+[00:42:58]   plugin.bcrypt: 8 cores detected, 7 threads will be used.
+[00:42:58]   Loaded.
+[00:42:58]  Loading plugin: sscanf
+[00:42:58] 
+
+[00:42:58]  ===============================
+
+[00:42:58]       sscanf plugin loaded.     
+
+[00:42:58]          Version:  2.8.3        
+
+[00:42:58]   (c) 2018 Alex "Y_Less" Cole  
+
+[00:42:58]  ===============================
+
+[00:42:58]   Loaded.
+[00:42:58]  Loaded 5 plugins.
+
+[00:42:58] 
+[00:42:58] Filterscripts
+[00:42:58] ---------------
+[00:42:58]   Loading filterscript 'VehicleSpawner.amx'...
+[00:42:58]   Unable to load filterscript 'VehicleSpawner.amx'.
+[00:42:58]   Loaded 0 filterscripts.
+
+[00:42:59] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[00:42:59] [debug] Long callback execution detected (hang or performance issue)
+[00:42:59] [debug] AMX backtrace:
+[00:42:59] [debug] #0 00008b00 in public SSCANF_OnGameModeInit () in Roleplay.amx
+[00:42:59] [debug] #1 00001624 in public zcmd_OnGameModeInit () in Roleplay.amx
+[00:42:59] [debug] #2 native CallLocalFunction () in samp-server.exe
+[00:42:59] [debug] #3 00000e24 in public BCRYPT_OnGameModeInit () in Roleplay.amx
+[00:42:59] [debug] #4 native CallLocalFunction () in samp-server.exe
+[00:42:59] [debug] #5 0000084c in public OnGameModeInit () in Roleplay.amx
+[00:42:59] 
+----------------------------------
+[00:42:59]  Gamemode started... please wait...
+[00:42:59] ----------------------------------
+
+[00:42:59] Number of vehicle models: 0
+[00:42:59] plugin.bcrypt: Version check failed.
+[00:42:59] ** [MYSQL]:Loaded 2 jobs from the database.
+[00:43:19] [connection] 127.0.0.1:62119 requests connection cookie.
+[00:43:20] [connection] incoming connection: 127.0.0.1:62119 id: 0
+[00:43:21] [join] testaccounts_2 has joined the server (0:127.0.0.1)
+[00:45:00] ** [MYSQL] Player:testaccounts_2 data has been saved! Disconnecting user...
+[00:45:00] [part] testaccounts_2 has left the server (0:1)
+[00:55:31] [debug] Server received interrupt signal
+[00:55:31] [debug] Native backtrace:
+[00:55:31] [debug] #0 76fd216c in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[00:55:31] [debug] #1 74b3f56f in ?? () in C:\WINDOWS\System32\KERNELBASE.dll
+[00:55:31] [debug] #2 0048d53c in ?? () in samp-server.exe
+[00:55:31] [debug] #3 0049b4a1 in ?? () in samp-server.exe
+[00:55:31] [debug] #4 0049b4b1 in ?? () in samp-server.exe
+[00:55:31] --- Server Shutting Down.
+[00:55:31] plugin.mysql: Unloading plugin...
+[00:55:31] plugin.mysql: Plugin unloaded.
+[00:55:31] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[00:55:31] plugin.bcrypt: Plugin unloaded.
+[00:55:31] 
+
+[00:55:31]  ===============================
+
+[00:55:31]      sscanf plugin unloaded.    
+
+[00:55:31]  ===============================
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[00:55:33] 
+[00:55:33] Server Plugins
+[00:55:33] --------------
+[00:55:33]  Loading plugin: mysql.dll
+[00:55:33]  >> plugin.mysql: R41-4 successfully loaded.
+[00:55:33]   Loaded.
+[00:55:33]  Loading plugin: crashdetect
+[00:55:33]   CrashDetect plugin 4.20
+[00:55:33]   Loaded.
+[00:55:33]  Loading plugin: streamer
+[00:55:33] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[00:55:33]   Loaded.
+[00:55:33]  Loading plugin: bcrypt-samp.dll
+[00:55:33]   plugin.bcrypt v2.2.3 was loaded.
+[00:55:33]   plugin.bcrypt: 8 cores detected, 7 threads will be used.
+[00:55:33]   Loaded.
+[00:55:33]  Loading plugin: sscanf
+[00:55:33] 
+
+[00:55:33]  ===============================
+
+[00:55:33]       sscanf plugin loaded.     
+
+[00:55:33]          Version:  2.8.3        
+
+[00:55:33]   (c) 2018 Alex "Y_Less" Cole  
+
+[00:55:33]  ===============================
+
+[00:55:33]   Loaded.
+[00:55:33]  Loaded 5 plugins.
+
+[00:55:33] 
+[00:55:33] Filterscripts
+[00:55:33] ---------------
+[00:55:33]   Loading filterscript 'VehicleSpawner.amx'...
+[00:55:33]   Unable to load filterscript 'VehicleSpawner.amx'.
+[00:55:33]   Loaded 0 filterscripts.
+
+[00:55:34] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[00:55:34] [debug] Long callback execution detected (hang or performance issue)
+[00:55:34] [debug] AMX backtrace:
+[00:55:34] [debug] #0 00008b00 in public SSCANF_OnGameModeInit () in Roleplay.amx
+[00:55:34] [debug] #1 00001624 in public zcmd_OnGameModeInit () in Roleplay.amx
+[00:55:34] [debug] #2 native CallLocalFunction () in samp-server.exe
+[00:55:34] [debug] #3 00000e24 in public BCRYPT_OnGameModeInit () in Roleplay.amx
+[00:55:34] [debug] #4 native CallLocalFunction () in samp-server.exe
+[00:55:34] [debug] #5 0000084c in public OnGameModeInit () in Roleplay.amx
+[00:55:34] 
+----------------------------------
+[00:55:34]  Gamemode started... please wait...
+[00:55:34] ----------------------------------
+
+[00:55:34] Number of vehicle models: 0
+[00:55:34] plugin.bcrypt: Version check failed.
+[00:55:34] ** [MYSQL]:Loaded 2 jobs from the database.
+[00:55:52] [connection] 127.0.0.1:58058 requests connection cookie.
+[00:55:53] [connection] incoming connection: 127.0.0.1:58058 id: 0
+[00:55:54] [join] testaccounts_2 has joined the server (0:127.0.0.1)
+[00:56:46] ** [MYSQL] Player:testaccounts_2 data has been saved! Disconnecting user...
+[00:56:46] [part] testaccounts_2 has left the server (0:1)
+[00:57:17] [debug] Server received interrupt signal
+[00:57:17] [debug] Native backtrace:
+[00:57:17] [debug] #0 76fd216c in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[00:57:17] [debug] #1 74b3f56f in ?? () in C:\WINDOWS\System32\KERNELBASE.dll
+[00:57:17] [debug] #2 0048d53c in ?? () in samp-server.exe
+[00:57:17] [debug] #3 0049b4a1 in ?? () in samp-server.exe
+[00:57:17] [debug] #4 0049b4b1 in ?? () in samp-server.exe
+[00:57:17] --- Server Shutting Down.
+[00:57:17] plugin.mysql: Unloading plugin...
+[00:57:17] plugin.mysql: Plugin unloaded.
+[00:57:17] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[00:57:17] plugin.bcrypt: Plugin unloaded.
+[00:57:17] 
+
+[00:57:17]  ===============================
+
+[00:57:17]      sscanf plugin unloaded.    
+
+[00:57:17]  ===============================
+
