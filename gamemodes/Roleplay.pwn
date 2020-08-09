@@ -46,12 +46,12 @@ new Text:NoReports;
 new Text:CantCommand, Text:CantTakePost;
 
 new Float:RandomPostLocations[][3] = {
-    {94.8995, 1183.6771, 18.0150 },    
+    { 94.8995, 1183.6771, 18.0150 },
     {-177.2173, 1213.1268, 19.2113 },
-    {-208.2337, 973.4498, 18.3233},
-    {-321.9125, 1055.7777, 19.1717},
-    {-362.2701, 1165.2568, 19.2094},
-    {-208.0344, 1112.1625, 19.2098}
+    {-208.2337, 973.4498, 18.3233 },
+    {-321.9125, 1055.7777, 19.1717 },
+    {-362.2701, 1165.2568, 19.2094 },
+    {-208.0344, 1112.1625, 19.2098 }
 };
 
 new maleSkins[] = {
@@ -514,7 +514,7 @@ public OnPlayerRequestClass(playerid, classid) {
 
 public OnPlayerConnect(playerid) {
     new query[200];
-
+    pInfo[playerid][pMuted] = 1;
     new name[MAX_PLAYER_NAME + 1];
     GetPlayerName(playerid, name, sizeof(name));
 
@@ -625,6 +625,8 @@ public SavePlayerData(playerid) {
 
 public OnPlayerSpawn(playerid) {
     if(pInfo[playerid][LoggedIn] == true) {
+        pInfo[playerid][pMuted] = 0;
+
         SetTimerEx("SavePlayerData", 300000, false, "ds", playerid, "SA-MP"); //called "function" when 5 mins elapsed
         SetTimerEx("payPlayerTimer", 30000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
     }
@@ -708,6 +710,7 @@ CMD:takepost(playerid, params[]) {
                     Dialog_Show(playerid, DIALOG_TAKEPOST, DIALOG_STYLE_MSGBOX, "Postman Job", string, "Continue", "");
                 } else {
                     TextDrawShowForPlayer(playerid, CantTakePost);
+                    SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
                 }
             }
             return 1;
@@ -862,7 +865,7 @@ public OnVehicleStreamOut(vehicleid, forplayerid) {
 
 Dialog:DIALOG_TAKEPOST(playerid, response, listitem, inputtext[]) {
     new randomLoc = random(sizeof(RandomPostLocations));
-    PostCheckpoint[0] = CreateDynamicCP(RandomPostLocations[randomLoc][0], RandomPostLocations[randomLoc][1], RandomPostLocations[randomLoc][2], 2, -1, -1, -1, 100);
+    PostCheckpoint[0] = CreateDynamicCP(RandomPostLocations[randomLoc][0], RandomPostLocations[randomLoc][1], RandomPostLocations[randomLoc][2], 2, -1, -1, -1, 10000);
     return 1;
 }
 
