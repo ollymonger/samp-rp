@@ -698,7 +698,7 @@ CMD:help(playerid, params[]) {
                 SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /quitjob, /takepost");
             } else if(pInfo[playerid][pJobId] == 0) {
-                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /takejob");
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /takejob, /listjobs");
             }
         }
     }
