@@ -8,6 +8,8 @@
 #include <easyDialog>
 #include <bcrypt>
 #include <zcmd>
+#include <sscanf2>
+#include <streamer>
 
 #define BCRYPT_COST 12
 #define lenull(%1) \
@@ -17,6 +19,8 @@
 
 #define GREY 			0xCECECEFF
 #define SPECIALORANGE   0xFFCC00FF // CRP Orange 0xFF8000FF
+#define SERVERCOLOR 	0xA9C4E4FF //0x99CEFFFF 94ABC8
+
 
 
 main() {
@@ -89,13 +93,15 @@ enum ENUM_PLAYER_DATA {
         pJobId,
         pJobPay,
 
+        pAdminLevel,
+
         bool:LoggedIn,
         pMuted
 }
 new pInfo[MAX_PLAYERS][ENUM_PLAYER_DATA];
 
 enum ENUM_JOB_DATA {
-    jID[32],
+    jID[11],
         jName[32],
         jPay,
         Float:jobIX,
@@ -426,6 +432,34 @@ public LoadJobData() {
     mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `jobs`");
     mysql_tquery(db_handle, DB_Query, "JobsReceived");
 }
+forward public LoadNewJobData(id);
+public LoadNewJobData(id) {
+    new DB_Query[900];
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `jobs` WHERE `jID` = '%d'", id);
+    mysql_tquery(db_handle, DB_Query, "newJob");
+}
+
+
+forward newJob();
+public newJob() {
+
+    if(cache_num_rows() == 0) print("Job does not exist");
+    else {
+        for (new i = 0; i < cache_num_rows(); i++) {
+            cache_get_value_int(i, "jId", jInfo[loadedJob][jID]);
+            cache_get_value(i, "jName", jInfo[loadedJob][jName], 32);
+            cache_get_value_int(i, "jPay", jInfo[loadedJob][jPay]);
+            cache_get_value_float(i, "jobIX", jInfo[loadedJob][jobIX]);
+            cache_get_value_float(i, "jobIY", jInfo[loadedJob][jobIY]);
+            cache_get_value_float(i, "jobIZ", jInfo[loadedJob][jobIZ]);
+            loadedJob++;
+            //`CreateDynamicPickup(19526, 1, factionInfo[i][facX], factionInfo[i][facY], factionInfo[i][facZ], 0, 0);
+
+            CreateDynamicPickup(1239, jInfo[loadedJob][jobIX], jInfo[loadedJob][jobIY], jInfo[loadedJob][jobIZ], 0, 0);
+        }
+        printf("[INFO]:Loaded a new job.", cache_num_rows());
+    }
+}
 
 forward JobsReceived();
 public JobsReceived() {
@@ -553,7 +587,10 @@ public SavePlayerData(playerid) {
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pLevel` = '%d', `pExp` = '%d', `pSkin` = '%d', `pPayTimer` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pLevel], pInfo[playerid][pExp], pInfo[playerid][pSkin], pInfo[playerid][pPayTimer], GetName(playerid));
     mysql_query(db_handle, query);
 
-    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pJobId` = '%f', `pJobPay` = '%f', WHERE `pName` = '%e'", pInfo[playerid][pJobId], pInfo[playerid][pJobPay], GetName(playerid));
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pJobId` = '%d', `pJobPay` = '%d', WHERE `pName` = '%e'", pInfo[playerid][pJobId], pInfo[playerid][pJobPay], GetName(playerid));
+    mysql_query(db_handle, query);
+
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAdminLevel` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pAdminLevel], GetName(playerid));
     mysql_query(db_handle, query);
 
     printf("** [MYSQL] Player:%s data has been saved! Disconnecting user...", GetName(playerid));
@@ -598,6 +635,29 @@ public OnPlayerText(playerid, text[]) {
 CMD:stats(playerid, params[]) {
     ReturnStats(playerid, playerid);
     return 1;
+}
+
+CMD:createjob(playerid, params[]) {
+    if(pInfo[playerid][pAdminLevel] == 6) {
+        new Float:infX, Float:infY, Float:infZ, query[1000], fPay, joName[32];
+        if(sscanf(params, "sd", joName, fPay)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createjob [JOB NAME] [JOB PAY]"); {
+            GetPlayerPos(playerid, infX, infY, infZ);
+            CreateDynamicPickup(1239, 1, infX, infY, infZ, -1);
+
+            mysql_format(db_handle, query, sizeof(query), "INSERT INTO `jobs` (`jName`,`jPay`, `jobIX`,`jobIY`,`jobIZ`) VALUES ('%s', '%d','%f','%f','%f')", joName, fPay, infX, infY, infZ);
+            mysql_tquery(db_handle, query, "OnJobCreated", "ds", playerid, joName);
+        }
+    }
+    return 1;
+}
+
+forward public OnJobCreated(playerid, joName[32]);
+public OnJobCreated(playerid, joName[32]) {
+    new string[256];
+    format(string, sizeof(string), "[SERVER]:{FFFFFF} Job:%s(%d) has been created!", joName, cache_insert_id());
+    SendClientMessage(playerid, -1, string); {
+        LoadNewJobData(cache_insert_id());
+    }
 }
 
 public OnPlayerCommandText(playerid, cmdtext[]) {
@@ -1093,6 +1153,9 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pPayTimer", pInfo[playerid][pPayTimer]);
     cache_get_value_int(0, "pJobId", pInfo[playerid][pJobId]);
     cache_get_value_int(0, "pJobPay", pInfo[playerid][pJobPay]);
+
+
+    cache_get_value_int(0, "pAdminLevel", pInfo[playerid][pAdminLevel]);
 
     pInfo[playerid][LoggedIn] = true;
     SendClientMessage(playerid, -1, "Logged in");

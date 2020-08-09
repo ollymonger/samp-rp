@@ -1,0 +1,11 @@
+[01:31:14] [plugins/mysql] cache_get_value_name_int: field 'jId' not found
+[01:31:14] [plugins/mysql] cache_get_value_name_int: field 'jId' not found
+[01:31:14] [plugins/mysql] cache_get_value_name_int: field 'jId' not found
+[01:31:14] [plugins/mysql] cache_get_value_name_int: field 'jId' not found
+[01:31:14] [plugins/mysql] cache_get_value_name_int: field 'jId' not found
+[01:31:14] [plugins/mysql] cache_get_value_name_int: field 'jId' not found
+[01:31:14] [plugins/mysql] cache_get_value_name_int: field 'jId' not found
+[01:31:44] [plugins/mysql] cache_get_value_name_int: field 'jId' not found
+[01:31:47] [plugins/mysql] cache_get_value_name_int: field 'jId' not found
+[01:31:49] [plugins/mysql] cache_get_value_name_int: field 'jId' not found
+[01:31:50] [plugins/mysql] error #1064 while executing query "UPDATE `accounts` SET `pJobId` = '0', `pJobPay` = '0', WHERE `pName` = 'testaccounts_2'": You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'WHERE `pName` = 'testaccounts_2'' at line 1
