@@ -890,6 +890,12 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
                 new randomLoc = random(sizeof(RandomGarbageLocations));
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Go to the next checkpoint on the minimap and collect the garbage!");
                 GarbageCheckpoint[0] = CreateDynamicCP(RandomGarbageLocations[randomLoc][0], RandomGarbageLocations[randomLoc][1], RandomGarbageLocations[randomLoc][2], 2, -1, -1, -1, 10000);
+            } else {
+                /* Player must now go to the dump, and use /dump cmd at info point 
+                    Need to define dump point
+                    Need to set player pay after the dump is complete. Longer job = better pay
+                */
+                
             }
         }
     }
