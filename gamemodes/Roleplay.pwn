@@ -32,7 +32,7 @@ main() {
 /* 1- NEWS -*/
 new MySQL:db_handle;
 
-new PostCheckpoint[MAX_PLAYERS];
+new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS];
 
 new Text:PublicTD[3];
 new Text:sheriffsoffice[4];
@@ -675,6 +675,10 @@ CMD:createjob(playerid, params[]) {
             mysql_format(db_handle, query, sizeof(query), "INSERT INTO `jobs` (`jName`,`jPay`, `jobIX`,`jobIY`,`jobIZ`) VALUES ('%s', '%d','%f','%f','%f')", joName, joPay, infX, infY, infZ);
             mysql_tquery(db_handle, query, "OnJobCreated", "ds", playerid, joName);
         }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+
     }
     return 1;
 }
@@ -688,10 +692,26 @@ CMD:takejob(playerid, params[]) {
                 format(string, sizeof(string), "[SERVER]:{FFFFFF} You have started working as a:{FFFFFF} %s", jInfo[i][jName]);
                 SendClientMessage(playerid, SERVERCOLOR, string);
                 return 1;
+            } else {
+                TextDrawShowForPlayer(playerid, CantCommand);
+                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+
             }
         }
         return 1;
     }
+    return 1;
+}
+
+CMD:listjobs(playerid, params[])
+{
+    //if(IsPlayerInRangeOfPoint)
+    new jobList[256], string[256];
+    for(new i = 0; i < loadedJob; i++){
+        format(string,sizeof(string), "JOB: %s {FFFFFF}(%d)\n", jInfo[i][jName], jInfo[i][jID]);
+        strcat(jobList, string);
+    }
+    Dialog_Show(playerid, DIALOG_JOB_LIST, DIALOG_STYLE_LIST, "Available Jobs", jobList, "Accept", "Decline");
     return 1;
 }
 
@@ -773,6 +793,10 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
             return 1;
         }
         return 1;
+    }
+    if(checkpointid == JobCheckpoint[0]){
+        GameTextForPlayer(playerid, "/takejob", 3000, 5);
+        DestroyDynamicCP(JobCheckpoint[0]);
     }
     return 1;
 }
@@ -862,6 +886,15 @@ public OnVehicleStreamOut(vehicleid, forplayerid) {
 }
 
 /* 3- DIALOGS -*/
+
+Dialog:DIALOG_JOB_LIST(playerid, response, listitem, inputtext[]){
+    for(new i = 0; i < loadedJob; i++){
+        if(listitem == jInfo[i][jID]-1){
+            JobCheckpoint[0] = CreateDynamicCP(jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ], 2, -1, -1, -1, 10000);
+        }
+    }
+    return 1;
+}
 
 Dialog:DIALOG_TAKEPOST(playerid, response, listitem, inputtext[]) {
     new randomLoc = random(sizeof(RandomPostLocations));
