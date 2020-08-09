@@ -32,6 +32,8 @@ main() {
 /* 1- NEWS -*/
 new MySQL:db_handle;
 
+new PostCheckpoint[MAX_PLAYERS];
+
 new Text:PublicTD[3];
 new Text:sheriffsoffice[4];
 new Text:hospital[3];
@@ -41,8 +43,11 @@ new Text:finishtutorial[3];
 new Text:PMuted;
 new Text:NoHelpmes;
 new Text:NoReports;
-new Text:CantCommand;
+new Text:CantCommand, Text:CantTakePost;
 
+new Float:RandomPostLocations[][3] = {
+    {-199.025, 1113.56, 19.595 }
+};
 
 new maleSkins[] = {
     20,
@@ -96,7 +101,9 @@ enum ENUM_PLAYER_DATA {
         pAdminLevel,
 
         bool:LoggedIn,
-        pMuted
+        pMuted,
+        CurrentState,
+        PostState
 }
 new pInfo[MAX_PLAYERS][ENUM_PLAYER_DATA];
 
@@ -156,6 +163,17 @@ public OnGameModeInit() {
     TextDrawSetOutline(NoReports, 0);
     TextDrawSetProportional(NoReports, 1);
     TextDrawSetShadow(NoReports, 1);
+
+
+
+    CantTakePost = TextDrawCreate(230.000000, 366.000000, "You have already collected post!");
+    TextDrawBackgroundColor(CantTakePost, 255);
+    TextDrawFont(CantTakePost, 1);
+    TextDrawLetterSize(CantTakePost, 0.559999, 1.800000);
+    TextDrawColor(CantTakePost, -1);
+    TextDrawSetOutline(CantTakePost, 0);
+    TextDrawSetProportional(CantTakePost, 1);
+    TextDrawSetShadow(CantTakePost, 1);
 
     CantCommand = TextDrawCreate(230.000000, 366.000000, "You cannot use this command!");
     TextDrawBackgroundColor(CantCommand, 255);
@@ -670,6 +688,30 @@ CMD:takejob(playerid, params[]) {
     return 1;
 }
 
+CMD:takepost(playerid, params[]) {
+    for (new i = 0; i < loadedJob; i++) {
+        //if(strcmp(jInfo[i][jName], "Postman", true)) { // if the job name is Postman!
+        if(IsPlayerInRangeOfPoint(playerid, 10, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ])) {
+            if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
+                if(pInfo[playerid][CurrentState] != 1) {
+                    pInfo[playerid][CurrentState] = 1;
+                    new string[256];
+                    new rand = random(15 - 3) + 3;
+
+                    format(string, sizeof(string), "You have taken:%d wrapped up newspapers! \n\nDeliver them to the marked location and receive payment for your work!\n\nThe current price for one stack of newspapers is:%d", rand, jInfo[i][jPay]);
+                    pInfo[playerid][PostState] = rand;
+                    Dialog_Show(playerid, DIALOG_TAKEPOST, DIALOG_STYLE_MSGBOX, "Postman Job", string, "Continue", "");
+                } else {
+                    TextDrawShowForPlayer(playerid, CantTakePost);
+                }
+            }
+            return 1;
+        }
+        //}
+    }
+    return 1;
+}
+
 forward public OnJobCreated(playerid, joName[32]);
 public OnJobCreated(playerid, joName[32]) {
     new string[256];
@@ -700,6 +742,29 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 }
 
 public OnPlayerEnterCheckpoint(playerid) {
+    return 1;
+}
+
+public OnPlayerEnterDynamicCP(playerid, checkpointid) {
+    if(checkpointid == PostCheckpoint[0]) //This checks what checkpoint it is before it continues
+    {
+        for (new i = 0; i < loadedJob; i++) {
+            if(pInfo[playerid][CurrentState] == 1) {
+
+                if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
+                    new totalPay, string[256];
+                    pInfo[playerid][CurrentState] = 0;
+                    totalPay = pInfo[playerid][PostState] * jInfo[i][jPay];
+                    pInfo[playerid][pJobPay] += totalPay;
+                    format(string, sizeof(string), "Thank you for posting these!\n\nPlease return to the depot to resume posting!\n\nYou will receive:$%d on your next paycheck!", totalPay);
+                    Dialog_Show(playerid, DIALOG_DELIVERPOST, DIALOG_STYLE_MSGBOX, "Job Complete!", string, "Continue", "");
+                    return 1;
+                }
+            }
+            return 1;
+        }
+        return 1;
+    }
     return 1;
 }
 
@@ -788,6 +853,18 @@ public OnVehicleStreamOut(vehicleid, forplayerid) {
 }
 
 /* 3- DIALOGS -*/
+
+Dialog:DIALOG_TAKEPOST(playerid, response, listitem, inputtext[]) {
+    new randomLoc = random(sizeof(RandomPostLocations));
+    PostCheckpoint[0] = CreateDynamicCP(RandomPostLocations[randomLoc][0], RandomPostLocations[randomLoc][1], RandomPostLocations[randomLoc][2], 2, -1, -1, -1, 100);
+    return 1;
+}
+
+Dialog:DIALOG_DELIVERPOST(playerid, response, listitem, inputtext[]) {
+
+    DestroyDynamicCP(PostCheckpoint[0]);
+    return 1;
+}
 
 Dialog:DIALOG_QUIZ1(playerid, response, listitem, inputtext[]) {
     if(response) {
@@ -1341,6 +1418,7 @@ public payPlayerTimer(playerid) {
 
                 new string[256];
                 format(string, sizeof(string), "[SERVER]:**-------- PAYCHECK --------**");
+                SendClientMessage(playerid, SPECIALORANGE, string);
                 payPlayer(playerid);
             } else {
                 pInfo[playerid][pPayTimer] -= 1;
@@ -1364,7 +1442,7 @@ public payPlayer(playerid) {
     //if(pInfo[playerid][pFac] > 1){ start faction pay here}
     tax = (salary / 500) * 100;
     totalpay = salary - tax; // taxing their job's pay
-    format(string, sizeof(string), "[SERVER]:{ABCDEF}Income:$%d | Tax:-$%d | Total Pay:+$%d", salary, tax, totalpay);
+    format(string, sizeof(string), "[SERVER]:{ABCDEF}Income: $%d | Tax: -$%d | Total Pay: +$%d", salary, tax, totalpay);
     SendClientMessage(playerid, SPECIALORANGE, string);
     pInfo[playerid][pPayTimer] = 60;
     pInfo[playerid][pBank] += totalpay;
@@ -1374,12 +1452,12 @@ public payPlayer(playerid) {
     if(pInfo[playerid][pExp] >= 8) {
         pInfo[playerid][pExp] = 0;
         pInfo[playerid][pLevel]++;
-        format(string, sizeof(string), "[SERVER]:{ABCDEF}You have levelled up! (Level:%d)", pInfo[playerid][pLevel]);
+        format(string, sizeof(string), "[SERVER]:{ABCDEF} You have levelled up! (Level: %d)", pInfo[playerid][pLevel]);
         SendClientMessage(playerid, SPECIALORANGE, string);
     }
     if(pInfo[playerid][pExp] <= 8) {
         pInfo[playerid][pExp]++;
-        format(string, sizeof(string), "[SERVER]:{ABCDEF}You have gained an experience point! (Exp:%d)", pInfo[playerid][pExp]);
+        format(string, sizeof(string), "[SERVER]:{ABCDEF} You have gained an experience point! (Exp: %d)", pInfo[playerid][pExp]);
         SendClientMessage(playerid, SPECIALORANGE, string);
     }
 
@@ -1402,7 +1480,7 @@ stock ReturnStats(playerid, target) {
     new string[256];
     format(string, sizeof(string), "[SERVER]:**-------- %s's STATISTICS --------**", RPName(target));
     SendClientMessage(playerid, SPECIALORANGE, string);
-    format(string, sizeof(string), "[SERVER]:{ABCDEF} Level:%d (%dexp/8) | Bank:$%d | Cash:$%d | Payment in:%dmins", pInfo[target][pLevel], pInfo[target][pExp], pInfo[target][pBank], pInfo[target][pCash], pInfo[target][pPayTimer]);
+    format(string, sizeof(string), "[SERVER]:{ABCDEF} Level: %d (%dexp/8) | Bank: $%d | Cash: $%d | Payment in: %dmins", pInfo[target][pLevel], pInfo[target][pExp], pInfo[target][pBank], pInfo[target][pCash], pInfo[target][pPayTimer]);
     SendClientMessage(playerid, SPECIALORANGE, string);
     if(pInfo[playerid][pJobId] == 0) {
         format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID: N/A | Job name: N/A", pInfo[target][pJobId]);
@@ -1417,6 +1495,17 @@ stock ReturnStats(playerid, target) {
             return 1;
         }
     }
+    return 1;
+}
+
+
+forward public RemoveTextdrawAfterTime(playerid);
+public RemoveTextdrawAfterTime(playerid) {
+    TextDrawHideForPlayer(playerid, Text:PMuted);
+    TextDrawHideForPlayer(playerid, Text:CantCommand);
+    TextDrawHideForPlayer(playerid, Text:NoHelpmes);
+    TextDrawHideForPlayer(playerid, Text:NoReports);
+    TextDrawHideForPlayer(playerid, Text:CantTakePost);
     return 1;
 }
 

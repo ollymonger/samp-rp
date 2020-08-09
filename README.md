@@ -7,3 +7,5 @@ easyDialog.inc
 bcrypt.inc
 streamer plugin
 
+## CurrentState:
+* 0 = Ready for task, 1 = Doing a job task, 
