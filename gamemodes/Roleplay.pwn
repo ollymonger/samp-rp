@@ -573,7 +573,7 @@ public SaveNewPlayerData(playerid, hashed[BCRYPT_HASH_LENGTH]) {
     mysql_query(db_handle, query);
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pRegion` = '%e' WHERE  `pName` = '%e'", pInfo[playerid][pRegion], GetName(playerid));
     mysql_query(db_handle, query);
-    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pLevel` = 1, `pExp` = 1, `pPayTimer` = 60, `pJobId` = 0, `pJobPay` = 0,  WHERE  `pName` = '%e'", GetName(playerid));
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pLevel` = 1, `pExp` = 1, `pPayTimer` = 60, `pJobId` = 0, `pJobPay` = 0  WHERE  `pName` = '%e'", GetName(playerid));
     mysql_query(db_handle, query);
 
     SendClientMessage(playerid, 0x00FF00FF, "{99c0da}[SERVER]:{ABCDEF}You are now registered and logged in!");
