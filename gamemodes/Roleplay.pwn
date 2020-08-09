@@ -528,6 +528,7 @@ public checkIfExists(playerid) {
 public OnPlayerDisconnect(playerid, reason) {
     if(pInfo[playerid][LoggedIn] == true) {
         SavePlayerData(playerid);
+        printf("** [MYSQL] Player:%s data has been saved! Disconnecting user...", GetName(playerid));
         pInfo[playerid][LoggedIn] = false;
     }
     return 1;
@@ -589,20 +590,20 @@ public SavePlayerData(playerid) {
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pLevel` = '%d', `pExp` = '%d', `pSkin` = '%d', `pPayTimer` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pLevel], pInfo[playerid][pExp], pInfo[playerid][pSkin], pInfo[playerid][pPayTimer], GetName(playerid));
     mysql_query(db_handle, query);
 
-    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pJobId` = '%d', `pJobPay` = '%d', WHERE `pName` = '%e'", pInfo[playerid][pJobId], pInfo[playerid][pJobPay], GetName(playerid));
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pJobId` = '%d', `pJobPay` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pJobId], pInfo[playerid][pJobPay], GetName(playerid));
     mysql_query(db_handle, query);
 
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAdminLevel` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pAdminLevel], GetName(playerid));
     mysql_query(db_handle, query);
+    SetTimerEx("SavePlayerData", 300000, false, "ds", playerid, "SA-MP"); //called "function" when 5 mins elapsed
 
-    printf("** [MYSQL] Player:%s data has been saved! Disconnecting user...", GetName(playerid));
     return 1;
 }
 
 public OnPlayerSpawn(playerid) {
     if(pInfo[playerid][LoggedIn] == true) {
-        SetTimerEx("SavePlayerData", 3000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
-        SetTimerEx("payPlayerTimer", 10000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
+        SetTimerEx("SavePlayerData", 300000, false, "ds", playerid, "SA-MP"); //called "function" when 5 mins elapsed
+        SetTimerEx("payPlayerTimer", 30000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
     }
     return 1;
 }
@@ -1354,7 +1355,7 @@ public payPlayerTimer(playerid) {
 forward public payPlayer(playerid);
 public payPlayer(playerid) {
     new tax, salary, totalpay, string[256];
-    salary += 250; // base salary for all players.
+    salary = 250; // base salary for all players.
     if(pInfo[playerid][pJobId] >= 1) {
         format(string, sizeof(string), "[SERVER]:{ABCDEF}Job Pay: +$%d", pInfo[playerid][pJobPay]);
         SendClientMessage(playerid, SPECIALORANGE, string);
