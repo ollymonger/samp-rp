@@ -24413,3 +24413,99 @@
 [16:08:24] [DEBUG] fetched MySQL result '0x0'
 [16:08:24] [DEBUG] CHandle::Execute - return value: true
 [16:08:24] [DEBUG] mysql_query: return value: '5'
+[16:13:33] [DEBUG] mysql_format(1, 0x03A8A714, 300, "UPDATE `accounts` SET `pHealth` = '%f', `pArmour` = '%f', `pCash` = '%d', `pBank` = '%d' WHERE `pName` = '%e'")
+[16:13:33] [DEBUG] mysql_format: return value: '120'
+[16:13:33] [DEBUG] mysql_query(1, "UPDATE `accounts` SET `pHealth` = '0.000000', `pArmour` = '0.000000', `pCash` = '0', `pBank` = '6695' WHERE `pName` = ''", 1)
+[16:13:33] [DEBUG] CHandle::Execute(this=0x7560c0, type=3, query=0x798498)
+[16:13:33] [DEBUG] CConnection::Execute(query=0x798498, this=0x72d938, connection=0x702288)
+[16:13:33] [DEBUG] CQuery::Execute(this=0x798498, connection=0x702288)
+[16:13:33] [INFO] query "UPDATE `accounts` SET `pHealth` = '0.000000', `pArmour` = '0.000000', `pCash` = '0', `pBank` = '6695' WHERE `pName` = ''" successfully executed within 0.321 milliseconds
+[16:13:33] [DEBUG] CResultSet::Create(connection=0x702288, query_str='UPDATE `accounts` SET `pHealth` = '0.000000', `pArmour` = '0.000000', `pCash` = '0', `pBank` = '6695' WHERE `pName` = ''')
+[16:13:33] [DEBUG] created new resultset '0x765118'
+[16:13:33] [DEBUG] fetched MySQL result '0x0'
+[16:13:33] [DEBUG] CHandle::Execute - return value: true
+[16:13:33] [DEBUG] mysql_query: return value: '6'
+[16:13:33] [DEBUG] mysql_format(1, 0x03A8A714, 300, "UPDATE `accounts` SET `pLevel` = '%d', `pExp` = '%d', `pSkin` = '%d', `pPayTimer` = '%d' WHERE `pName` = '%e'")
+[16:13:33] [DEBUG] mysql_format: return value: '105'
+[16:13:33] [DEBUG] mysql_query(1, "UPDATE `accounts` SET `pLevel` = '2', `pExp` = '3', `pSkin` = '73', `pPayTimer` = '59' WHERE `pName` = ''", 1)
+[16:13:33] [DEBUG] CHandle::Execute(this=0x7560c0, type=3, query=0x797950)
+[16:13:33] [DEBUG] CConnection::Execute(query=0x797950, this=0x72d938, connection=0x702288)
+[16:13:33] [DEBUG] CQuery::Execute(this=0x797950, connection=0x702288)
+[16:13:33] [INFO] query "UPDATE `accounts` SET `pLevel` = '2', `pExp` = '3', `pSkin` = '73', `pPayTimer` = '59' WHERE `pName` = ''" successfully executed within 0.264 milliseconds
+[16:13:33] [DEBUG] CResultSet::Create(connection=0x702288, query_str='UPDATE `accounts` SET `pLevel` = '2', `pExp` = '3', `pSkin` = '73', `pPayTimer` = '59' WHERE `pName` = ''')
+[16:13:33] [DEBUG] created new resultset '0x765070'
+[16:13:33] [DEBUG] fetched MySQL result '0x0'
+[16:13:33] [DEBUG] CHandle::Execute - return value: true
+[16:13:33] [DEBUG] mysql_query: return value: '7'
+[16:13:33] [DEBUG] mysql_format(1, 0x03A8A714, 300, "UPDATE `accounts` SET `pJobId` = '%d', `pJobPay` = '%d' WHERE `pName` = '%e'")
+[16:13:33] [DEBUG] mysql_format: return value: '72'
+[16:13:33] [DEBUG] mysql_query(1, "UPDATE `accounts` SET `pJobId` = '2', `pJobPay` = '0' WHERE `pName` = ''", 1)
+[16:13:33] [DEBUG] CHandle::Execute(this=0x7560c0, type=3, query=0x797ea8)
+[16:13:33] [DEBUG] CConnection::Execute(query=0x797ea8, this=0x72d938, connection=0x702288)
+[16:13:33] [DEBUG] CQuery::Execute(this=0x797ea8, connection=0x702288)
+[16:13:33] [INFO] query "UPDATE `accounts` SET `pJobId` = '2', `pJobPay` = '0' WHERE `pName` = ''" successfully executed within 0.221 milliseconds
+[16:13:33] [DEBUG] CResultSet::Create(connection=0x702288, query_str='UPDATE `accounts` SET `pJobId` = '2', `pJobPay` = '0' WHERE `pName` = ''')
+[16:13:33] [DEBUG] created new resultset '0x7652d8'
+[16:13:33] [DEBUG] fetched MySQL result '0x0'
+[16:13:33] [DEBUG] CHandle::Execute - return value: true
+[16:13:33] [DEBUG] mysql_query: return value: '8'
+[16:13:33] [DEBUG] mysql_format(1, 0x03A8A714, 300, "UPDATE `accounts` SET `pAdminLevel` = '%d' WHERE `pName` = '%e'")
+[16:13:33] [DEBUG] mysql_format: return value: '60'
+[16:13:33] [DEBUG] mysql_query(1, "UPDATE `accounts` SET `pAdminLevel` = '6' WHERE `pName` = ''", 1)
+[16:13:33] [DEBUG] CHandle::Execute(this=0x7560c0, type=3, query=0x797820)
+[16:13:33] [DEBUG] CConnection::Execute(query=0x797820, this=0x72d938, connection=0x702288)
+[16:13:33] [DEBUG] CQuery::Execute(this=0x797820, connection=0x702288)
+[16:13:33] [INFO] query "UPDATE `accounts` SET `pAdminLevel` = '6' WHERE `pName` = ''" successfully executed within 0.214 milliseconds
+[16:13:34] [DEBUG] CResultSet::Create(connection=0x702288, query_str='UPDATE `accounts` SET `pAdminLevel` = '6' WHERE `pName` = ''')
+[16:13:34] [DEBUG] created new resultset '0x765230'
+[16:13:34] [DEBUG] fetched MySQL result '0x0'
+[16:13:34] [DEBUG] CHandle::Execute - return value: true
+[16:13:34] [DEBUG] mysql_query: return value: '9'
+[16:14:01] [DEBUG] mysql_format(1, 0x03A8A714, 300, "UPDATE `accounts` SET `pHealth` = '%f', `pArmour` = '%f', `pCash` = '%d', `pBank` = '%d' WHERE `pName` = '%e'")
+[16:14:01] [DEBUG] mysql_format: return value: '120'
+[16:14:01] [DEBUG] mysql_query(1, "UPDATE `accounts` SET `pHealth` = '0.000000', `pArmour` = '0.000000', `pCash` = '0', `pBank` = '6695' WHERE `pName` = ''", 1)
+[16:14:01] [DEBUG] CHandle::Execute(this=0x7560c0, type=3, query=0x798498)
+[16:14:01] [DEBUG] CConnection::Execute(query=0x798498, this=0x72d938, connection=0x702288)
+[16:14:01] [DEBUG] CQuery::Execute(this=0x798498, connection=0x702288)
+[16:14:01] [INFO] query "UPDATE `accounts` SET `pHealth` = '0.000000', `pArmour` = '0.000000', `pCash` = '0', `pBank` = '6695' WHERE `pName` = ''" successfully executed within 0.263 milliseconds
+[16:14:01] [DEBUG] CResultSet::Create(connection=0x702288, query_str='UPDATE `accounts` SET `pHealth` = '0.000000', `pArmour` = '0.000000', `pCash` = '0', `pBank` = '6695' WHERE `pName` = ''')
+[16:14:01] [DEBUG] created new resultset '0x765460'
+[16:14:01] [DEBUG] fetched MySQL result '0x0'
+[16:14:01] [DEBUG] CHandle::Execute - return value: true
+[16:14:01] [DEBUG] mysql_query: return value: '10'
+[16:14:01] [DEBUG] mysql_format(1, 0x03A8A714, 300, "UPDATE `accounts` SET `pLevel` = '%d', `pExp` = '%d', `pSkin` = '%d', `pPayTimer` = '%d' WHERE `pName` = '%e'")
+[16:14:01] [DEBUG] mysql_format: return value: '105'
+[16:14:01] [DEBUG] mysql_query(1, "UPDATE `accounts` SET `pLevel` = '2', `pExp` = '3', `pSkin` = '73', `pPayTimer` = '59' WHERE `pName` = ''", 1)
+[16:14:01] [DEBUG] CHandle::Execute(this=0x7560c0, type=3, query=0x797fd8)
+[16:14:01] [DEBUG] CConnection::Execute(query=0x797fd8, this=0x72d938, connection=0x702288)
+[16:14:01] [DEBUG] CQuery::Execute(this=0x797fd8, connection=0x702288)
+[16:14:01] [INFO] query "UPDATE `accounts` SET `pLevel` = '2', `pExp` = '3', `pSkin` = '73', `pPayTimer` = '59' WHERE `pName` = ''" successfully executed within 0.247 milliseconds
+[16:14:01] [DEBUG] CResultSet::Create(connection=0x702288, query_str='UPDATE `accounts` SET `pLevel` = '2', `pExp` = '3', `pSkin` = '73', `pPayTimer` = '59' WHERE `pName` = ''')
+[16:14:01] [DEBUG] created new resultset '0x7655e8'
+[16:14:01] [DEBUG] fetched MySQL result '0x0'
+[16:14:01] [DEBUG] CHandle::Execute - return value: true
+[16:14:01] [DEBUG] mysql_query: return value: '11'
+[16:14:01] [DEBUG] mysql_format(1, 0x03A8A714, 300, "UPDATE `accounts` SET `pJobId` = '%d', `pJobPay` = '%d' WHERE `pName` = '%e'")
+[16:14:01] [DEBUG] mysql_format: return value: '72'
+[16:14:01] [DEBUG] mysql_query(1, "UPDATE `accounts` SET `pJobId` = '2', `pJobPay` = '0' WHERE `pName` = ''", 1)
+[16:14:01] [DEBUG] CHandle::Execute(this=0x7560c0, type=3, query=0x798400)
+[16:14:01] [DEBUG] CConnection::Execute(query=0x798400, this=0x72d938, connection=0x702288)
+[16:14:01] [DEBUG] CQuery::Execute(this=0x798400, connection=0x702288)
+[16:14:01] [INFO] query "UPDATE `accounts` SET `pJobId` = '2', `pJobPay` = '0' WHERE `pName` = ''" successfully executed within 0.335 milliseconds
+[16:14:01] [DEBUG] CResultSet::Create(connection=0x702288, query_str='UPDATE `accounts` SET `pJobId` = '2', `pJobPay` = '0' WHERE `pName` = ''')
+[16:14:01] [DEBUG] created new resultset '0x765310'
+[16:14:01] [DEBUG] fetched MySQL result '0x0'
+[16:14:01] [DEBUG] CHandle::Execute - return value: true
+[16:14:01] [DEBUG] mysql_query: return value: '12'
+[16:14:01] [DEBUG] mysql_format(1, 0x03A8A714, 300, "UPDATE `accounts` SET `pAdminLevel` = '%d' WHERE `pName` = '%e'")
+[16:14:01] [DEBUG] mysql_format: return value: '60'
+[16:14:01] [DEBUG] mysql_query(1, "UPDATE `accounts` SET `pAdminLevel` = '6' WHERE `pName` = ''", 1)
+[16:14:01] [DEBUG] CHandle::Execute(this=0x7560c0, type=3, query=0x797e10)
+[16:14:01] [DEBUG] CConnection::Execute(query=0x797e10, this=0x72d938, connection=0x702288)
+[16:14:01] [DEBUG] CQuery::Execute(this=0x797e10, connection=0x702288)
+[16:14:01] [INFO] query "UPDATE `accounts` SET `pAdminLevel` = '6' WHERE `pName` = ''" successfully executed within 0.291 milliseconds
+[16:14:01] [DEBUG] CResultSet::Create(connection=0x702288, query_str='UPDATE `accounts` SET `pAdminLevel` = '6' WHERE `pName` = ''')
+[16:14:01] [DEBUG] created new resultset '0x7651f8'
+[16:14:01] [DEBUG] fetched MySQL result '0x0'
+[16:14:01] [DEBUG] CHandle::Execute - return value: true
+[16:14:01] [DEBUG] mysql_query: return value: '13'
