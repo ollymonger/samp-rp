@@ -9338,3 +9338,8 @@ v0.3.7-R2, (C)2005-2015 SA-MP Team
 [16:06:52] Number of vehicle models: 0
 [16:06:52] plugin.bcrypt: Version check failed.
 [16:06:52] ** [MYSQL]:Loaded 2 jobs from the database.
+[16:07:53] [connection] 127.0.0.1:54472 requests connection cookie.
+[16:07:54] [connection] incoming connection: 127.0.0.1:54472 id: 0
+[16:07:54] [join] testaccounts_2 has joined the server (0:127.0.0.1)
+[16:08:24] ** [MYSQL] Player:testaccounts_2 data has been saved! Disconnecting user...
+[16:08:24] [part] testaccounts_2 has left the server (0:1)

@@ -882,8 +882,16 @@ public OnPlayerEnterCheckpoint(playerid) {
 }
 
 public OnPlayerEnterDynamicCP(playerid, checkpointid) {
-    if(checkpointid == GarbageCheckpoint[0]){
-        DestroyDynamicCP(GarbageCheckpoint[0]);
+    if(checkpointid == GarbageCheckpoint[0]) {
+        if(pInfo[playerid][CurrentState] == 1) {
+            DestroyDynamicCP(GarbageCheckpoint[0]);
+            if(pInfo[playerid][GarbageState] <= 19){
+                pInfo[playerid][GarbageState]++;                
+                new randomLoc = random(sizeof(RandomGarbageLocations));
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Go to the next checkpoint on the minimap and collect the garbage!");
+                GarbageCheckpoint[0] = CreateDynamicCP(RandomGarbageLocations[randomLoc][0], RandomGarbageLocations[randomLoc][1], RandomGarbageLocations[randomLoc][2], 2, -1, -1, -1, 10000);
+            }
+        }
     }
     if(checkpointid == PostCheckpoint[0]) //This checks what checkpoint it is before it continues
     {
