@@ -1,0 +1,1 @@
+[04:11:58] [plugins/mysql] error #1064 while executing query "UPDATE `accounts` SET `pLevel` = 1, `pExp` = 1, `pPayTimer` = 60, `pJobId` = 0, `pJobPay` = 0,  WHERE  `pName` = 'testaccounts_6'": You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'WHERE  `pName` = 'testaccounts_6'' at line 1

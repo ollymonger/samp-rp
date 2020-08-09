@@ -1441,17 +1441,19 @@ public payPlayerTimer(playerid) {
 
 forward public payPlayer(playerid);
 public payPlayer(playerid) {
-    new tax, salary, totalpay, string[256];
-    salary = 250; // base salary for all players.
+    new tax, salary = 250, totalpay, string[256];
+    format(string, sizeof(string), "[SERVER]:{ABCDEF} Basic Salary: +$%d", salary);
+    SendClientMessage(playerid, SPECIALORANGE, string);
     if(pInfo[playerid][pJobId] >= 1) {
-        format(string, sizeof(string), "[SERVER]:{ABCDEF}Job Pay: +$%d", pInfo[playerid][pJobPay]);
-        SendClientMessage(playerid, SPECIALORANGE, string);
         salary += pInfo[playerid][pJobPay]; // adding up their job's pay
+        tax = (salary / 500) * 100;
+        format(string, sizeof(string), "[SERVER]:{ABCDEF}Job Pay: +$%d | Job Tax: -$%d", pInfo[playerid][pJobPay], tax);
+        SendClientMessage(playerid, SPECIALORANGE, string);
     }
     //if(pInfo[playerid][pFac] > 1){ start faction pay here}
     tax = (salary / 500) * 100;
     totalpay = salary - tax; // taxing their job's pay
-    format(string, sizeof(string), "[SERVER]:{ABCDEF}Income: $%d | Tax: -$%d | Total Pay: +$%d", salary, tax, totalpay);
+    format(string, sizeof(string), "[SERVER]:{ABCDEF} Income: $%d | Tax: -$%d | Total Pay: +$%d", salary, tax, totalpay);
     SendClientMessage(playerid, SPECIALORANGE, string);
     pInfo[playerid][pPayTimer] = 60;
     pInfo[playerid][pBank] += totalpay;
