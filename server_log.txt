@@ -7435,3 +7435,31 @@ v0.3.7-R2, (C)2005-2015 SA-MP Team
 [03:24:35] [join] testaccounts_2 has joined the server (0:127.0.0.1)
 [03:25:11] ** [MYSQL] Player:testaccounts_2 data has been saved! Disconnecting user...
 [03:25:11] [part] testaccounts_2 has left the server (0:1)
+[03:35:31] [connection] 127.0.0.1:52131 requests connection cookie.
+[03:35:32] [connection] incoming connection: 127.0.0.1:52131 id: 0
+[03:35:32] [join] testaccounts_2 has joined the server (0:127.0.0.1)
+[03:35:45] ** [MYSQL] Player:testaccounts_2 data has been saved! Disconnecting user...
+[03:35:45] [part] testaccounts_2 has left the server (0:1)
+[03:37:29] [debug] Server received interrupt signal
+[03:37:29] [debug] Native backtrace:
+[03:37:29] [debug] #0 76fd216c in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[03:37:29] [debug] #1 74b3f56f in ?? () in C:\WINDOWS\System32\KERNELBASE.dll
+[03:37:29] [debug] #2 0048d53c in ?? () in samp-server.exe
+[03:37:29] [debug] #3 0049b4a1 in ?? () in samp-server.exe
+[03:37:29] [debug] #4 0049b4b1 in ?? () in samp-server.exe
+[03:37:29] --- Server Shutting Down.
+[03:37:29] plugin.mysql: Unloading plugin...
+[03:37:29] plugin.mysql: Plugin unloaded.
+[03:37:29] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[03:37:29] plugin.bcrypt: Plugin unloaded.
+[03:37:29] 
+
+[03:37:29]  ===============================
+
+[03:37:29]      sscanf plugin unloaded.    
+
+[03:37:29]  ===============================
+

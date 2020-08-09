@@ -750,12 +750,13 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
     {
         for (new i = 0; i < loadedJob; i++) {
             if(pInfo[playerid][CurrentState] == 1) {
-
                 if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
                     new totalPay, string[256];
                     pInfo[playerid][CurrentState] = 0;
                     totalPay = pInfo[playerid][PostState] * jInfo[i][jPay];
                     pInfo[playerid][pJobPay] += totalPay;
+
+                    pInfo[playerid][PostState] = 0;
                     format(string, sizeof(string), "Thank you for posting these!\n\nPlease return to the depot to resume posting!\n\nYou will receive:$%d on your next paycheck!", totalPay);
                     Dialog_Show(playerid, DIALOG_DELIVERPOST, DIALOG_STYLE_MSGBOX, "Job Complete!", string, "Continue", "");
                     return 1;
