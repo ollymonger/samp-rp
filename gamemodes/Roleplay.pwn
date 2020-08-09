@@ -32,7 +32,7 @@ main() {
 /* 1- NEWS -*/
 new MySQL:db_handle;
 
-new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS];
+new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS], GarbageCheckpoint[MAX_PLAYERS];
 
 new Text:PublicTD[3];
 new Text:sheriffsoffice[4];
@@ -46,6 +46,15 @@ new Text:NoReports;
 new Text:CantCommand, Text:CantTakePost;
 
 new Float:RandomPostLocations[][3] = {
+    { 94.8995, 1183.6771, 18.0150 },
+    {-177.2173, 1213.1268, 19.2113 },
+    {-208.2337, 973.4498, 18.3233 },
+    {-321.9125, 1055.7777, 19.1717 },
+    {-362.2701, 1165.2568, 19.2094 },
+    {-208.0344, 1112.1625, 19.2098 }
+};
+
+new Float:RandomGarbageLocations[][3] = {
     { 94.8995, 1183.6771, 18.0150 },
     {-177.2173, 1213.1268, 19.2113 },
     {-208.2337, 973.4498, 18.3233 },
@@ -110,7 +119,8 @@ enum ENUM_PLAYER_DATA {
         bool:LoggedIn,
         pMuted,
         CurrentState,
-        PostState
+        PostState,
+        GarbageState
 }
 new pInfo[MAX_PLAYERS][ENUM_PLAYER_DATA];
 
@@ -591,6 +601,10 @@ public SaveNewPlayerData(playerid, hashed[BCRYPT_HASH_LENGTH]) {
     pInfo[playerid][pJobPay] = 0;
     pInfo[playerid][pPayTimer] = 60;
 
+    pInfo[playerid][CurrentState] = 0;
+    pInfo[playerid][PostState] = 0;
+    pInfo[playerid][GarbageState] = 0;
+
     SetPlayerScore(playerid, 1);
     GivePlayerMoney(playerid, pInfo[playerid][pCash]);
 
@@ -628,6 +642,7 @@ public SavePlayerData(playerid) {
 public OnPlayerSpawn(playerid) {
     if(pInfo[playerid][LoggedIn] == true) {
         pInfo[playerid][pMuted] = 0;
+        pInfo[playerid][CurrentState] = 0;
 
         SetTimerEx("SavePlayerData", 300000, false, "ds", playerid, "SA-MP"); //called "function" when 5 mins elapsed
         SetTimerEx("payPlayerTimer", 30000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
@@ -694,7 +709,10 @@ CMD:help(playerid, params[]) {
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/help, /admins, /mods, /helpers, /staff");
         } else if(strcmp(Usage, "Job", true) == 0) {
             SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
-            if(pInfo[playerid][pJobId] == 1) {
+            if(pInfo[playerid][pJobId] == 2) {
+                SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /startjob, /collect, /dump, /quitjob");
+            } else if(pInfo[playerid][pJobId] == 1) {
                 SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /quitjob, /takepost");
             } else if(pInfo[playerid][pJobId] == 0) {
@@ -731,14 +749,12 @@ CMD:takejob(playerid, params[]) {
                 new string[256];
                 format(string, sizeof(string), "[SERVER]:{FFFFFF} You have started working as a:{FFFFFF} %s", jInfo[i][jName]);
                 SendClientMessage(playerid, SERVERCOLOR, string);
-                return 1;
             } else {
                 TextDrawShowForPlayer(playerid, CantCommand);
                 SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
 
             }
         }
-        return 1;
     }
     return 1;
 }
@@ -804,15 +820,32 @@ CMD:takepost(playerid, params[]) {
 }
 
 /* Garbageman job */
-CMD:startjob(playerid, params[]){
+CMD:startjob(playerid, params[]) {
     /* Player must be in garbageman job(ID 2)
     Player must have garbagestate = 0
     CurrentState must be 0, awaiting job
     
-    This command commences the job + gets random checkpoint from list.
+    This command commences the job and creates random checkpoint from location list:RandomGarbageLocations.
 
     Must be in range of predefined point of rubbish, maybe have 10-20 garbage points which are randomly selected on entering the created checkpoint?
     */
+    if(pInfo[playerid][pJobId] == 2) {
+        if(pInfo[playerid][CurrentState] == 0) { // awaiting job
+            if(pInfo[playerid][GarbageState] == 0) {
+                new randomLoc = random(sizeof(RandomGarbageLocations));
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Go to the checkpoint on the minimap and collect the garbage!");
+                GarbageCheckpoint[0] = CreateDynamicCP(RandomGarbageLocations[randomLoc][0], RandomGarbageLocations[randomLoc][1], RandomGarbageLocations[randomLoc][2], 2, -1, -1, -1, 10000);
+                pInfo[playerid][CurrentState] = 1;
+                pInfo[playerid][GarbageState] = 0;
+                return 1;
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:collect(playerid, params[]) {
+    return 1;
 }
 
 forward public OnJobCreated(playerid, joName[32]);
