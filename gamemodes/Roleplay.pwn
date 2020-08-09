@@ -7,10 +7,21 @@
 #include <a_mysql>
 #include <easyDialog>
 #include <bcrypt>
+#include <zcmd>
+#include <sscanf2>
+#include <streamer>
 
 #define BCRYPT_COST 12
 #define lenull(%1) \
 ((!( % 1[0])) || ((( % 1[0]) == '\1') && (!( % 1[1]))))
+#define MAX_JOBS 50
+
+
+#define GREY 			0xCECECEFF
+#define SPECIALORANGE   0xFFCC00FF // CRP Orange 0xFF8000FF
+#define SERVERCOLOR 	0xA9C4E4FF //0x99CEFFFF 94ABC8
+
+
 
 main() {
     print("\n----------------------------------");
@@ -21,6 +32,8 @@ main() {
 /* 1- NEWS -*/
 new MySQL:db_handle;
 
+new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS];
+
 new Text:PublicTD[3];
 new Text:sheriffsoffice[4];
 new Text:hospital[3];
@@ -30,8 +43,16 @@ new Text:finishtutorial[3];
 new Text:PMuted;
 new Text:NoHelpmes;
 new Text:NoReports;
-new Text:CantCommand;
+new Text:CantCommand, Text:CantTakePost;
 
+new Float:RandomPostLocations[][3] = {
+    { 94.8995, 1183.6771, 18.0150 },
+    {-177.2173, 1213.1268, 19.2113 },
+    {-208.2337, 973.4498, 18.3233 },
+    {-321.9125, 1055.7777, 19.1717 },
+    {-362.2701, 1165.2568, 19.2094 },
+    {-208.0344, 1112.1625, 19.2098 }
+};
 
 new maleSkins[] = {
     20,
@@ -68,6 +89,8 @@ enum ENUM_PLAYER_DATA {
         pPassword[255],
         HashedPassword[BCRYPT_HASH_LENGTH],
         pEmail[128],
+        pLevel,
+        pExp,
         pRegion[32],
         Float:pHealth,
         Float:pArmour,
@@ -76,10 +99,30 @@ enum ENUM_PLAYER_DATA {
         pAge,
         pBank,
         pCash,
+        pPayTimer,
+        pJobId,
+        pJobPay,
+
+        pAdminLevel,
+        pModerator,
+        pHelper,
 
         bool:LoggedIn,
+        pMuted,
+        CurrentState,
+        PostState
 }
 new pInfo[MAX_PLAYERS][ENUM_PLAYER_DATA];
+
+enum ENUM_JOB_DATA {
+    jID[11],
+        jName[32],
+        jPay,
+        Float:jobIX,
+        Float:jobIY,
+        Float:jobIZ
+}
+new jInfo[MAX_JOBS][ENUM_JOB_DATA], loadedJob;
 
 /* 2- DIALOGS -*/
 
@@ -98,6 +141,8 @@ public OnGameModeInit() {
     }
     printf("** [MYSQL] Connected successfully! Proceeding to load the gamemode!");
 
+
+    LoadJobData();
 
     PMuted = TextDrawCreate(230.000000, 366.000000, "You are muted!");
     TextDrawBackgroundColor(PMuted, 255);
@@ -125,6 +170,17 @@ public OnGameModeInit() {
     TextDrawSetOutline(NoReports, 0);
     TextDrawSetProportional(NoReports, 1);
     TextDrawSetShadow(NoReports, 1);
+
+
+
+    CantTakePost = TextDrawCreate(230.000000, 366.000000, "You have already collected post!");
+    TextDrawBackgroundColor(CantTakePost, 255);
+    TextDrawFont(CantTakePost, 1);
+    TextDrawLetterSize(CantTakePost, 0.559999, 1.800000);
+    TextDrawColor(CantTakePost, -1);
+    TextDrawSetOutline(CantTakePost, 0);
+    TextDrawSetProportional(CantTakePost, 1);
+    TextDrawSetShadow(CantTakePost, 1);
 
     CantCommand = TextDrawCreate(230.000000, 366.000000, "You cannot use this command!");
     TextDrawBackgroundColor(CantCommand, 255);
@@ -393,6 +449,63 @@ public OnGameModeInit() {
     return 1;
 }
 
+// load server data
+forward public LoadJobData();
+public LoadJobData() {
+    new DB_Query[900];
+
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `jobs`");
+    mysql_tquery(db_handle, DB_Query, "JobsReceived");
+}
+forward public LoadNewJobData(id);
+public LoadNewJobData(id) {
+    new DB_Query[900];
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `jobs` WHERE `jID` = '%d'", id);
+    mysql_tquery(db_handle, DB_Query, "newJob");
+}
+
+
+forward newJob();
+public newJob() {
+
+    if(cache_num_rows() == 0) print("Job does not exist");
+    else {
+        for (new i = 0; i < cache_num_rows(); i++) {
+            cache_get_value_int(i, "jID", jInfo[loadedJob][jID]);
+            cache_get_value(i, "jName", jInfo[loadedJob][jName], 32);
+            cache_get_value_int(i, "jPay", jInfo[loadedJob][jPay]);
+            cache_get_value_float(i, "jobIX", jInfo[loadedJob][jobIX]);
+            cache_get_value_float(i, "jobIY", jInfo[loadedJob][jobIY]);
+            cache_get_value_float(i, "jobIZ", jInfo[loadedJob][jobIZ]);
+            CreateDynamicPickup(1239, 1, jInfo[loadedJob][jobIX], jInfo[loadedJob][jobIY], jInfo[loadedJob][jobIZ], -1);
+            loadedJob++;
+            //`CreateDynamicPickup(19526, 1, factionInfo[i][facX], factionInfo[i][facY], factionInfo[i][facZ], 0, 0);
+
+        }
+        printf("[INFO]:Loaded a new job.", cache_num_rows());
+    }
+}
+
+forward JobsReceived();
+public JobsReceived() {
+    if(cache_num_rows() == 0) print("No jobs have been created!");
+    else {
+        for (new i = 0; i < cache_num_rows(); i++) {
+            cache_get_value_int(i, "jID", jInfo[loadedJob][jID]);
+            cache_get_value(i, "jName", jInfo[loadedJob][jName], 32);
+            cache_get_value_int(i, "jPay", jInfo[loadedJob][jPay]);
+            cache_get_value_float(i, "jobIX", jInfo[loadedJob][jobIX]);
+            cache_get_value_float(i, "jobIY", jInfo[loadedJob][jobIY]);
+            cache_get_value_float(i, "jobIZ", jInfo[loadedJob][jobIZ]);
+            CreateDynamicPickup(1239, 1, jInfo[loadedJob][jobIX], jInfo[loadedJob][jobIY], jInfo[loadedJob][jobIZ], -1);
+            loadedJob++;
+        }
+        printf("** [MYSQL]:Loaded %d jobs from the database.", cache_num_rows());
+
+    }
+    return 1;
+}
+
 public OnGameModeExit() {
     return 1;
 }
@@ -403,7 +516,7 @@ public OnPlayerRequestClass(playerid, classid) {
 
 public OnPlayerConnect(playerid) {
     new query[200];
-
+    pInfo[playerid][pMuted] = 1;
     new name[MAX_PLAYER_NAME + 1];
     GetPlayerName(playerid, name, sizeof(name));
 
@@ -440,6 +553,7 @@ public checkIfExists(playerid) {
 public OnPlayerDisconnect(playerid, reason) {
     if(pInfo[playerid][LoggedIn] == true) {
         SavePlayerData(playerid);
+        printf("** [MYSQL] Player:%s data has been saved! Disconnecting user...", GetName(playerid));
         pInfo[playerid][LoggedIn] = false;
     }
     return 1;
@@ -461,6 +575,8 @@ public SaveNewPlayerData(playerid, hashed[BCRYPT_HASH_LENGTH]) {
     mysql_query(db_handle, query);
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pRegion` = '%e' WHERE  `pName` = '%e'", pInfo[playerid][pRegion], GetName(playerid));
     mysql_query(db_handle, query);
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pLevel` = 1, `pExp` = 1, `pPayTimer` = 60, `pJobId` = 0, `pJobPay` = 0  WHERE  `pName` = '%e'", GetName(playerid));
+    mysql_query(db_handle, query);
 
     SendClientMessage(playerid, 0x00FF00FF, "{99c0da}[SERVER]:{ABCDEF}You are now registered and logged in!");
     pInfo[playerid][LoggedIn] = true;
@@ -469,6 +585,11 @@ public SaveNewPlayerData(playerid, hashed[BCRYPT_HASH_LENGTH]) {
     pInfo[playerid][pArmour] = 5;
     pInfo[playerid][pCash] = 1000;
     pInfo[playerid][pBank] = 0;
+    pInfo[playerid][pLevel] = 1;
+    pInfo[playerid][pExp] = 1;
+    pInfo[playerid][pJobId] = 0;
+    pInfo[playerid][pJobPay] = 0;
+    pInfo[playerid][pPayTimer] = 60;
 
     SetPlayerScore(playerid, 1);
     GivePlayerMoney(playerid, pInfo[playerid][pCash]);
@@ -490,11 +611,27 @@ public SavePlayerData(playerid) {
 
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pHealth` = '%f', `pArmour` = '%f', `pCash` = '%d', `pBank` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pHealth], pInfo[playerid][pArmour], pInfo[playerid][pCash], pInfo[playerid][pBank], GetName(playerid));
     mysql_query(db_handle, query);
-    printf("** [MYSQL] Player:%s data has been saved! Disconnecting user...", GetName(playerid));
+
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pLevel` = '%d', `pExp` = '%d', `pSkin` = '%d', `pPayTimer` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pLevel], pInfo[playerid][pExp], pInfo[playerid][pSkin], pInfo[playerid][pPayTimer], GetName(playerid));
+    mysql_query(db_handle, query);
+
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pJobId` = '%d', `pJobPay` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pJobId], pInfo[playerid][pJobPay], GetName(playerid));
+    mysql_query(db_handle, query);
+
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAdminLevel` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pAdminLevel], GetName(playerid));
+    mysql_query(db_handle, query);
+    SetTimerEx("SavePlayerData", 300000, false, "ds", playerid, "SA-MP"); //called "function" when 5 mins elapsed
+
     return 1;
 }
 
 public OnPlayerSpawn(playerid) {
+    if(pInfo[playerid][LoggedIn] == true) {
+        pInfo[playerid][pMuted] = 0;
+
+        SetTimerEx("SavePlayerData", 300000, false, "ds", playerid, "SA-MP"); //called "function" when 5 mins elapsed
+        SetTimerEx("payPlayerTimer", 30000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
+    }
     return 1;
 }
 
@@ -510,8 +647,168 @@ public OnVehicleDeath(vehicleid, killerid) {
     return 1;
 }
 
+
 public OnPlayerText(playerid, text[]) {
+    if(pInfo[playerid][pMuted] == 0) {
+        new string[256];
+
+        format(string, sizeof(string), "%s[%i] says:%s", RPName(playerid), playerid, text);
+        nearByMessage(playerid, -1, string, 12.0);
+    } else {
+        TextDrawShowForPlayer(playerid, PMuted);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 0;
+}
+
+/* COMMANDS */
+CMD:stats(playerid, params[]) {
+    ReturnStats(playerid, playerid);
     return 1;
+}
+
+
+CMD:help(playerid, params[]) {
+    new Usage[128];
+    if(sscanf(params, "s[128]", Usage)) {
+        if(pInfo[playerid][pAdminLevel] >= 1) {
+            SendClientMessage(playerid, SERVERCOLOR, "[SYNTAX]:{FFFFFF} /help [Usage]");
+            SendClientMessage(playerid, SERVERCOLOR, "[USAGES]:{FFFFFF} General, Chat, Faction, Job, Business, House, Phone");
+            SendClientMessage(playerid, SERVERCOLOR, "[USAGES]:{FFFFFF} Helper, Moderator, Admin");
+        } else if(pInfo[playerid][pModerator] >= 1) {
+            SendClientMessage(playerid, SERVERCOLOR, "[SYNTAX]:{FFFFFF} /help [Usage]");
+            SendClientMessage(playerid, SERVERCOLOR, "[USAGES]:{FFFFFF} General, Chat, Faction, Job, Business, House, Phone");
+            SendClientMessage(playerid, SERVERCOLOR, "[USAGES]:{FFFFFF} Helper, Moderator");
+        } else if(pInfo[playerid][pHelper] >= 1) {
+            SendClientMessage(playerid, SERVERCOLOR, "[SYNTAX]:{FFFFFF} /help [Usage]");
+            SendClientMessage(playerid, SERVERCOLOR, "[USAGES]:{FFFFFF} General, Chat, Faction, Job, Business, House, Phone");
+            SendClientMessage(playerid, SERVERCOLOR, "[USAGES]:{FFFFFF} Helper");
+        } else {
+            SendClientMessage(playerid, SERVERCOLOR, "[SYNTAX]:{FFFFFF} /help [Usage]");
+            SendClientMessage(playerid, SERVERCOLOR, "[USAGES]:{FFFFFF} General, Chat Faction, Job, Business, House, Phone");
+        }
+        return 1;
+    } else {
+        if(strcmp(Usage, "General", true) == 0) {
+            SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} General Commands ::.");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/help, /admins, /mods, /helpers, /staff");
+        } else if(strcmp(Usage, "Job", true) == 0) {
+            SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
+            if(pInfo[playerid][pJobId] == 1) {
+                SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /quitjob, /takepost");
+            } else if(pInfo[playerid][pJobId] == 0) {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /takejob");
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:createjob(playerid, params[]) {
+    if(pInfo[playerid][pAdminLevel] == 6) {
+        new Float:infX, Float:infY, Float:infZ, query[1000], joPay, joName[32];
+        if(sscanf(params, "sd", joName, joPay)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createjob [JOB NAME] [JOB PAY]"); {
+            GetPlayerPos(playerid, infX, infY, infZ);
+            CreateDynamicPickup(1239, 1, infX, infY, infZ, -1);
+
+            mysql_format(db_handle, query, sizeof(query), "INSERT INTO `jobs` (`jName`,`jPay`, `jobIX`,`jobIY`,`jobIZ`) VALUES ('%s', '%d','%f','%f','%f')", joName, joPay, infX, infY, infZ);
+            mysql_tquery(db_handle, query, "OnJobCreated", "ds", playerid, joName);
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+
+    }
+    return 1;
+}
+
+CMD:takejob(playerid, params[]) {
+    for (new i = 0; i < loadedJob; i++) {
+        if(IsPlayerInRangeOfPoint(playerid, 5, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ])) {
+            if(pInfo[playerid][pJobId] == 0) {
+                pInfo[playerid][pJobId] = jInfo[i][jID];
+                new string[256];
+                format(string, sizeof(string), "[SERVER]:{FFFFFF} You have started working as a:{FFFFFF} %s", jInfo[i][jName]);
+                SendClientMessage(playerid, SERVERCOLOR, string);
+                return 1;
+            } else {
+                TextDrawShowForPlayer(playerid, CantCommand);
+                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+
+            }
+        }
+        return 1;
+    }
+    return 1;
+}
+
+CMD:quitjob(playerid, params[]) {
+    if(pInfo[playerid][pJobId] >= 1) {
+        for (new i = 0; i < loadedJob; i++) {
+            if(IsPlayerInRangeOfPoint(playerid, 10, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ])) {
+                if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have quit your job!");
+                    pInfo[playerid][pJobId] = 0;
+                    return 1;
+                }
+            } else {
+                TextDrawShowForPlayer(playerid, CantCommand);
+                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+            }
+        }
+    } else {
+
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+
+    }
+    return 1;
+}
+
+CMD:listjobs(playerid, params[]) {
+    //if(IsPlayerInRangeOfPoint)
+    new jobList[256], string[256];
+    for (new i = 0; i < loadedJob; i++) {
+        format(string, sizeof(string), "JOB:%s {FFFFFF}(%d)\n", jInfo[i][jName], jInfo[i][jID]);
+        strcat(jobList, string);
+    }
+    Dialog_Show(playerid, DIALOG_JOB_LIST, DIALOG_STYLE_LIST, "Available Jobs", jobList, "Accept", "Decline");
+    return 1;
+}
+
+CMD:takepost(playerid, params[]) {
+    for (new i = 0; i < loadedJob; i++) {
+        //if(strcmp(jInfo[i][jName], "Postman", true)) { // if the job name is Postman!
+        if(IsPlayerInRangeOfPoint(playerid, 10, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ])) {
+            if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
+                if(pInfo[playerid][CurrentState] != 1) {
+                    pInfo[playerid][CurrentState] = 1;
+                    new string[256];
+                    new rand = random(15 - 3) + 3;
+
+                    format(string, sizeof(string), "You have taken:%d wrapped up newspapers! \n\nDeliver them to the marked location and receive payment for your work!\n\nThe current price for one stack of newspapers is:%d", rand, jInfo[i][jPay]);
+                    pInfo[playerid][PostState] = rand;
+                    Dialog_Show(playerid, DIALOG_TAKEPOST, DIALOG_STYLE_MSGBOX, "Postman Job", string, "Continue", "");
+                } else {
+                    TextDrawShowForPlayer(playerid, CantTakePost);
+                    SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+                }
+            }
+            return 1;
+        }
+        //}
+    }
+    return 1;
+}
+
+forward public OnJobCreated(playerid, joName[32]);
+public OnJobCreated(playerid, joName[32]) {
+    new string[256];
+    format(string, sizeof(string), "[SERVER]:{FFFFFF} Job:%s(%d) has been created!", joName, cache_insert_id());
+    SendClientMessage(playerid, -1, string); {
+        LoadNewJobData(cache_insert_id());
+    }
 }
 
 public OnPlayerCommandText(playerid, cmdtext[]) {
@@ -535,6 +832,34 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 }
 
 public OnPlayerEnterCheckpoint(playerid) {
+    return 1;
+}
+
+public OnPlayerEnterDynamicCP(playerid, checkpointid) {
+    if(checkpointid == PostCheckpoint[0]) //This checks what checkpoint it is before it continues
+    {
+        for (new i = 0; i < loadedJob; i++) {
+            if(pInfo[playerid][CurrentState] == 1) {
+                if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
+                    new totalPay, string[256];
+                    pInfo[playerid][CurrentState] = 0;
+                    totalPay = pInfo[playerid][PostState] * jInfo[i][jPay];
+                    pInfo[playerid][pJobPay] += totalPay;
+
+                    pInfo[playerid][PostState] = 0;
+                    format(string, sizeof(string), "Thank you for posting these!\n\nPlease return to the depot to resume posting!\n\nYou will receive:$%d on your next paycheck!", totalPay);
+                    Dialog_Show(playerid, DIALOG_DELIVERPOST, DIALOG_STYLE_MSGBOX, "Job Complete!", string, "Continue", "");
+                    return 1;
+                }
+            }
+            return 1;
+        }
+        return 1;
+    }
+    if(checkpointid == JobCheckpoint[0]) {
+        GameTextForPlayer(playerid, "/takejob", 3000, 5);
+        DestroyDynamicCP(JobCheckpoint[0]);
+    }
     return 1;
 }
 
@@ -623,6 +948,28 @@ public OnVehicleStreamOut(vehicleid, forplayerid) {
 }
 
 /* 3- DIALOGS -*/
+
+Dialog:DIALOG_JOB_LIST(playerid, response, listitem, inputtext[]) {
+    for (new i = 0; i < loadedJob; i++) {
+        if(listitem == jInfo[i][jID] - 1) {
+            JobCheckpoint[0] = CreateDynamicCP(jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ], 2, -1, -1, -1, 10000);
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Go to the checkpoint on your minimap to find this job!");
+            return 1;
+        }
+    }
+    return 1;
+}
+
+Dialog:DIALOG_TAKEPOST(playerid, response, listitem, inputtext[]) {
+    new randomLoc = random(sizeof(RandomPostLocations));
+    PostCheckpoint[0] = CreateDynamicCP(RandomPostLocations[randomLoc][0], RandomPostLocations[randomLoc][1], RandomPostLocations[randomLoc][2], 2, -1, -1, -1, 10000);
+    return 1;
+}
+
+Dialog:DIALOG_DELIVERPOST(playerid, response, listitem, inputtext[]) {
+    DestroyDynamicCP(PostCheckpoint[0]);
+    return 1;
+}
 
 Dialog:DIALOG_QUIZ1(playerid, response, listitem, inputtext[]) {
     if(response) {
@@ -994,6 +1341,8 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "ID", pInfo[playerid][ID]);
     cache_get_value(0, "pName", pInfo[playerid][pName], 128);
     cache_get_value(0, "pEmail", pInfo[playerid][pEmail], 128);
+    cache_get_value_int(0, "pLevel", pInfo[playerid][pLevel]);
+    cache_get_value_int(0, "pExp", pInfo[playerid][pExp]);
     cache_get_value_float(0, "pHealth", pInfo[playerid][pHealth]);
     cache_get_value_float(0, "pArmour", pInfo[playerid][pArmour]);
     cache_get_value(0, "pRegion", pInfo[playerid][pRegion], 32);
@@ -1002,6 +1351,12 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pAge", pInfo[playerid][pAge]);
     cache_get_value_int(0, "pBank", pInfo[playerid][pBank]);
     cache_get_value_int(0, "pCash", pInfo[playerid][pCash]);
+    cache_get_value_int(0, "pPayTimer", pInfo[playerid][pPayTimer]);
+    cache_get_value_int(0, "pJobId", pInfo[playerid][pJobId]);
+    cache_get_value_int(0, "pJobPay", pInfo[playerid][pJobPay]);
+
+
+    cache_get_value_int(0, "pAdminLevel", pInfo[playerid][pAdminLevel]);
 
     pInfo[playerid][LoggedIn] = true;
     SendClientMessage(playerid, -1, "Logged in");
@@ -1138,6 +1493,127 @@ public KickPublic(playerid) { Kick(playerid); }
 stock KickWithMessage(playerid, message[]) {
     SendClientMessage(playerid, 0xFF4444FF, message);
     SetTimerEx("KickPublic", 1000, 0, "d", playerid);
+}
+
+/*Text formatting*/
+
+forward public nearByMessage(playerid, color, string[], Float:Distance);
+public nearByMessage(playerid, color, string[], Float:Distance) {
+    new
+    Float:nbCoords[3]; // Variable to store the position of the main player
+
+    GetPlayerPos(playerid, nbCoords[0], nbCoords[1], nbCoords[2]); // Getting the main position
+
+    for (new i = 0; i < MAX_PLAYERS; i++) {
+        if(IsPlayerInRangeOfPoint(i, Distance, nbCoords[0], nbCoords[1], nbCoords[2]) && (GetPlayerVirtualWorld(i) == GetPlayerVirtualWorld(playerid))) { // Confirming if the player being looped is within range and is in the same virtual world and interior as the main player
+            SendClientMessage(i, color, string); // Sending them the message if all checks out
+        } else if(IsPlayerInRangeOfPoint(i, 16, nbCoords[0], nbCoords[1], nbCoords[2]) && (GetPlayerVirtualWorld(i) == GetPlayerVirtualWorld(playerid))) { // Confirming if the player being looped is within range and is in the same virtual world and interior as the main player
+            SendClientMessage(i, GREY, string); // Sending them the message if all checks out
+        }
+    }
+    return 1;
+}
+
+/* paying players */
+forward public payPlayerTimer(playerid);
+public payPlayerTimer(playerid) {
+    if(pInfo[playerid][LoggedIn] == true) {
+        if(pInfo[playerid][pPayTimer] < 61) {
+            if(pInfo[playerid][pPayTimer] == 0) {
+
+                new string[256];
+                format(string, sizeof(string), "[SERVER]:**-------- PAYCHECK --------**");
+                SendClientMessage(playerid, SPECIALORANGE, string);
+                payPlayer(playerid);
+            } else {
+                pInfo[playerid][pPayTimer] -= 1;
+                SetTimerEx("payPlayerTimer", 60000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
+
+            }
+        }
+    }
+    return 1;
+}
+
+forward public payPlayer(playerid);
+public payPlayer(playerid) {
+    new tax, salary = 250, totalpay, string[256];
+    format(string, sizeof(string), "[SERVER]:{ABCDEF} Basic Salary: +$%d", salary);
+    SendClientMessage(playerid, SPECIALORANGE, string);
+    if(pInfo[playerid][pJobId] >= 1) {
+        salary += pInfo[playerid][pJobPay]; // adding up their job's pay
+        tax = (salary / 500) * 100;
+        format(string, sizeof(string), "[SERVER]:{ABCDEF}Job Pay: +$%d | Job Tax: -$%d", pInfo[playerid][pJobPay], tax);
+        SendClientMessage(playerid, SPECIALORANGE, string);
+    }
+    //if(pInfo[playerid][pFac] > 1){ start faction pay here}
+    tax = (salary / 500) * 100;
+    totalpay = salary - tax; // taxing their job's pay
+    format(string, sizeof(string), "[SERVER]:{ABCDEF} Income: $%d | Tax: -$%d | Total Pay: +$%d", salary, tax, totalpay);
+    SendClientMessage(playerid, SPECIALORANGE, string);
+    pInfo[playerid][pPayTimer] = 60;
+    pInfo[playerid][pBank] += totalpay;
+    pInfo[playerid][pJobPay] = 0;
+    SetTimerEx("payPlayerTimer", 60000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
+
+    if(pInfo[playerid][pExp] >= 8) {
+        pInfo[playerid][pExp] = 0;
+        pInfo[playerid][pLevel]++;
+        format(string, sizeof(string), "[SERVER]:{ABCDEF} You have levelled up! (Level: %d)", pInfo[playerid][pLevel]);
+        SendClientMessage(playerid, SPECIALORANGE, string);
+    }
+    if(pInfo[playerid][pExp] <= 8) {
+        pInfo[playerid][pExp]++;
+        format(string, sizeof(string), "[SERVER]:{ABCDEF} You have gained an experience point! (Exp: %d)", pInfo[playerid][pExp]);
+        SendClientMessage(playerid, SPECIALORANGE, string);
+    }
+
+    return 1;
+}
+
+stock RPName(playerid) {
+    new
+    szName[MAX_PLAYER_NAME],
+        stringPos;
+
+    GetPlayerName(playerid, szName, sizeof(szName));
+    stringPos = strfind(szName, "_");
+    szName[stringPos] = ' ';
+    return szName;
+}
+
+
+stock ReturnStats(playerid, target) {
+    new string[256];
+    format(string, sizeof(string), "[SERVER]:**-------- %s's STATISTICS --------**", RPName(target));
+    SendClientMessage(playerid, SPECIALORANGE, string);
+    format(string, sizeof(string), "[SERVER]:{ABCDEF} Level: %d (%dexp/8) | Bank: $%d | Cash: $%d | Payment in: %dmins", pInfo[target][pLevel], pInfo[target][pExp], pInfo[target][pBank], pInfo[target][pCash], pInfo[target][pPayTimer]);
+    SendClientMessage(playerid, SPECIALORANGE, string);
+    if(pInfo[playerid][pJobId] == 0) {
+        format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID: N/A | Job name: N/A", pInfo[target][pJobId]);
+        SendClientMessage(playerid, SPECIALORANGE, string);
+    }
+    for (new i = 0; i < loadedJob; i++) {
+        if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
+            if(pInfo[playerid][pJobId] >= 1) {
+                format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID: %d | Job name: %s", pInfo[target][pJobId], jInfo[i][jName]);
+                SendClientMessage(playerid, SPECIALORANGE, string);
+            }
+            return 1;
+        }
+    }
+    return 1;
+}
+
+
+forward public RemoveTextdrawAfterTime(playerid);
+public RemoveTextdrawAfterTime(playerid) {
+    TextDrawHideForPlayer(playerid, Text:PMuted);
+    TextDrawHideForPlayer(playerid, Text:CantCommand);
+    TextDrawHideForPlayer(playerid, Text:NoHelpmes);
+    TextDrawHideForPlayer(playerid, Text:NoReports);
+    TextDrawHideForPlayer(playerid, Text:CantTakePost);
+    return 1;
 }
 
 public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
