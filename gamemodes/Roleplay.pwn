@@ -548,12 +548,27 @@ public OnPlayerConnect(playerid) {
     InterpolateCameraPos(playerid, 163.4399, 1179.7891, 23.3623, 178.1042, 1187.0188, 22.1915, 15000, CAMERA_MOVE);
     InterpolateCameraLookAt(playerid, 163.5655, 1180.7781, 23.2423, 177.8423, 1187.9811, 22.0065, 15000, CAMERA_MOVE);
 
-    SetPlayerMapIcon(playerid, 1, 281.7589, 1411.7045, 9.8603, 24, 0, MAPICON_GLOBAL);
+
+    LoadMapIcons(playerid);
 
     ApplyAnimation(playerid, "SMOKING", "M_smklean_loop", 4.0, true, false, false, false, 0, false); // Smoke
 
     mysql_format(db_handle, query, sizeof(query), "SELECT * FROM `accounts` where `pName` = '%s'", name); // Get the player's name
     mysql_tquery(db_handle, query, "checkIfExists", "d", playerid); // Send to check if exists function
+    return 1;
+}
+
+forward public LoadMapIcons(playerid);
+public LoadMapIcons(playerid) {
+    SetPlayerMapIcon(playerid, 1, 281.7589, 1411.7045, 9.8603, 24, 0, MAPICON_GLOBAL);
+    for (new i = 0; i < loadedJob; i++) {
+        if(jInfo[i][jID] == 1) {
+            SetPlayerMapIcon(playerid, jInfo[i][jID] + 1, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ], 60, 0, MAPICON_GLOBAL);
+        }
+        if(jInfo[i][jID] == 2) {
+            SetPlayerMapIcon(playerid, jInfo[i][jID] + 1, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ], 61, 0, MAPICON_GLOBAL);
+        }
+    }
     return 1;
 }
 
