@@ -452,10 +452,10 @@ public newJob() {
             cache_get_value_float(i, "jobIX", jInfo[loadedJob][jobIX]);
             cache_get_value_float(i, "jobIY", jInfo[loadedJob][jobIY]);
             cache_get_value_float(i, "jobIZ", jInfo[loadedJob][jobIZ]);
+            CreateDynamicPickup(1239, 1, jInfo[loadedJob][jobIX], jInfo[loadedJob][jobIY], jInfo[loadedJob][jobIZ], -1);
             loadedJob++;
             //`CreateDynamicPickup(19526, 1, factionInfo[i][facX], factionInfo[i][facY], factionInfo[i][facZ], 0, 0);
 
-            CreateDynamicPickup(1239, jInfo[loadedJob][jobIX], jInfo[loadedJob][jobIY], jInfo[loadedJob][jobIZ], 0, 0);
         }
         printf("[INFO]:Loaded a new job.", cache_num_rows());
     }
@@ -472,6 +472,7 @@ public JobsReceived() {
             cache_get_value_float(i, "jobIX", jInfo[loadedJob][jobIX]);
             cache_get_value_float(i, "jobIY", jInfo[loadedJob][jobIY]);
             cache_get_value_float(i, "jobIZ", jInfo[loadedJob][jobIZ]);
+            CreateDynamicPickup(1239, 1, jInfo[loadedJob][jobIX], jInfo[loadedJob][jobIY], jInfo[loadedJob][jobIZ], -1);
             loadedJob++;
         }
         printf("** [MYSQL]:Loaded %d jobs from the database.", cache_num_rows());
