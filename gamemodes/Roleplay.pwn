@@ -844,25 +844,25 @@ CMD:startjob(playerid, params[]) {
 
     Must be in range of predefined point of rubbish, maybe have 10-20 garbage points which are randomly selected on entering the created checkpoint?
     */
-    for (new i = 0; i < loadedJob; i++) {
-        if(jInfo[i][jID] == 2) {
-            if(IsPlayerInRangeOfPoint(playerid, 10, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ])) {
-                if(pInfo[playerid][pJobId] == 2) {
+    if(pInfo[playerid][pJobId] == 2) {
+        for (new i = 0; i < loadedJob; i++) {
+            if(jInfo[i][jID] == 2) {
+                if(IsPlayerInRangeOfPoint(playerid, 10, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ])) {
                     if(pInfo[playerid][CurrentState] == 0) { // awaiting job
                         if(pInfo[playerid][GarbageState] == 0) {
-                            new randomLoc = random(sizeof(RandomGarbageLocations));
-                            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Go to the checkpoint on the minimap and collect the garbage!");
-                            GarbageCheckpoint[0] = CreateDynamicCP(RandomGarbageLocations[randomLoc][0], RandomGarbageLocations[randomLoc][1], RandomGarbageLocations[randomLoc][2], 2, -1, -1, -1, 10000);
-                            pInfo[playerid][CurrentState] = 1;
-                            pInfo[playerid][GarbageState] = 0;
-                            return 1;
+                            new string[256];
+                            format(string, sizeof(string), "Thank you for starting your job!\n\nCollect the marked (check minimap) garbage bags and take them to the Dump (marked 'D')!\n\nThe current price per bag is:$%d", jInfo[i][jPay]);
+                            Dialog_Show(playerid, DIALOG_STARTGARBAGE, DIALOG_STYLE_MSGBOX, "Job Complete!", string, "Continue", "");
                         }
                     }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not in range of the job point!");
                 }
-            } else {
-                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not in range of the job point!");
             }
         }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
     }
     return 1;
 }
@@ -909,19 +909,21 @@ CMD:collect(playerid, params[]) {
 CMD:dump(playerid, params[]) {
     if(IsPlayerInRangeOfPoint(playerid, 10, 281.7589, 1411.7045, 9.8603)) {
         if(pInfo[playerid][pJobId] == 2) {
-            if(pInfo[playerid][CurrentState] == 1) {
+            if(pInfo[playerid][CurrentState] == 1) { // if started job
                 if(pInfo[playerid][GarbageState] >= 1) {
                     for (new i = 0; i < loadedJob; i++) {
-                        new totalPay, string[256];
-                        pInfo[playerid][CurrentState] = 0;
-                        totalPay = pInfo[playerid][GarbageState] * jInfo[i][jPay];
-                        pInfo[playerid][pJobPay] += totalPay;
+                        if(jInfo[i][jID] == 2) {
+                            new totalPay, string[256];
+                            pInfo[playerid][CurrentState] = 0; // finish job
+                            totalPay = pInfo[playerid][GarbageState] * jInfo[i][jPay];
+                            pInfo[playerid][pJobPay] += totalPay;
 
-                        format(string, sizeof(string), "Thank you for collecting %d garbage bags!\n\nReturn to the depot to resume collecting!\n\nYou will receive:$%d on your next paycheck!", pInfo[playerid][GarbageState], totalPay);
-                        Dialog_Show(playerid, DIALOG_DUMP, DIALOG_STYLE_MSGBOX, "Job Complete!", string, "Continue", "");
+                            format(string, sizeof(string), "Thank you for collecting %d garbage bags!\n\nReturn to the depot to resume collecting!\n\nYou will receive:$%d on your next paycheck!", pInfo[playerid][GarbageState], totalPay);
+                            Dialog_Show(playerid, DIALOG_DUMP, DIALOG_STYLE_MSGBOX, "Job Complete!", string, "Continue", "");
 
-                        pInfo[playerid][GarbageState] = 0;
-                        return 1;
+                            pInfo[playerid][GarbageState] = 0;
+                            return 1;
+                        }
                     }
                 } else {
                     TextDrawShowForPlayer(playerid, NoBinBags);
@@ -1100,6 +1102,14 @@ Dialog:DIALOG_JOB_LIST(playerid, response, listitem, inputtext[]) {
 Dialog:DIALOG_COLLECT(playerid, response, listitem, inputtext[]) {
     new randomLoc = random(sizeof(RandomGarbageLocations));
     GarbageCheckpoint[0] = CreateDynamicCP(RandomGarbageLocations[randomLoc][0], RandomGarbageLocations[randomLoc][1], RandomGarbageLocations[randomLoc][2], 2, -1, -1, -1, 10000);
+    return 1;
+}
+
+Dialog:DIALOG_STARTGARBAGE(playerid, response, listitem, inputtext[]) {
+    new randomLoc = random(sizeof(RandomGarbageLocations));
+    GarbageCheckpoint[0] = CreateDynamicCP(RandomGarbageLocations[randomLoc][0], RandomGarbageLocations[randomLoc][1], RandomGarbageLocations[randomLoc][2], 2, -1, -1, -1, 10000);
+    pInfo[playerid][CurrentState] = 1;
+    pInfo[playerid][GarbageState] = 0;
     return 1;
 }
 
