@@ -915,7 +915,6 @@ CMD:collect(playerid, params[]) {
     return 1;
 }
 
-
 CMD:dump(playerid, params[]) {
     if(IsPlayerInRangeOfPoint(playerid, 10, 281.7589, 1411.7045, 9.8603)) {
         if(pInfo[playerid][pJobId] == 2) {
@@ -944,6 +943,22 @@ CMD:dump(playerid, params[]) {
             TextDrawShowForPlayer(playerid, CantCommand);
             SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
         }
+    }
+    return 1;
+}
+
+CMD:endjob(playerid, params[]) {
+    if(pInfo[playerid][pJobId] >= 1) {
+        // affect all jobs
+        if(pInfo[playerid][CurrentState] == 1) {
+            Dialog_Show(playerid, DIALOG_ENDJOB, DIALOG_STYLE_MSGBOX, "Ending job...", "Are you sure you want to end this current job?\n\nWARNING:This will forfeit ALL of your collected garbage bags/newspapers!", "Yes", "No");
+        } else {
+            TextDrawShowForPlayer(playerid, CantCommand);
+            SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
     }
     return 1;
 }
@@ -1137,6 +1152,21 @@ Dialog:DIALOG_DELIVERPOST(playerid, response, listitem, inputtext[]) {
 Dialog:DIALOG_DUMP(playerid, response, listitem, inputtext[]) {
     DestroyDynamicCP(dumpCheckPoint[0]);
     return 1;
+}
+
+Dialog:DIALOG_ENDJOB(playerid, response, listitem, inputtext[]) {
+    /* begin ending jobs */
+    if(response) {
+        pInfo[playerid][CurrentState] = 0;
+        pInfo[playerid][PostState] = 0;
+        pInfo[playerid][GarbageState] = 0;
+        DestroyDynamicCP(PostCheckpoint[0]);
+        DestroyDynamicCP(GarbageCheckpoint[0]);
+        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have ended your current job and have lost all of your collectables as a result!");
+        return 1;
+    } else {
+        return 1;
+    }
 }
 
 Dialog:DIALOG_QUIZ1(playerid, response, listitem, inputtext[]) {
