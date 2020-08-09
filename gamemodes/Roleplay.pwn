@@ -777,6 +777,7 @@ CMD:listjobs(playerid, params[]) {
     return 1;
 }
 
+//*postman job*/
 CMD:takepost(playerid, params[]) {
     for (new i = 0; i < loadedJob; i++) {
         //if(strcmp(jInfo[i][jName], "Postman", true)) { // if the job name is Postman!
@@ -800,6 +801,18 @@ CMD:takepost(playerid, params[]) {
         //}
     }
     return 1;
+}
+
+/* Garbageman job */
+CMD:startjob(playerid, params[]){
+    /* Player must be in garbageman job(ID 2)
+    Player must have garbagestate = 0
+    CurrentState must be 0, awaiting job
+    
+    This command commences the job + gets random checkpoint from list.
+
+    Must be in range of predefined point of rubbish, maybe have 10-20 garbage points which are randomly selected on entering the created checkpoint?
+    */
 }
 
 forward public OnJobCreated(playerid, joName[32]);
