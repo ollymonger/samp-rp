@@ -1368,6 +1368,7 @@ public payPlayer(playerid) {
     SendClientMessage(playerid, SPECIALORANGE, string);
     pInfo[playerid][pPayTimer] = 60;
     pInfo[playerid][pBank] += totalpay;
+    pInfo[playerid][pJobPay] = 0;
     SetTimerEx("payPlayerTimer", 60000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
 
     if(pInfo[playerid][pExp] >= 8) {
@@ -1403,13 +1404,14 @@ stock ReturnStats(playerid, target) {
     SendClientMessage(playerid, SPECIALORANGE, string);
     format(string, sizeof(string), "[SERVER]:{ABCDEF} Level:%d (%dexp/8) | Bank:$%d | Cash:$%d | Payment in:%dmins", pInfo[target][pLevel], pInfo[target][pExp], pInfo[target][pBank], pInfo[target][pCash], pInfo[target][pPayTimer]);
     SendClientMessage(playerid, SPECIALORANGE, string);
+    if(pInfo[playerid][pJobId] == 0) {
+        format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID: N/A | Job name: N/A", pInfo[target][pJobId]);
+        SendClientMessage(playerid, SPECIALORANGE, string);
+    }
     for (new i = 0; i < loadedJob; i++) {
         if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
             if(pInfo[playerid][pJobId] >= 1) {
                 format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID: %d | Job name: %s", pInfo[target][pJobId], jInfo[i][jName]);
-                SendClientMessage(playerid, SPECIALORANGE, string);
-            } else {
-                format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID: N/A | Job name: N/A", pInfo[target][pJobId]);
                 SendClientMessage(playerid, SPECIALORANGE, string);
             }
             return 1;
