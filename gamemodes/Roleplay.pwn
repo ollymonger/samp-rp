@@ -135,7 +135,22 @@ enum ENUM_JOB_DATA {
 }
 new jInfo[MAX_JOBS][ENUM_JOB_DATA], loadedJob;
 
-/* 2- DIALOGS -*/
+enum ENUM_VEH_DATA {
+    vID[32],
+        vModelId,
+        vOwner[32],
+        vJobId,
+        vFacId,
+        vPlate[32],
+        Float:vParkedX,
+        Float:vParkedY,
+        Float:vParkedZ,
+        Float:vAngle,
+        vColor1,
+        vColor2
+}
+new vInfo[500][ENUM_VEH_DATA], loadedVeh;
+
 
 public OnGameModeInit() {
     mysql_log(ALL);
@@ -154,6 +169,7 @@ public OnGameModeInit() {
 
 
     LoadJobData();
+    LoadVehicleData();
 
     // DUMP 
     CreateDynamicPickup(1239, 1, 281.7589, 1411.7045, 10.5003, -1);
@@ -472,6 +488,47 @@ public OnGameModeInit() {
 }
 
 // load server data
+
+
+forward public LoadVehicleData();
+public LoadVehicleData() {
+    new DB_Query[900];
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `vehicles`");
+    mysql_tquery(db_handle, DB_Query, "VehsReceived");
+}
+
+forward VehsReceived();
+public VehsReceived() {
+    if(cache_num_rows() == 0) print("No vehicles have been created!");
+    else {
+        for (new i = 0; i < cache_num_rows(); i++) {
+            cache_get_value_int(i, "vID", vInfo[loadedVeh][vID]);
+            cache_get_value_int(i, "vModelId", vInfo[loadedVeh][vModelId]);
+            cache_get_value(i, "vOwner", vInfo[loadedVeh][vOwner], 32);
+            cache_get_value_int(i, "vJobId", vInfo[loadedVeh][vJobId]);
+            cache_get_value_int(i, "vFacId", vInfo[loadedVeh][vFacId]);
+            cache_get_value(i, "vPlate", vInfo[loadedVeh][vPlate], 32);
+            cache_get_value_float(i, "vParkedX", vInfo[loadedVeh][vParkedX]);
+            cache_get_value_float(i, "vParkedY", vInfo[loadedVeh][vParkedY]);
+            cache_get_value_float(i, "vParkedZ", vInfo[loadedVeh][vParkedZ]);
+            cache_get_value_int(i, "vColor1", vInfo[loadedVeh][vColor1]);
+            cache_get_value_int(i, "vColor2", vInfo[loadedVeh][vColor2]);
+            new vehicleid = CreateVehicle(vInfo[loadedVeh][vModelId],
+                vInfo[loadedVeh][vParkedX],
+                vInfo[loadedVeh][vParkedY],
+                vInfo[loadedVeh][vParkedZ],
+                vInfo[loadedVeh][vAngle],
+                vInfo[loadedVeh][vColor1],
+                vInfo[loadedVeh][vColor2],
+                -1
+            );
+            SetVehicleNumberPlate(vehicleid, vInfo[i][vPlate]);
+            loadedVeh++;
+        }
+        printf("** [MYSQL] Loaded %d vehicles from the database!", cache_num_rows());
+    }
+}
+
 forward public LoadJobData();
 public LoadJobData() {
     new DB_Query[900];
@@ -855,6 +912,9 @@ CMD:startjob(playerid, params[]) {
     Must be in range of predefined point of rubbish, maybe have 10-20 garbage points which are randomly selected on entering the created checkpoint?
     */
     if(pInfo[playerid][pJobId] == 2) {
+        DestroyDynamicCP(GarbageCheckpoint[0]);
+        DestroyDynamicCP(PostCheckpoint[0]);
+        DestroyDynamicCP(dumpCheckPoint[0]);
         for (new i = 0; i < loadedJob; i++) {
             if(jInfo[i][jID] == 2) {
                 if(IsPlayerInRangeOfPoint(playerid, 10, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ])) {

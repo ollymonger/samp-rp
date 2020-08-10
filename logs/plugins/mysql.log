@@ -32086,3 +32086,863 @@
 [00:56:46] [DEBUG] fetched MySQL result '0x0'
 [00:56:46] [DEBUG] CHandle::Execute - return value: true
 [00:56:46] [DEBUG] mysql_query: return value: '5'
+[01:42:27] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[01:42:27] [DEBUG] mysql_connect_file("mysql.ini")
+[01:42:27] [DEBUG] CHandleManager::CreateFromFile(this=0x606830, file_path='mysql.ini')
+[01:42:27] [INFO] Options instance with id '1' successfully created.
+[01:42:27] [DEBUG] CHandleManager::CreateFromFile - new options = 0x5fad20 (id '1')
+[01:42:27] [DEBUG] CHandleManager::Create(this=0x606830, host='localhost', user='root', pass='****', db='samp', options=0x5fad20)
+[01:42:27] [INFO] Creating new connection handle...
+[01:42:27] [WARNING] mysql_connect_file: no password specified
+[01:42:27] [DEBUG] CConnection::CConnection(this=0x5cdf40, host='localhost', user='root', passw='****', db='samp', options=0x5fad20)
+[01:42:27] [DEBUG] CConnection::CConnection - new connection = 0x609a10
+[01:42:28] [DEBUG] CConnection::CConnection(this=0x3ad2020, host='localhost', user='root', passw='****', db='samp', options=0x5fad20)
+[01:42:28] [DEBUG] CConnection::CConnection - new connection = 0x6053f8
+[01:42:28] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3ad2020, connection=0x3ad2020)
+[01:42:28] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3ad2020, connection=0x3ad2020)
+[01:42:28] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x5cdfc0)
+[01:42:28] [DEBUG] CConnection::CConnection(this=0x3e5c020, host='localhost', user='root', passw='****', db='samp', options=0x5fad20)
+[01:42:28] [DEBUG] CConnection::CConnection - new connection = 0x61d3c0
+[01:42:28] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3e5c020, connection=0x3e5c020)
+[01:42:28] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3e5c020, connection=0x3e5c020)
+[01:42:28] [DEBUG] CConnection::CConnection(this=0x3feb020, host='localhost', user='root', passw='****', db='samp', options=0x5fad20)
+[01:42:28] [DEBUG] CConnection::CConnection - new connection = 0x6269b0
+[01:42:28] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3feb020, connection=0x3feb020)
+[01:42:28] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3feb020, connection=0x3feb020)
+[01:42:28] [INFO] Connection handle with id '1' successfully created.
+[01:42:28] [DEBUG] CHandleManager::Create - new handle = 0x5f76e8
+[01:42:28] [DEBUG] mysql_connect_file: return value: '1'
+[01:42:28] [DEBUG] mysql_errno(1)
+[01:42:28] [DEBUG] CHandle::GetErrorId(this=0x5f76e8)
+[01:42:28] [DEBUG] CConnection::GetError(this=0x5cdf40, connection=0x609a10)
+[01:42:28] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[01:42:28] [DEBUG] mysql_errno: return value: '0'
+[01:42:28] [DEBUG] mysql_format(1, 0x03AC8FD0, 900, "SELECT * FROM `jobs`")
+[01:42:28] [DEBUG] mysql_format: return value: '20'
+[01:42:28] [DEBUG] mysql_tquery(1, "SELECT * FROM `jobs`", "JobsReceived", "")
+[01:42:28] [DEBUG] CCallback::Create(amx=0x296afa0, name='JobsReceived', format='', params=0x3ac8fbc, param_offset=5)
+[01:42:28] [DEBUG] CCallback::Create - callback index for 'JobsReceived': 7
+[01:42:28] [INFO] Callback 'JobsReceived' set up for delayed execution.
+[01:42:28] [DEBUG] created delayed callback with 0 parameter
+[01:42:28] [DEBUG] CHandle::Execute(this=0x5f76e8, type=1, query=0x5ffd00)
+[01:42:28] [DEBUG] CHandle::Execute - return value: true
+[01:42:28] [DEBUG] mysql_tquery: return value: '1'
+[01:42:28] [DEBUG] CConnection::Execute(query=0x5ffd00, this=0x3ad2020, connection=0x6053f8)
+[01:42:28] [DEBUG] CQuery::Execute(this=0x5ffd00, connection=0x6053f8)
+[01:42:28] [INFO] query "SELECT * FROM `jobs`" successfully executed within 0.258 milliseconds
+[01:42:28] [DEBUG] CResultSet::Create(connection=0x6053f8, query_str='SELECT * FROM `jobs`')
+[01:42:28] [DEBUG] created new resultset '0x606f08'
+[01:42:28] [DEBUG] fetched MySQL result '0x649f48'
+[01:42:28] [DEBUG] allocated 152 bytes for PAWN result
+[01:42:28] [DEBUG] CCallback::Execute(amx=0x296afa0, index=7, num_params=0)
+[01:42:28] [INFO] Executing callback 'JobsReceived' with 0 parameter...
+[01:42:28] [DEBUG] executing AMX callback with index '7'
+[01:42:28] [DEBUG] cache_get_row_count(0x03AC9E18)
+[01:42:28] [DEBUG] cache_get_row_count: return value: '1'
+[01:42:28] [DEBUG] cache_get_row_count(0x03AC9E10)
+[01:42:28] [DEBUG] cache_get_row_count: return value: '1'
+[01:42:28] [DEBUG] cache_get_value_name_int(0, "jID", 0x03A80B28)
+[01:42:28] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[01:42:28] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:42:28] [DEBUG] cache_get_value_name(0, "jName", 0x03A80B54, 32)
+[01:42:28] [DEBUG] cache_get_value_name: assigned value: 'Postman'
+[01:42:28] [DEBUG] cache_get_value_name: return value: '1'
+[01:42:28] [DEBUG] cache_get_value_name_int(0, "jPay", 0x03A80BD4)
+[01:42:28] [DEBUG] cache_get_value_name_int: assigned value: '8'
+[01:42:28] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:42:28] [DEBUG] cache_get_value_name_float(0, "jobIX", 0x03A80BD8)
+[01:42:28] [DEBUG] cache_get_value_name_float: assigned value: '-88.8793'
+[01:42:28] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:42:28] [DEBUG] cache_get_value_name_float(0, "jobIY", 0x03A80BDC)
+[01:42:28] [DEBUG] cache_get_value_name_float: assigned value: '1124.12'
+[01:42:28] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:42:28] [DEBUG] cache_get_value_name_float(0, "jobIZ", 0x03A80BE0)
+[01:42:28] [DEBUG] cache_get_value_name_float: assigned value: '19.3012'
+[01:42:28] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:42:28] [DEBUG] cache_get_row_count(0x03AC9E10)
+[01:42:28] [DEBUG] cache_get_row_count: return value: '1'
+[01:42:28] [DEBUG] cache_get_value_name_int(1, "jID", 0x03A80BE4)
+[01:42:28] [DEBUG] cache_get_value_name_int: assigned value: '2'
+[01:42:28] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:42:28] [DEBUG] cache_get_value_name(1, "jName", 0x03A80C10, 32)
+[01:42:28] [DEBUG] cache_get_value_name: assigned value: 'Garbageman'
+[01:42:28] [DEBUG] cache_get_value_name: return value: '1'
+[01:42:28] [DEBUG] cache_get_value_name_int(1, "jPay", 0x03A80C90)
+[01:42:28] [DEBUG] cache_get_value_name_int: assigned value: '12'
+[01:42:28] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:42:28] [DEBUG] cache_get_value_name_float(1, "jobIX", 0x03A80C94)
+[01:42:28] [DEBUG] cache_get_value_name_float: assigned value: '285.13'
+[01:42:28] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:42:28] [DEBUG] cache_get_value_name_float(1, "jobIY", 0x03A80C98)
+[01:42:28] [DEBUG] cache_get_value_name_float: assigned value: '1406.48'
+[01:42:28] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:42:28] [DEBUG] cache_get_value_name_float(1, "jobIZ", 0x03A80C9C)
+[01:42:28] [DEBUG] cache_get_value_name_float: assigned value: '10.5003'
+[01:42:28] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:42:28] [DEBUG] cache_get_row_count(0x03AC9E10)
+[01:42:28] [DEBUG] cache_get_row_count: return value: '1'
+[01:42:28] [DEBUG] cache_get_row_count(0x03AC9E18)
+[01:42:28] [DEBUG] cache_get_row_count: return value: '1'
+[01:42:28] [DEBUG] AMX callback executed with error '0'
+[01:42:28] [INFO] Callback successfully executed.
+[01:43:16] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[01:43:16] [DEBUG] mysql_connect_file("mysql.ini")
+[01:43:16] [DEBUG] CHandleManager::CreateFromFile(this=0x8511e0, file_path='mysql.ini')
+[01:43:16] [INFO] Options instance with id '1' successfully created.
+[01:43:16] [DEBUG] CHandleManager::CreateFromFile - new options = 0x8a9e78 (id '1')
+[01:43:16] [DEBUG] CHandleManager::Create(this=0x8511e0, host='localhost', user='root', pass='****', db='samp', options=0x8a9e78)
+[01:43:16] [INFO] Creating new connection handle...
+[01:43:16] [WARNING] mysql_connect_file: no password specified
+[01:43:16] [DEBUG] CConnection::CConnection(this=0x87e208, host='localhost', user='root', passw='****', db='samp', options=0x8a9e78)
+[01:43:16] [DEBUG] CConnection::CConnection - new connection = 0x851668
+[01:43:16] [DEBUG] CConnection::CConnection(this=0x3d12020, host='localhost', user='root', passw='****', db='samp', options=0x8a9e78)
+[01:43:16] [DEBUG] CConnection::CConnection - new connection = 0x8b6350
+[01:43:16] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3d12020, connection=0x3d12020)
+[01:43:16] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3d12020, connection=0x3d12020)
+[01:43:16] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x87df88)
+[01:43:16] [DEBUG] CConnection::CConnection(this=0x3ee9020, host='localhost', user='root', passw='****', db='samp', options=0x8a9e78)
+[01:43:16] [DEBUG] CConnection::CConnection - new connection = 0x8c9480
+[01:43:16] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3ee9020, connection=0x3ee9020)
+[01:43:16] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3ee9020, connection=0x3ee9020)
+[01:43:16] [DEBUG] CConnection::CConnection(this=0x40b2020, host='localhost', user='root', passw='****', db='samp', options=0x8a9e78)
+[01:43:16] [DEBUG] CConnection::CConnection - new connection = 0x8cc850
+[01:43:16] [DEBUG] CThreadedConnection::WorkerFunc(this=0x40b2020, connection=0x40b2020)
+[01:43:16] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x40b2020, connection=0x40b2020)
+[01:43:16] [INFO] Connection handle with id '1' successfully created.
+[01:43:16] [DEBUG] CHandleManager::Create - new handle = 0x8a7e20
+[01:43:16] [DEBUG] mysql_connect_file: return value: '1'
+[01:43:16] [DEBUG] mysql_errno(1)
+[01:43:16] [DEBUG] CHandle::GetErrorId(this=0x8a7e20)
+[01:43:16] [DEBUG] CConnection::GetError(this=0x87e208, connection=0x851668)
+[01:43:16] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[01:43:16] [DEBUG] mysql_errno: return value: '0'
+[01:43:16] [DEBUG] mysql_format(1, 0x03BCCFE4, 900, "SELECT * FROM `jobs`")
+[01:43:16] [DEBUG] mysql_format: return value: '20'
+[01:43:16] [DEBUG] mysql_tquery(1, "SELECT * FROM `jobs`", "JobsReceived", "")
+[01:43:16] [DEBUG] CCallback::Create(amx=0x2a7afa0, name='JobsReceived', format='', params=0x3bccfd0, param_offset=5)
+[01:43:16] [DEBUG] CCallback::Create - callback index for 'JobsReceived': 7
+[01:43:16] [INFO] Callback 'JobsReceived' set up for delayed execution.
+[01:43:16] [DEBUG] created delayed callback with 0 parameter
+[01:43:16] [DEBUG] CHandle::Execute(this=0x8a7e20, type=1, query=0x8addd0)
+[01:43:16] [DEBUG] CHandle::Execute - return value: true
+[01:43:16] [DEBUG] mysql_tquery: return value: '1'
+[01:43:16] [DEBUG] mysql_format(1, 0x03BCCFE4, 900, "SELECT * FROM `vehicles`")
+[01:43:16] [DEBUG] CConnection::Execute(query=0x8addd0, this=0x3d12020, connection=0x8b6350)
+[01:43:16] [DEBUG] mysql_format: return value: '24'
+[01:43:16] [DEBUG] mysql_tquery(1, "SELECT * FROM `vehicles`", "VehsReceived", "")
+[01:43:16] [DEBUG] CQuery::Execute(this=0x8addd0, connection=0x8b6350)
+[01:43:16] [DEBUG] CCallback::Create(amx=0x2a7afa0, name='VehsReceived', format='', params=0x3bccfd0, param_offset=5)
+[01:43:16] [DEBUG] CCallback::Create - callback index for 'VehsReceived': 68
+[01:43:16] [INFO] Callback 'VehsReceived' set up for delayed execution.
+[01:43:16] [DEBUG] created delayed callback with 0 parameter
+[01:43:16] [DEBUG] CHandle::Execute(this=0x8a7e20, type=1, query=0x8b6f38)
+[01:43:16] [DEBUG] CHandle::Execute - return value: true
+[01:43:16] [DEBUG] mysql_tquery: return value: '1'
+[01:43:16] [INFO] query "SELECT * FROM `jobs`" successfully executed within 0.258 milliseconds
+[01:43:16] [DEBUG] CResultSet::Create(connection=0x8b6350, query_str='SELECT * FROM `jobs`')
+[01:43:16] [DEBUG] created new resultset '0x8b7458'
+[01:43:16] [DEBUG] fetched MySQL result '0x8b14e8'
+[01:43:16] [DEBUG] allocated 152 bytes for PAWN result
+[01:43:16] [DEBUG] CConnection::Execute(query=0x8b6f38, this=0x3d12020, connection=0x8b6350)
+[01:43:16] [DEBUG] CQuery::Execute(this=0x8b6f38, connection=0x8b6350)
+[01:43:16] [INFO] query "SELECT * FROM `vehicles`" successfully executed within 0.196 milliseconds
+[01:43:16] [DEBUG] CCallback::Execute(amx=0x2a7afa0, index=7, num_params=0)
+[01:43:16] [DEBUG] CResultSet::Create(connection=0x8b6350, query_str='SELECT * FROM `vehicles`')
+[01:43:16] [INFO] Executing callback 'JobsReceived' with 0 parameter...
+[01:43:16] [DEBUG] executing AMX callback with index '7'
+[01:43:16] [DEBUG] created new resultset '0x8b7650'
+[01:43:16] [DEBUG] fetched MySQL result '0x8ab6c0'
+[01:43:16] [DEBUG] allocated 0 bytes for PAWN result
+[01:43:16] [DEBUG] cache_get_row_count(0x03BCDE2C)
+[01:43:16] [DEBUG] cache_get_row_count: return value: '1'
+[01:43:16] [DEBUG] cache_get_row_count(0x03BCDE24)
+[01:43:16] [DEBUG] cache_get_row_count: return value: '1'
+[01:43:16] [DEBUG] cache_get_value_name_int(0, "jID", 0x03B84B3C)
+[01:43:16] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[01:43:16] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:43:16] [DEBUG] cache_get_value_name(0, "jName", 0x03B84B68, 32)
+[01:43:16] [DEBUG] cache_get_value_name: assigned value: 'Postman'
+[01:43:16] [DEBUG] cache_get_value_name: return value: '1'
+[01:43:16] [DEBUG] cache_get_value_name_int(0, "jPay", 0x03B84BE8)
+[01:43:16] [DEBUG] cache_get_value_name_int: assigned value: '8'
+[01:43:16] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:43:16] [DEBUG] cache_get_value_name_float(0, "jobIX", 0x03B84BEC)
+[01:43:16] [DEBUG] cache_get_value_name_float: assigned value: '-88.8793'
+[01:43:16] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:43:16] [DEBUG] cache_get_value_name_float(0, "jobIY", 0x03B84BF0)
+[01:43:16] [DEBUG] cache_get_value_name_float: assigned value: '1124.12'
+[01:43:16] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:43:16] [DEBUG] cache_get_value_name_float(0, "jobIZ", 0x03B84BF4)
+[01:43:16] [DEBUG] cache_get_value_name_float: assigned value: '19.3012'
+[01:43:16] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:43:16] [DEBUG] cache_get_row_count(0x03BCDE24)
+[01:43:16] [DEBUG] cache_get_row_count: return value: '1'
+[01:43:16] [DEBUG] cache_get_value_name_int(1, "jID", 0x03B84BF8)
+[01:43:16] [DEBUG] cache_get_value_name_int: assigned value: '2'
+[01:43:16] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:43:16] [DEBUG] cache_get_value_name(1, "jName", 0x03B84C24, 32)
+[01:43:16] [DEBUG] cache_get_value_name: assigned value: 'Garbageman'
+[01:43:16] [DEBUG] cache_get_value_name: return value: '1'
+[01:43:16] [DEBUG] cache_get_value_name_int(1, "jPay", 0x03B84CA4)
+[01:43:16] [DEBUG] cache_get_value_name_int: assigned value: '12'
+[01:43:16] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:43:16] [DEBUG] cache_get_value_name_float(1, "jobIX", 0x03B84CA8)
+[01:43:16] [DEBUG] cache_get_value_name_float: assigned value: '285.13'
+[01:43:16] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:43:16] [DEBUG] cache_get_value_name_float(1, "jobIY", 0x03B84CAC)
+[01:43:16] [DEBUG] cache_get_value_name_float: assigned value: '1406.48'
+[01:43:16] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:43:16] [DEBUG] cache_get_value_name_float(1, "jobIZ", 0x03B84CB0)
+[01:43:16] [DEBUG] cache_get_value_name_float: assigned value: '10.5003'
+[01:43:16] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:43:16] [DEBUG] cache_get_row_count(0x03BCDE24)
+[01:43:16] [DEBUG] cache_get_row_count: return value: '1'
+[01:43:16] [DEBUG] cache_get_row_count(0x03BCDE2C)
+[01:43:16] [DEBUG] cache_get_row_count: return value: '1'
+[01:43:16] [DEBUG] AMX callback executed with error '0'
+[01:43:16] [INFO] Callback successfully executed.
+[01:43:16] [DEBUG] CCallback::Execute(amx=0x2a7afa0, index=68, num_params=0)
+[01:43:16] [INFO] Executing callback 'VehsReceived' with 0 parameter...
+[01:43:16] [DEBUG] executing AMX callback with index '68'
+[01:43:16] [DEBUG] cache_get_row_count(0x03BCDE2C)
+[01:43:16] [DEBUG] cache_get_row_count: return value: '1'
+[01:43:16] [DEBUG] AMX callback executed with error '0'
+[01:43:16] [INFO] Callback successfully executed.
+[01:44:53] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[01:44:53] [DEBUG] mysql_connect_file("mysql.ini")
+[01:44:53] [DEBUG] CHandleManager::CreateFromFile(this=0x729ed8, file_path='mysql.ini')
+[01:44:53] [INFO] Options instance with id '1' successfully created.
+[01:44:53] [DEBUG] CHandleManager::CreateFromFile - new options = 0x758f68 (id '1')
+[01:44:53] [DEBUG] CHandleManager::Create(this=0x729ed8, host='localhost', user='root', pass='****', db='samp', options=0x758f68)
+[01:44:53] [INFO] Creating new connection handle...
+[01:44:53] [WARNING] mysql_connect_file: no password specified
+[01:44:53] [DEBUG] CConnection::CConnection(this=0x72da88, host='localhost', user='root', passw='****', db='samp', options=0x758f68)
+[01:44:53] [DEBUG] CConnection::CConnection - new connection = 0x7024e8
+[01:44:53] [DEBUG] CConnection::CConnection(this=0x3bdd020, host='localhost', user='root', passw='****', db='samp', options=0x758f68)
+[01:44:53] [DEBUG] CConnection::CConnection - new connection = 0x7018c8
+[01:44:53] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3bdd020, connection=0x3bdd020)
+[01:44:53] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3bdd020, connection=0x3bdd020)
+[01:44:53] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x72d388)
+[01:44:53] [DEBUG] CConnection::CConnection(this=0x3f53020, host='localhost', user='root', passw='****', db='samp', options=0x758f68)
+[01:44:53] [DEBUG] CConnection::CConnection - new connection = 0x77a110
+[01:44:53] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3f53020, connection=0x3f53020)
+[01:44:53] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3f53020, connection=0x3f53020)
+[01:44:53] [DEBUG] CConnection::CConnection(this=0x40e1020, host='localhost', user='root', passw='****', db='samp', options=0x758f68)
+[01:44:53] [DEBUG] CConnection::CConnection - new connection = 0x788198
+[01:44:53] [DEBUG] CThreadedConnection::WorkerFunc(this=0x40e1020, connection=0x40e1020)
+[01:44:53] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x40e1020, connection=0x40e1020)
+[01:44:53] [INFO] Connection handle with id '1' successfully created.
+[01:44:53] [DEBUG] CHandleManager::Create - new handle = 0x757038
+[01:44:53] [DEBUG] mysql_connect_file: return value: '1'
+[01:44:53] [DEBUG] mysql_errno(1)
+[01:44:53] [DEBUG] CHandle::GetErrorId(this=0x757038)
+[01:44:53] [DEBUG] CConnection::GetError(this=0x72da88, connection=0x7024e8)
+[01:44:53] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[01:44:53] [DEBUG] mysql_errno: return value: '0'
+[01:44:53] [DEBUG] mysql_format(1, 0x03BC6FE4, 900, "SELECT * FROM `jobs`")
+[01:44:53] [DEBUG] mysql_format: return value: '20'
+[01:44:53] [DEBUG] mysql_tquery(1, "SELECT * FROM `jobs`", "JobsReceived", "")
+[01:44:53] [DEBUG] CCallback::Create(amx=0x2aaafa0, name='JobsReceived', format='', params=0x3bc6fd0, param_offset=5)
+[01:44:53] [DEBUG] CCallback::Create - callback index for 'JobsReceived': 7
+[01:44:53] [INFO] Callback 'JobsReceived' set up for delayed execution.
+[01:44:53] [DEBUG] created delayed callback with 0 parameter
+[01:44:53] [DEBUG] CHandle::Execute(this=0x757038, type=1, query=0x77b078)
+[01:44:53] [DEBUG] CHandle::Execute - return value: true
+[01:44:53] [DEBUG] mysql_tquery: return value: '1'
+[01:44:53] [DEBUG] mysql_format(1, 0x03BC6FE4, 900, "SELECT * FROM `vehicles`")
+[01:44:53] [DEBUG] CConnection::Execute(query=0x77b078, this=0x3bdd020, connection=0x7018c8)
+[01:44:53] [DEBUG] CQuery::Execute(this=0x77b078, connection=0x7018c8)
+[01:44:53] [DEBUG] mysql_format: return value: '24'
+[01:44:53] [DEBUG] mysql_tquery(1, "SELECT * FROM `vehicles`", "VehsReceived", "")
+[01:44:53] [DEBUG] CCallback::Create(amx=0x2aaafa0, name='VehsReceived', format='', params=0x3bc6fd0, param_offset=5)
+[01:44:53] [DEBUG] CCallback::Create - callback index for 'VehsReceived': 68
+[01:44:53] [INFO] Callback 'VehsReceived' set up for delayed execution.
+[01:44:53] [DEBUG] created delayed callback with 0 parameter
+[01:44:53] [DEBUG] CHandle::Execute(this=0x757038, type=1, query=0x795f98)
+[01:44:53] [DEBUG] CHandle::Execute - return value: true
+[01:44:53] [DEBUG] mysql_tquery: return value: '1'
+[01:44:53] [INFO] query "SELECT * FROM `jobs`" successfully executed within 0.253 milliseconds
+[01:44:53] [DEBUG] CResultSet::Create(connection=0x7018c8, query_str='SELECT * FROM `jobs`')
+[01:44:53] [DEBUG] created new resultset '0x7947c8'
+[01:44:53] [DEBUG] fetched MySQL result '0x7c95d8'
+[01:44:53] [DEBUG] allocated 152 bytes for PAWN result
+[01:44:53] [DEBUG] CConnection::Execute(query=0x795f98, this=0x3bdd020, connection=0x7018c8)
+[01:44:53] [DEBUG] CQuery::Execute(this=0x795f98, connection=0x7018c8)
+[01:44:53] [INFO] query "SELECT * FROM `vehicles`" successfully executed within 0.253 milliseconds
+[01:44:53] [DEBUG] CCallback::Execute(amx=0x2aaafa0, index=7, num_params=0)
+[01:44:53] [DEBUG] CResultSet::Create(connection=0x7018c8, query_str='SELECT * FROM `vehicles`')
+[01:44:53] [DEBUG] created new resultset '0x794838'
+[01:44:53] [INFO] Executing callback 'JobsReceived' with 0 parameter...
+[01:44:53] [DEBUG] executing AMX callback with index '7'
+[01:44:53] [DEBUG] fetched MySQL result '0x75b640'
+[01:44:53] [DEBUG] allocated 132 bytes for PAWN result
+[01:44:53] [DEBUG] cache_get_row_count(0x03BC7E2C)
+[01:44:53] [DEBUG] cache_get_row_count: return value: '1'
+[01:44:53] [DEBUG] cache_get_row_count(0x03BC7E24)
+[01:44:53] [DEBUG] cache_get_row_count: return value: '1'
+[01:44:53] [DEBUG] cache_get_value_name_int(0, "jID", 0x03B7EB3C)
+[01:44:53] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[01:44:53] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:44:53] [DEBUG] cache_get_value_name(0, "jName", 0x03B7EB68, 32)
+[01:44:53] [DEBUG] cache_get_value_name: assigned value: 'Postman'
+[01:44:53] [DEBUG] cache_get_value_name: return value: '1'
+[01:44:53] [DEBUG] cache_get_value_name_int(0, "jPay", 0x03B7EBE8)
+[01:44:53] [DEBUG] cache_get_value_name_int: assigned value: '8'
+[01:44:53] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:44:53] [DEBUG] cache_get_value_name_float(0, "jobIX", 0x03B7EBEC)
+[01:44:53] [DEBUG] cache_get_value_name_float: assigned value: '-88.8793'
+[01:44:53] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:44:53] [DEBUG] cache_get_value_name_float(0, "jobIY", 0x03B7EBF0)
+[01:44:53] [DEBUG] cache_get_value_name_float: assigned value: '1124.12'
+[01:44:53] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:44:53] [DEBUG] cache_get_value_name_float(0, "jobIZ", 0x03B7EBF4)
+[01:44:53] [DEBUG] cache_get_value_name_float: assigned value: '19.3012'
+[01:44:53] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:44:53] [DEBUG] cache_get_row_count(0x03BC7E24)
+[01:44:53] [DEBUG] cache_get_row_count: return value: '1'
+[01:44:53] [DEBUG] cache_get_value_name_int(1, "jID", 0x03B7EBF8)
+[01:44:53] [DEBUG] cache_get_value_name_int: assigned value: '2'
+[01:44:53] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:44:53] [DEBUG] cache_get_value_name(1, "jName", 0x03B7EC24, 32)
+[01:44:53] [DEBUG] cache_get_value_name: assigned value: 'Garbageman'
+[01:44:53] [DEBUG] cache_get_value_name: return value: '1'
+[01:44:53] [DEBUG] cache_get_value_name_int(1, "jPay", 0x03B7ECA4)
+[01:44:53] [DEBUG] cache_get_value_name_int: assigned value: '12'
+[01:44:53] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:44:53] [DEBUG] cache_get_value_name_float(1, "jobIX", 0x03B7ECA8)
+[01:44:53] [DEBUG] cache_get_value_name_float: assigned value: '285.13'
+[01:44:53] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:44:53] [DEBUG] cache_get_value_name_float(1, "jobIY", 0x03B7ECAC)
+[01:44:53] [DEBUG] cache_get_value_name_float: assigned value: '1406.48'
+[01:44:53] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:44:53] [DEBUG] cache_get_value_name_float(1, "jobIZ", 0x03B7ECB0)
+[01:44:53] [DEBUG] cache_get_value_name_float: assigned value: '10.5003'
+[01:44:53] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:44:53] [DEBUG] cache_get_row_count(0x03BC7E24)
+[01:44:53] [DEBUG] cache_get_row_count: return value: '1'
+[01:44:53] [DEBUG] cache_get_row_count(0x03BC7E2C)
+[01:44:53] [DEBUG] cache_get_row_count: return value: '1'
+[01:44:53] [DEBUG] AMX callback executed with error '0'
+[01:44:54] [INFO] Callback successfully executed.
+[01:44:54] [DEBUG] CCallback::Execute(amx=0x2aaafa0, index=68, num_params=0)
+[01:44:54] [INFO] Executing callback 'VehsReceived' with 0 parameter...
+[01:44:54] [DEBUG] executing AMX callback with index '68'
+[01:44:54] [DEBUG] cache_get_row_count(0x03BC7E2C)
+[01:44:54] [DEBUG] cache_get_row_count: return value: '1'
+[01:44:54] [DEBUG] cache_get_row_count(0x03BC7E24)
+[01:44:54] [DEBUG] cache_get_row_count: return value: '1'
+[01:44:54] [DEBUG] cache_get_value_name_int(0, "vID", 0x03B817C8)
+[01:44:54] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[01:44:54] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:44:54] [DEBUG] cache_get_value_name_int(0, "vModelId", 0x03B81848)
+[01:44:54] [DEBUG] cache_get_value_name_int: assigned value: '411'
+[01:44:54] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:44:54] [DEBUG] cache_get_value_name(0, "vOwner", 0x03B8184C, 32)
+[01:44:54] [DEBUG] cache_get_value_name: assigned value: 'testaccounts_2'
+[01:44:54] [DEBUG] cache_get_value_name: return value: '1'
+[01:44:54] [DEBUG] cache_get_value_name_int(0, "vJobId", 0x03B818CC)
+[01:44:54] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[01:44:54] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:44:54] [DEBUG] cache_get_value_name_int(0, "vFacId", 0x03B818D0)
+[01:44:54] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[01:44:54] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:44:54] [DEBUG] cache_get_value_name(0, "vPlate", 0x03B818D4, 32)
+[01:44:54] [DEBUG] cache_get_value_name: assigned value: 'TESTING1'
+[01:44:54] [DEBUG] cache_get_value_name: return value: '1'
+[01:44:54] [DEBUG] cache_get_value_name_float(0, "vParkedX", 0x03B81954)
+[01:44:54] [DEBUG] cache_get_value_name_float: assigned value: '-204.533'
+[01:44:54] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:44:54] [DEBUG] cache_get_value_name_float(0, "vParkedY", 0x03B81958)
+[01:44:54] [DEBUG] cache_get_value_name_float: assigned value: '1119.16'
+[01:44:54] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:44:54] [DEBUG] cache_get_value_name_float(0, "vParkedZ", 0x03B8195C)
+[01:44:54] [DEBUG] cache_get_value_name_float: assigned value: '23.2031'
+[01:44:54] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:44:54] [DEBUG] cache_get_value_name_int(0, "vColor1", 0x03B81964)
+[01:44:54] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[01:44:54] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:44:54] [DEBUG] cache_get_value_name_int(0, "vColor2", 0x03B81968)
+[01:44:54] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[01:44:54] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:44:54] [DEBUG] cache_get_row_count(0x03BC7E24)
+[01:44:54] [DEBUG] cache_get_row_count: return value: '1'
+[01:44:54] [DEBUG] AMX callback executed with error '0'
+[01:44:54] [INFO] Callback successfully executed.
+[01:45:22] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[01:45:22] [DEBUG] mysql_connect_file("mysql.ini")
+[01:45:22] [DEBUG] CHandleManager::CreateFromFile(this=0x7629e0, file_path='mysql.ini')
+[01:45:22] [INFO] Options instance with id '1' successfully created.
+[01:45:22] [DEBUG] CHandleManager::CreateFromFile - new options = 0x757540 (id '1')
+[01:45:22] [DEBUG] CHandleManager::Create(this=0x7629e0, host='localhost', user='root', pass='****', db='samp', options=0x757540)
+[01:45:22] [INFO] Creating new connection handle...
+[01:45:22] [WARNING] mysql_connect_file: no password specified
+[01:45:22] [DEBUG] CConnection::CConnection(this=0x72b998, host='localhost', user='root', passw='****', db='samp', options=0x757540)
+[01:45:22] [DEBUG] CConnection::CConnection - new connection = 0x769230
+[01:45:22] [DEBUG] CConnection::CConnection(this=0x3c18020, host='localhost', user='root', passw='****', db='samp', options=0x757540)
+[01:45:22] [DEBUG] CConnection::CConnection - new connection = 0x768e48
+[01:45:22] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3c18020, connection=0x3c18020)
+[01:45:22] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3c18020, connection=0x3c18020)
+[01:45:22] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x72bb98)
+[01:45:22] [DEBUG] CConnection::CConnection(this=0x3de1020, host='localhost', user='root', passw='****', db='samp', options=0x757540)
+[01:45:22] [DEBUG] CConnection::CConnection - new connection = 0x769618
+[01:45:22] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3de1020, connection=0x3de1020)
+[01:45:22] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3de1020, connection=0x3de1020)
+[01:45:22] [DEBUG] CConnection::CConnection(this=0x3fbd020, host='localhost', user='root', passw='****', db='samp', options=0x757540)
+[01:45:22] [DEBUG] CConnection::CConnection - new connection = 0x767ac0
+[01:45:22] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3fbd020, connection=0x3fbd020)
+[01:45:22] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3fbd020, connection=0x3fbd020)
+[01:45:22] [INFO] Connection handle with id '1' successfully created.
+[01:45:22] [DEBUG] CHandleManager::Create - new handle = 0x755ce0
+[01:45:22] [DEBUG] mysql_connect_file: return value: '1'
+[01:45:22] [DEBUG] mysql_errno(1)
+[01:45:22] [DEBUG] CHandle::GetErrorId(this=0x755ce0)
+[01:45:22] [DEBUG] CConnection::GetError(this=0x72b998, connection=0x769230)
+[01:45:22] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[01:45:22] [DEBUG] mysql_errno: return value: '0'
+[01:45:22] [DEBUG] mysql_format(1, 0x03ACC00C, 900, "SELECT * FROM `jobs`")
+[01:45:22] [DEBUG] mysql_format: return value: '20'
+[01:45:22] [DEBUG] mysql_tquery(1, "SELECT * FROM `jobs`", "JobsReceived", "")
+[01:45:22] [DEBUG] CCallback::Create(amx=0x296afa0, name='JobsReceived', format='', params=0x3acbff8, param_offset=5)
+[01:45:22] [DEBUG] CCallback::Create - callback index for 'JobsReceived': 7
+[01:45:22] [INFO] Callback 'JobsReceived' set up for delayed execution.
+[01:45:22] [DEBUG] created delayed callback with 0 parameter
+[01:45:22] [DEBUG] CHandle::Execute(this=0x755ce0, type=1, query=0x75b6f0)
+[01:45:22] [DEBUG] CHandle::Execute - return value: true
+[01:45:22] [DEBUG] mysql_tquery: return value: '1'
+[01:45:22] [DEBUG] mysql_format(1, 0x03ACC00C, 900, "SELECT * FROM `vehicles`")
+[01:45:22] [DEBUG] mysql_format: return value: '24'
+[01:45:22] [DEBUG] CConnection::Execute(query=0x75b6f0, this=0x3c18020, connection=0x768e48)
+[01:45:22] [DEBUG] mysql_tquery(1, "SELECT * FROM `vehicles`", "VehsReceived", "")
+[01:45:22] [DEBUG] CCallback::Create(amx=0x296afa0, name='VehsReceived', format='', params=0x3acbff8, param_offset=5)
+[01:45:22] [DEBUG] CQuery::Execute(this=0x75b6f0, connection=0x768e48)
+[01:45:22] [DEBUG] CCallback::Create - callback index for 'VehsReceived': 68
+[01:45:22] [INFO] Callback 'VehsReceived' set up for delayed execution.
+[01:45:22] [DEBUG] created delayed callback with 0 parameter
+[01:45:22] [DEBUG] CHandle::Execute(this=0x755ce0, type=1, query=0x796e20)
+[01:45:22] [DEBUG] CHandle::Execute - return value: true
+[01:45:22] [DEBUG] mysql_tquery: return value: '1'
+[01:45:22] [INFO] query "SELECT * FROM `jobs`" successfully executed within 0.295 milliseconds
+[01:45:22] [DEBUG] CResultSet::Create(connection=0x768e48, query_str='SELECT * FROM `jobs`')
+[01:45:22] [DEBUG] created new resultset '0x7630f0'
+[01:45:22] [DEBUG] fetched MySQL result '0x799580'
+[01:45:22] [DEBUG] allocated 152 bytes for PAWN result
+[01:45:22] [DEBUG] CConnection::Execute(query=0x796e20, this=0x3c18020, connection=0x768e48)
+[01:45:22] [DEBUG] CQuery::Execute(this=0x796e20, connection=0x768e48)
+[01:45:22] [INFO] query "SELECT * FROM `vehicles`" successfully executed within 0.234 milliseconds
+[01:45:22] [DEBUG] CResultSet::Create(connection=0x768e48, query_str='SELECT * FROM `vehicles`')
+[01:45:22] [DEBUG] created new resultset '0x763080'
+[01:45:22] [DEBUG] CCallback::Execute(amx=0x296afa0, index=7, num_params=0)
+[01:45:22] [DEBUG] fetched MySQL result '0x7639c0'
+[01:45:22] [INFO] Executing callback 'JobsReceived' with 0 parameter...
+[01:45:22] [DEBUG] allocated 132 bytes for PAWN result
+[01:45:22] [DEBUG] executing AMX callback with index '7'
+[01:45:22] [DEBUG] cache_get_row_count(0x03ACCE54)
+[01:45:22] [DEBUG] cache_get_row_count: return value: '1'
+[01:45:22] [DEBUG] cache_get_row_count(0x03ACCE4C)
+[01:45:22] [DEBUG] cache_get_row_count: return value: '1'
+[01:45:22] [DEBUG] cache_get_value_name_int(0, "jID", 0x03A83B64)
+[01:45:22] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[01:45:22] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:22] [DEBUG] cache_get_value_name(0, "jName", 0x03A83B90, 32)
+[01:45:22] [DEBUG] cache_get_value_name: assigned value: 'Postman'
+[01:45:22] [DEBUG] cache_get_value_name: return value: '1'
+[01:45:22] [DEBUG] cache_get_value_name_int(0, "jPay", 0x03A83C10)
+[01:45:22] [DEBUG] cache_get_value_name_int: assigned value: '8'
+[01:45:22] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:22] [DEBUG] cache_get_value_name_float(0, "jobIX", 0x03A83C14)
+[01:45:22] [DEBUG] cache_get_value_name_float: assigned value: '-88.8793'
+[01:45:22] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:45:22] [DEBUG] cache_get_value_name_float(0, "jobIY", 0x03A83C18)
+[01:45:22] [DEBUG] cache_get_value_name_float: assigned value: '1124.12'
+[01:45:22] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:45:22] [DEBUG] cache_get_value_name_float(0, "jobIZ", 0x03A83C1C)
+[01:45:22] [DEBUG] cache_get_value_name_float: assigned value: '19.3012'
+[01:45:22] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:45:22] [DEBUG] cache_get_row_count(0x03ACCE4C)
+[01:45:22] [DEBUG] cache_get_row_count: return value: '1'
+[01:45:22] [DEBUG] cache_get_value_name_int(1, "jID", 0x03A83C20)
+[01:45:22] [DEBUG] cache_get_value_name_int: assigned value: '2'
+[01:45:22] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:22] [DEBUG] cache_get_value_name(1, "jName", 0x03A83C4C, 32)
+[01:45:22] [DEBUG] cache_get_value_name: assigned value: 'Garbageman'
+[01:45:22] [DEBUG] cache_get_value_name: return value: '1'
+[01:45:22] [DEBUG] cache_get_value_name_int(1, "jPay", 0x03A83CCC)
+[01:45:22] [DEBUG] cache_get_value_name_int: assigned value: '12'
+[01:45:22] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:22] [DEBUG] cache_get_value_name_float(1, "jobIX", 0x03A83CD0)
+[01:45:22] [DEBUG] cache_get_value_name_float: assigned value: '285.13'
+[01:45:22] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:45:22] [DEBUG] cache_get_value_name_float(1, "jobIY", 0x03A83CD4)
+[01:45:22] [DEBUG] cache_get_value_name_float: assigned value: '1406.48'
+[01:45:22] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:45:22] [DEBUG] cache_get_value_name_float(1, "jobIZ", 0x03A83CD8)
+[01:45:22] [DEBUG] cache_get_value_name_float: assigned value: '10.5003'
+[01:45:22] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:45:22] [DEBUG] cache_get_row_count(0x03ACCE4C)
+[01:45:22] [DEBUG] cache_get_row_count: return value: '1'
+[01:45:22] [DEBUG] cache_get_row_count(0x03ACCE54)
+[01:45:22] [DEBUG] cache_get_row_count: return value: '1'
+[01:45:22] [DEBUG] AMX callback executed with error '0'
+[01:45:23] [INFO] Callback successfully executed.
+[01:45:23] [DEBUG] CCallback::Execute(amx=0x296afa0, index=68, num_params=0)
+[01:45:23] [INFO] Executing callback 'VehsReceived' with 0 parameter...
+[01:45:23] [DEBUG] executing AMX callback with index '68'
+[01:45:23] [DEBUG] cache_get_row_count(0x03ACCE54)
+[01:45:23] [DEBUG] cache_get_row_count: return value: '1'
+[01:45:23] [DEBUG] cache_get_row_count(0x03ACCE4C)
+[01:45:23] [DEBUG] cache_get_row_count: return value: '1'
+[01:45:23] [DEBUG] cache_get_value_name_int(0, "vID", 0x03A867F0)
+[01:45:23] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[01:45:23] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:23] [DEBUG] cache_get_value_name_int(0, "vModelId", 0x03A86870)
+[01:45:23] [DEBUG] cache_get_value_name_int: assigned value: '411'
+[01:45:23] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:23] [DEBUG] cache_get_value_name(0, "vOwner", 0x03A86874, 32)
+[01:45:23] [DEBUG] cache_get_value_name: assigned value: 'testaccounts_2'
+[01:45:23] [DEBUG] cache_get_value_name: return value: '1'
+[01:45:23] [DEBUG] cache_get_value_name_int(0, "vJobId", 0x03A868F4)
+[01:45:23] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[01:45:23] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:23] [DEBUG] cache_get_value_name_int(0, "vFacId", 0x03A868F8)
+[01:45:23] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[01:45:23] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:23] [DEBUG] cache_get_value_name(0, "vPlate", 0x03A868FC, 32)
+[01:45:23] [DEBUG] cache_get_value_name: assigned value: 'TESTING1'
+[01:45:23] [DEBUG] cache_get_value_name: return value: '1'
+[01:45:23] [DEBUG] cache_get_value_name_float(0, "vParkedX", 0x03A8697C)
+[01:45:23] [DEBUG] cache_get_value_name_float: assigned value: '-204.533'
+[01:45:23] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:45:23] [DEBUG] cache_get_value_name_float(0, "vParkedY", 0x03A86980)
+[01:45:23] [DEBUG] cache_get_value_name_float: assigned value: '1119.16'
+[01:45:23] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:45:23] [DEBUG] cache_get_value_name_float(0, "vParkedZ", 0x03A86984)
+[01:45:23] [DEBUG] cache_get_value_name_float: assigned value: '23.2031'
+[01:45:23] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:45:23] [DEBUG] cache_get_value_name_int(0, "vColor1", 0x03A8698C)
+[01:45:23] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[01:45:23] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:23] [DEBUG] cache_get_value_name_int(0, "vColor2", 0x03A86990)
+[01:45:23] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[01:45:23] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:23] [DEBUG] cache_get_row_count(0x03ACCE4C)
+[01:45:23] [DEBUG] cache_get_row_count: return value: '1'
+[01:45:23] [DEBUG] cache_get_row_count(0x03ACCE54)
+[01:45:23] [DEBUG] cache_get_row_count: return value: '1'
+[01:45:23] [DEBUG] AMX callback executed with error '0'
+[01:45:23] [INFO] Callback successfully executed.
+[01:45:45] [DEBUG] mysql_format(1, 0x03ACCACC, 200, "SELECT * FROM `accounts` where `pName` = '%s'")
+[01:45:45] [DEBUG] mysql_format: return value: '57'
+[01:45:45] [DEBUG] mysql_tquery(1, "SELECT * FROM `accounts` where `pName` = 'testaccounts_2'", "checkIfExists", "d")
+[01:45:45] [DEBUG] CCallback::Create(amx=0x296afa0, name='checkIfExists', format='d', params=0x3acca50, param_offset=5)
+[01:45:45] [DEBUG] CCallback::Create - callback index for 'checkIfExists': 69
+[01:45:45] [DEBUG] processing specifier 'd' with parameter index 0
+[01:45:45] [DEBUG] retrieved and pushed value '0'
+[01:45:45] [INFO] Callback 'checkIfExists' set up for delayed execution.
+[01:45:45] [DEBUG] created delayed callback with 1 parameter
+[01:45:45] [DEBUG] CHandle::Execute(this=0x755ce0, type=1, query=0x796668)
+[01:45:45] [DEBUG] CHandle::Execute - return value: true
+[01:45:45] [DEBUG] mysql_tquery: return value: '1'
+[01:45:45] [DEBUG] CConnection::Execute(query=0x796668, this=0x3c18020, connection=0x768e48)
+[01:45:45] [DEBUG] CQuery::Execute(this=0x796668, connection=0x768e48)
+[01:45:45] [INFO] query "SELECT * FROM `accounts` where `pName` = 'testaccounts_2'" successfully executed within 0.267 milliseconds
+[01:45:45] [DEBUG] CResultSet::Create(connection=0x768e48, query_str='SELECT * FROM `accounts` where `pName` = 'testaccounts_2'')
+[01:45:45] [DEBUG] created new resultset '0x762fd8'
+[01:45:45] [DEBUG] fetched MySQL result '0x762308'
+[01:45:45] [DEBUG] allocated 228 bytes for PAWN result
+[01:45:45] [DEBUG] CCallback::Execute(amx=0x296afa0, index=69, num_params=1)
+[01:45:45] [INFO] Executing callback 'checkIfExists' with 1 parameter...
+[01:45:45] [DEBUG] processing internal specifier 'c'
+[01:45:45] [DEBUG] pushed value '0' onto AMX stack
+[01:45:45] [DEBUG] executing AMX callback with index '69'
+[01:45:45] [DEBUG] cache_get_row_count(0x03ACC61C)
+[01:45:45] [DEBUG] cache_get_row_count: return value: '1'
+[01:45:45] [DEBUG] AMX callback executed with error '0'
+[01:45:45] [INFO] Callback successfully executed.
+[01:45:52] [DEBUG] mysql_format(1, 0x03ACC978, 256, "SELECT `pPassword` from `accounts` WHERE `pName` = '%e'")
+[01:45:52] [DEBUG] CHandle::EscapeString(this=0x755ce0, src='testaccounts_2')
+[01:45:52] [DEBUG] CConnection::EscapeString(src='testaccounts_2', this=0x72b998, connection=0x769230)
+[01:45:52] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'testaccounts_2'
+[01:45:52] [DEBUG] mysql_format: return value: '67'
+[01:45:52] [DEBUG] mysql_query(1, "SELECT `pPassword` from `accounts` WHERE `pName` = 'testaccounts_2'", 1)
+[01:45:52] [DEBUG] CHandle::Execute(this=0x755ce0, type=3, query=0x7964a0)
+[01:45:52] [DEBUG] CConnection::Execute(query=0x7964a0, this=0x72b998, connection=0x769230)
+[01:45:52] [DEBUG] CQuery::Execute(this=0x7964a0, connection=0x769230)
+[01:45:52] [INFO] query "SELECT `pPassword` from `accounts` WHERE `pName` = 'testaccounts_2'" successfully executed within 0.257 milliseconds
+[01:45:53] [DEBUG] CResultSet::Create(connection=0x769230, query_str='SELECT `pPassword` from `accounts` WHERE `pName` = 'testaccounts_2'')
+[01:45:53] [DEBUG] created new resultset '0x762da8'
+[01:45:53] [DEBUG] fetched MySQL result '0x751e68'
+[01:45:53] [DEBUG] allocated 76 bytes for PAWN result
+[01:45:53] [DEBUG] CHandle::Execute - return value: true
+[01:45:53] [DEBUG] mysql_query: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name(0, "pPassword", 0x03ACC824, 61)
+[01:45:53] [DEBUG] cache_get_value_name: assigned value: '$2y$12$XFDYQjXvbjThLR/xKkjRTOarF5sW7jrTtLDUAQoj5KzHKM/NZ3rRa'
+[01:45:53] [DEBUG] cache_get_value_name: return value: '1'
+[01:45:53] [DEBUG] mysql_format(1, 0x03ACC4FC, 300, "SELECT * from `accounts` WHERE `pName` = '%e'")
+[01:45:53] [DEBUG] CHandle::EscapeString(this=0x755ce0, src='testaccounts_2')
+[01:45:53] [DEBUG] CConnection::EscapeString(src='testaccounts_2', this=0x72b998, connection=0x769230)
+[01:45:53] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'testaccounts_2'
+[01:45:53] [DEBUG] mysql_format: return value: '57'
+[01:45:53] [DEBUG] mysql_tquery(1, "SELECT * from `accounts` WHERE `pName` = 'testaccounts_2'", "OnPlayerLoad", "d")
+[01:45:53] [DEBUG] CCallback::Create(amx=0x296afa0, name='OnPlayerLoad', format='d', params=0x3acc4e4, param_offset=5)
+[01:45:53] [DEBUG] CCallback::Create - callback index for 'OnPlayerLoad': 36
+[01:45:53] [DEBUG] processing specifier 'd' with parameter index 0
+[01:45:53] [DEBUG] retrieved and pushed value '0'
+[01:45:53] [INFO] Callback 'OnPlayerLoad' set up for delayed execution.
+[01:45:53] [DEBUG] created delayed callback with 1 parameter
+[01:45:53] [DEBUG] CHandle::Execute(this=0x755ce0, type=1, query=0x796668)
+[01:45:53] [DEBUG] CHandle::Execute - return value: true
+[01:45:53] [DEBUG] mysql_tquery: return value: '1'
+[01:45:53] [DEBUG] CConnection::Execute(query=0x796668, this=0x3c18020, connection=0x768e48)
+[01:45:53] [DEBUG] CQuery::Execute(this=0x796668, connection=0x768e48)
+[01:45:53] [INFO] query "SELECT * from `accounts` WHERE `pName` = 'testaccounts_2'" successfully executed within 0.278 milliseconds
+[01:45:53] [DEBUG] CResultSet::Create(connection=0x768e48, query_str='SELECT * from `accounts` WHERE `pName` = 'testaccounts_2'')
+[01:45:53] [DEBUG] created new resultset '0x762e88'
+[01:45:53] [DEBUG] fetched MySQL result '0x762308'
+[01:45:53] [DEBUG] allocated 228 bytes for PAWN result
+[01:45:53] [DEBUG] CCallback::Execute(amx=0x296afa0, index=36, num_params=1)
+[01:45:53] [INFO] Executing callback 'OnPlayerLoad' with 1 parameter...
+[01:45:53] [DEBUG] processing internal specifier 'c'
+[01:45:53] [DEBUG] pushed value '0' onto AMX stack
+[01:45:53] [DEBUG] executing AMX callback with index '36'
+[01:45:53] [DEBUG] cache_get_value_name_int(0, "ID", 0x0386899C)
+[01:45:53] [DEBUG] cache_get_value_name_int: assigned value: '22'
+[01:45:53] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name(0, "pName", 0x03868A1C, 128)
+[01:45:53] [DEBUG] cache_get_value_name: assigned value: 'testaccounts_2'
+[01:45:53] [DEBUG] cache_get_value_name: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name(0, "pEmail", 0x03868F6C, 128)
+[01:45:53] [DEBUG] cache_get_value_name: assigned value: 'olly@yllo.co.uk'
+[01:45:53] [DEBUG] cache_get_value_name: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name_int(0, "pLevel", 0x0386916C)
+[01:45:53] [DEBUG] cache_get_value_name_int: assigned value: '2'
+[01:45:53] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name_int(0, "pExp", 0x03869170)
+[01:45:53] [DEBUG] cache_get_value_name_int: assigned value: '3'
+[01:45:53] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name_float(0, "pHealth", 0x038691F4)
+[01:45:53] [DEBUG] cache_get_value_name_float: assigned value: '75'
+[01:45:53] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name_float(0, "pArmour", 0x038691F8)
+[01:45:53] [DEBUG] cache_get_value_name_float: assigned value: '0'
+[01:45:53] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name(0, "pRegion", 0x03869174, 32)
+[01:45:53] [DEBUG] cache_get_value_name: assigned value: 'Los Santos'
+[01:45:53] [DEBUG] cache_get_value_name: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name_int(0, "pGender", 0x038691FC)
+[01:45:53] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[01:45:53] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name_int(0, "pSkin", 0x03869200)
+[01:45:53] [DEBUG] cache_get_value_name_int: assigned value: '73'
+[01:45:53] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name_int(0, "pAge", 0x03869204)
+[01:45:53] [DEBUG] cache_get_value_name_int: assigned value: '28'
+[01:45:53] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name_int(0, "pBank", 0x03869208)
+[01:45:53] [DEBUG] cache_get_value_name_int: assigned value: '6695'
+[01:45:53] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name_int(0, "pCash", 0x0386920C)
+[01:45:53] [DEBUG] cache_get_value_name_int: assigned value: '1000'
+[01:45:53] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name_int(0, "pPayTimer", 0x03869210)
+[01:45:53] [DEBUG] cache_get_value_name_int: assigned value: '35'
+[01:45:53] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name_int(0, "pJobId", 0x03869214)
+[01:45:53] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[01:45:53] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name_int(0, "pJobPay", 0x03869218)
+[01:45:53] [DEBUG] cache_get_value_name_int: assigned value: '351'
+[01:45:53] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:53] [DEBUG] cache_get_value_name_int(0, "pAdminLevel", 0x0386921C)
+[01:45:53] [DEBUG] cache_get_value_name_int: assigned value: '6'
+[01:45:53] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:45:53] [DEBUG] AMX callback executed with error '0'
+[01:45:53] [INFO] Callback successfully executed.
+[01:48:40] [DEBUG] mysql_format(1, 0x03ACC988, 300, "UPDATE `accounts` SET `pHealth` = '%f', `pArmour` = '%f', `pCash` = '%d', `pBank` = '%d' WHERE `pName` = '%e'")
+[01:48:40] [DEBUG] CHandle::EscapeString(this=0x755ce0, src='testaccounts_2')
+[01:48:40] [DEBUG] CConnection::EscapeString(src='testaccounts_2', this=0x72b998, connection=0x769230)
+[01:48:40] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'testaccounts_2'
+[01:48:40] [DEBUG] mysql_format: return value: '138'
+[01:48:40] [DEBUG] mysql_query(1, "UPDATE `accounts` SET `pHealth` = '75.000000', `pArmour` = '0.000000', `pCash` = '1000', `pBank` = '6695' WHERE `pName` = 'testaccounts_2'", 1)
+[01:48:40] [DEBUG] CHandle::Execute(this=0x755ce0, type=3, query=0x796c58)
+[01:48:40] [DEBUG] CConnection::Execute(query=0x796c58, this=0x72b998, connection=0x769230)
+[01:48:40] [DEBUG] CQuery::Execute(this=0x796c58, connection=0x769230)
+[01:48:40] [INFO] query "UPDATE `accounts` SET `pHealth` = '75.000000', `pArmour` = '0.000000', `pCash` = '1000', `pBank` = '6695' WHERE `pName` = 'testaccounts_2'" successfully executed within 51.636 milliseconds
+[01:48:40] [DEBUG] CResultSet::Create(connection=0x769230, query_str='UPDATE `accounts` SET `pHealth` = '75.000000', `pArmour` = '0.000000', `pCash` = '1000', `pBank` = '6695' WHERE `pName` = 'testaccounts_2'')
+[01:48:40] [DEBUG] created new resultset '0x763320'
+[01:48:40] [DEBUG] fetched MySQL result '0x0'
+[01:48:40] [DEBUG] CHandle::Execute - return value: true
+[01:48:40] [DEBUG] mysql_query: return value: '2'
+[01:48:40] [DEBUG] mysql_format(1, 0x03ACC988, 300, "UPDATE `accounts` SET `pLevel` = '%d', `pExp` = '%d', `pSkin` = '%d', `pPayTimer` = '%d' WHERE `pName` = '%e'")
+[01:48:40] [DEBUG] CHandle::EscapeString(this=0x755ce0, src='testaccounts_2')
+[01:48:40] [DEBUG] CConnection::EscapeString(src='testaccounts_2', this=0x72b998, connection=0x769230)
+[01:48:40] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'testaccounts_2'
+[01:48:40] [DEBUG] mysql_format: return value: '119'
+[01:48:40] [DEBUG] mysql_query(1, "UPDATE `accounts` SET `pLevel` = '2', `pExp` = '3', `pSkin` = '73', `pPayTimer` = '33' WHERE `pName` = 'testaccounts_2'", 1)
+[01:48:40] [DEBUG] CHandle::Execute(this=0x755ce0, type=3, query=0x796700)
+[01:48:40] [DEBUG] CConnection::Execute(query=0x796700, this=0x72b998, connection=0x769230)
+[01:48:40] [DEBUG] CQuery::Execute(this=0x796700, connection=0x769230)
+[01:48:40] [INFO] query "UPDATE `accounts` SET `pLevel` = '2', `pExp` = '3', `pSkin` = '73', `pPayTimer` = '33' WHERE `pName` = 'testaccounts_2'" successfully executed within 25.778 milliseconds
+[01:48:40] [DEBUG] CResultSet::Create(connection=0x769230, query_str='UPDATE `accounts` SET `pLevel` = '2', `pExp` = '3', `pSkin` = '73', `pPayTimer` = '33' WHERE `pName` = 'testaccounts_2'')
+[01:48:40] [DEBUG] created new resultset '0x706788'
+[01:48:40] [DEBUG] fetched MySQL result '0x0'
+[01:48:40] [DEBUG] CHandle::Execute - return value: true
+[01:48:40] [DEBUG] mysql_query: return value: '3'
+[01:48:40] [DEBUG] mysql_format(1, 0x03ACC988, 300, "UPDATE `accounts` SET `pJobId` = '%d', `pJobPay` = '%d' WHERE `pName` = '%e'")
+[01:48:40] [DEBUG] CHandle::EscapeString(this=0x755ce0, src='testaccounts_2')
+[01:48:40] [DEBUG] CConnection::EscapeString(src='testaccounts_2', this=0x72b998, connection=0x769230)
+[01:48:40] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'testaccounts_2'
+[01:48:40] [DEBUG] mysql_format: return value: '88'
+[01:48:40] [DEBUG] mysql_query(1, "UPDATE `accounts` SET `pJobId` = '2', `pJobPay` = '375' WHERE `pName` = 'testaccounts_2'", 1)
+[01:48:40] [DEBUG] CHandle::Execute(this=0x755ce0, type=3, query=0x796700)
+[01:48:40] [DEBUG] CConnection::Execute(query=0x796700, this=0x72b998, connection=0x769230)
+[01:48:40] [DEBUG] CQuery::Execute(this=0x796700, connection=0x769230)
+[01:48:40] [INFO] query "UPDATE `accounts` SET `pJobId` = '2', `pJobPay` = '375' WHERE `pName` = 'testaccounts_2'" successfully executed within 24.358 milliseconds
+[01:48:40] [DEBUG] CResultSet::Create(connection=0x769230, query_str='UPDATE `accounts` SET `pJobId` = '2', `pJobPay` = '375' WHERE `pName` = 'testaccounts_2'')
+[01:48:40] [DEBUG] created new resultset '0x7647c0'
+[01:48:40] [DEBUG] fetched MySQL result '0x0'
+[01:48:40] [DEBUG] CHandle::Execute - return value: true
+[01:48:40] [DEBUG] mysql_query: return value: '4'
+[01:48:40] [DEBUG] mysql_format(1, 0x03ACC988, 300, "UPDATE `accounts` SET `pAdminLevel` = '%d' WHERE `pName` = '%e'")
+[01:48:40] [DEBUG] CHandle::EscapeString(this=0x755ce0, src='testaccounts_2')
+[01:48:40] [DEBUG] CConnection::EscapeString(src='testaccounts_2', this=0x72b998, connection=0x769230)
+[01:48:40] [DEBUG] CHandle::EscapeString - return value: true, escaped string: 'testaccounts_2'
+[01:48:40] [DEBUG] mysql_format: return value: '74'
+[01:48:40] [DEBUG] mysql_query(1, "UPDATE `accounts` SET `pAdminLevel` = '6' WHERE `pName` = 'testaccounts_2'", 1)
+[01:48:40] [DEBUG] CHandle::Execute(this=0x755ce0, type=3, query=0x7965d0)
+[01:48:40] [DEBUG] CConnection::Execute(query=0x7965d0, this=0x72b998, connection=0x769230)
+[01:48:40] [DEBUG] CQuery::Execute(this=0x7965d0, connection=0x769230)
+[01:48:40] [INFO] query "UPDATE `accounts` SET `pAdminLevel` = '6' WHERE `pName` = 'testaccounts_2'" successfully executed within 24.329 milliseconds
+[01:48:40] [DEBUG] CResultSet::Create(connection=0x769230, query_str='UPDATE `accounts` SET `pAdminLevel` = '6' WHERE `pName` = 'testaccounts_2'')
+[01:48:40] [DEBUG] created new resultset '0x764558'
+[01:48:40] [DEBUG] fetched MySQL result '0x0'
+[01:48:40] [DEBUG] CHandle::Execute - return value: true
+[01:48:40] [DEBUG] mysql_query: return value: '5'
+[01:49:44] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[01:49:44] [DEBUG] mysql_connect_file("mysql.ini")
+[01:49:44] [DEBUG] CHandleManager::CreateFromFile(this=0x693c20, file_path='mysql.ini')
+[01:49:44] [INFO] Options instance with id '1' successfully created.
+[01:49:44] [DEBUG] CHandleManager::CreateFromFile - new options = 0x6883e0 (id '1')
+[01:49:44] [DEBUG] CHandleManager::Create(this=0x693c20, host='localhost', user='root', pass='****', db='samp', options=0x6883e0)
+[01:49:44] [INFO] Creating new connection handle...
+[01:49:44] [WARNING] mysql_connect_file: no password specified
+[01:49:44] [DEBUG] CConnection::CConnection(this=0x65d060, host='localhost', user='root', passw='****', db='samp', options=0x6883e0)
+[01:49:44] [DEBUG] CConnection::CConnection - new connection = 0x693290
+[01:49:44] [DEBUG] CConnection::CConnection(this=0x3d6d020, host='localhost', user='root', passw='****', db='samp', options=0x6883e0)
+[01:49:44] [DEBUG] CConnection::CConnection - new connection = 0x69dae8
+[01:49:44] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3d6d020, connection=0x3d6d020)
+[01:49:44] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3d6d020, connection=0x3d6d020)
+[01:49:44] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x65d420)
+[01:49:44] [DEBUG] CConnection::CConnection(this=0x3f38020, host='localhost', user='root', passw='****', db='samp', options=0x6883e0)
+[01:49:44] [DEBUG] CConnection::CConnection - new connection = 0x6ab0a0
+[01:49:44] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3f38020, connection=0x3f38020)
+[01:49:44] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3f38020, connection=0x3f38020)
+[01:49:44] [DEBUG] CConnection::CConnection(this=0x4104020, host='localhost', user='root', passw='****', db='samp', options=0x6883e0)
+[01:49:44] [DEBUG] CConnection::CConnection - new connection = 0x6b5388
+[01:49:44] [DEBUG] CThreadedConnection::WorkerFunc(this=0x4104020, connection=0x4104020)
+[01:49:44] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x4104020, connection=0x4104020)
+[01:49:44] [INFO] Connection handle with id '1' successfully created.
+[01:49:44] [DEBUG] CHandleManager::Create - new handle = 0x686598
+[01:49:44] [DEBUG] mysql_connect_file: return value: '1'
+[01:49:44] [DEBUG] mysql_errno(1)
+[01:49:44] [DEBUG] CHandle::GetErrorId(this=0x686598)
+[01:49:44] [DEBUG] CConnection::GetError(this=0x65d060, connection=0x693290)
+[01:49:44] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[01:49:44] [DEBUG] mysql_errno: return value: '0'
+[01:49:44] [DEBUG] mysql_format(1, 0x03AD7090, 900, "SELECT * FROM `jobs`")
+[01:49:44] [DEBUG] mysql_format: return value: '20'
+[01:49:44] [DEBUG] mysql_tquery(1, "SELECT * FROM `jobs`", "JobsReceived", "")
+[01:49:44] [DEBUG] CCallback::Create(amx=0x298afa0, name='JobsReceived', format='', params=0x3ad707c, param_offset=5)
+[01:49:44] [DEBUG] CCallback::Create - callback index for 'JobsReceived': 7
+[01:49:44] [INFO] Callback 'JobsReceived' set up for delayed execution.
+[01:49:44] [DEBUG] created delayed callback with 0 parameter
+[01:49:44] [DEBUG] CHandle::Execute(this=0x686598, type=1, query=0x68c5f0)
+[01:49:44] [DEBUG] CHandle::Execute - return value: true
+[01:49:44] [DEBUG] mysql_tquery: return value: '1'
+[01:49:44] [DEBUG] mysql_format(1, 0x03AD7090, 900, "SELECT * FROM `vehicles`")
+[01:49:44] [DEBUG] mysql_format: return value: '24'
+[01:49:44] [DEBUG] mysql_tquery(1, "SELECT * FROM `vehicles`", "VehsReceived", "")
+[01:49:44] [DEBUG] CConnection::Execute(query=0x68c5f0, this=0x3d6d020, connection=0x69dae8)
+[01:49:44] [DEBUG] CCallback::Create(amx=0x298afa0, name='VehsReceived', format='', params=0x3ad707c, param_offset=5)
+[01:49:44] [DEBUG] CQuery::Execute(this=0x68c5f0, connection=0x69dae8)
+[01:49:44] [DEBUG] CCallback::Create - callback index for 'VehsReceived': 68
+[01:49:44] [INFO] Callback 'VehsReceived' set up for delayed execution.
+[01:49:44] [DEBUG] created delayed callback with 0 parameter
+[01:49:44] [DEBUG] CHandle::Execute(this=0x686598, type=1, query=0x685480)
+[01:49:44] [DEBUG] CHandle::Execute - return value: true
+[01:49:44] [DEBUG] mysql_tquery: return value: '1'
+[01:49:44] [INFO] query "SELECT * FROM `jobs`" successfully executed within 0.325 milliseconds
+[01:49:44] [DEBUG] CResultSet::Create(connection=0x69dae8, query_str='SELECT * FROM `jobs`')
+[01:49:44] [DEBUG] created new resultset '0x693f60'
+[01:49:44] [DEBUG] fetched MySQL result '0x685328'
+[01:49:44] [DEBUG] allocated 152 bytes for PAWN result
+[01:49:44] [DEBUG] CConnection::Execute(query=0x685480, this=0x3d6d020, connection=0x69dae8)
+[01:49:44] [DEBUG] CQuery::Execute(this=0x685480, connection=0x69dae8)
+[01:49:44] [INFO] query "SELECT * FROM `vehicles`" successfully executed within 0.218 milliseconds
+[01:49:44] [DEBUG] CCallback::Execute(amx=0x298afa0, index=7, num_params=0)
+[01:49:44] [DEBUG] CResultSet::Create(connection=0x69dae8, query_str='SELECT * FROM `vehicles`')
+[01:49:44] [DEBUG] created new resultset '0x6940b0'
+[01:49:44] [INFO] Executing callback 'JobsReceived' with 0 parameter...
+[01:49:44] [DEBUG] executing AMX callback with index '7'
+[01:49:44] [DEBUG] fetched MySQL result '0x692320'
+[01:49:44] [DEBUG] allocated 132 bytes for PAWN result
+[01:49:44] [DEBUG] cache_get_row_count(0x03AD7ED8)
+[01:49:44] [DEBUG] cache_get_row_count: return value: '1'
+[01:49:44] [DEBUG] cache_get_row_count(0x03AD7ED0)
+[01:49:44] [DEBUG] cache_get_row_count: return value: '1'
+[01:49:44] [DEBUG] cache_get_value_name_int(0, "jID", 0x03A8EBE8)
+[01:49:44] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[01:49:44] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:49:44] [DEBUG] cache_get_value_name(0, "jName", 0x03A8EC14, 32)
+[01:49:44] [DEBUG] cache_get_value_name: assigned value: 'Postman'
+[01:49:44] [DEBUG] cache_get_value_name: return value: '1'
+[01:49:44] [DEBUG] cache_get_value_name_int(0, "jPay", 0x03A8EC94)
+[01:49:44] [DEBUG] cache_get_value_name_int: assigned value: '8'
+[01:49:44] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:49:44] [DEBUG] cache_get_value_name_float(0, "jobIX", 0x03A8EC98)
+[01:49:44] [DEBUG] cache_get_value_name_float: assigned value: '-88.8793'
+[01:49:44] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:49:44] [DEBUG] cache_get_value_name_float(0, "jobIY", 0x03A8EC9C)
+[01:49:44] [DEBUG] cache_get_value_name_float: assigned value: '1124.12'
+[01:49:44] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:49:44] [DEBUG] cache_get_value_name_float(0, "jobIZ", 0x03A8ECA0)
+[01:49:44] [DEBUG] cache_get_value_name_float: assigned value: '19.3012'
+[01:49:44] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:49:44] [DEBUG] cache_get_row_count(0x03AD7ED0)
+[01:49:44] [DEBUG] cache_get_row_count: return value: '1'
+[01:49:44] [DEBUG] cache_get_value_name_int(1, "jID", 0x03A8ECA4)
+[01:49:44] [DEBUG] cache_get_value_name_int: assigned value: '2'
+[01:49:44] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:49:44] [DEBUG] cache_get_value_name(1, "jName", 0x03A8ECD0, 32)
+[01:49:44] [DEBUG] cache_get_value_name: assigned value: 'Garbageman'
+[01:49:44] [DEBUG] cache_get_value_name: return value: '1'
+[01:49:44] [DEBUG] cache_get_value_name_int(1, "jPay", 0x03A8ED50)
+[01:49:44] [DEBUG] cache_get_value_name_int: assigned value: '12'
+[01:49:44] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:49:44] [DEBUG] cache_get_value_name_float(1, "jobIX", 0x03A8ED54)
+[01:49:44] [DEBUG] cache_get_value_name_float: assigned value: '285.13'
+[01:49:44] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:49:44] [DEBUG] cache_get_value_name_float(1, "jobIY", 0x03A8ED58)
+[01:49:44] [DEBUG] cache_get_value_name_float: assigned value: '1406.48'
+[01:49:44] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:49:44] [DEBUG] cache_get_value_name_float(1, "jobIZ", 0x03A8ED5C)
+[01:49:44] [DEBUG] cache_get_value_name_float: assigned value: '10.5003'
+[01:49:44] [DEBUG] cache_get_value_name_float: return value: '1'
+[01:49:44] [DEBUG] cache_get_row_count(0x03AD7ED0)
+[01:49:44] [DEBUG] cache_get_row_count: return value: '1'
+[01:49:44] [DEBUG] cache_get_row_count(0x03AD7ED8)
+[01:49:44] [DEBUG] cache_get_row_count: return value: '1'
+[01:49:44] [DEBUG] AMX callback executed with error '0'
+[01:49:44] [INFO] Callback successfully executed.
+[01:49:44] [DEBUG] CCallback::Execute(amx=0x298afa0, index=68, num_params=0)
+[01:49:44] [INFO] Executing callback 'VehsReceived' with 0 parameter...
+[01:49:44] [DEBUG] executing AMX callback with index '68'
+[01:49:44] [DEBUG] cache_get_row_count(0x03AD7ED8)
+[01:49:44] [DEBUG] cache_get_row_count: return value: '1'
+[01:49:44] [DEBUG] cache_get_row_count(0x03AD7ED0)
+[01:49:44] [DEBUG] cache_get_row_count: return value: '1'
+[01:49:44] [DEBUG] cache_get_value_name_int(0, "vID", 0x03A91874)
+[01:49:44] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[01:49:44] [DEBUG] cache_get_value_name_int: return value: '1'
+[01:49:44] [DEBUG] cache_get_value_name_int(0, "vModelId", 0x03A918F4)
+[01:49:44] [DEBUG] cache_get_value_name_int: assigned value: '411'
+[01:49:44] [DEBUG] cache_get_value_name_int: return value: '1'
