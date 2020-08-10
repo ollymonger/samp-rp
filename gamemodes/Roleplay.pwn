@@ -1493,7 +1493,6 @@ CMD:rentcar(playerid, params[]){
     return 1;    
 }
 CMD:unrentcar(playerid,params[]){
-    new vehicleid = GetPlayerVehicleID(playerid);
     if(pInfo[playerid][RentingVehicle] != INVALID_VEHICLE_ID){
         if(GetPlayerState(playerid) == PLAYER_STATE_DRIVER){
             UnrentPlayerVehicle(playerid);
@@ -1529,17 +1528,12 @@ public UnrentVehicle(playerid, vehicleid){
 
 forward public RentCar(playerid, vehicleid);
 public RentCar(playerid, vehicleid){
-
-    printf("%d", vehicleid);
     if(pInfo[playerid][RentingVehicle] != INVALID_VEHICLE_ID){        
 	    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are already renting a vehicle.");
 	    return 1;
     }
     if(vInfo[vehicleid-1][vRentalState] == VEHICLE_NOT_RENTABLE){
-        new string[256];
-        format(string, sizeof(string), "%d", vInfo[vehicleid][vRentalState]);
 		SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle is not rentable.");
-        printf(string);
 		return 1;
     }
     if(vInfo[vehicleid-1][vRented] == VEHICLE_RENTED || vInfo[vehicleid-1][vRentingPlayer] != INVALID_PLAYER_ID){    
