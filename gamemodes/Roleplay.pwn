@@ -1343,6 +1343,7 @@ public OnPlayerEnterVehicle(playerid, vehicleid, ispassenger) {
             PlayerTextDrawShow(playerid, VEHSTUFF[playerid][2]);
             PlayerTextDrawShow(playerid, VEHSTUFF[playerid][3]);
             PlayerTextDrawShow(playerid, VEHSTUFF[playerid][4]);
+
             new vehName[32];
             format(vehName, sizeof(vehName), "%s", GetVehicleName(vehicleid));
             PlayerTextDrawSetString(playerid, VEHSTUFF[playerid][2], vehName);
@@ -1414,6 +1415,34 @@ public OnPlayerExitVehicle(playerid, vehicleid) {
 
 
 public OnPlayerStateChange(playerid, newstate, oldstate) {
+    new VehicleId, name[32];
+    VehicleId = GetPlayerVehicleID(playerid);
+    GetPlayerName(playerid, name, sizeof(name));
+
+    for (new i = 0; i < loadedVeh; i++) {
+        if(vInfo[i][vID] == VehicleId) {
+            if(newstate == PLAYER_STATE_DRIVER) {
+                if(vInfo[i][vJobId] >= 1) {
+                    if(vInfo[i][vJobId] == pInfo[playerid][pJobId]) {
+                        SendClientMessage(playerid, GREY, "correct job");
+                        return 1;
+                    } else {
+                        RemovePlayerFromVehicle(playerid);
+                        PlayerTextDrawHide(playerid, VEHSTUFF[playerid][0]);
+                        PlayerTextDrawHide(playerid, VEHSTUFF[playerid][1]);
+                        PlayerTextDrawHide(playerid, VEHSTUFF[playerid][2]);
+                        PlayerTextDrawHide(playerid, VEHSTUFF[playerid][3]);
+                        PlayerTextDrawHide(playerid, VEHSTUFF[playerid][4]);
+                        return 1;
+                    }
+                }
+                if(!strcmp(name, vInfo[i][vOwner]))
+                    SendClientMessage(playerid, GREY, "must be a player veh");
+                return 1;
+            }
+        }
+        return 1;
+    }
     return 1;
 }
 
