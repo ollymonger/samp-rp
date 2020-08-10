@@ -38895,3 +38895,207 @@
 [02:59:02] [DEBUG] fetched MySQL result '0x0'
 [02:59:02] [DEBUG] CHandle::Execute - return value: true
 [02:59:02] [DEBUG] mysql_query: return value: '5'
+[13:15:23] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[13:15:23] [DEBUG] mysql_connect_file("mysql.ini")
+[13:15:23] [DEBUG] CHandleManager::CreateFromFile(this=0x6e4c08, file_path='mysql.ini')
+[13:15:23] [INFO] Options instance with id '1' successfully created.
+[13:15:23] [DEBUG] CHandleManager::CreateFromFile - new options = 0x6f4a68 (id '1')
+[13:15:23] [DEBUG] CHandleManager::Create(this=0x6e4c08, host='localhost', user='root', pass='****', db='samp', options=0x6f4a68)
+[13:15:23] [INFO] Creating new connection handle...
+[13:15:23] [WARNING] mysql_connect_file: no password specified
+[13:15:23] [DEBUG] CConnection::CConnection(this=0x6ea968, host='localhost', user='root', passw='****', db='samp', options=0x6f4a68)
+[13:15:25] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[13:15:25] [DEBUG] CConnection::CConnection(this=0x3bef020, host='localhost', user='root', passw='****', db='samp', options=0x6f4a68)
+[13:15:27] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[13:15:27] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3bef020, connection=0x3bef020)
+[13:15:27] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3bef020, connection=0x3bef020)
+[13:15:27] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x6e9f28)
+[13:15:27] [DEBUG] CConnection::CConnection(this=0x407e020, host='localhost', user='root', passw='****', db='samp', options=0x6f4a68)
+[13:15:29] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[13:15:29] [DEBUG] CThreadedConnection::WorkerFunc(this=0x407e020, connection=0x407e020)
+[13:15:29] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x407e020, connection=0x407e020)
+[13:15:29] [DEBUG] CConnection::CConnection(this=0x4205020, host='localhost', user='root', passw='****', db='samp', options=0x6f4a68)
+[13:15:31] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[13:15:31] [DEBUG] CThreadedConnection::WorkerFunc(this=0x4205020, connection=0x4205020)
+[13:15:31] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x4205020, connection=0x4205020)
+[13:15:31] [INFO] Connection handle with id '1' successfully created.
+[13:15:31] [DEBUG] CHandleManager::Create - new handle = 0x6f2340
+[13:15:31] [DEBUG] mysql_connect_file: return value: '1'
+[13:15:31] [DEBUG] mysql_errno(1)
+[13:15:31] [DEBUG] CHandle::GetErrorId(this=0x6f2340)
+[13:15:31] [DEBUG] CConnection::GetError(this=0x6ea968, connection=0x7022e0)
+[13:15:31] [DEBUG] CHandle::GetErrorId - return value: true, error id: '2002', error msg: 'Can't connect to MySQL server on 'localhost' (10061)'
+[13:15:31] [DEBUG] mysql_errno: return value: '2002'
+[13:15:55] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[13:15:55] [DEBUG] mysql_connect_file("mysql.ini")
+[13:15:55] [DEBUG] CHandleManager::CreateFromFile(this=0x744f68, file_path='mysql.ini')
+[13:15:55] [INFO] Options instance with id '1' successfully created.
+[13:15:55] [DEBUG] CHandleManager::CreateFromFile - new options = 0x755700 (id '1')
+[13:15:55] [DEBUG] CHandleManager::Create(this=0x744f68, host='localhost', user='root', pass='****', db='samp', options=0x755700)
+[13:15:55] [INFO] Creating new connection handle...
+[13:15:55] [WARNING] mysql_connect_file: no password specified
+[13:15:55] [DEBUG] CConnection::CConnection(this=0x74a6a0, host='localhost', user='root', passw='****', db='samp', options=0x755700)
+[13:15:57] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[13:15:57] [DEBUG] CConnection::CConnection(this=0x3c51020, host='localhost', user='root', passw='****', db='samp', options=0x755700)
+[13:15:59] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[13:15:59] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3c51020, connection=0x3c51020)
+[13:15:59] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3c51020, connection=0x3c51020)
+[13:15:59] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x74ab20)
+[13:15:59] [DEBUG] CConnection::CConnection(this=0x409c020, host='localhost', user='root', passw='****', db='samp', options=0x755700)
+[13:16:01] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[13:16:01] [DEBUG] CThreadedConnection::WorkerFunc(this=0x409c020, connection=0x409c020)
+[13:16:01] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x409c020, connection=0x409c020)
+[13:16:01] [DEBUG] CConnection::CConnection(this=0x422b020, host='localhost', user='root', passw='****', db='samp', options=0x755700)
+[13:16:03] [ERROR] CConnection::CConnection - establishing connection to MySQL database failed: #2002 'Can't connect to MySQL server on 'localhost' (10061)'
+[13:16:03] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x422b020, connection=0x422b020)
+[13:16:03] [INFO] Connection handle with id '1' successfully created.
+[13:16:03] [DEBUG] CHandleManager::Create - new handle = 0x753e98
+[13:16:03] [DEBUG] mysql_connect_file: return value: '1'
+[13:16:03] [DEBUG] mysql_errno(1)
+[13:16:03] [DEBUG] CHandle::GetErrorId(this=0x753e98)
+[13:16:03] [DEBUG] CConnection::GetError(this=0x74a6a0, connection=0x7623f8)
+[13:16:03] [DEBUG] CHandle::GetErrorId - return value: true, error id: '2002', error msg: 'Can't connect to MySQL server on 'localhost' (10061)'
+[13:16:03] [DEBUG] mysql_errno: return value: '2002'
+[13:16:03] [DEBUG] CThreadedConnection::WorkerFunc(this=0x422b020, connection=0x422b020)
+[13:16:12] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[13:16:12] [DEBUG] mysql_connect_file("mysql.ini")
+[13:16:12] [DEBUG] CHandleManager::CreateFromFile(this=0x6b6b00, file_path='mysql.ini')
+[13:16:12] [INFO] Options instance with id '1' successfully created.
+[13:16:12] [DEBUG] CHandleManager::CreateFromFile - new options = 0x6c8680 (id '1')
+[13:16:12] [DEBUG] CHandleManager::Create(this=0x6b6b00, host='localhost', user='root', pass='****', db='samp', options=0x6c8680)
+[13:16:12] [INFO] Creating new connection handle...
+[13:16:12] [WARNING] mysql_connect_file: no password specified
+[13:16:12] [DEBUG] CConnection::CConnection(this=0x6bbe68, host='localhost', user='root', passw='****', db='samp', options=0x6c8680)
+[13:16:12] [DEBUG] CConnection::CConnection - new connection = 0x6d83d8
+[13:16:12] [DEBUG] CConnection::CConnection(this=0x3f5c020, host='localhost', user='root', passw='****', db='samp', options=0x6c8680)
+[13:16:12] [DEBUG] CConnection::CConnection - new connection = 0x6f4690
+[13:16:12] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3f5c020, connection=0x3f5c020)
+[13:16:12] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3f5c020, connection=0x3f5c020)
+[13:16:12] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x6bc1a8)
+[13:16:12] [DEBUG] CConnection::CConnection(this=0x412b020, host='localhost', user='root', passw='****', db='samp', options=0x6c8680)
+[13:16:12] [DEBUG] CConnection::CConnection - new connection = 0x6fdc80
+[13:16:13] [DEBUG] CThreadedConnection::WorkerFunc(this=0x412b020, connection=0x412b020)
+[13:16:13] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x412b020, connection=0x412b020)
+[13:16:13] [DEBUG] CConnection::CConnection(this=0x42fe020, host='localhost', user='root', passw='****', db='samp', options=0x6c8680)
+[13:16:13] [DEBUG] CConnection::CConnection - new connection = 0x707998
+[13:16:13] [DEBUG] CThreadedConnection::WorkerFunc(this=0x42fe020, connection=0x42fe020)
+[13:16:13] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x42fe020, connection=0x42fe020)
+[13:16:13] [INFO] Connection handle with id '1' successfully created.
+[13:16:13] [DEBUG] CHandleManager::Create - new handle = 0x6c6c50
+[13:16:13] [DEBUG] mysql_connect_file: return value: '1'
+[13:16:13] [DEBUG] mysql_errno(1)
+[13:16:13] [DEBUG] CHandle::GetErrorId(this=0x6c6c50)
+[13:16:13] [DEBUG] CConnection::GetError(this=0x6bbe68, connection=0x6d83d8)
+[13:16:13] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[13:16:13] [DEBUG] mysql_errno: return value: '0'
+[13:16:13] [DEBUG] mysql_format(1, 0x03CC2DC4, 900, "SELECT * FROM `jobs`")
+[13:16:13] [DEBUG] mysql_format: return value: '20'
+[13:16:13] [DEBUG] mysql_tquery(1, "SELECT * FROM `jobs`", "JobsReceived", "")
+[13:16:13] [DEBUG] CCallback::Create(amx=0x2b776c0, name='JobsReceived', format='', params=0x3cc2db0, param_offset=5)
+[13:16:13] [DEBUG] CCallback::Create - callback index for 'JobsReceived': 8
+[13:16:13] [INFO] Callback 'JobsReceived' set up for delayed execution.
+[13:16:13] [DEBUG] created delayed callback with 0 parameter
+[13:16:13] [DEBUG] CHandle::Execute(this=0x6c6c50, type=1, query=0x6b2ec8)
+[13:16:13] [DEBUG] CHandle::Execute - return value: true
+[13:16:13] [DEBUG] mysql_tquery: return value: '1'
+[13:16:13] [DEBUG] mysql_format(1, 0x03CC2DC4, 900, "SELECT * FROM `vehicles`")
+[13:16:13] [DEBUG] mysql_format: return value: '24'
+[13:16:13] [DEBUG] mysql_tquery(1, "SELECT * FROM `vehicles`", "VehsReceived", "")
+[13:16:13] [DEBUG] CConnection::Execute(query=0x6b2ec8, this=0x3f5c020, connection=0x6f4690)
+[13:16:13] [DEBUG] CCallback::Create(amx=0x2b776c0, name='VehsReceived', format='', params=0x3cc2db0, param_offset=5)
+[13:16:13] [DEBUG] CCallback::Create - callback index for 'VehsReceived': 71
+[13:16:13] [INFO] Callback 'VehsReceived' set up for delayed execution.
+[13:16:13] [DEBUG] CQuery::Execute(this=0x6b2ec8, connection=0x6f4690)
+[13:16:13] [DEBUG] created delayed callback with 0 parameter
+[13:16:13] [DEBUG] CHandle::Execute(this=0x6c6c50, type=1, query=0x6b2710)
+[13:16:13] [DEBUG] CHandle::Execute - return value: true
+[13:16:13] [DEBUG] mysql_tquery: return value: '1'
+[13:16:13] [INFO] query "SELECT * FROM `jobs`" successfully executed within 40.781 milliseconds
+[13:16:13] [DEBUG] CResultSet::Create(connection=0x6f4690, query_str='SELECT * FROM `jobs`')
+[13:16:13] [DEBUG] created new resultset '0x71e730'
+[13:16:13] [DEBUG] fetched MySQL result '0x6ce0c0'
+[13:16:13] [DEBUG] allocated 152 bytes for PAWN result
+[13:16:13] [DEBUG] CConnection::Execute(query=0x6b2710, this=0x3f5c020, connection=0x6f4690)
+[13:16:13] [DEBUG] CQuery::Execute(this=0x6b2710, connection=0x6f4690)
+[13:16:13] [ERROR] error #1146 while executing query "SELECT * FROM `vehicles`": Table 'samp.vehicles' doesn't exist
+[13:16:13] [DEBUG] CConnection::GetError(this=0x3f5c020, connection=0x6f4690)
+[13:16:13] [DEBUG] CCallback::Execute(amx=0x2b776c0, index=8, num_params=0)
+[13:16:13] [INFO] Executing callback 'JobsReceived' with 0 parameter...
+[13:16:13] [DEBUG] executing AMX callback with index '8'
+[13:16:13] [DEBUG] cache_get_row_count(0x03CC3C0C)
+[13:16:13] [DEBUG] cache_get_row_count: return value: '1'
+[13:16:13] [DEBUG] cache_get_row_count(0x03CC3C04)
+[13:16:13] [DEBUG] cache_get_row_count: return value: '1'
+[13:16:13] [DEBUG] cache_get_value_name_int(0, "jID", 0x03C77594)
+[13:16:13] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[13:16:13] [DEBUG] cache_get_value_name_int: return value: '1'
+[13:16:13] [DEBUG] cache_get_value_name(0, "jName", 0x03C775C0, 32)
+[13:16:13] [DEBUG] cache_get_value_name: assigned value: 'Postman'
+[13:16:13] [DEBUG] cache_get_value_name: return value: '1'
+[13:16:13] [DEBUG] cache_get_value_name_int(0, "jPay", 0x03C77640)
+[13:16:13] [DEBUG] cache_get_value_name_int: assigned value: '5'
+[13:16:13] [DEBUG] cache_get_value_name_int: return value: '1'
+[13:16:13] [DEBUG] cache_get_value_name_float(0, "jobIX", 0x03C77644)
+[13:16:13] [DEBUG] cache_get_value_name_float: assigned value: '-199.025'
+[13:16:13] [DEBUG] cache_get_value_name_float: return value: '1'
+[13:16:13] [DEBUG] cache_get_value_name_float(0, "jobIY", 0x03C77648)
+[13:16:13] [DEBUG] cache_get_value_name_float: assigned value: '1113.56'
+[13:16:13] [DEBUG] cache_get_value_name_float: return value: '1'
+[13:16:13] [DEBUG] cache_get_value_name_float(0, "jobIZ", 0x03C7764C)
+[13:16:13] [DEBUG] cache_get_value_name_float: assigned value: '19.595'
+[13:16:13] [DEBUG] cache_get_value_name_float: return value: '1'
+[13:16:13] [DEBUG] cache_get_row_count(0x03CC3C04)
+[13:16:13] [DEBUG] cache_get_row_count: return value: '1'
+[13:16:13] [DEBUG] cache_get_value_name_int(1, "jID", 0x03C77650)
+[13:16:13] [DEBUG] cache_get_value_name_int: assigned value: '2'
+[13:16:13] [DEBUG] cache_get_value_name_int: return value: '1'
+[13:16:13] [DEBUG] cache_get_value_name(1, "jName", 0x03C7767C, 32)
+[13:16:13] [DEBUG] cache_get_value_name: assigned value: 'Garbageman'
+[13:16:13] [DEBUG] cache_get_value_name: return value: '1'
+[13:16:13] [DEBUG] cache_get_value_name_int(1, "jPay", 0x03C776FC)
+[13:16:13] [DEBUG] cache_get_value_name_int: assigned value: '12'
+[13:16:13] [DEBUG] cache_get_value_name_int: return value: '1'
+[13:16:13] [DEBUG] cache_get_value_name_float(1, "jobIX", 0x03C77700)
+[13:16:13] [DEBUG] cache_get_value_name_float: assigned value: '-201.496'
+[13:16:13] [DEBUG] cache_get_value_name_float: return value: '1'
+[13:16:13] [DEBUG] cache_get_value_name_float(1, "jobIY", 0x03C77704)
+[13:16:13] [DEBUG] cache_get_value_name_float: assigned value: '1126.44'
+[13:16:13] [DEBUG] cache_get_value_name_float: return value: '1'
+[13:16:13] [DEBUG] cache_get_value_name_float(1, "jobIZ", 0x03C77708)
+[13:16:13] [DEBUG] cache_get_value_name_float: assigned value: '19.7422'
+[13:16:13] [DEBUG] cache_get_value_name_float: return value: '1'
+[13:16:13] [DEBUG] cache_get_row_count(0x03CC3C04)
+[13:16:13] [DEBUG] cache_get_row_count: return value: '1'
+[13:16:13] [DEBUG] cache_get_row_count(0x03CC3C0C)
+[13:16:13] [DEBUG] cache_get_row_count: return value: '1'
+[13:16:13] [DEBUG] AMX callback executed with error '0'
+[13:16:13] [INFO] Callback successfully executed.
+[13:16:13] [DEBUG] CCallback::Create(amx=0x2b776c0, name='OnQueryError', format='dsssd)
+[13:16:13] [DEBUG] CCallback::Create - callback index for 'OnQueryError': -10047
+[13:16:13] [DEBUG] processing specifier 'd'
+[13:16:13] [DEBUG] retrieved and pushed value '1146'
+[13:16:13] [DEBUG] processing specifier 's'
+[13:16:13] [DEBUG] retrieved and pushed value 'Table 'samp.vehicles' doesn't exist'
+[13:16:13] [DEBUG] processing specifier 's'
+[13:16:13] [DEBUG] retrieved and pushed value 'VehsReceived'
+[13:16:13] [DEBUG] processing specifier 's'
+[13:16:13] [DEBUG] retrieved and pushed value 'SELECT * FROM `vehicles`'
+[13:16:13] [DEBUG] processing specifier 'd'
+[13:16:13] [DEBUG] retrieved and pushed value '1'
+[13:16:13] [INFO] Callback 'OnQueryError' set up for delayed execution.
+[13:16:13] [DEBUG] created delayed callback with 5 parameters
+[13:16:13] [DEBUG] CCallback::Execute(amx=0x2b776c0, index=-10047, num_params=5)
+[13:16:13] [INFO] Executing callback '¯2' with 5 parameters...
+[13:16:13] [DEBUG] processing internal specifier 'c'
+[13:16:13] [DEBUG] pushed value '1' onto AMX stack
+[13:16:13] [DEBUG] processing internal specifier 's'
+[13:16:13] [DEBUG] pushed value 'SELECT * FROM `vehicles`' onto AMX stack
+[13:16:13] [DEBUG] processing internal specifier 's'
+[13:16:13] [DEBUG] pushed value 'VehsReceived' onto AMX stack
+[13:16:13] [DEBUG] processing internal specifier 's'
+[13:16:13] [DEBUG] pushed value 'Table 'samp.vehicles' doesn't exist' onto AMX stack
+[13:16:13] [DEBUG] processing internal specifier 'c'
+[13:16:13] [DEBUG] pushed value '1146' onto AMX stack
+[13:16:13] [DEBUG] executing AMX callback with index '-10047'
+[13:16:13] [DEBUG] AMX callback executed with error '0'
+[13:16:13] [INFO] Callback successfully executed.

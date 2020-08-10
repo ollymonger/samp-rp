@@ -1,0 +1,1 @@
+[13:16:13] [plugins/mysql] error #1146 while executing query "SELECT * FROM `vehicles`": Table 'samp.vehicles' doesn't exist
