@@ -32,7 +32,8 @@ main() {
 /* 1- NEWS -*/
 new MySQL:db_handle;
 
-new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS];
+new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS], GarbageCheckpoint[MAX_PLAYERS];
+new dumpCheckPoint[MAX_PLAYERS];
 
 new Text:PublicTD[3];
 new Text:sheriffsoffice[4];
@@ -43,9 +44,18 @@ new Text:finishtutorial[3];
 new Text:PMuted;
 new Text:NoHelpmes;
 new Text:NoReports;
-new Text:CantCommand, Text:CantTakePost;
+new Text:CantCommand, Text:CantTakePost, Text:NoBinBags;
 
 new Float:RandomPostLocations[][3] = {
+    { 94.8995, 1183.6771, 18.0150 },
+    {-177.2173, 1213.1268, 19.2113 },
+    {-208.2337, 973.4498, 18.3233 },
+    {-321.9125, 1055.7777, 19.1717 },
+    {-362.2701, 1165.2568, 19.2094 },
+    {-208.0344, 1112.1625, 19.2098 }
+};
+
+new Float:RandomGarbageLocations[][3] = {
     { 94.8995, 1183.6771, 18.0150 },
     {-177.2173, 1213.1268, 19.2113 },
     {-208.2337, 973.4498, 18.3233 },
@@ -110,7 +120,8 @@ enum ENUM_PLAYER_DATA {
         bool:LoggedIn,
         pMuted,
         CurrentState,
-        PostState
+        PostState,
+        GarbageState
 }
 new pInfo[MAX_PLAYERS][ENUM_PLAYER_DATA];
 
@@ -144,6 +155,10 @@ public OnGameModeInit() {
 
     LoadJobData();
 
+    // DUMP 
+    CreateDynamicPickup(1239, 1, 281.7589, 1411.7045, 10.5003, -1);
+
+
     PMuted = TextDrawCreate(230.000000, 366.000000, "You are muted!");
     TextDrawBackgroundColor(PMuted, 255);
     TextDrawFont(PMuted, 1);
@@ -171,7 +186,14 @@ public OnGameModeInit() {
     TextDrawSetProportional(NoReports, 1);
     TextDrawSetShadow(NoReports, 1);
 
-
+    NoBinBags = TextDrawCreate(230.000000, 366.000000, "You have not collected any garbage!");
+    TextDrawBackgroundColor(NoBinBags, 255);
+    TextDrawFont(NoBinBags, 1);
+    TextDrawLetterSize(NoBinBags, 0.559999, 1.800000);
+    TextDrawColor(NoBinBags, -1);
+    TextDrawSetOutline(NoBinBags, 0);
+    TextDrawSetProportional(NoBinBags, 1);
+    TextDrawSetShadow(NoBinBags, 1);
 
     CantTakePost = TextDrawCreate(230.000000, 366.000000, "You have already collected post!");
     TextDrawBackgroundColor(CantTakePost, 255);
@@ -525,10 +547,28 @@ public OnPlayerConnect(playerid) {
     SetPlayerFacingAngle(playerid, 221.263046);
     InterpolateCameraPos(playerid, 163.4399, 1179.7891, 23.3623, 178.1042, 1187.0188, 22.1915, 15000, CAMERA_MOVE);
     InterpolateCameraLookAt(playerid, 163.5655, 1180.7781, 23.2423, 177.8423, 1187.9811, 22.0065, 15000, CAMERA_MOVE);
+
+
+    LoadMapIcons(playerid);
+
     ApplyAnimation(playerid, "SMOKING", "M_smklean_loop", 4.0, true, false, false, false, 0, false); // Smoke
 
     mysql_format(db_handle, query, sizeof(query), "SELECT * FROM `accounts` where `pName` = '%s'", name); // Get the player's name
     mysql_tquery(db_handle, query, "checkIfExists", "d", playerid); // Send to check if exists function
+    return 1;
+}
+
+forward public LoadMapIcons(playerid);
+public LoadMapIcons(playerid) {
+    SetPlayerMapIcon(playerid, 1, 281.7589, 1411.7045, 9.8603, 24, 0, MAPICON_GLOBAL);
+    for (new i = 0; i < loadedJob; i++) {
+        if(jInfo[i][jID] == 1) {
+            SetPlayerMapIcon(playerid, jInfo[i][jID] + 1, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ], 60, 0, MAPICON_GLOBAL);
+        }
+        if(jInfo[i][jID] == 2) {
+            SetPlayerMapIcon(playerid, jInfo[i][jID] + 1, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ], 61, 0, MAPICON_GLOBAL);
+        }
+    }
     return 1;
 }
 
@@ -591,6 +631,10 @@ public SaveNewPlayerData(playerid, hashed[BCRYPT_HASH_LENGTH]) {
     pInfo[playerid][pJobPay] = 0;
     pInfo[playerid][pPayTimer] = 60;
 
+    pInfo[playerid][CurrentState] = 0;
+    pInfo[playerid][PostState] = 0;
+    pInfo[playerid][GarbageState] = 0;
+
     SetPlayerScore(playerid, 1);
     GivePlayerMoney(playerid, pInfo[playerid][pCash]);
 
@@ -628,6 +672,7 @@ public SavePlayerData(playerid) {
 public OnPlayerSpawn(playerid) {
     if(pInfo[playerid][LoggedIn] == true) {
         pInfo[playerid][pMuted] = 0;
+        pInfo[playerid][CurrentState] = 0;
 
         SetTimerEx("SavePlayerData", 300000, false, "ds", playerid, "SA-MP"); //called "function" when 5 mins elapsed
         SetTimerEx("payPlayerTimer", 30000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
@@ -694,11 +739,14 @@ CMD:help(playerid, params[]) {
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/help, /admins, /mods, /helpers, /staff");
         } else if(strcmp(Usage, "Job", true) == 0) {
             SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
-            if(pInfo[playerid][pJobId] == 1) {
+            if(pInfo[playerid][pJobId] == 2) {
+                SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /startjob, /collect, /dump, /quitjob");
+            } else if(pInfo[playerid][pJobId] == 1) {
                 SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /quitjob, /takepost");
             } else if(pInfo[playerid][pJobId] == 0) {
-                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /takejob");
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /takejob, /listjobs");
             }
         }
     }
@@ -731,14 +779,12 @@ CMD:takejob(playerid, params[]) {
                 new string[256];
                 format(string, sizeof(string), "[SERVER]:{FFFFFF} You have started working as a:{FFFFFF} %s", jInfo[i][jName]);
                 SendClientMessage(playerid, SERVERCOLOR, string);
-                return 1;
             } else {
                 TextDrawShowForPlayer(playerid, CantCommand);
                 SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
 
             }
         }
-        return 1;
     }
     return 1;
 }
@@ -746,15 +792,10 @@ CMD:takejob(playerid, params[]) {
 CMD:quitjob(playerid, params[]) {
     if(pInfo[playerid][pJobId] >= 1) {
         for (new i = 0; i < loadedJob; i++) {
-            if(IsPlayerInRangeOfPoint(playerid, 10, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ])) {
-                if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
-                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have quit your job!");
-                    pInfo[playerid][pJobId] = 0;
-                    return 1;
-                }
-            } else {
-                TextDrawShowForPlayer(playerid, CantCommand);
-                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+            if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have quit your job!");
+                pInfo[playerid][pJobId] = 0;
+                return 1;
             }
         }
     } else {
@@ -777,6 +818,7 @@ CMD:listjobs(playerid, params[]) {
     return 1;
 }
 
+//*postman job*/
 CMD:takepost(playerid, params[]) {
     for (new i = 0; i < loadedJob; i++) {
         //if(strcmp(jInfo[i][jName], "Postman", true)) { // if the job name is Postman!
@@ -798,6 +840,125 @@ CMD:takepost(playerid, params[]) {
             return 1;
         }
         //}
+    }
+    return 1;
+}
+
+/* Garbageman job */
+CMD:startjob(playerid, params[]) {
+    /* Player must be in garbageman job(ID 2)
+    Player must have garbagestate = 0
+    CurrentState must be 0, awaiting job
+    
+    This command commences the job and creates random checkpoint from location list:RandomGarbageLocations.
+
+    Must be in range of predefined point of rubbish, maybe have 10-20 garbage points which are randomly selected on entering the created checkpoint?
+    */
+    if(pInfo[playerid][pJobId] == 2) {
+        for (new i = 0; i < loadedJob; i++) {
+            if(jInfo[i][jID] == 2) {
+                if(IsPlayerInRangeOfPoint(playerid, 10, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ])) {
+                    if(pInfo[playerid][CurrentState] == 0) { // awaiting job
+                        if(pInfo[playerid][GarbageState] == 0) {
+                            new string[256];
+                            format(string, sizeof(string), "Thank you for starting your job!\n\nCollect the marked (check minimap) garbage bags and take them to the Dump (marked 'D')!\n\nThe current price per bag is:$%d", jInfo[i][jPay]);
+                            Dialog_Show(playerid, DIALOG_STARTGARBAGE, DIALOG_STYLE_MSGBOX, "Job Complete!", string, "Continue", "");
+                        }
+                    }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not in range of the job point!");
+                }
+            }
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 1;
+}
+
+CMD:collect(playerid, params[]) {
+    if(pInfo[playerid][pJobId] == 2) {
+        if(IsPlayerInDynamicCP(playerid, GarbageCheckpoint[0])) {
+            if(pInfo[playerid][CurrentState] == 1) {
+                if(pInfo[playerid][GarbageState] <= 19) {
+                    DestroyDynamicCP(GarbageCheckpoint[0]);
+                    new rand = random(6 - 3) + 2;
+                    new string[256];
+                    for (new i = 0; i < loadedJob; i++) {
+                        if(jInfo[i][jID] == 2) {
+                            format(string, sizeof(string), "You have taken:%d garbage bags! \n\nYou can take them straight to the Dump (marked 'D' on the minimap), or continue to the next checkpoint!\n\nThe current price for one garbage bag is:%d", rand, jInfo[i][jPay]);
+                            pInfo[playerid][GarbageState] += rand;
+                            Dialog_Show(playerid, DIALOG_COLLECT, DIALOG_STYLE_MSGBOX, "Garbageman Job", string, "Continue", "");
+                            return 1;
+                        }
+                    }
+                } else {
+                    /* Player must now go to the dump, and use /dump cmd at info point 
+                        Need to define dump point
+                        Need to set player pay after the dump is complete. Longer job = better pay
+                    */
+
+                    DestroyDynamicCP(GarbageCheckpoint[0]);
+                    dumpCheckPoint[0] = CreateDynamicCP(281.7589, 1411.7045, 9.8603, 2, -1, -1, -1, 10000);
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You cannot hold any more garbage bags! Please visit the dump marked on the minimap!");
+                }
+            }
+        } else {
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not at a Garbage collection point, check your minimap for the next point!");
+            return 1;
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 1;
+}
+
+CMD:dump(playerid, params[]) {
+    if(IsPlayerInRangeOfPoint(playerid, 10, 281.7589, 1411.7045, 9.8603)) {
+        if(pInfo[playerid][pJobId] == 2) {
+            if(pInfo[playerid][CurrentState] == 1) { // if started job
+                if(pInfo[playerid][GarbageState] >= 1) {
+                    for (new i = 0; i < loadedJob; i++) {
+                        if(jInfo[i][jID] == 2) {
+                            new totalPay, string[256];
+                            pInfo[playerid][CurrentState] = 0; // finish job
+                            totalPay = pInfo[playerid][GarbageState] * jInfo[i][jPay];
+                            pInfo[playerid][pJobPay] += totalPay;
+
+                            format(string, sizeof(string), "Thank you for collecting %d garbage bags!\n\nReturn to the depot to resume collecting!\n\nYou will receive:$%d on your next paycheck!", pInfo[playerid][GarbageState], totalPay);
+                            Dialog_Show(playerid, DIALOG_DUMP, DIALOG_STYLE_MSGBOX, "Job Complete!", string, "Continue", "");
+
+                            pInfo[playerid][GarbageState] = 0;
+                            return 1;
+                        }
+                    }
+                } else {
+                    TextDrawShowForPlayer(playerid, NoBinBags);
+                    SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+                }
+            }
+        } else {
+            TextDrawShowForPlayer(playerid, CantCommand);
+            SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+        }
+    }
+    return 1;
+}
+
+CMD:endjob(playerid, params[]) {
+    if(pInfo[playerid][pJobId] >= 1) {
+        // affect all jobs
+        if(pInfo[playerid][CurrentState] == 1) {
+            Dialog_Show(playerid, DIALOG_ENDJOB, DIALOG_STYLE_MSGBOX, "Ending job...", "Are you sure you want to end this current job?\n\nWARNING:This will forfeit ALL of your collected garbage bags/newspapers!", "Yes", "No");
+        } else {
+            TextDrawShowForPlayer(playerid, CantCommand);
+            SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
     }
     return 1;
 }
@@ -836,6 +997,9 @@ public OnPlayerEnterCheckpoint(playerid) {
 }
 
 public OnPlayerEnterDynamicCP(playerid, checkpointid) {
+    if(checkpointid == GarbageCheckpoint[0]) {
+        GameTextForPlayer(playerid, "/collect", 3000, 5);
+    }
     if(checkpointid == PostCheckpoint[0]) //This checks what checkpoint it is before it continues
     {
         for (new i = 0; i < loadedJob; i++) {
@@ -960,6 +1124,20 @@ Dialog:DIALOG_JOB_LIST(playerid, response, listitem, inputtext[]) {
     return 1;
 }
 
+Dialog:DIALOG_COLLECT(playerid, response, listitem, inputtext[]) {
+    new randomLoc = random(sizeof(RandomGarbageLocations));
+    GarbageCheckpoint[0] = CreateDynamicCP(RandomGarbageLocations[randomLoc][0], RandomGarbageLocations[randomLoc][1], RandomGarbageLocations[randomLoc][2], 2, -1, -1, -1, 10000);
+    return 1;
+}
+
+Dialog:DIALOG_STARTGARBAGE(playerid, response, listitem, inputtext[]) {
+    new randomLoc = random(sizeof(RandomGarbageLocations));
+    GarbageCheckpoint[0] = CreateDynamicCP(RandomGarbageLocations[randomLoc][0], RandomGarbageLocations[randomLoc][1], RandomGarbageLocations[randomLoc][2], 2, -1, -1, -1, 10000);
+    pInfo[playerid][CurrentState] = 1;
+    pInfo[playerid][GarbageState] = 0;
+    return 1;
+}
+
 Dialog:DIALOG_TAKEPOST(playerid, response, listitem, inputtext[]) {
     new randomLoc = random(sizeof(RandomPostLocations));
     PostCheckpoint[0] = CreateDynamicCP(RandomPostLocations[randomLoc][0], RandomPostLocations[randomLoc][1], RandomPostLocations[randomLoc][2], 2, -1, -1, -1, 10000);
@@ -969,6 +1147,26 @@ Dialog:DIALOG_TAKEPOST(playerid, response, listitem, inputtext[]) {
 Dialog:DIALOG_DELIVERPOST(playerid, response, listitem, inputtext[]) {
     DestroyDynamicCP(PostCheckpoint[0]);
     return 1;
+}
+
+Dialog:DIALOG_DUMP(playerid, response, listitem, inputtext[]) {
+    DestroyDynamicCP(dumpCheckPoint[0]);
+    return 1;
+}
+
+Dialog:DIALOG_ENDJOB(playerid, response, listitem, inputtext[]) {
+    /* begin ending jobs */
+    if(response) {
+        pInfo[playerid][CurrentState] = 0;
+        pInfo[playerid][PostState] = 0;
+        pInfo[playerid][GarbageState] = 0;
+        DestroyDynamicCP(PostCheckpoint[0]);
+        DestroyDynamicCP(GarbageCheckpoint[0]);
+        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have ended your current job and have lost all of your collectables as a result!");
+        return 1;
+    } else {
+        return 1;
+    }
 }
 
 Dialog:DIALOG_QUIZ1(playerid, response, listitem, inputtext[]) {
@@ -1613,6 +1811,7 @@ public RemoveTextdrawAfterTime(playerid) {
     TextDrawHideForPlayer(playerid, Text:NoHelpmes);
     TextDrawHideForPlayer(playerid, Text:NoReports);
     TextDrawHideForPlayer(playerid, Text:CantTakePost);
+    TextDrawHideForPlayer(playerid, Text:NoBinBags);
     return 1;
 }
 

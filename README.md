@@ -9,3 +9,7 @@ streamer plugin
 
 ## CurrentState:
 * 0 = Ready for task, 1 = Doing a job task, 
+
+## Jobs: (in this order)
+* Postman (ID1)
+* Garbageman (ID2)
