@@ -22,6 +22,12 @@
 #define SERVERCOLOR 	0xA9C4E4FF //0x99CEFFFF 94ABC8
 
 
+#define     VEHICLE_NOT_RENTABLE    0
+#define     VEHICLE_RENTABLE        1
+#define     VEHICLE_PLAYER_OWNED    2
+#define     VEHICLE_NOT_RENTED      0
+#define     VEHICLE_RENTED      	1
+
 
 main() {
     print("\n----------------------------------");
@@ -339,7 +345,9 @@ enum ENUM_PLAYER_DATA {
         pMuted,
         CurrentState,
         PostState,
-        GarbageState
+        GarbageState,
+
+        RentingVehicle
 }
 new pInfo[MAX_PLAYERS][ENUM_PLAYER_DATA];
 
@@ -366,7 +374,10 @@ enum ENUM_VEH_DATA {
         Float:vParkedZ,
         Float:vAngle,
         vColor1,
-        vColor2
+        vColor2,
+        vRented,
+        vRentalState,
+        vRentalPrice
 }
 new vInfo[500][ENUM_VEH_DATA], loadedVeh;
 
@@ -734,6 +745,8 @@ public VehsReceived() {
             cache_get_value_float(i, "vParkedZ", vInfo[loadedVeh][vParkedZ]);
             cache_get_value_int(i, "vColor1", vInfo[loadedVeh][vColor1]);
             cache_get_value_int(i, "vColor2", vInfo[loadedVeh][vColor2]);
+            cache_get_value_int(i, "vRentalState", vInfo[loadedVeh][vRentalState]);
+            cache_get_value_int(i, "vRentalPrice", vInfo[loadedVeh][vRentalPrice]);
             new vehicleid = CreateVehicle(vInfo[loadedVeh][vModelId],
                 vInfo[loadedVeh][vParkedX],
                 vInfo[loadedVeh][vParkedY],
@@ -1333,6 +1346,7 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 }
 
 public OnPlayerEnterVehicle(playerid, vehicleid, ispassenger) {
+
     new modelid;
     modelid = GetVehicleModel(vehicleid);
     if(!ispassenger) {
@@ -1435,6 +1449,12 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
                         PlayerTextDrawHide(playerid, VEHSTUFF[playerid][4]);
                         return 1;
                     }
+                }
+                if(vInfo[i][vRentalState] == VEHICLE_RENTABLE && vInfo[i][vRented] == VEHICLE_NOT_RENTED) {
+                    new string[256];
+                    format(string, sizeof(string), "[SERVER]:{FFFFFF}This vehicle is rentable for {00FF00}$%d{FFFFFF}. Type /rentcar to rent it.", vInfo[i][vRentalPrice]);
+                    SendClientMessage(playerid, SERVERCOLOR, string);
+                    TurnVehicleEngineOff(VehicleId);
                 }
                 if(!strcmp(name, vInfo[i][vOwner]))
                     SendClientMessage(playerid, GREY, "must be a player veh");
@@ -2262,6 +2282,12 @@ stock ReturnStats(playerid, target) {
     return 1;
 }
 
+
+stock TurnVehicleEngineOff(vehicleid) {
+    new engine, lights, alarm, doors, bonnet, boot, objective;
+    GetVehicleParamsEx(vehicleid, engine, lights, alarm, doors, bonnet, boot, objective);
+    SetVehicleParamsEx(vehicleid, VEHICLE_PARAMS_OFF, lights, alarm, doors, bonnet, boot, objective);
+}
 
 forward public RemoveTextdrawAfterTime(playerid);
 public RemoveTextdrawAfterTime(playerid) {
