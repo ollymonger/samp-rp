@@ -757,6 +757,7 @@ public VehsReceived() {
                 vInfo[loadedVeh][vColor2],
                 -1
             );
+            vInfo[loadedVeh][vRentingPlayer] = INVALID_PLAYER_ID;
             SetVehicleNumberPlate(vehicleid, vInfo[i][vPlate]);
             loadedVeh++;
         }
@@ -1035,6 +1036,7 @@ public OnPlayerSpawn(playerid) {
     if(pInfo[playerid][LoggedIn] == true) {
         pInfo[playerid][pMuted] = 0;
         pInfo[playerid][CurrentState] = 0;
+        pInfo[playerid][RentingVehicle] = INVALID_VEHICLE_ID;
 
         SetTimerEx("SavePlayerData", 300000, false, "ds", playerid, "SA-MP"); //called "function" when 5 mins elapsed
         SetTimerEx("payPlayerTimer", 30000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
@@ -1483,19 +1485,23 @@ CMD:rentcar(playerid, params[]){
 forward public RentCar(playerid, vehicleid);
 public RentCar(playerid, vehicleid){
 
+    printf("%d", vehicleid);
     if(pInfo[playerid][RentingVehicle] != INVALID_VEHICLE_ID){        
 	    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are already renting a vehicle.");
 	    return 1;
     }
-    if(vInfo[vehicleid][vRentalState] == VEHICLE_NOT_RENTABLE || vInfo[vehicleid][vRentalState] == VEHICLE_PLAYER_OWNED){
+    if(vInfo[vehicleid-1][vRentalState] == VEHICLE_NOT_RENTABLE){
+        new string[256];
+        format(string, sizeof(string), "%d", vInfo[vehicleid][vRentalState]);
 		SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle is not rentable.");
+        printf(string);
 		return 1;
     }
-    if(vInfo[vehicleid][vRented] == VEHICLE_RENTED || vInfo[vehicleid][vRentingPlayer] != INVALID_PLAYER_ID){    
+    if(vInfo[vehicleid-1][vRented] == VEHICLE_RENTED || vInfo[vehicleid-1][vRentingPlayer] != INVALID_PLAYER_ID){    
 	    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle is already rented.");
 	    return 1;
     }
-    if(GetPlayerMoney(playerid) < vInfo[vehicleid][vRentalPrice]){        
+    if(GetPlayerMoney(playerid) < vInfo[vehicleid-1][vRentalPrice]){        
 		new string[256];
 		format(string, sizeof(string), "[SERVER]:{FFFFFF} You need {00FF00}$%d {FFFFFF}to rent this vehicle, you only have {00FF00}$%d{FFFFFF}.", vInfo[vehicleid][vRentalPrice], GetPlayerMoney(playerid));
 		SendClientMessage(playerid, SERVERCOLOR, string);
