@@ -34,7 +34,9 @@ new MySQL:db_handle;
 
 new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS], GarbageCheckpoint[MAX_PLAYERS];
 new dumpCheckPoint[MAX_PLAYERS];
+new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS];
 
+new PlayerText:VEHSTUFF[MAX_PLAYERS][5];
 new Text:PublicTD[3];
 new Text:sheriffsoffice[4];
 new Text:hospital[3];
@@ -91,6 +93,222 @@ new femaleSkins[] = {
     197
 };
 
+
+new VehicleNames[][] = {
+    "Landstalker",
+    "Bravura",
+    "Buffalo",
+    "Linerunner",
+    "Perrenial",
+    "Sentinel",
+    "Dumper",
+    "Firetruck",
+    "Trashmaster",
+    "Stretch",
+    "Manana",
+    "Infernus",
+    "Voodoo",
+    "Pony",
+    "Mule",
+    "Cheetah",
+    "Ambulance",
+    "Leviathan",
+    "Moonbeam",
+    "Esperanto",
+    "Taxi",
+    "Washington",
+    "Bobcat",
+    "Whoopee",
+    "BF Injection",
+    "Hunter",
+    "Premier",
+    "Enforcer",
+    "Securicar",
+    "Banshee",
+    "Predator",
+    "Bus",
+    "Rhino",
+    "Barracks",
+    "Hotknife",
+    "Trailer",
+    "Previon",
+    "Coach",
+    "Cabbie",
+    "Stallion",
+    "Rumpo",
+    "RC Bandit",
+    "Romero",
+    "Packer",
+    "Monster",
+    "Admiral",
+    "Squalo",
+    "Seasparrow",
+    "Pizzaboy",
+    "Tram",
+    "Trailer",
+    "Turismo",
+    "Speeder",
+    "Reefer",
+    "Tropic",
+    "Flatbed",
+    "Yankee",
+    "Caddy",
+    "Solair",
+    "Berkley's RC Van",
+    "Skimmer",
+    "PCJ-600",
+    "Faggio",
+    "Freeway",
+    "RC Baron",
+    "RC Raider",
+    "Glendale",
+    "Oceanic",
+    "Sanchez",
+    "Sparrow",
+    "Patriot",
+    "Quad",
+    "Coastguard",
+    "Dinghy",
+    "Hermes",
+    "Sabre",
+    "Rustler",
+    "ZR-350",
+    "Walton",
+    "Regina",
+    "Comet",
+    "BMX",
+    "Burrito",
+    "Camper",
+    "Marquis",
+    "Baggage",
+    "Dozer",
+    "Maverick",
+    "News Chopper",
+    "Rancher",
+    "FBI Rancher",
+    "Virgo",
+    "Greenwood",
+    "Jetmax",
+    "Hotring",
+    "Sandking",
+    "Blista Compact",
+    "Police Maverick",
+    "Boxville",
+    "Benson",
+    "Mesa",
+    "RC Goblin",
+    "Hotring Racer A",
+    "Hotring Racer B",
+    "Bloodring Banger",
+    "Rancher",
+    "Super GT",
+    "Elegant",
+    "Journey",
+    "Bike",
+    "Mountain Bike",
+    "Beagle",
+    "Cropduster",
+    "Stunt",
+    "Tanker",
+    "Roadtrain",
+    "Nebula",
+    "Majestic",
+    "Buccaneer",
+    "Shamal",
+    "Hydra",
+    "FCR-900",
+    "NRG-500",
+    "HPV1000",
+    "Cement Truck",
+    "Tow Truck",
+    "Fortune",
+    "Cadrona",
+    "FBI Truck",
+    "Willard",
+    "Forklift",
+    "Tractor",
+    "Combine",
+    "Feltzer",
+    "Remington",
+    "Slamvan",
+    "Blade",
+    "Freight",
+    "Streak",
+    "Vortex",
+    "Vincent",
+    "Bullet",
+    "Clover",
+    "Sadler",
+    "Firetruck",
+    "Hustler",
+    "Intruder",
+    "Primo",
+    "Cargobob",
+    "Tampa",
+    "Sunrise",
+    "Merit",
+    "Utility",
+    "Nevada",
+    "Yosemite",
+    "Windsor",
+    "Monster",
+    "Monster",
+    "Uranus",
+    "Jester",
+    "Sultan",
+    "Stratium",
+    "Elegy",
+    "Raindance",
+    "RC Tiger",
+    "Flash",
+    "Tahoma",
+    "Savanna",
+    "Bandito",
+    "Freight Flat",
+    "Streak Carriage",
+    "Kart",
+    "Mower",
+    "Dune",
+    "Sweeper",
+    "Broadway",
+    "Tornado",
+    "AT-400",
+    "DFT-30",
+    "Huntley",
+    "Stafford",
+    "BF-400",
+    "News Van",
+    "Tug",
+    "Trailer",
+    "Emperor",
+    "Wayfarer",
+    "Euros",
+    "Hotdog",
+    "Club",
+    "Freight Box",
+    "Trailer",
+    "Andromada",
+    "Dodo",
+    "RC Cam",
+    "Launch",
+    "Police Car",
+    "Police Car",
+    "Police Car",
+    "Police Ranger",
+    "Picador",
+    "S.W.A.T",
+    "Alpha",
+    "Phoenix",
+    "Glendale",
+    "Sadler",
+    "Luggage",
+    "Luggage",
+    "Stairs",
+    "Boxville",
+    "Tiller",
+    "Utility Trailer"
+};
+
 new tries[MAX_PLAYERS], passwordForFinalReg[MAX_PLAYERS][BCRYPT_HASH_LENGTH], quizAttempts[MAX_PLAYERS];
 
 enum ENUM_PLAYER_DATA {
@@ -139,6 +357,7 @@ enum ENUM_VEH_DATA {
     vID[32],
         vModelId,
         vOwner[32],
+        vFuel,
         vJobId,
         vFacId,
         vPlate[32],
@@ -173,6 +392,7 @@ public OnGameModeInit() {
 
     // DUMP 
     CreateDynamicPickup(1239, 1, 281.7589, 1411.7045, 10.5003, -1);
+
 
 
     PMuted = TextDrawCreate(230.000000, 366.000000, "You are muted!");
@@ -505,6 +725,7 @@ public VehsReceived() {
             cache_get_value_int(i, "vID", vInfo[loadedVeh][vID]);
             cache_get_value_int(i, "vModelId", vInfo[loadedVeh][vModelId]);
             cache_get_value(i, "vOwner", vInfo[loadedVeh][vOwner], 32);
+            cache_get_value_int(i, "vFuel", vInfo[loadedVeh][vFuel]);
             cache_get_value_int(i, "vJobId", vInfo[loadedVeh][vJobId]);
             cache_get_value_int(i, "vFacId", vInfo[loadedVeh][vFacId]);
             cache_get_value(i, "vPlate", vInfo[loadedVeh][vPlate], 32);
@@ -612,6 +833,77 @@ public OnPlayerConnect(playerid) {
 
     mysql_format(db_handle, query, sizeof(query), "SELECT * FROM `accounts` where `pName` = '%s'", name); // Get the player's name
     mysql_tquery(db_handle, query, "checkIfExists", "d", playerid); // Send to check if exists function
+
+
+    VEHSTUFF[playerid][0] = CreatePlayerTextDraw(playerid, 595.000000, 359.000000, "~n~~n~~n~");
+    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][0], 1);
+    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][0], -0.004166, 1.500000);
+    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][0], 483.500000, 93.500000);
+    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][0], 1);
+    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][0], 0);
+    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][0], 1);
+    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][0], -1);
+    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][0], 255);
+    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][0], 50);
+    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][0], 1);
+    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][0], 1);
+    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][0], 0);
+
+    VEHSTUFF[playerid][1] = CreatePlayerTextDraw(playerid, 492.000000, 359.000000, "NAME:~n~SPEED:~n~FUEL:~n~");
+    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][1], 1);
+    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][1], 0.370833, 1.500000);
+    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][1], 163.500000, 88.500000);
+    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][1], 1);
+    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][1], 0);
+    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][1], 1);
+    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][1], -2686721);
+    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][1], 255);
+    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][1], 50);
+    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][1], 0);
+    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][1], 1);
+    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][1], 0);
+
+    VEHSTUFF[playerid][2] = CreatePlayerTextDraw(playerid, 533.000000, 361.000000, "INFERNUS");
+    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][2], 1);
+    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][2], 0.320832, 1.100000);
+    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][2], 400.000000, 17.000000);
+    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][2], 1);
+    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][2], 0);
+    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][2], 1);
+    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][2], -1);
+    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][2], 255);
+    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][2], 50);
+    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][2], 0);
+    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][2], 1);
+    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][2], 0);
+
+    VEHSTUFF[playerid][3] = CreatePlayerTextDraw(playerid, 581.000000, 376.000000, "0 KM/H");
+    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][3], 1);
+    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][3], 0.320832, 1.100000);
+    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][3], 400.000000, 17.000000);
+    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][3], 1);
+    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][3], 0);
+    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][3], 3);
+    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][3], -1);
+    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][3], 255);
+    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][3], 50);
+    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][3], 0);
+    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][3], 1);
+    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][3], 0);
+
+    VEHSTUFF[playerid][4] = CreatePlayerTextDraw(playerid, 558.000000, 389.000000, "0 L");
+    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][4], 1);
+    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][4], 0.320832, 1.100000);
+    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][4], 400.000000, 17.000000);
+    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][4], 1);
+    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][4], 0);
+    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][4], 3);
+    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][4], -1);
+    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][4], 255);
+    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][4], 50);
+    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][4], 0);
+    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][4], 1);
+    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][4], 0);
     return 1;
 }
 
@@ -1041,12 +1333,85 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 }
 
 public OnPlayerEnterVehicle(playerid, vehicleid, ispassenger) {
+    new modelid;
+    modelid = GetVehicleModel(vehicleid);
+    if(!ispassenger) {
+        if(modelid != 481) {
+            // display vehicle speedo stuff
+            PlayerTextDrawShow(playerid, VEHSTUFF[playerid][0]);
+            PlayerTextDrawShow(playerid, VEHSTUFF[playerid][1]);
+            PlayerTextDrawShow(playerid, VEHSTUFF[playerid][2]);
+            PlayerTextDrawShow(playerid, VEHSTUFF[playerid][3]);
+            PlayerTextDrawShow(playerid, VEHSTUFF[playerid][4]);
+            new vehName[32];
+            format(vehName, sizeof(vehName), "%s", GetVehicleName(vehicleid));
+            PlayerTextDrawSetString(playerid, VEHSTUFF[playerid][2], vehName);
+            new fuel[32];
+            for (new i = 0; i < loadedVeh; i++) {
+                if(vInfo[i][vID] == vehicleid) {
+                    format(fuel, sizeof(fuel), "%d L", vInfo[i][vFuel]);
+                    PlayerTextDrawSetString(playerid, VEHSTUFF[playerid][4], fuel);
+                }
+            }
+
+            speedoTimer[playerid] = SetTimerEx("GetVehicleSpeed", 100, false, "dd", playerid);
+            fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 9000, false, "dd", playerid, GetPlayerVehicleID(playerid));
+        }
+    }
     return 1;
 }
 
-public OnPlayerExitVehicle(playerid, vehicleid) {
+
+forward public SetVehicleFuel(playerid, vehid);
+public SetVehicleFuel(playerid, vehid) {
+    for (new i = 0; i < loadedVeh; i++) {
+        if(vInfo[i][vID] == GetPlayerVehicleID(playerid)) {
+            new engine, lights, alarm, doors, bonnet, boot, objective;
+            GetVehicleParamsEx(vInfo[i][vID], engine, lights, alarm, doors, bonnet, boot, objective); //will check that what is the state of the engine.
+            if(engine == 1) {
+                if(vInfo[i][vFuel] > 2) {
+                    vInfo[i][vFuel]--;
+                    new fuel[32];
+                    format(fuel, sizeof(fuel), "%d L", vInfo[i][vFuel]);
+                    PlayerTextDrawSetString(playerid, VEHSTUFF[playerid][4], fuel);
+                    fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 9000, false, "dd", playerid, vehid);
+                } else {
+                    SetVehicleParamsEx(vInfo[i][vID], false, lights, alarm, doors, bonnet, boot, objective); //will check that what is the state of the engine.
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle does not have enough fuel!");
+                }
+            }
+        }
+    }
     return 1;
 }
+
+forward public GetVehicleSpeed(playerid);
+public GetVehicleSpeed(playerid) {
+    new Float:x, Float:y, Float:z;
+    new Float:speed, Float:final_speed;
+    new vehSpeed[32];
+    GetVehicleVelocity(GetPlayerVehicleID(playerid), x, y, z);
+    speed = floatsqroot(((x * x) + (y * y)) + (z * z)) * 100;
+    final_speed = floatround(speed, floatround_round);
+
+    format(vehSpeed, sizeof(vehSpeed), "%.0f MPH", final_speed);
+    PlayerTextDrawSetString(playerid, VEHSTUFF[playerid][3], vehSpeed);
+    SetTimerEx("GetVehicleSpeed", 100, false, "dd", playerid);
+    return 1;
+}
+
+
+public OnPlayerExitVehicle(playerid, vehicleid) {
+    PlayerTextDrawHide(playerid, VEHSTUFF[playerid][0]);
+    PlayerTextDrawHide(playerid, VEHSTUFF[playerid][1]);
+    PlayerTextDrawHide(playerid, VEHSTUFF[playerid][2]);
+    PlayerTextDrawHide(playerid, VEHSTUFF[playerid][3]);
+    PlayerTextDrawHide(playerid, VEHSTUFF[playerid][4]);
+    KillTimer(speedoTimer[playerid]);
+    KillTimer(fuelTimer[playerid]);
+    return 1;
+}
+
 
 public OnPlayerStateChange(playerid, newstate, oldstate) {
     return 1;
@@ -1840,6 +2205,11 @@ stock RPName(playerid) {
     return szName;
 }
 
+stock GetVehicleName(vehicleid) {
+    new String[256];
+    format(String, sizeof(String), "%s", VehicleNames[GetVehicleModel(vehicleid) - 400]);
+    return String;
+}
 
 stock ReturnStats(playerid, target) {
     new string[256];
