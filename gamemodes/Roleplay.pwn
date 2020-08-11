@@ -22,6 +22,7 @@
 #define SPECIALORANGE   0xFFCC00FF // CRP Orange 0xFF8000FF
 #define SERVERCOLOR 	0xA9C4E4FF //0x99CEFFFF 94ABC8
 #define NICESKY 		0xC2A2DAFF // rp color
+#define ADMINBLUE 		0x1D7CF2FF //0059E8
 
 #define     VEHICLE_NOT_RENTABLE    0
 #define     VEHICLE_RENTABLE        1
@@ -1219,7 +1220,32 @@ CMD:help(playerid, params[]) {
             } else if(pInfo[playerid][pJobId] == 0) {
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /takejob, /listjobs");
             }
+        } else if(strcmp(Usage, "Admin", true) == 0) {
+            if(pInfo[playerid][pAdminLevel] > 1) {
+                SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Admin Commands ::.");
+                if(pInfo[playerid][pAdminLevel] == 6) {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/createjob, /makeleader");
+
+                }
+            }
         }
+    }
+    return 1;
+}
+
+CMD:makeleader(playerid, params[]) {
+    new target, facid, string[256];
+    if(pInfo[playerid][pAdminLevel] == 6) {
+        if(sscanf(params, "dd", target, facid)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /makeleader [ID] [facid]"); {
+            pInfo[target][pFactionId] = facid;
+            pInfo[target][pFactionRank] = 7;
+            SetFactionRanknameByRank(playerid, facid - 1, 7);
+            format(string, sizeof(string), "[SERVER]:{FFFFFF} You have made %s the leader of %s.", RPName(target), ReturnFacName(playerid, facid - 1));
+            SendClientMessage(playerid, ADMINBLUE, string);
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
     }
     return 1;
 }
@@ -2330,6 +2356,38 @@ public OnPlayerRegister(playerid) {
     return 1;
 }
 
+stock SetFactionRanknameByRank(playerid, facid, rank) {
+    new rankbyid[32];
+    if(rank == 1) {
+        format(rankbyid, sizeof(rankbyid), "%s", fInfo[facid][fRank1Name]);
+        pInfo[playerid][pFactionRankname] = rankbyid;
+    }    
+    if(rank == 2) {
+        format(rankbyid, sizeof(rankbyid), "%s", fInfo[facid][fRank2Name]);
+        pInfo[playerid][pFactionRankname] = rankbyid;
+    }    
+    if(rank == 3) {
+        format(rankbyid, sizeof(rankbyid), "%s", fInfo[facid][fRank3Name]);
+        pInfo[playerid][pFactionRankname] = rankbyid;
+    }
+    if(rank == 4) {
+        format(rankbyid, sizeof(rankbyid), "%s", fInfo[facid][fRank4Name]);
+        pInfo[playerid][pFactionRankname] = rankbyid;
+    }
+    if(rank == 5) {
+        format(rankbyid, sizeof(rankbyid), "%s", fInfo[facid][fRank5Name]);
+        pInfo[playerid][pFactionRankname] = rankbyid;
+    }
+    if(rank == 6) {
+        format(rankbyid, sizeof(rankbyid), "%s", fInfo[facid][fRank6Name]);
+        pInfo[playerid][pFactionRankname] = rankbyid;
+    }    
+    if(rank == 7) {
+        format(rankbyid, sizeof(rankbyid), "%s", fInfo[facid][fRank7Name]);
+        pInfo[playerid][pFactionRankname] = rankbyid;
+    }
+    return 1;
+}
 
 stock GetName(playerid) {
     new name[MAX_PLAYER_NAME];
@@ -2554,26 +2612,26 @@ stock ReturnStats(playerid, target) {
     new string[256];
     format(string, sizeof(string), "[SERVER]:**-------- %s's STATISTICS --------**", RPName(target));
     SendClientMessage(playerid, SPECIALORANGE, string);
-    format(string, sizeof(string), "[SERVER]:{ABCDEF} Level: %d (%dexp/8) | Bank: $%d | Cash: $%d | Payment in: %dmins", pInfo[target][pLevel], pInfo[target][pExp], pInfo[target][pBank], pInfo[target][pCash], pInfo[target][pPayTimer]);
+    format(string, sizeof(string), "[PLAYER]:{ABCDEF} Level: %d (%dexp/8) | Bank: $%d | Cash: $%d | Payment in: %dmins", pInfo[target][pLevel], pInfo[target][pExp], pInfo[target][pBank], pInfo[target][pCash], pInfo[target][pPayTimer]);
     SendClientMessage(playerid, SPECIALORANGE, string);
     if(pInfo[playerid][pFactionId] == 0) {
-        format(string, sizeof(string), "[SERVER]:{ABCDEF} Faction (0): N/A | Ranknam: N/A");
+        format(string, sizeof(string), "[FACTION]:{ABCDEF} Faction (0): N/A | Ranknam: N/A");
         SendClientMessage(playerid, SPECIALORANGE, string);
     }
     for (new i = 0; i < loadedFac; i++) {
         if(pInfo[playerid][pFactionId] == fInfo[i][fID]) {
-            format(string, sizeof(string), "[SERVER]:{ABCDEF} Faction (%d): %s | Rank: %d | Rankname: %s", pInfo[playerid][pFactionId], ReturnFacName(playerid, pInfo[playerid][pFactionId] - 1), pInfo[playerid][pFactionRank], pInfo[playerid][pFactionRankname]);
+            format(string, sizeof(string), "[FACTION]:{ABCDEF} Faction (%d): %s | Rank: %d | Rankname: %s", pInfo[playerid][pFactionId], ReturnFacName(playerid, pInfo[playerid][pFactionId] - 1), pInfo[playerid][pFactionRank], pInfo[playerid][pFactionRankname]);
             SendClientMessage(playerid, SPECIALORANGE, string);
         }
     }
     if(pInfo[playerid][pJobId] == 0) {
-        format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID: N/A | Job name: N/A", pInfo[target][pJobId]);
+        format(string, sizeof(string), "[JOB]:{ABCDEF} Job ID: N/A | Job name: N/A", pInfo[target][pJobId]);
         SendClientMessage(playerid, SPECIALORANGE, string);
     }
     for (new i = 0; i < loadedJob; i++) {
         if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
             if(pInfo[playerid][pJobId] >= 1) {
-                format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID: %d | Job name: %s", pInfo[target][pJobId], jInfo[i][jName]);
+                format(string, sizeof(string), "[JOB]:{ABCDEF} Job ID: %d | Job name: %s", pInfo[target][pJobId], jInfo[i][jName]);
                 SendClientMessage(playerid, SPECIALORANGE, string);
             }
             return 1;
