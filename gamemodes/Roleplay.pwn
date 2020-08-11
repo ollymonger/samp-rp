@@ -1266,34 +1266,39 @@ CMD:startjob(playerid, params[]) {
 
 CMD:collect(playerid, params[]) {
     if(pInfo[playerid][pJobId] == 2) {
-        if(IsPlayerInDynamicCP(playerid, GarbageCheckpoint[0])) {
-            if(pInfo[playerid][CurrentState] == 1) {
-                if(pInfo[playerid][GarbageState] <= 19) {
-                    DestroyDynamicCP(GarbageCheckpoint[0]);
-                    new rand = random(6 - 3) + 2;
-                    new string[256];
-                    for (new i = 0; i < loadedJob; i++) {
-                        if(jInfo[i][jID] == 2) {
-                            format(string, sizeof(string), "You have taken %d garbage bags! \n\nYou can take them straight to the Dump (marked 'D' on the minimap), or continue to the next checkpoint!\n\nThe current price for one garbage bag is $%d", rand, jInfo[i][jPay]);
-                            pInfo[playerid][GarbageState] += rand;
-                            Dialog_Show(playerid, DIALOG_COLLECT, DIALOG_STYLE_MSGBOX, "Garbageman Job", string, "Continue", "");
-                            return 1;
+        new vehicleid = GetPlayerVehicleID(playerid);
+        if(vehicleid == 0){
+            if(IsPlayerInDynamicCP(playerid, GarbageCheckpoint[0])) {
+                if(pInfo[playerid][CurrentState] == 1) {
+                    if(pInfo[playerid][GarbageState] <= 19) {
+                        DestroyDynamicCP(GarbageCheckpoint[0]);
+                        new rand = random(6 - 3) + 2;
+                        new string[256];
+                        for (new i = 0; i < loadedJob; i++) {
+                            if(jInfo[i][jID] == 2) {
+                                format(string, sizeof(string), "You have taken %d garbage bags! \n\nYou can take them straight to the Dump (marked 'D' on the minimap), or continue to the next checkpoint!\n\nThe current price for one garbage bag is $%d", rand, jInfo[i][jPay]);
+                                pInfo[playerid][GarbageState] += rand;
+                                Dialog_Show(playerid, DIALOG_COLLECT, DIALOG_STYLE_MSGBOX, "Garbageman Job", string, "Continue", "");
+                                return 1;
+                            }
                         }
-                    }
-                } else {
-                    /* Player must now go to the dump, and use /dump cmd at info point 
-                        Need to define dump point
-                        Need to set player pay after the dump is complete. Longer job = better pay
-                    */
+                    } else {
+                        /* Player must now go to the dump, and use /dump cmd at info point 
+                            Need to define dump point
+                            Need to set player pay after the dump is complete. Longer job = better pay
+                        */
 
-                    DestroyDynamicCP(GarbageCheckpoint[0]);
-                    dumpCheckPoint[0] = CreateDynamicCP(281.7589, 1411.7045, 9.8603, 2, -1, -1, -1, 10000);
-                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You cannot hold any more garbage bags! Please visit the dump marked on the minimap!");
+                        DestroyDynamicCP(GarbageCheckpoint[0]);
+                        dumpCheckPoint[0] = CreateDynamicCP(281.7589, 1411.7045, 9.8603, 2, -1, -1, -1, 10000);
+                        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You cannot hold any more garbage bags! Please visit the dump marked on the minimap!");
+                    }
                 }
+            } else {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not at a Garbage collection point, check your minimap for the next point!");
+                return 1;
             }
         } else {
-            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not at a Garbage collection point, check your minimap for the next point!");
-            return 1;
+            return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You must be on foot to collect garbage!");
         }
     } else {
         TextDrawShowForPlayer(playerid, CantCommand);
@@ -1305,26 +1310,31 @@ CMD:collect(playerid, params[]) {
 CMD:dump(playerid, params[]) {
     if(IsPlayerInRangeOfPoint(playerid, 10, 281.7589, 1411.7045, 9.8603)) {
         if(pInfo[playerid][pJobId] == 2) {
-            if(pInfo[playerid][CurrentState] == 1) { // if started job
-                if(pInfo[playerid][GarbageState] >= 1) {
-                    for (new i = 0; i < loadedJob; i++) {
-                        if(jInfo[i][jID] == 2) {
-                            new totalPay, string[256];
-                            pInfo[playerid][CurrentState] = 0; // finish job
-                            totalPay = pInfo[playerid][GarbageState] * jInfo[i][jPay];
-                            pInfo[playerid][pJobPay] += totalPay;
+            new vehicleid = GetPlayerVehicleID(playerid);
+            if(vehicleid == 0 ){
+                if(pInfo[playerid][CurrentState] == 1) { // if started job
+                    if(pInfo[playerid][GarbageState] >= 1) {
+                        for (new i = 0; i < loadedJob; i++) {
+                            if(jInfo[i][jID] == 2) {
+                                new totalPay, string[256];
+                                pInfo[playerid][CurrentState] = 0; // finish job
+                                totalPay = pInfo[playerid][GarbageState] * jInfo[i][jPay];
+                                pInfo[playerid][pJobPay] += totalPay;
 
-                            format(string, sizeof(string), "Thank you for collecting %d garbage bags!\n\nReturn to the depot to resume collecting!\n\nYou will receive $%d on your next paycheck!", pInfo[playerid][GarbageState], totalPay);
-                            Dialog_Show(playerid, DIALOG_DUMP, DIALOG_STYLE_MSGBOX, "Job Complete!", string, "Continue", "");
+                                format(string, sizeof(string), "Thank you for collecting %d garbage bags!\n\nReturn to the depot to resume collecting!\n\nYou will receive $%d on your next paycheck!", pInfo[playerid][GarbageState], totalPay);
+                                Dialog_Show(playerid, DIALOG_DUMP, DIALOG_STYLE_MSGBOX, "Job Complete!", string, "Continue", "");
 
-                            pInfo[playerid][GarbageState] = 0;
-                            return 1;
+                                pInfo[playerid][GarbageState] = 0;
+                                return 1;
+                            }
                         }
+                    } else {
+                        TextDrawShowForPlayer(playerid, NoBinBags);
+                        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
                     }
-                } else {
-                    TextDrawShowForPlayer(playerid, NoBinBags);
-                    SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
                 }
+            } else {
+                return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You must be on foot to dump your collected garbage!");
             }
         } else {
             TextDrawShowForPlayer(playerid, CantCommand);
