@@ -20,7 +20,7 @@
 #define GREY 			0xCECECEFF
 #define SPECIALORANGE   0xFFCC00FF // CRP Orange 0xFF8000FF
 #define SERVERCOLOR 	0xA9C4E4FF //0x99CEFFFF 94ABC8
-
+#define NICESKY 		0xC2A2DAFF // rp color
 
 #define     VEHICLE_NOT_RENTABLE    0
 #define     VEHICLE_RENTABLE        1
@@ -747,6 +747,7 @@ public VehsReceived() {
             cache_get_value_int(i, "vColor1", vInfo[loadedVeh][vColor1]);
             cache_get_value_int(i, "vColor2", vInfo[loadedVeh][vColor2]);
             cache_get_value_int(i, "vRentalState", vInfo[loadedVeh][vRentalState]);
+            printf("%d", vInfo[loadedVeh][vRentalState]);
             cache_get_value_int(i, "vRentalPrice", vInfo[loadedVeh][vRentalPrice]);
             new vehicleid = CreateVehicle(vInfo[loadedVeh][vModelId],
                 vInfo[loadedVeh][vParkedX],
@@ -956,9 +957,8 @@ public checkIfExists(playerid) {
 public OnPlayerDisconnect(playerid, reason) {
     if(pInfo[playerid][LoggedIn] == true) {
         SavePlayerData(playerid);
-        
-        if(pInfo[playerid][RentingVehicle] != INVALID_VEHICLE_ID)
-        {
+
+        if(pInfo[playerid][RentingVehicle] != INVALID_VEHICLE_ID) {
             UnrentVehicle(playerid, pInfo[playerid][RentingVehicle]);
         }
         printf("** [MYSQL] Player:%s data has been saved! Disconnecting user...", GetName(playerid));
@@ -1424,7 +1424,7 @@ public GetVehicleSpeed(playerid) {
 }
 
 forward public HideSpeedoTextdraws(playerid);
-public HideSpeedoTextdraws(playerid){    
+public HideSpeedoTextdraws(playerid) {
     PlayerTextDrawHide(playerid, VEHSTUFF[playerid][0]);
     PlayerTextDrawHide(playerid, VEHSTUFF[playerid][1]);
     PlayerTextDrawHide(playerid, VEHSTUFF[playerid][2]);
@@ -1453,7 +1453,7 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
                     if(vInfo[i][vJobId] == pInfo[playerid][pJobId]) {
                         if(vInfo[i][vRentalState] == VEHICLE_RENTABLE && vInfo[i][vRented] == VEHICLE_NOT_RENTED) {
                             new string[256];
-                            format(string, sizeof(string), "[SERVER]:{FFFFFF}This vehicle is rentable for {00FF00}$%d{FFFFFF}. Type /rentcar to rent it.", vInfo[i][vRentalPrice]);
+                            format(string, sizeof(string), "[SERVER]:{FFFFFF} This vehicle is rentable for {00FF00}$%d{FFFFFF}. Type /rentcar to rent it.", vInfo[i][vRentalPrice]);
                             SendClientMessage(playerid, SERVERCOLOR, string);
                             TurnVehicleEngineOff(VehicleId);
                         }
@@ -1483,18 +1483,20 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
     }
     return 1;
 }
-CMD:rentcar(playerid, params[]){
+CMD:rentcar(playerid, params[]) {
     new vehicleid;
     vehicleid = GetPlayerVehicleID(playerid);
-    if(vehicleid == 0){
+
+    if(vehicleid == 0) {
         return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not in a vehicle!");
     }
+    vehicleid -= 1;
     RentCar(playerid, vehicleid);
-    return 1;    
+    return 1;
 }
-CMD:unrentcar(playerid,params[]){
-    if(pInfo[playerid][RentingVehicle] != INVALID_VEHICLE_ID){
-        if(GetPlayerState(playerid) == PLAYER_STATE_DRIVER){
+CMD:unrentcar(playerid, params[]) {
+    if(pInfo[playerid][RentingVehicle] != INVALID_VEHICLE_ID) {
+        if(GetPlayerState(playerid) == PLAYER_STATE_DRIVER) {
             UnrentPlayerVehicle(playerid);
             return 1;
         } else {
@@ -1506,48 +1508,85 @@ CMD:unrentcar(playerid,params[]){
     }
 }
 
+/* vehicle cmds */
+
+CMD:engine(playerid, params[]) {
+    new engine, lights, alarm, doors, bonnet, boot, objective;
+    new vid, nname[32], string[256];
+
+    vid = GetPlayerVehicleID(playerid);
+    GetVehicleParamsEx(vid, engine, lights, alarm, doors, bonnet, boot, objective);
+    format(nname, sizeof(nname), "%s", GetName(playerid));
+    for (new i = 0; i < loadedVeh; i++) {
+        if(vInfo[i][vID] == GetPlayerVehicleID(playerid)) // if player in vehicle?
+        {
+            if(GetPlayerState(playerid) == PLAYER_STATE_DRIVER) { // if player driver
+                GetVehicleParamsEx(vid, engine, lights, alarm, doors, bonnet, boot, objective); //will check that what is the state of the engine.
+                if(vInfo[i][vRentingPlayer] == playerid) { // if rented by player
+                    if(engine == 1) {
+                        SetVehicleParamsEx(vid, false, lights, alarm, doors, bonnet, boot, objective);
+                        format(string, sizeof(string), "* %s takes their key from the igntion and turns the engine off.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        KillTimer(fuelTimer[playerid]);
+                        return 1;
+                    } else {
+                        SetVehicleParamsEx(vid, true, lights, alarm, doors, bonnet, boot, objective);
+                        format(string, sizeof(string), "* %s inserts their key into the ignition and starts the engine.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 9000, false, "dd", playerid, vInfo[i][vID]);
+                        return 1;
+                    }
+                }
+            }
+        }
+    }
+    return 1;
+}
+
 forward public UnrentPlayerVehicle(playerid);
 forward public UnrentVehicle(playerid, vehicleid);
-public UnrentPlayerVehicle(playerid){
+public UnrentPlayerVehicle(playerid) {
     new vehicleid = GetPlayerVehicleID(playerid);
+    vehicleid-=1;
     UnrentVehicle(playerid, vehicleid);
     pInfo[playerid][RentingVehicle] = INVALID_VEHICLE_ID;
     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have unrented your vehicle!");
     return 1;
 }
-public UnrentVehicle(playerid, vehicleid){
-    vInfo[vehicleid][vRentalState] = VEHICLE_NOT_RENTED;
+public UnrentVehicle(playerid, vehicleid) {
+    vInfo[vehicleid][vRented] = VEHICLE_NOT_RENTED;
+    vInfo[vehicleid][vRentalState] = VEHICLE_RENTABLE;
     vInfo[vehicleid][vRentingPlayer] = INVALID_PLAYER_ID;
     TurnVehicleEngineOff(vehicleid);
     HideSpeedoTextdraws(playerid);
     RemovePlayerFromVehicle(playerid);
-    SetVehicleToRespawn(vehicleid);
+    SetVehicleToRespawn(vehicleid+1);
     printf("** Unrenting vehicle..");
     return 1;
 }
 
 forward public RentCar(playerid, vehicleid);
-public RentCar(playerid, vehicleid){
-    if(pInfo[playerid][RentingVehicle] != INVALID_VEHICLE_ID){        
-	    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are already renting a vehicle.");
-	    return 1;
+public RentCar(playerid, vehicleid) {
+    if(pInfo[playerid][RentingVehicle] != INVALID_VEHICLE_ID) {
+        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are already renting a vehicle.");
+        return 1;
     }
-    if(vInfo[vehicleid-1][vRentalState] == VEHICLE_NOT_RENTABLE){
-		SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle is not rentable.");
-		return 1;
+    if(vInfo[vehicleid][vRentalState] == VEHICLE_NOT_RENTABLE) {
+        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle is not rentable.");
+        return 1;
     }
-    if(vInfo[vehicleid-1][vRented] == VEHICLE_RENTED || vInfo[vehicleid-1][vRentingPlayer] != INVALID_PLAYER_ID){    
-	    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle is already rented.");
-	    return 1;
+    if(vInfo[vehicleid][vRented] == VEHICLE_RENTED || vInfo[vehicleid][vRentingPlayer] != INVALID_PLAYER_ID) {
+        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle is already rented.");
+        return 1;
     }
-    if(GetPlayerMoney(playerid) < vInfo[vehicleid-1][vRentalPrice]){        
-		new string[256];
-		format(string, sizeof(string), "[SERVER]:{FFFFFF} You need {00FF00}$%d {FFFFFF}to rent this vehicle, you only have {00FF00}$%d{FFFFFF}.", vInfo[vehicleid][vRentalPrice], GetPlayerMoney(playerid));
-		SendClientMessage(playerid, SERVERCOLOR, string);
+    if(GetPlayerMoney(playerid) < vInfo[vehicleid][vRentalPrice]) {
+        new string[256];
+        format(string, sizeof(string), "[SERVER]:{FFFFFF} You need {00FF00}$%d {FFFFFF}to rent this vehicle, you only have {00FF00}$%d{FFFFFF}.", vInfo[vehicleid][vRentalPrice], GetPlayerMoney(playerid));
+        SendClientMessage(playerid, SERVERCOLOR, string);
         return 1;
     }
 
-    GivePlayerMoney(playerid, -vInfo[vehicleid-1][vRentalPrice]);
+    GivePlayerMoney(playerid, -vInfo[vehicleid][vRentalPrice]);
     pInfo[playerid][RentingVehicle] = vehicleid;
     vInfo[vehicleid][vRented] = VEHICLE_RENTED;
     vInfo[vehicleid][vRentingPlayer] = playerid;
@@ -2258,6 +2297,21 @@ stock KickWithMessage(playerid, message[]) {
 }
 
 /*Text formatting*/
+
+stock nearByAction(playerid, color, string[], Float:Distance = 12.0) {
+    new
+    Float:nbCoords[3]; // Variable to store the position of the main player
+
+    GetPlayerPos(playerid, nbCoords[0], nbCoords[1], nbCoords[2]); // Getting the main position
+
+    for (new i = 0; i < MAX_PLAYERS; i++) {
+        if(IsPlayerInRangeOfPoint(i, Distance, nbCoords[0], nbCoords[1], nbCoords[2]) && (GetPlayerVirtualWorld(i) == GetPlayerVirtualWorld(playerid))) { // Confirming if the player being looped is within range and is in the same virtual world and interior as the main player
+            SendClientMessage(i, color, string); // Sending them the message if all checks out
+        }
+    }
+
+    return 1;
+}
 
 forward public nearByMessage(playerid, color, string[], Float:Distance);
 public nearByMessage(playerid, color, string[], Float:Distance) {
