@@ -20,7 +20,13 @@
 #define GREY 			0xCECECEFF
 #define SPECIALORANGE   0xFFCC00FF // CRP Orange 0xFF8000FF
 #define SERVERCOLOR 	0xA9C4E4FF //0x99CEFFFF 94ABC8
+#define NICESKY 		0xC2A2DAFF // rp color
 
+#define     VEHICLE_NOT_RENTABLE    0
+#define     VEHICLE_RENTABLE        1
+#define     VEHICLE_PLAYER_OWNED    2
+#define     VEHICLE_NOT_RENTED      0
+#define     VEHICLE_RENTED      	1
 
 
 main() {
@@ -34,7 +40,11 @@ new MySQL:db_handle;
 
 new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS], GarbageCheckpoint[MAX_PLAYERS];
 new dumpCheckPoint[MAX_PLAYERS];
+new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS];
 
+new dumpPickup, jobPickup[MAX_JOBS];
+
+new PlayerText:VEHSTUFF[MAX_PLAYERS][5];
 new Text:PublicTD[3];
 new Text:sheriffsoffice[4];
 new Text:hospital[3];
@@ -91,6 +101,222 @@ new femaleSkins[] = {
     197
 };
 
+
+new VehicleNames[][] = {
+    "Landstalker",
+    "Bravura",
+    "Buffalo",
+    "Linerunner",
+    "Perrenial",
+    "Sentinel",
+    "Dumper",
+    "Firetruck",
+    "Trashmaster",
+    "Stretch",
+    "Manana",
+    "Infernus",
+    "Voodoo",
+    "Pony",
+    "Mule",
+    "Cheetah",
+    "Ambulance",
+    "Leviathan",
+    "Moonbeam",
+    "Esperanto",
+    "Taxi",
+    "Washington",
+    "Bobcat",
+    "Whoopee",
+    "BF Injection",
+    "Hunter",
+    "Premier",
+    "Enforcer",
+    "Securicar",
+    "Banshee",
+    "Predator",
+    "Bus",
+    "Rhino",
+    "Barracks",
+    "Hotknife",
+    "Trailer",
+    "Previon",
+    "Coach",
+    "Cabbie",
+    "Stallion",
+    "Rumpo",
+    "RC Bandit",
+    "Romero",
+    "Packer",
+    "Monster",
+    "Admiral",
+    "Squalo",
+    "Seasparrow",
+    "Pizzaboy",
+    "Tram",
+    "Trailer",
+    "Turismo",
+    "Speeder",
+    "Reefer",
+    "Tropic",
+    "Flatbed",
+    "Yankee",
+    "Caddy",
+    "Solair",
+    "Berkley's RC Van",
+    "Skimmer",
+    "PCJ-600",
+    "Faggio",
+    "Freeway",
+    "RC Baron",
+    "RC Raider",
+    "Glendale",
+    "Oceanic",
+    "Sanchez",
+    "Sparrow",
+    "Patriot",
+    "Quad",
+    "Coastguard",
+    "Dinghy",
+    "Hermes",
+    "Sabre",
+    "Rustler",
+    "ZR-350",
+    "Walton",
+    "Regina",
+    "Comet",
+    "BMX",
+    "Burrito",
+    "Camper",
+    "Marquis",
+    "Baggage",
+    "Dozer",
+    "Maverick",
+    "News Chopper",
+    "Rancher",
+    "FBI Rancher",
+    "Virgo",
+    "Greenwood",
+    "Jetmax",
+    "Hotring",
+    "Sandking",
+    "Blista Compact",
+    "Police Maverick",
+    "Boxville",
+    "Benson",
+    "Mesa",
+    "RC Goblin",
+    "Hotring Racer A",
+    "Hotring Racer B",
+    "Bloodring Banger",
+    "Rancher",
+    "Super GT",
+    "Elegant",
+    "Journey",
+    "Bike",
+    "Mountain Bike",
+    "Beagle",
+    "Cropduster",
+    "Stunt",
+    "Tanker",
+    "Roadtrain",
+    "Nebula",
+    "Majestic",
+    "Buccaneer",
+    "Shamal",
+    "Hydra",
+    "FCR-900",
+    "NRG-500",
+    "HPV1000",
+    "Cement Truck",
+    "Tow Truck",
+    "Fortune",
+    "Cadrona",
+    "FBI Truck",
+    "Willard",
+    "Forklift",
+    "Tractor",
+    "Combine",
+    "Feltzer",
+    "Remington",
+    "Slamvan",
+    "Blade",
+    "Freight",
+    "Streak",
+    "Vortex",
+    "Vincent",
+    "Bullet",
+    "Clover",
+    "Sadler",
+    "Firetruck",
+    "Hustler",
+    "Intruder",
+    "Primo",
+    "Cargobob",
+    "Tampa",
+    "Sunrise",
+    "Merit",
+    "Utility",
+    "Nevada",
+    "Yosemite",
+    "Windsor",
+    "Monster",
+    "Monster",
+    "Uranus",
+    "Jester",
+    "Sultan",
+    "Stratium",
+    "Elegy",
+    "Raindance",
+    "RC Tiger",
+    "Flash",
+    "Tahoma",
+    "Savanna",
+    "Bandito",
+    "Freight Flat",
+    "Streak Carriage",
+    "Kart",
+    "Mower",
+    "Dune",
+    "Sweeper",
+    "Broadway",
+    "Tornado",
+    "AT-400",
+    "DFT-30",
+    "Huntley",
+    "Stafford",
+    "BF-400",
+    "News Van",
+    "Tug",
+    "Trailer",
+    "Emperor",
+    "Wayfarer",
+    "Euros",
+    "Hotdog",
+    "Club",
+    "Freight Box",
+    "Trailer",
+    "Andromada",
+    "Dodo",
+    "RC Cam",
+    "Launch",
+    "Police Car",
+    "Police Car",
+    "Police Car",
+    "Police Ranger",
+    "Picador",
+    "S.W.A.T",
+    "Alpha",
+    "Phoenix",
+    "Glendale",
+    "Sadler",
+    "Luggage",
+    "Luggage",
+    "Stairs",
+    "Boxville",
+    "Tiller",
+    "Utility Trailer"
+};
+
 new tries[MAX_PLAYERS], passwordForFinalReg[MAX_PLAYERS][BCRYPT_HASH_LENGTH], quizAttempts[MAX_PLAYERS];
 
 enum ENUM_PLAYER_DATA {
@@ -121,7 +347,9 @@ enum ENUM_PLAYER_DATA {
         pMuted,
         CurrentState,
         PostState,
-        GarbageState
+        GarbageState,
+
+        RentingVehicle
 }
 new pInfo[MAX_PLAYERS][ENUM_PLAYER_DATA];
 
@@ -135,7 +363,27 @@ enum ENUM_JOB_DATA {
 }
 new jInfo[MAX_JOBS][ENUM_JOB_DATA], loadedJob;
 
-/* 2- DIALOGS -*/
+enum ENUM_VEH_DATA {
+    vID[32],
+        vModelId,
+        vOwner[32],
+        vFuel,
+        vJobId,
+        vFacId,
+        vPlate[32],
+        Float:vParkedX,
+        Float:vParkedY,
+        Float:vParkedZ,
+        Float:vAngle,
+        vColor1,
+        vColor2,
+        vRentingPlayer,
+        vRented,
+        vRentalState,
+        vRentalPrice
+}
+new vInfo[500][ENUM_VEH_DATA], loadedVeh;
+
 
 public OnGameModeInit() {
     mysql_log(ALL);
@@ -154,10 +402,24 @@ public OnGameModeInit() {
 
 
     LoadJobData();
+    LoadVehicleData();
 
     // DUMP 
-    CreateDynamicPickup(1239, 1, 281.7589, 1411.7045, 10.5003, -1);
+    dumpPickup = CreatePickup(1239, 1, 281.7589, 1411.7045, 10.5003, -1);
 
+    /* POSTMAN
+    CreateDynamicObject(17038, -94.66439, 1130.53223, 18.72370, 0.00000, 0.00000, 180.00000);
+    CreateDynamicObject(6959, -92.12310, 1125.20642, 18.73150, 0.00000, 0.00000, 0.00000);
+    CreateDynamicObject(1345, -90.60535, 1130.87866, 19.46094, 356.85840, 0.00000, -1.57080);
+    CreateDynamicObject(1345, -90.60535, 1130.87866, 19.46094, 356.85840, 0.00000, -1.57080);
+    CreateDynamicObject(1232, -76.37077, 1137.26379, 21.30760, 0.00000, 0.00000, 0.00000);
+    CreateDynamicObject(1286, -85.68120, 1137.99756, 19.24240, 0.00000, 0.00000, 181.43620);
+    CreateDynamicObject(1289, -86.81896, 1137.96716, 19.24240, 0.00000, 0.00000, 180.00000);
+    CreateDynamicObject(1287, -86.27790, 1138.02942, 19.24240, 0.00000, 0.00000, 181.43620);
+    CreateDynamicObject(1285, -85.16120, 1137.99756, 19.24240, 0.00000, 0.00000, 181.43620);
+    CreateDynamicObject(1286, -84.60120, 1137.99756, 19.24240, 0.00000, 0.00000, 181.43620);
+    CreateDynamicObject(1508, -96.28460, 1117.77185, 20.30520, 0.00000, 0.00000, 90.00000);
+    CreateDynamicObject(1334, -102.79440, 1116.40662, 19.81580, 0.00000, 0.00000, 40.00000);*/
 
     PMuted = TextDrawCreate(230.000000, 366.000000, "You are muted!");
     TextDrawBackgroundColor(PMuted, 255);
@@ -472,6 +734,52 @@ public OnGameModeInit() {
 }
 
 // load server data
+
+
+forward public LoadVehicleData();
+public LoadVehicleData() {
+    new DB_Query[900];
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `vehicles`");
+    mysql_tquery(db_handle, DB_Query, "VehsReceived");
+}
+
+forward VehsReceived();
+public VehsReceived() {
+    if(cache_num_rows() == 0) print("No vehicles have been created!");
+    else {
+        for (new i = 0; i < cache_num_rows(); i++) {
+            cache_get_value_int(i, "vID", vInfo[loadedVeh][vID]);
+            cache_get_value_int(i, "vModelId", vInfo[loadedVeh][vModelId]);
+            cache_get_value(i, "vOwner", vInfo[loadedVeh][vOwner], 32);
+            cache_get_value_int(i, "vFuel", vInfo[loadedVeh][vFuel]);
+            cache_get_value_int(i, "vJobId", vInfo[loadedVeh][vJobId]);
+            cache_get_value_int(i, "vFacId", vInfo[loadedVeh][vFacId]);
+            cache_get_value(i, "vPlate", vInfo[loadedVeh][vPlate], 32);
+            cache_get_value_float(i, "vParkedX", vInfo[loadedVeh][vParkedX]);
+            cache_get_value_float(i, "vParkedY", vInfo[loadedVeh][vParkedY]);
+            cache_get_value_float(i, "vParkedZ", vInfo[loadedVeh][vParkedZ]);
+            cache_get_value_float(i, "vAngle", vInfo[loadedVeh][vAngle]);
+            cache_get_value_int(i, "vColor1", vInfo[loadedVeh][vColor1]);
+            cache_get_value_int(i, "vColor2", vInfo[loadedVeh][vColor2]);
+            cache_get_value_int(i, "vRentalState", vInfo[loadedVeh][vRentalState]);
+            cache_get_value_int(i, "vRentalPrice", vInfo[loadedVeh][vRentalPrice]);
+            new vehicleid = CreateVehicle(vInfo[loadedVeh][vModelId],
+                vInfo[loadedVeh][vParkedX],
+                vInfo[loadedVeh][vParkedY],
+                vInfo[loadedVeh][vParkedZ],
+                vInfo[loadedVeh][vAngle],
+                vInfo[loadedVeh][vColor1],
+                vInfo[loadedVeh][vColor2],
+                -1
+            );
+            vInfo[loadedVeh][vRentingPlayer] = INVALID_PLAYER_ID;
+            SetVehicleNumberPlate(vehicleid, vInfo[i][vPlate]);
+            loadedVeh++;
+        }
+        printf("** [MYSQL] Loaded %d vehicles from the database!", cache_num_rows());
+    }
+}
+
 forward public LoadJobData();
 public LoadJobData() {
     new DB_Query[900];
@@ -489,7 +797,6 @@ public LoadNewJobData(id) {
 
 forward newJob();
 public newJob() {
-
     if(cache_num_rows() == 0) print("Job does not exist");
     else {
         for (new i = 0; i < cache_num_rows(); i++) {
@@ -499,7 +806,7 @@ public newJob() {
             cache_get_value_float(i, "jobIX", jInfo[loadedJob][jobIX]);
             cache_get_value_float(i, "jobIY", jInfo[loadedJob][jobIY]);
             cache_get_value_float(i, "jobIZ", jInfo[loadedJob][jobIZ]);
-            CreateDynamicPickup(1239, 1, jInfo[loadedJob][jobIX], jInfo[loadedJob][jobIY], jInfo[loadedJob][jobIZ], -1);
+            jobPickup[loadedJob] = CreateDynamicPickup(1239, 1, jInfo[loadedJob][jobIX], jInfo[loadedJob][jobIY], jInfo[loadedJob][jobIZ], -1);
             loadedJob++;
             //`CreateDynamicPickup(19526, 1, factionInfo[i][facX], factionInfo[i][facY], factionInfo[i][facZ], 0, 0);
 
@@ -519,8 +826,9 @@ public JobsReceived() {
             cache_get_value_float(i, "jobIX", jInfo[loadedJob][jobIX]);
             cache_get_value_float(i, "jobIY", jInfo[loadedJob][jobIY]);
             cache_get_value_float(i, "jobIZ", jInfo[loadedJob][jobIZ]);
-            CreateDynamicPickup(1239, 1, jInfo[loadedJob][jobIX], jInfo[loadedJob][jobIY], jInfo[loadedJob][jobIZ], -1);
+            jobPickup[loadedJob] = CreateDynamicPickup(1239, 1, jInfo[loadedJob][jobIX], jInfo[loadedJob][jobIY], jInfo[loadedJob][jobIZ], -1);
             loadedJob++;
+
         }
         printf("** [MYSQL]:Loaded %d jobs from the database.", cache_num_rows());
 
@@ -555,6 +863,79 @@ public OnPlayerConnect(playerid) {
 
     mysql_format(db_handle, query, sizeof(query), "SELECT * FROM `accounts` where `pName` = '%s'", name); // Get the player's name
     mysql_tquery(db_handle, query, "checkIfExists", "d", playerid); // Send to check if exists function
+
+
+    // remove buildings
+
+    VEHSTUFF[playerid][0] = CreatePlayerTextDraw(playerid, 595.000000, 359.000000, "~n~~n~~n~");
+    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][0], 1);
+    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][0], -0.004166, 1.500000);
+    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][0], 483.500000, 93.500000);
+    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][0], 1);
+    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][0], 0);
+    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][0], 1);
+    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][0], -1);
+    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][0], 255);
+    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][0], 50);
+    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][0], 1);
+    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][0], 1);
+    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][0], 0);
+
+    VEHSTUFF[playerid][1] = CreatePlayerTextDraw(playerid, 492.000000, 359.000000, "NAME:~n~SPEED:~n~FUEL:~n~");
+    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][1], 1);
+    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][1], 0.370833, 1.500000);
+    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][1], 163.500000, 88.500000);
+    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][1], 1);
+    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][1], 0);
+    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][1], 1);
+    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][1], -2686721);
+    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][1], 255);
+    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][1], 50);
+    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][1], 0);
+    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][1], 1);
+    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][1], 0);
+
+    VEHSTUFF[playerid][2] = CreatePlayerTextDraw(playerid, 533.000000, 361.000000, "INFERNUS");
+    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][2], 1);
+    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][2], 0.320832, 1.100000);
+    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][2], 400.000000, 17.000000);
+    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][2], 1);
+    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][2], 0);
+    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][2], 1);
+    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][2], -1);
+    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][2], 255);
+    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][2], 50);
+    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][2], 0);
+    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][2], 1);
+    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][2], 0);
+
+    VEHSTUFF[playerid][3] = CreatePlayerTextDraw(playerid, 581.000000, 376.000000, "0 KM/H");
+    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][3], 1);
+    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][3], 0.320832, 1.100000);
+    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][3], 400.000000, 17.000000);
+    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][3], 1);
+    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][3], 0);
+    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][3], 3);
+    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][3], -1);
+    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][3], 255);
+    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][3], 50);
+    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][3], 0);
+    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][3], 1);
+    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][3], 0);
+
+    VEHSTUFF[playerid][4] = CreatePlayerTextDraw(playerid, 558.000000, 389.000000, "0 L");
+    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][4], 1);
+    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][4], 0.320832, 1.100000);
+    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][4], 400.000000, 17.000000);
+    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][4], 1);
+    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][4], 0);
+    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][4], 3);
+    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][4], -1);
+    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][4], 255);
+    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][4], 50);
+    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][4], 0);
+    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][4], 1);
+    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][4], 0);
     return 1;
 }
 
@@ -593,6 +974,10 @@ public checkIfExists(playerid) {
 public OnPlayerDisconnect(playerid, reason) {
     if(pInfo[playerid][LoggedIn] == true) {
         SavePlayerData(playerid);
+
+        if(pInfo[playerid][RentingVehicle] != INVALID_VEHICLE_ID) {
+            UnrentVehicle(playerid, pInfo[playerid][RentingVehicle]);
+        }
         printf("** [MYSQL] Player:%s data has been saved! Disconnecting user...", GetName(playerid));
         pInfo[playerid][LoggedIn] = false;
     }
@@ -673,6 +1058,7 @@ public OnPlayerSpawn(playerid) {
     if(pInfo[playerid][LoggedIn] == true) {
         pInfo[playerid][pMuted] = 0;
         pInfo[playerid][CurrentState] = 0;
+        pInfo[playerid][RentingVehicle] = INVALID_VEHICLE_ID;
 
         SetTimerEx("SavePlayerData", 300000, false, "ds", playerid, "SA-MP"); //called "function" when 5 mins elapsed
         SetTimerEx("payPlayerTimer", 30000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
@@ -681,6 +1067,7 @@ public OnPlayerSpawn(playerid) {
 }
 
 public OnPlayerDeath(playerid, killerid, reason) {
+    HideSpeedoTextdraws(playerid);
     return 1;
 }
 
@@ -855,6 +1242,9 @@ CMD:startjob(playerid, params[]) {
     Must be in range of predefined point of rubbish, maybe have 10-20 garbage points which are randomly selected on entering the created checkpoint?
     */
     if(pInfo[playerid][pJobId] == 2) {
+        DestroyDynamicCP(GarbageCheckpoint[0]);
+        DestroyDynamicCP(PostCheckpoint[0]);
+        DestroyDynamicCP(dumpCheckPoint[0]);
         for (new i = 0; i < loadedJob; i++) {
             if(jInfo[i][jID] == 2) {
                 if(IsPlayerInRangeOfPoint(playerid, 10, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ])) {
@@ -879,34 +1269,39 @@ CMD:startjob(playerid, params[]) {
 
 CMD:collect(playerid, params[]) {
     if(pInfo[playerid][pJobId] == 2) {
-        if(IsPlayerInDynamicCP(playerid, GarbageCheckpoint[0])) {
-            if(pInfo[playerid][CurrentState] == 1) {
-                if(pInfo[playerid][GarbageState] <= 19) {
-                    DestroyDynamicCP(GarbageCheckpoint[0]);
-                    new rand = random(6 - 3) + 2;
-                    new string[256];
-                    for (new i = 0; i < loadedJob; i++) {
-                        if(jInfo[i][jID] == 2) {
-                            format(string, sizeof(string), "You have taken:%d garbage bags! \n\nYou can take them straight to the Dump (marked 'D' on the minimap), or continue to the next checkpoint!\n\nThe current price for one garbage bag is:%d", rand, jInfo[i][jPay]);
-                            pInfo[playerid][GarbageState] += rand;
-                            Dialog_Show(playerid, DIALOG_COLLECT, DIALOG_STYLE_MSGBOX, "Garbageman Job", string, "Continue", "");
-                            return 1;
+        new vehicleid = GetPlayerVehicleID(playerid);
+        if(vehicleid == 0) {
+            if(IsPlayerInDynamicCP(playerid, GarbageCheckpoint[0])) {
+                if(pInfo[playerid][CurrentState] == 1) {
+                    if(pInfo[playerid][GarbageState] <= 19) {
+                        DestroyDynamicCP(GarbageCheckpoint[0]);
+                        new rand = random(6 - 3) + 2;
+                        new string[256];
+                        for (new i = 0; i < loadedJob; i++) {
+                            if(jInfo[i][jID] == 2) {
+                                format(string, sizeof(string), "You have taken %d garbage bags! \n\nYou can take them straight to the Dump (marked 'D' on the minimap), or continue to the next checkpoint!\n\nThe current price for one garbage bag is $%d", rand, jInfo[i][jPay]);
+                                pInfo[playerid][GarbageState] += rand;
+                                Dialog_Show(playerid, DIALOG_COLLECT, DIALOG_STYLE_MSGBOX, "Garbageman Job", string, "Continue", "");
+                                return 1;
+                            }
                         }
-                    }
-                } else {
-                    /* Player must now go to the dump, and use /dump cmd at info point 
-                        Need to define dump point
-                        Need to set player pay after the dump is complete. Longer job = better pay
-                    */
+                    } else {
+                        /* Player must now go to the dump, and use /dump cmd at info point 
+                            Need to define dump point
+                            Need to set player pay after the dump is complete. Longer job = better pay
+                        */
 
-                    DestroyDynamicCP(GarbageCheckpoint[0]);
-                    dumpCheckPoint[0] = CreateDynamicCP(281.7589, 1411.7045, 9.8603, 2, -1, -1, -1, 10000);
-                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You cannot hold any more garbage bags! Please visit the dump marked on the minimap!");
+                        DestroyDynamicCP(GarbageCheckpoint[0]);
+                        dumpCheckPoint[0] = CreateDynamicCP(281.7589, 1411.7045, 9.8603, 2, -1, -1, -1, 10000);
+                        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You cannot hold any more garbage bags! Please visit the dump marked on the minimap!");
+                    }
                 }
+            } else {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not at a Garbage collection point, check your minimap for the next point!");
+                return 1;
             }
         } else {
-            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not at a Garbage collection point, check your minimap for the next point!");
-            return 1;
+            return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You must be on foot to collect garbage!");
         }
     } else {
         TextDrawShowForPlayer(playerid, CantCommand);
@@ -918,26 +1313,31 @@ CMD:collect(playerid, params[]) {
 CMD:dump(playerid, params[]) {
     if(IsPlayerInRangeOfPoint(playerid, 10, 281.7589, 1411.7045, 9.8603)) {
         if(pInfo[playerid][pJobId] == 2) {
-            if(pInfo[playerid][CurrentState] == 1) { // if started job
-                if(pInfo[playerid][GarbageState] >= 1) {
-                    for (new i = 0; i < loadedJob; i++) {
-                        if(jInfo[i][jID] == 2) {
-                            new totalPay, string[256];
-                            pInfo[playerid][CurrentState] = 0; // finish job
-                            totalPay = pInfo[playerid][GarbageState] * jInfo[i][jPay];
-                            pInfo[playerid][pJobPay] += totalPay;
+            new vehicleid = GetPlayerVehicleID(playerid);
+            if(vehicleid == 0) {
+                if(pInfo[playerid][CurrentState] == 1) { // if started job
+                    if(pInfo[playerid][GarbageState] >= 1) {
+                        for (new i = 0; i < loadedJob; i++) {
+                            if(jInfo[i][jID] == 2) {
+                                new totalPay, string[256];
+                                pInfo[playerid][CurrentState] = 0; // finish job
+                                totalPay = pInfo[playerid][GarbageState] * jInfo[i][jPay];
+                                pInfo[playerid][pJobPay] += totalPay;
 
-                            format(string, sizeof(string), "Thank you for collecting %d garbage bags!\n\nReturn to the depot to resume collecting!\n\nYou will receive:$%d on your next paycheck!", pInfo[playerid][GarbageState], totalPay);
-                            Dialog_Show(playerid, DIALOG_DUMP, DIALOG_STYLE_MSGBOX, "Job Complete!", string, "Continue", "");
+                                format(string, sizeof(string), "Thank you for collecting %d garbage bags!\n\nReturn to the depot to resume collecting!\n\nYou will receive $%d on your next paycheck!", pInfo[playerid][GarbageState], totalPay);
+                                Dialog_Show(playerid, DIALOG_DUMP, DIALOG_STYLE_MSGBOX, "Job Complete!", string, "Continue", "");
 
-                            pInfo[playerid][GarbageState] = 0;
-                            return 1;
+                                pInfo[playerid][GarbageState] = 0;
+                                return 1;
+                            }
                         }
+                    } else {
+                        TextDrawShowForPlayer(playerid, NoBinBags);
+                        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
                     }
-                } else {
-                    TextDrawShowForPlayer(playerid, NoBinBags);
-                    SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
                 }
+            } else {
+                return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You must be on foot to dump your collected garbage!");
             }
         } else {
             TextDrawShowForPlayer(playerid, CantCommand);
@@ -951,7 +1351,7 @@ CMD:endjob(playerid, params[]) {
     if(pInfo[playerid][pJobId] >= 1) {
         // affect all jobs
         if(pInfo[playerid][CurrentState] == 1) {
-            Dialog_Show(playerid, DIALOG_ENDJOB, DIALOG_STYLE_MSGBOX, "Ending job...", "Are you sure you want to end this current job?\n\nWARNING:This will forfeit ALL of your collected garbage bags/newspapers!", "Yes", "No");
+            Dialog_Show(playerid, DIALOG_ENDJOB, DIALOG_STYLE_MSGBOX, "Ending job...", "Are you sure you want to end this current job?\n\nWARNING - This will forfeit ALL of your collected garbage bags/newspapers!", "Yes", "No");
         } else {
             TextDrawShowForPlayer(playerid, CantCommand);
             SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
@@ -966,7 +1366,7 @@ CMD:endjob(playerid, params[]) {
 forward public OnJobCreated(playerid, joName[32]);
 public OnJobCreated(playerid, joName[32]) {
     new string[256];
-    format(string, sizeof(string), "[SERVER]:{FFFFFF} Job:%s(%d) has been created!", joName, cache_insert_id());
+    format(string, sizeof(string), "[SERVER]:{FFFFFF} Job %s(%d) has been created!", joName, cache_insert_id());
     SendClientMessage(playerid, -1, string); {
         LoadNewJobData(cache_insert_id());
     }
@@ -981,15 +1381,250 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 }
 
 public OnPlayerEnterVehicle(playerid, vehicleid, ispassenger) {
+
+    new modelid;
+    modelid = GetVehicleModel(vehicleid);
+    if(!ispassenger) {
+        if(modelid != 481) {
+            // display vehicle speedo stuff
+            PlayerTextDrawShow(playerid, VEHSTUFF[playerid][0]);
+            PlayerTextDrawShow(playerid, VEHSTUFF[playerid][1]);
+            PlayerTextDrawShow(playerid, VEHSTUFF[playerid][2]);
+            PlayerTextDrawShow(playerid, VEHSTUFF[playerid][3]);
+            PlayerTextDrawShow(playerid, VEHSTUFF[playerid][4]);
+
+            new vehName[32];
+            format(vehName, sizeof(vehName), "%s", GetVehicleName(vehicleid));
+            PlayerTextDrawSetString(playerid, VEHSTUFF[playerid][2], vehName);
+            new fuel[32];
+            for (new i = 0; i < loadedVeh; i++) {
+                if(vInfo[i][vID] == vehicleid) {
+                    format(fuel, sizeof(fuel), "%d L", vInfo[i][vFuel]);
+                    PlayerTextDrawSetString(playerid, VEHSTUFF[playerid][4], fuel);
+                }
+            }
+
+            speedoTimer[playerid] = SetTimerEx("GetVehicleSpeed", 100, false, "dd", playerid);
+            fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 9000, false, "dd", playerid, GetPlayerVehicleID(playerid));
+        }
+    }
+    return 1;
+}
+
+
+forward public SetVehicleFuel(playerid, vehid);
+public SetVehicleFuel(playerid, vehid) {
+    for (new i = 0; i < loadedVeh; i++) {
+        if(vInfo[i][vID] == GetPlayerVehicleID(playerid)) {
+            new engine, lights, alarm, doors, bonnet, boot, objective;
+            GetVehicleParamsEx(vInfo[i][vID], engine, lights, alarm, doors, bonnet, boot, objective); //will check that what is the state of the engine.
+            if(engine == 1) {
+                if(vInfo[i][vFuel] > 2) {
+                    vInfo[i][vFuel]--;
+                    new fuel[32];
+                    format(fuel, sizeof(fuel), "%d L", vInfo[i][vFuel]);
+                    PlayerTextDrawSetString(playerid, VEHSTUFF[playerid][4], fuel);
+                    fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 9000, false, "dd", playerid, vehid);
+                } else {
+                    SetVehicleParamsEx(vInfo[i][vID], false, lights, alarm, doors, bonnet, boot, objective); //will check that what is the state of the engine.
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle does not have enough fuel!");
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+forward public GetVehicleSpeed(playerid);
+public GetVehicleSpeed(playerid) {
+    new Float:x, Float:y, Float:z;
+    new Float:speed, Float:final_speed;
+    new vehSpeed[32];
+    GetVehicleVelocity(GetPlayerVehicleID(playerid), x, y, z);
+    speed = floatsqroot(((x * x) + (y * y)) + (z * z)) * 100;
+    final_speed = floatround(speed, floatround_round);
+
+    format(vehSpeed, sizeof(vehSpeed), "%.0f MPH", final_speed);
+    PlayerTextDrawSetString(playerid, VEHSTUFF[playerid][3], vehSpeed);
+    SetTimerEx("GetVehicleSpeed", 100, false, "dd", playerid);
+    return 1;
+}
+
+forward public HideSpeedoTextdraws(playerid);
+public HideSpeedoTextdraws(playerid) {
+    PlayerTextDrawHide(playerid, VEHSTUFF[playerid][0]);
+    PlayerTextDrawHide(playerid, VEHSTUFF[playerid][1]);
+    PlayerTextDrawHide(playerid, VEHSTUFF[playerid][2]);
+    PlayerTextDrawHide(playerid, VEHSTUFF[playerid][3]);
+    PlayerTextDrawHide(playerid, VEHSTUFF[playerid][4]);
+    KillTimer(speedoTimer[playerid]);
+    KillTimer(fuelTimer[playerid]);
     return 1;
 }
 
 public OnPlayerExitVehicle(playerid, vehicleid) {
+    HideSpeedoTextdraws(playerid);
     return 1;
 }
 
+
 public OnPlayerStateChange(playerid, newstate, oldstate) {
+    new vehicleid, name[32];
+    GetPlayerName(playerid, name, sizeof(name));
+
+    vehicleid = GetPlayerVehicleID(playerid); // check vehicle id;
+    vehicleid -= 1; // taking one away to select correct veh;
+
+    if(newstate == PLAYER_STATE_DRIVER) { // IF PLAYER IS DRIVER
+        if(vInfo[vehicleid][vJobId] != pInfo[playerid][pJobId]) { // check if player job vehicle
+            if(vInfo[vehicleid][vRentalState] == VEHICLE_RENTABLE && vInfo[vehicleid][vRented] == VEHICLE_NOT_RENTED) { // check if vehicle is rentable + not rented NOT JOB RENTAL{
+                RemovePlayerFromVehicle(playerid);
+                PlayerTextDrawHide(playerid, VEHSTUFF[playerid][0]);
+                PlayerTextDrawHide(playerid, VEHSTUFF[playerid][1]);
+                PlayerTextDrawHide(playerid, VEHSTUFF[playerid][2]);
+                PlayerTextDrawHide(playerid, VEHSTUFF[playerid][3]);
+                PlayerTextDrawHide(playerid, VEHSTUFF[playerid][4]);
+                return 1;
+            }
+            RemovePlayerFromVehicle(playerid);
+            return 1;
+        }
+        if(vInfo[vehicleid][vRentalState] == VEHICLE_RENTABLE && vInfo[vehicleid][vRented] == VEHICLE_NOT_RENTED) { // check if vehicle is rentable + not rented NOT JOB RENTAL{
+            new string[256];
+            format(string, sizeof(string), "[SERVER]:{FFFFFF} This vehicle is rentable for {00FF00}$%d{FFFFFF}. Type /rentcar to rent it.", vInfo[vehicleid][vRentalPrice]);
+            SendClientMessage(playerid, SERVERCOLOR, string);
+            TurnVehicleEngineOff(vehicleid + 1);
+            return 1;
+        }
+        if(vInfo[vehicleid][vJobId] == pInfo[playerid][pJobId]) { // check if player job vehicle
+            if(vInfo[vehicleid][vRentalState] == VEHICLE_RENTABLE && vInfo[vehicleid][vRented] == VEHICLE_NOT_RENTED) { // check if vehicle is rentable + not rented NOT JOB RENTAL{
+                new string[256];
+                format(string, sizeof(string), "[SERVER]:{FFFFFF} This vehicle is rentable for {00FF00}$%d{FFFFFF}. Type /rentcar to rent it.", vInfo[vehicleid][vRentalPrice]);
+                SendClientMessage(playerid, SERVERCOLOR, string);
+                TurnVehicleEngineOff(vehicleid + 1);
+                return 1;
+            }
+        }
+
+        if(!strcmp(name, vInfo[vehicleid][vOwner]))
+            SendClientMessage(playerid, GREY, "must be a player veh");
+        return 1;
+    }
     return 1;
+}
+CMD:rentcar(playerid, params[]) {
+    new vehicleid;
+    vehicleid = GetPlayerVehicleID(playerid);
+
+    if(vehicleid == 0) {
+        return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not in a vehicle!");
+    }
+    vehicleid -= 1;
+    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Checking if vehicle is rentable....");
+    SetTimerEx("RentCar", 1800, false, "dd", playerid, vehicleid);
+    return 1;
+}
+CMD:unrentcar(playerid, params[]) {
+    if(pInfo[playerid][RentingVehicle] != INVALID_VEHICLE_ID) {
+        if(GetPlayerState(playerid) == PLAYER_STATE_DRIVER) {
+            UnrentPlayerVehicle(playerid);
+            return 1;
+        } else {
+            return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You must be in your rented vehicle to use this command!");
+        }
+    } else {
+        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not renting a vehicle!");
+        return 1;
+    }
+}
+
+/* vehicle cmds */
+
+CMD:engine(playerid, params[]) {
+    new engine, lights, alarm, doors, bonnet, boot, objective;
+    new vid, nname[32], string[256];
+
+    vid = GetPlayerVehicleID(playerid);
+    GetVehicleParamsEx(vid, engine, lights, alarm, doors, bonnet, boot, objective);
+    format(nname, sizeof(nname), "%s", GetName(playerid));
+    for (new i = 0; i < loadedVeh; i++) {
+        if(vInfo[i][vID] == GetPlayerVehicleID(playerid)) // if player in vehicle?
+        {
+            if(GetPlayerState(playerid) == PLAYER_STATE_DRIVER) { // if player driver
+                GetVehicleParamsEx(vid, engine, lights, alarm, doors, bonnet, boot, objective); //will check that what is the state of the engine.
+                if(vInfo[i][vRentingPlayer] == playerid) { // if rented by player
+                    if(engine == 1) {
+                        SetVehicleParamsEx(vid, false, lights, alarm, doors, bonnet, boot, objective);
+                        format(string, sizeof(string), "* %s takes their key from the igntion and turns the engine off.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        KillTimer(fuelTimer[playerid]);
+                        return 1;
+                    } else {
+                        SetVehicleParamsEx(vid, true, lights, alarm, doors, bonnet, boot, objective);
+                        format(string, sizeof(string), "* %s inserts their key into the ignition and starts the engine.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 9000, false, "dd", playerid, vInfo[i][vID]);
+                        return 1;
+                    }
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+forward public UnrentPlayerVehicle(playerid);
+forward public UnrentVehicle(playerid, vehicleid);
+public UnrentPlayerVehicle(playerid) {
+    UnrentVehicle(playerid, pInfo[playerid][RentingVehicle]);
+    pInfo[playerid][RentingVehicle] = INVALID_VEHICLE_ID;
+    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have unrented your vehicle!");
+    return 1;
+}
+public UnrentVehicle(playerid, vehicleid) {
+    vInfo[vehicleid][vRented] = VEHICLE_NOT_RENTED;
+    vInfo[vehicleid][vRentalState] = VEHICLE_RENTABLE;
+    vInfo[vehicleid][vRentingPlayer] = INVALID_PLAYER_ID;
+    TurnVehicleEngineOff(vehicleid);
+    HideSpeedoTextdraws(playerid);
+    RemovePlayerFromVehicle(playerid);
+    SetVehicleToRespawn(vehicleid + 1);
+    printf("** Unrenting vehicle..");
+    return 1;
+}
+
+forward public RentCar(playerid, vehicleid);
+public RentCar(playerid, vehicleid) {
+    if(GetPlayerState(playerid) == PLAYER_STATE_DRIVER) {
+        if(pInfo[playerid][RentingVehicle] != INVALID_VEHICLE_ID) {
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are already renting a vehicle.");
+            return 1;
+        }
+        if(vInfo[vehicleid][vRentalState] == VEHICLE_NOT_RENTABLE) {
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle is not rentable.");
+            return 1;
+        }
+        if(vInfo[vehicleid][vRented] == VEHICLE_RENTED || vInfo[vehicleid][vRentingPlayer] != INVALID_PLAYER_ID) {
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle is already rented.");
+            return 1;
+        }
+        if(GetPlayerMoney(playerid) < vInfo[vehicleid][vRentalPrice]) {
+            new string[256];
+            format(string, sizeof(string), "[SERVER]:{FFFFFF} You need {00FF00}$%d {FFFFFF}to rent this vehicle, you only have {00FF00}$%d{FFFFFF}.", vInfo[vehicleid][vRentalPrice], GetPlayerMoney(playerid));
+            SendClientMessage(playerid, SERVERCOLOR, string);
+            return 1;
+        }
+
+        GivePlayerMoney(playerid, -vInfo[vehicleid][vRentalPrice]);
+        pInfo[playerid][RentingVehicle] = vehicleid;
+        vInfo[vehicleid][vRented] = VEHICLE_RENTED;
+        vInfo[vehicleid][vRentingPlayer] = playerid;
+        TurnVehicleEngineOff(vehicleid);
+        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have rented the vehicle.");
+        return 1;
+    } else {
+        return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not in a vehicle! (This vehicle may be job-specific)");
+    }
 }
 
 public OnPlayerEnterCheckpoint(playerid) {
@@ -1056,6 +1691,33 @@ public OnPlayerObjectMoved(playerid, objectid) {
 }
 
 public OnPlayerPickUpPickup(playerid, pickupid) {
+    if(pickupid == dumpPickup) {
+        if(pInfo[playerid][pJobId] == 2) {
+            GameTextForPlayer(playerid, "/dump", 3000, 5);
+            return 1;
+        }
+    }
+    return 1;
+}
+
+public OnPlayerPickUpDynamicPickup(playerid, pickupid) { // check if player picked up pickup
+    if(pickupid == jobPickup[pickupid-1]) {
+        if(pInfo[playerid][pJobId] == jobPickup[pickupid-1]) {
+            if(pInfo[playerid][pJobId] == 1) {
+                GameTextForPlayer(playerid, "/takepost", 3000, 5);
+                return 1;
+            }
+            if(pInfo[playerid][pJobId] == 2) {
+                GameTextForPlayer(playerid, "/startjob", 3000, 5);
+                return 1;
+            }
+            return 1;
+        }
+        if(pInfo[playerid][pJobId] == 0) {
+            GameTextForPlayer(playerid, "/takejob", 3000, 5);
+            return 1;
+        }
+    }
     return 1;
 }
 
@@ -1695,6 +2357,21 @@ stock KickWithMessage(playerid, message[]) {
 
 /*Text formatting*/
 
+stock nearByAction(playerid, color, string[], Float:Distance = 12.0) {
+    new
+    Float:nbCoords[3]; // Variable to store the position of the main player
+
+    GetPlayerPos(playerid, nbCoords[0], nbCoords[1], nbCoords[2]); // Getting the main position
+
+    for (new i = 0; i < MAX_PLAYERS; i++) {
+        if(IsPlayerInRangeOfPoint(i, Distance, nbCoords[0], nbCoords[1], nbCoords[2]) && (GetPlayerVirtualWorld(i) == GetPlayerVirtualWorld(playerid))) { // Confirming if the player being looped is within range and is in the same virtual world and interior as the main player
+            SendClientMessage(i, color, string); // Sending them the message if all checks out
+        }
+    }
+
+    return 1;
+}
+
 forward public nearByMessage(playerid, color, string[], Float:Distance);
 public nearByMessage(playerid, color, string[], Float:Distance) {
     new
@@ -1780,6 +2457,11 @@ stock RPName(playerid) {
     return szName;
 }
 
+stock GetVehicleName(vehicleid) {
+    new String[256];
+    format(String, sizeof(String), "%s", VehicleNames[GetVehicleModel(vehicleid) - 400]);
+    return String;
+}
 
 stock ReturnStats(playerid, target) {
     new string[256];
@@ -1803,6 +2485,12 @@ stock ReturnStats(playerid, target) {
     return 1;
 }
 
+
+stock TurnVehicleEngineOff(vehicleid) {
+    new engine, lights, alarm, doors, bonnet, boot, objective;
+    GetVehicleParamsEx(vehicleid, engine, lights, alarm, doors, bonnet, boot, objective);
+    SetVehicleParamsEx(vehicleid, VEHICLE_PARAMS_OFF, lights, alarm, doors, bonnet, boot, objective);
+}
 
 forward public RemoveTextdrawAfterTime(playerid);
 public RemoveTextdrawAfterTime(playerid) {
