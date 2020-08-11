@@ -15,6 +15,7 @@
 #define lenull(%1) \
 ((!( % 1[0])) || ((( % 1[0]) == '\1') && (!( % 1[1]))))
 #define MAX_JOBS 50
+#define MAX_FACTIONS 50
 
 
 #define GREY 			0xCECECEFF
@@ -336,6 +337,11 @@ enum ENUM_PLAYER_DATA {
         pBank,
         pCash,
         pPayTimer,
+
+        pFactionId,
+        pFactionRank,
+        pFactionRankname[32],
+
         pJobId,
         pJobPay,
 
@@ -384,6 +390,18 @@ enum ENUM_VEH_DATA {
 }
 new vInfo[500][ENUM_VEH_DATA], loadedVeh;
 
+enum ENUM_FAC_DATA {
+    fID[32],
+    fType, // 1 = gang 2 = legal
+    fRank1Name[32],
+    fRank2Name[32],
+    fRank3Name[32],
+    fRank4Name[32],
+    fRank5Name[32],
+    fRank6Name[32],
+    fRank7Name[32],
+}
+new fInfo[MAX_FACTIONS][ENUM_FAC_DATA], loadedFac;
 
 public OnGameModeInit() {
     mysql_log(ALL);
@@ -1047,6 +1065,9 @@ public SavePlayerData(playerid) {
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pJobId` = '%d', `pJobPay` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pJobId], pInfo[playerid][pJobPay], GetName(playerid));
     mysql_query(db_handle, query);
 
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pFactionId` = '%d', `pFactionRank` = '%d', `pFactionRankname` = '%e' WHERE `pName` = '%e'", pInfo[playerid][pFactionId], pInfo[playerid][pFactionRank], pInfo[playerid][pFactionRankname], GetName(playerid));
+    mysql_query(db_handle, query);
+
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAdminLevel` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pAdminLevel], GetName(playerid));
     mysql_query(db_handle, query);
     SetTimerEx("SavePlayerData", 300000, false, "ds", playerid, "SA-MP"); //called "function" when 5 mins elapsed
@@ -1701,8 +1722,8 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 }
 
 public OnPlayerPickUpDynamicPickup(playerid, pickupid) { // check if player picked up pickup
-    if(pickupid == jobPickup[pickupid-1]) {
-        if(pInfo[playerid][pJobId] == jobPickup[pickupid-1]) {
+    if(pickupid == jobPickup[pickupid - 1]) {
+        if(pInfo[playerid][pJobId] == jobPickup[pickupid - 1]) {
             if(pInfo[playerid][pJobId] == 1) {
                 GameTextForPlayer(playerid, "/takepost", 3000, 5);
                 return 1;
@@ -2471,6 +2492,10 @@ stock ReturnStats(playerid, target) {
     SendClientMessage(playerid, SPECIALORANGE, string);
     if(pInfo[playerid][pJobId] == 0) {
         format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID: N/A | Job name: N/A", pInfo[target][pJobId]);
+        SendClientMessage(playerid, SPECIALORANGE, string);
+    }
+    if(pInfo[playerid][pFactionId] == 0) {
+        format(string, sizeof(string), "[SERVER]:{ABCDEF} Faction (0): N/A | Ranknam: N/A", pInfo[target][pJobId]);
         SendClientMessage(playerid, SPECIALORANGE, string);
     }
     for (new i = 0; i < loadedJob; i++) {
