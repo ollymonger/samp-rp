@@ -42,6 +42,8 @@ new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS], GarbageCheckpoint[M
 new dumpCheckPoint[MAX_PLAYERS];
 new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS];
 
+new dumpPickup, jobPickup[MAX_JOBS];
+
 new PlayerText:VEHSTUFF[MAX_PLAYERS][5];
 new Text:PublicTD[3];
 new Text:sheriffsoffice[4];
@@ -403,7 +405,7 @@ public OnGameModeInit() {
     LoadVehicleData();
 
     // DUMP 
-    CreateDynamicPickup(1239, 1, 281.7589, 1411.7045, 10.5003, -1);
+    dumpPickup = CreatePickup(1239, 1, 281.7589, 1411.7045, 10.5003, -1);
 
     /* POSTMAN
     CreateDynamicObject(17038, -94.66439, 1130.53223, 18.72370, 0.00000, 0.00000, 180.00000);
@@ -804,7 +806,7 @@ public newJob() {
             cache_get_value_float(i, "jobIX", jInfo[loadedJob][jobIX]);
             cache_get_value_float(i, "jobIY", jInfo[loadedJob][jobIY]);
             cache_get_value_float(i, "jobIZ", jInfo[loadedJob][jobIZ]);
-            CreateDynamicPickup(1239, 1, jInfo[loadedJob][jobIX], jInfo[loadedJob][jobIY], jInfo[loadedJob][jobIZ], -1);
+            jobPickup[loadedJob] = CreateDynamicPickup(1239, 1, jInfo[loadedJob][jobIX], jInfo[loadedJob][jobIY], jInfo[loadedJob][jobIZ], -1);
             loadedJob++;
             //`CreateDynamicPickup(19526, 1, factionInfo[i][facX], factionInfo[i][facY], factionInfo[i][facZ], 0, 0);
 
@@ -824,8 +826,9 @@ public JobsReceived() {
             cache_get_value_float(i, "jobIX", jInfo[loadedJob][jobIX]);
             cache_get_value_float(i, "jobIY", jInfo[loadedJob][jobIY]);
             cache_get_value_float(i, "jobIZ", jInfo[loadedJob][jobIZ]);
-            CreateDynamicPickup(1239, 1, jInfo[loadedJob][jobIX], jInfo[loadedJob][jobIY], jInfo[loadedJob][jobIZ], -1);
+            jobPickup[loadedJob] = CreateDynamicPickup(1239, 1, jInfo[loadedJob][jobIX], jInfo[loadedJob][jobIY], jInfo[loadedJob][jobIZ], -1);
             loadedJob++;
+
         }
         printf("** [MYSQL]:Loaded %d jobs from the database.", cache_num_rows());
 
@@ -1267,7 +1270,7 @@ CMD:startjob(playerid, params[]) {
 CMD:collect(playerid, params[]) {
     if(pInfo[playerid][pJobId] == 2) {
         new vehicleid = GetPlayerVehicleID(playerid);
-        if(vehicleid == 0){
+        if(vehicleid == 0) {
             if(IsPlayerInDynamicCP(playerid, GarbageCheckpoint[0])) {
                 if(pInfo[playerid][CurrentState] == 1) {
                     if(pInfo[playerid][GarbageState] <= 19) {
@@ -1311,7 +1314,7 @@ CMD:dump(playerid, params[]) {
     if(IsPlayerInRangeOfPoint(playerid, 10, 281.7589, 1411.7045, 9.8603)) {
         if(pInfo[playerid][pJobId] == 2) {
             new vehicleid = GetPlayerVehicleID(playerid);
-            if(vehicleid == 0 ){
+            if(vehicleid == 0) {
                 if(pInfo[playerid][CurrentState] == 1) { // if started job
                     if(pInfo[playerid][GarbageState] >= 1) {
                         for (new i = 0; i < loadedJob; i++) {
@@ -1688,6 +1691,33 @@ public OnPlayerObjectMoved(playerid, objectid) {
 }
 
 public OnPlayerPickUpPickup(playerid, pickupid) {
+    if(pickupid == dumpPickup) {
+        if(pInfo[playerid][pJobId] == 2) {
+            GameTextForPlayer(playerid, "/dump", 3000, 5);
+            return 1;
+        }
+    }
+    return 1;
+}
+
+public OnPlayerPickUpDynamicPickup(playerid, pickupid) { // check if player picked up pickup
+    if(pickupid == jobPickup[pickupid-1]) {
+        if(pInfo[playerid][pJobId] == jobPickup[pickupid-1]) {
+            if(pInfo[playerid][pJobId] == 1) {
+                GameTextForPlayer(playerid, "/takepost", 3000, 5);
+                return 1;
+            }
+            if(pInfo[playerid][pJobId] == 2) {
+                GameTextForPlayer(playerid, "/startjob", 3000, 5);
+                return 1;
+            }
+            return 1;
+        }
+        if(pInfo[playerid][pJobId] == 0) {
+            GameTextForPlayer(playerid, "/takejob", 3000, 5);
+            return 1;
+        }
+    }
     return 1;
 }
 
