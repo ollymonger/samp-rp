@@ -392,14 +392,15 @@ new vInfo[500][ENUM_VEH_DATA], loadedVeh;
 
 enum ENUM_FAC_DATA {
     fID[32],
-    fType, // 1 = gang 2 = legal
-    fRank1Name[32],
-    fRank2Name[32],
-    fRank3Name[32],
-    fRank4Name[32],
-    fRank5Name[32],
-    fRank6Name[32],
-    fRank7Name[32],
+        fName[32],
+        fType, // 1 = gang 2 = legal
+        fRank1Name[32],
+        fRank2Name[32],
+        fRank3Name[32],
+        fRank4Name[32],
+        fRank5Name[32],
+        fRank6Name[32],
+        fRank7Name[32],
 }
 new fInfo[MAX_FACTIONS][ENUM_FAC_DATA], loadedFac;
 
@@ -420,6 +421,7 @@ public OnGameModeInit() {
 
 
     LoadJobData();
+    LoadFacData();
     LoadVehicleData();
 
     // DUMP 
@@ -798,6 +800,64 @@ public VehsReceived() {
     }
 }
 
+forward public LoadFacData();
+public LoadFacData() {
+    new DB_Query[900];
+
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `factions`");
+    mysql_tquery(db_handle, DB_Query, "FacsReceived");
+}
+
+forward public LoadNewFacData(id);
+public LoadNewFacData(id) {
+    new DB_Query[900];
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `factions` WHERE `fID` = '%d'", id);
+    mysql_tquery(db_handle, DB_Query, "newFac");
+}
+
+forward public newFac();
+public newFac() {
+
+    if(cache_num_rows() == 0) print("No factions created!");
+    else {
+        for (new i = 0; i < cache_num_rows(); i++) {
+            cache_get_value_int(i, "fID", fInfo[i][fID]);
+            cache_get_value(i, "fName", fInfo[i][fName], 32);
+            cache_get_value(i, "fRank1Name", fInfo[i][fRank1Name], 32);
+            cache_get_value(i, "fRank2Name", fInfo[i][fRank2Name], 32);
+            cache_get_value(i, "fRank3Name", fInfo[i][fRank3Name], 32);
+            cache_get_value(i, "fRank4Name", fInfo[i][fRank4Name], 32);
+            cache_get_value(i, "fRank5Name", fInfo[i][fRank5Name], 32);
+            cache_get_value(i, "fRank6Name", fInfo[i][fRank6Name], 32);
+            cache_get_value(i, "fRank7Name", fInfo[i][fRank7Name], 32);
+            loadedFac++;
+        }
+    }
+    return 1;
+}
+
+forward public FacsReceived();
+public FacsReceived() {
+    if(cache_num_rows() == 0) print("No factions created!");
+    else {
+        for (new i = 0; i < cache_num_rows(); i++) {
+            cache_get_value_int(i, "fID", fInfo[i][fID]);
+            cache_get_value(i, "fName", fInfo[i][fName], 32);
+            cache_get_value(i, "fRank1Name", fInfo[i][fRank1Name], 32);
+            cache_get_value(i, "fRank2Name", fInfo[i][fRank2Name], 32);
+            cache_get_value(i, "fRank3Name", fInfo[i][fRank3Name], 32);
+            cache_get_value(i, "fRank4Name", fInfo[i][fRank4Name], 32);
+            cache_get_value(i, "fRank5Name", fInfo[i][fRank5Name], 32);
+            cache_get_value(i, "fRank6Name", fInfo[i][fRank6Name], 32);
+            cache_get_value(i, "fRank7Name", fInfo[i][fRank7Name], 32);
+            loadedFac++;
+        }
+
+        printf("** [MYSQL]:Loaded %d facs from the database.", cache_num_rows());
+    }
+    return 1;
+}
+
 forward public LoadJobData();
 public LoadJobData() {
     new DB_Query[900];
@@ -805,6 +865,7 @@ public LoadJobData() {
     mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `jobs`");
     mysql_tquery(db_handle, DB_Query, "JobsReceived");
 }
+
 forward public LoadNewJobData(id);
 public LoadNewJobData(id) {
     new DB_Query[900];
@@ -1030,6 +1091,8 @@ public SaveNewPlayerData(playerid, hashed[BCRYPT_HASH_LENGTH]) {
     pInfo[playerid][pBank] = 0;
     pInfo[playerid][pLevel] = 1;
     pInfo[playerid][pExp] = 1;
+    pInfo[playerid][pFactionId] = 0;
+    pInfo[playerid][pFactionRank] = 0;
     pInfo[playerid][pJobId] = 0;
     pInfo[playerid][pJobPay] = 0;
     pInfo[playerid][pPayTimer] = 60;
@@ -2233,6 +2296,9 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pBank", pInfo[playerid][pBank]);
     cache_get_value_int(0, "pCash", pInfo[playerid][pCash]);
     cache_get_value_int(0, "pPayTimer", pInfo[playerid][pPayTimer]);
+    cache_get_value_int(0, "pFactionId", pInfo[playerid][pFactionId]);
+    cache_get_value_int(0, "pFactionRank", pInfo[playerid][pFactionRank]);
+    cache_get_value(0, "pFactionRankname", pInfo[playerid][pFactionRankname], 32);
     cache_get_value_int(0, "pJobId", pInfo[playerid][pJobId]);
     cache_get_value_int(0, "pJobPay", pInfo[playerid][pJobPay]);
 
@@ -2490,12 +2556,18 @@ stock ReturnStats(playerid, target) {
     SendClientMessage(playerid, SPECIALORANGE, string);
     format(string, sizeof(string), "[SERVER]:{ABCDEF} Level: %d (%dexp/8) | Bank: $%d | Cash: $%d | Payment in: %dmins", pInfo[target][pLevel], pInfo[target][pExp], pInfo[target][pBank], pInfo[target][pCash], pInfo[target][pPayTimer]);
     SendClientMessage(playerid, SPECIALORANGE, string);
-    if(pInfo[playerid][pJobId] == 0) {
-        format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID: N/A | Job name: N/A", pInfo[target][pJobId]);
+    if(pInfo[playerid][pFactionId] == 0) {
+        format(string, sizeof(string), "[SERVER]:{ABCDEF} Faction (0): N/A | Ranknam: N/A");
         SendClientMessage(playerid, SPECIALORANGE, string);
     }
-    if(pInfo[playerid][pFactionId] == 0) {
-        format(string, sizeof(string), "[SERVER]:{ABCDEF} Faction (0): N/A | Ranknam: N/A", pInfo[target][pJobId]);
+    for (new i = 0; i < loadedFac; i++) {
+        if(pInfo[playerid][pFactionId] == fInfo[i][fID]) {
+            format(string, sizeof(string), "[SERVER]:{ABCDEF} Faction (%d): %s | Rank: %d | Rankname: %s", pInfo[playerid][pFactionId], ReturnFacName(playerid, pInfo[playerid][pFactionId] - 1), pInfo[playerid][pFactionRank], pInfo[playerid][pFactionRankname]);
+            SendClientMessage(playerid, SPECIALORANGE, string);
+        }
+    }
+    if(pInfo[playerid][pJobId] == 0) {
+        format(string, sizeof(string), "[SERVER]:{ABCDEF} Job ID: N/A | Job name: N/A", pInfo[target][pJobId]);
         SendClientMessage(playerid, SPECIALORANGE, string);
     }
     for (new i = 0; i < loadedJob; i++) {
@@ -2510,6 +2582,18 @@ stock ReturnStats(playerid, target) {
     return 1;
 }
 
+stock ReturnFacName(playerid, facid) {
+    new string[32];
+    /* loop through all factions...
+    getfactionname from faction id?*/
+    for (new i = 0; i < loadedFac; i++) {
+        if(pInfo[playerid][pFactionId] >= 1) {
+            format(string, sizeof(string), "%s", fInfo[facid][fName]);
+            return string;
+        }
+    }
+    return string;
+}
 
 stock TurnVehicleEngineOff(vehicleid) {
     new engine, lights, alarm, doors, bonnet, boot, objective;
