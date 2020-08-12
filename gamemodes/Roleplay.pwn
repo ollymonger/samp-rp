@@ -1242,6 +1242,8 @@ CMD:makeleader(playerid, params[]) {
             SetFactionRanknameByRank(playerid, facid - 1, 7);
             format(string, sizeof(string), "[SERVER]:{FFFFFF} You have made %s the leader of %s.", RPName(target), ReturnFacName(playerid, facid - 1));
             SendClientMessage(playerid, ADMINBLUE, string);
+            format(string, sizeof(string), "[SERVER]:{FFFFFF} You have been made the leader of %s.", ReturnFacName(playerid, facid - 1));
+            SendClientMessage(target, ADMINBLUE, string);
         }
     } else {
         TextDrawShowForPlayer(playerid, CantCommand);
@@ -1614,6 +1616,13 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
                 TurnVehicleEngineOff(vehicleid + 1);
                 return 1;
             }
+        }
+
+        if(vInfo[vehicleid][vJobId] == 0 && vInfo[vehicleid][vFacId] >= 1){
+            if(pInfo[playerid][pFactionId] == vInfo[vehicleid][vFacId]){
+                
+            }
+            RemovePlayerFromVehicle(playerid);
         }
 
         if(!strcmp(name, vInfo[vehicleid][vOwner]))
