@@ -27996,3 +27996,77 @@ v0.3.7-R2, (C)2005-2015 SA-MP Team
 
 [18:13:56]  ===============================
 
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[19:21:12] 
+[19:21:12] Server Plugins
+[19:21:12] --------------
+[19:21:12]  Loading plugin: mysql.dll
+[19:21:12]  >> plugin.mysql: R41-4 successfully loaded.
+[19:21:12]   Loaded.
+[19:21:12]  Loading plugin: crashdetect
+[19:21:12]   CrashDetect plugin 4.20
+[19:21:12]   Loaded.
+[19:21:12]  Loading plugin: streamer
+[19:21:12] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[19:21:12]   Loaded.
+[19:21:12]  Loading plugin: bcrypt-samp.dll
+[19:21:12]   plugin.bcrypt v2.2.3 was loaded.
+[19:21:12]   plugin.bcrypt: 4 cores detected, 3 threads will be used.
+[19:21:12]   Loaded.
+[19:21:12]  Loading plugin: sscanf
+[19:21:12] 
+
+[19:21:12]  ===============================
+
+[19:21:12]       sscanf plugin loaded.     
+
+[19:21:12]          Version:  2.8.3        
+
+[19:21:12]   (c) 2018 Alex "Y_Less" Cole  
+
+[19:21:12]  ===============================
+
+[19:21:12]   Loaded.
+[19:21:12]  Loaded 5 plugins.
+
+[19:21:12] 
+[19:21:12] Filterscripts
+[19:21:12] ---------------
+[19:21:12]   Loading filterscript 'VehicleSpawner.amx'...
+[19:21:12]   Unable to load filterscript 'VehicleSpawner.amx'.
+[19:21:13]   Loaded 0 filterscripts.
+
+[19:21:21] ** [MYSQL] Failed to connect! Exiting gamemode!
+[19:21:21] 
+----------------------------------
+[19:21:21]  Gamemode started... please wait...
+[19:21:21] ----------------------------------
+
+[19:21:21] Number of vehicle models: 0
+[19:21:21] --- Server Shutting Down.
+[19:21:22] plugin.mysql: Unloading plugin...
+[19:21:23] plugin.mysql: Plugin unloaded.
+[19:21:23] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[19:21:23] plugin.bcrypt: Plugin unloaded.
+[19:21:23] 
+
+[19:21:23]  ===============================
+
+[19:21:23]      sscanf plugin unloaded.    
+
+[19:21:23]  ===============================
+

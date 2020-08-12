@@ -46,7 +46,7 @@ new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS], GarbageCheckpoint[M
 new dumpCheckPoint[MAX_PLAYERS];
 new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS];
 
-new dumpPickup, jobPickup[MAX_JOBS];
+new dumpPickup, jobPickup[MAX_JOBS], busStopObject[75];
 
 new PlayerText:VEHSTUFF[MAX_PLAYERS][5];
 new Text:PublicTD[3];
@@ -372,6 +372,19 @@ enum ENUM_JOB_DATA {
 }
 new jInfo[MAX_JOBS][ENUM_JOB_DATA], loadedJob;
 
+enum ENUM_STOP_DATA {
+    stopId[32],
+    stopName[32],
+    routeId,
+    Float:stopX,
+    Float:stopY,
+    Float:stopZ,
+    Float:objX,
+    Float:objY,
+    Float:objZ
+}
+new stopInfo[75][ENUM_STOP_DATA], loadedStop;
+
 enum ENUM_VEH_DATA {
     vID[32],
         vModelId,
@@ -424,6 +437,7 @@ public OnGameModeInit() {
 
 
     LoadJobData();
+    LoadBusStops();
     LoadFacData();
     LoadVehicleData();
 
@@ -929,6 +943,67 @@ public JobsReceived() {
         }
         printf("** [MYSQL]:Loaded %d jobs from the database.", cache_num_rows());
 
+    }
+    return 1;
+}
+
+forward public LoadBusStops();
+public LoadBusStops(){
+    new DB_Query[900];
+
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `busStops`");
+    mysql_tquery(db_handle, DB_Query, "busStopsReceived");
+}
+
+forward public ReloadBusStop(id);
+public ReloadBusStop(id){
+    new DB_Query[900];
+
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `busStops`");
+    mysql_tquery(db_handle, DB_Query, "reloadSpecificStopId");
+}
+
+forward public busStopsReceived();
+public busStopsReceived(){
+    if(cache_num_rows() == 0) print("Bus stops not created!");
+    else {
+        for (new i = 0; i < cache_num_rows(); i++) {
+            cache_get_value_int(i, "stopId", stopInfo[loadedStop][stopId]);            
+            cache_get_value(i, "stopName", stopInfo[loadedStop][stopName],32);          
+            cache_get_value_int(i, "routeId", stopInfo[loadedStop][routeId]);        
+            cache_get_value_float(i, "stopX", stopInfo[loadedStop][stopX]);        
+            cache_get_value_float(i, "stopY", stopInfo[loadedStop][stopY]);        
+            cache_get_value_float(i, "stopZ", stopInfo[loadedStop][stopZ]);     
+            cache_get_value_float(i, "objX", stopInfo[loadedStop][objX]);     
+            cache_get_value_float(i, "objY", stopInfo[loadedStop][objY]);     
+            cache_get_value_float(i, "objZ", stopInfo[loadedStop][objZ]);
+            busStopObject[loadedStop] = CreateDynamicObject(1257, stopInfo[loadedStop][objX], stopInfo[loadedStop][objY], stopInfo[loadedStop][objZ], 0.00000, 0.00000, 180.00000);
+
+            loadedStop++;
+        }
+        printf("** [MYSQL]: Loaded %d stops from the database!", cache_num_rows());
+    }
+    return 1;
+}
+
+forward public reloadSpecificStopId();
+public reloadSpecificStopId(){
+    if(cache_num_rows() == 0) print("Bus id does not exist!");
+    else {
+        for (new i = 0; i < cache_num_rows(); i++) {
+            cache_get_value_int(i, "stopId", stopInfo[loadedStop][stopId]);            
+            cache_get_value(i, "stopName", stopInfo[loadedStop][stopName],32);          
+            cache_get_value_int(i, "routeId", stopInfo[loadedStop][routeId]);        
+            cache_get_value_float(i, "stopX", stopInfo[loadedStop][stopX]);        
+            cache_get_value_float(i, "stopY", stopInfo[loadedStop][stopY]);        
+            cache_get_value_float(i, "stopZ", stopInfo[loadedStop][stopZ]);     
+            cache_get_value_float(i, "objX", stopInfo[loadedStop][objX]);     
+            cache_get_value_float(i, "objY", stopInfo[loadedStop][objY]);     
+            cache_get_value_float(i, "objZ", stopInfo[loadedStop][objZ]);
+            busStopObject[loadedStop] = CreateDynamicObject(1257, stopInfo[loadedStop][objX], stopInfo[loadedStop][objY], stopInfo[loadedStop][objZ], 0.00000, 0.00000, 180.00000);
+            loadedStop++;
+        }
+        printf("** [MYSQL]: Reloaded new stop!", cache_num_rows());
     }
     return 1;
 }
@@ -1718,6 +1793,21 @@ CMD:engine(playerid, params[]) {
                     }
                 }
                 if(vInfo[i][vJobId] == pInfo[playerid][pJobId]){
+                    if(engine == 1) {
+                        SetVehicleParamsEx(vid, false, lights, alarm, doors, bonnet, boot, objective);
+                        format(string, sizeof(string), "* %s takes their key from the igntion and turns the engine off.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        KillTimer(fuelTimer[playerid]);
+                        return 1;
+                    } else {
+                        SetVehicleParamsEx(vid, true, lights, alarm, doors, bonnet, boot, objective);
+                        format(string, sizeof(string), "* %s inserts their key into the ignition and starts the engine.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 9000, false, "dd", playerid, vInfo[i][vID]);
+                        return 1;
+                    }
+                }
+                if(strcmp(GetName(playerid), vInfo[i][vOwner], true) == 0){
                     if(engine == 1) {
                         SetVehicleParamsEx(vid, false, lights, alarm, doors, bonnet, boot, objective);
                         format(string, sizeof(string), "* %s takes their key from the igntion and turns the engine off.", RPName(playerid));
