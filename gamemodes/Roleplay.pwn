@@ -40,6 +40,8 @@ main() {
 /* 1- NEWS -*/
 new MySQL:db_handle;
 
+new Menu:busdrivermenu;
+
 new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS], GarbageCheckpoint[MAX_PLAYERS];
 new dumpCheckPoint[MAX_PLAYERS];
 new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS];
@@ -441,6 +443,21 @@ public OnGameModeInit() {
     CreateDynamicObject(1286, -84.60120, 1137.99756, 19.24240, 0.00000, 0.00000, 181.43620);
     CreateDynamicObject(1508, -96.28460, 1117.77185, 20.30520, 0.00000, 0.00000, 90.00000);
     CreateDynamicObject(1334, -102.79440, 1116.40662, 19.81580, 0.00000, 0.00000, 40.00000);*/
+
+    // BUS DRIVER
+
+    busdrivermenu = CreateMenu("Bus Routes", 2, 200.0, 100.0, 150.0, 150.0);
+
+    SetMenuColumnHeader(busdrivermenu, 0, "Route");
+    SetMenuColumnHeader(busdrivermenu, 1, "Salary");
+    AddMenuItem(busdrivermenu, 0, "Classic");
+    AddMenuItem(busdrivermenu, 1, "$500");
+    AddMenuItem(busdrivermenu, 0, "Classic Reversed");
+    AddMenuItem(busdrivermenu, 1, "$500");
+    AddMenuItem(busdrivermenu, 0, "Express");
+    AddMenuItem(busdrivermenu, 1, "$250");
+
+    // CONTINUE LOAD
 
     PMuted = TextDrawCreate(230.000000, 366.000000, "You are muted!");
     TextDrawBackgroundColor(PMuted, 255);
@@ -1211,11 +1228,11 @@ CMD:help(playerid, params[]) {
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/help, /admins, /mods, /helpers, /staff");
         } else if(strcmp(Usage, "Job", true) == 0) {
             SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
-            if(pInfo[playerid][pJobId] == 2) {
-                SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
+            if(pInfo[playerid][pJobId] == 3) {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /quitjob, /route");
+            } else if(pInfo[playerid][pJobId] == 2) {
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /startjob, /collect, /dump, /quitjob");
             } else if(pInfo[playerid][pJobId] == 1) {
-                SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /quitjob, /takepost");
             } else if(pInfo[playerid][pJobId] == 0) {
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /takejob, /listjobs");
@@ -1459,6 +1476,14 @@ CMD:dump(playerid, params[]) {
     return 1;
 }
 
+/* bus job */
+CMD:route(playerid, params[]) {
+    if(pInfo[playerid][pJobId] == 3) {
+        ShowMenuForPlayer(busdrivermenu, playerid);
+    }
+    return 1;
+}
+
 CMD:endjob(playerid, params[]) {
     if(pInfo[playerid][pJobId] >= 1) {
         // affect all jobs
@@ -1618,9 +1643,9 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
             }
         }
 
-        if(vInfo[vehicleid][vJobId] == 0 && vInfo[vehicleid][vFacId] >= 1){
-            if(pInfo[playerid][pFactionId] == vInfo[vehicleid][vFacId]){
-                
+        if(vInfo[vehicleid][vJobId] == 0 && vInfo[vehicleid][vFacId] >= 1) {
+            if(pInfo[playerid][pFactionId] == vInfo[vehicleid][vFacId]) {
+
             }
             RemovePlayerFromVehicle(playerid);
         }
@@ -1853,6 +1878,21 @@ public OnVehicleRespray(playerid, vehicleid, color1, color2) {
 }
 
 public OnPlayerSelectedMenuRow(playerid, row) {
+    new Menu:currentMenu = GetPlayerMenu(playerid);
+    // BUS DRIVER MENU
+    if(currentMenu == busdrivermenu) {
+        switch (row) {
+            case 0:{
+                printf("Bus route 1 started");
+            }
+            case 1:{
+                printf("Bus route 2 started");
+            }
+            case 2:{
+                printf("Bus route 3 started");
+            }
+        }
+    }
     return 1;
 }
 
@@ -2370,11 +2410,11 @@ stock SetFactionRanknameByRank(playerid, facid, rank) {
     if(rank == 1) {
         format(rankbyid, sizeof(rankbyid), "%s", fInfo[facid][fRank1Name]);
         pInfo[playerid][pFactionRankname] = rankbyid;
-    }    
+    }
     if(rank == 2) {
         format(rankbyid, sizeof(rankbyid), "%s", fInfo[facid][fRank2Name]);
         pInfo[playerid][pFactionRankname] = rankbyid;
-    }    
+    }
     if(rank == 3) {
         format(rankbyid, sizeof(rankbyid), "%s", fInfo[facid][fRank3Name]);
         pInfo[playerid][pFactionRankname] = rankbyid;
@@ -2390,7 +2430,7 @@ stock SetFactionRanknameByRank(playerid, facid, rank) {
     if(rank == 6) {
         format(rankbyid, sizeof(rankbyid), "%s", fInfo[facid][fRank6Name]);
         pInfo[playerid][pFactionRankname] = rankbyid;
-    }    
+    }
     if(rank == 7) {
         format(rankbyid, sizeof(rankbyid), "%s", fInfo[facid][fRank7Name]);
         pInfo[playerid][pFactionRankname] = rankbyid;
