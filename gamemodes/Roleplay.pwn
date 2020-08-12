@@ -1478,8 +1478,14 @@ CMD:dump(playerid, params[]) {
 
 /* bus job */
 CMD:route(playerid, params[]) {
-    if(pInfo[playerid][pJobId] == 3) {
-        ShowMenuForPlayer(busdrivermenu, playerid);
+    if(pInfo[playerid][pJobId] == 3) { // check if valid job id 
+        new vehid = GetPlayerVehicleID(playerid);
+        if(IsPlayerInVehicle(playerid, vehid)){
+            if(GetVehicleModel(vehid) == 431) {// checking if in bus
+                ShowMenuForPlayer(busdrivermenu, playerid); // show the bus menu!
+                TogglePlayerControllable(playerid, false); // freeze player so they can use the menu
+            }
+        }
     }
     return 1;
 }
@@ -1711,6 +1717,21 @@ CMD:engine(playerid, params[]) {
                         return 1;
                     }
                 }
+                if(vInfo[i][vJobId] == pInfo[playerid][pJobId]){
+                    if(engine == 1) {
+                        SetVehicleParamsEx(vid, false, lights, alarm, doors, bonnet, boot, objective);
+                        format(string, sizeof(string), "* %s takes their key from the igntion and turns the engine off.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        KillTimer(fuelTimer[playerid]);
+                        return 1;
+                    } else {
+                        SetVehicleParamsEx(vid, true, lights, alarm, doors, bonnet, boot, objective);
+                        format(string, sizeof(string), "* %s inserts their key into the ignition and starts the engine.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 9000, false, "dd", playerid, vInfo[i][vID]);
+                        return 1;
+                    }
+                }
             }
         }
     }
@@ -1884,12 +1905,15 @@ public OnPlayerSelectedMenuRow(playerid, row) {
         switch (row) {
             case 0:{
                 printf("Bus route 1 started");
+                TogglePlayerControllable(playerid, true);
             }
             case 1:{
                 printf("Bus route 2 started");
+                TogglePlayerControllable(playerid, true);
             }
             case 2:{
                 printf("Bus route 3 started");
+                TogglePlayerControllable(playerid, true);
             }
         }
     }
