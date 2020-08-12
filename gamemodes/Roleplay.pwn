@@ -43,10 +43,10 @@ new MySQL:db_handle;
 new Menu:busdrivermenu;
 
 new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS], GarbageCheckpoint[MAX_PLAYERS];
-new dumpCheckPoint[MAX_PLAYERS], busCheckpoint[MAX_PLAYERS], finish[MAX_PLAYERS], routeid[MAX_PLAYERS], nextStopId[MAX_PLAYERS], nextAfterStopId[MAX_PLAYERS];
+new dumpCheckPoint[MAX_PLAYERS];
 new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS];
 
-new dumpPickup, jobPickup[MAX_JOBS], busStopObject[75];
+new dumpPickup, jobPickup[MAX_JOBS];
 
 new PlayerText:VEHSTUFF[MAX_PLAYERS][5];
 new Text:PublicTD[3];
@@ -321,12 +321,6 @@ new VehicleNames[][] = {
     "Utility Trailer"
 };
 
-new RoutePay[] = {
-    500,
-    500,
-    250
-};
-
 new tries[MAX_PLAYERS], passwordForFinalReg[MAX_PLAYERS][BCRYPT_HASH_LENGTH], quizAttempts[MAX_PLAYERS];
 
 enum ENUM_PLAYER_DATA {
@@ -378,20 +372,6 @@ enum ENUM_JOB_DATA {
         Float:jobIZ
 }
 new jInfo[MAX_JOBS][ENUM_JOB_DATA], loadedJob;
-
-enum ENUM_STOP_DATA {
-    stopId[32],
-        stopName[32],
-        routeId,
-        Float:stopX,
-        Float:stopY,
-        Float:stopZ,
-        Float:objX,
-        Float:objY,
-        Float:objZ,
-        Float:objA
-}
-new stopInfo[75][ENUM_STOP_DATA], loadedStop;
 
 enum ENUM_VEH_DATA {
     vID[32],
@@ -445,7 +425,6 @@ public OnGameModeInit() {
 
 
     LoadJobData();
-    LoadBusStops();
     LoadFacData();
     LoadVehicleData();
 
@@ -955,69 +934,6 @@ public JobsReceived() {
     return 1;
 }
 
-forward public LoadBusStops();
-public LoadBusStops() {
-    new DB_Query[900];
-
-    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `busStops`");
-    mysql_tquery(db_handle, DB_Query, "busStopsReceived");
-}
-
-forward public newBusStop(id);
-public newBusStop(id) {
-    new DB_Query[900];
-
-    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `busStops`");
-    mysql_tquery(db_handle, DB_Query, "reloadSpecificStopId");
-}
-
-forward public busStopsReceived();
-public busStopsReceived() {
-    if(cache_num_rows() == 0) print("Bus stops not created!");
-    else {
-        for (new i = 0; i < cache_num_rows(); i++) {
-            cache_get_value_int(i, "stopId", stopInfo[loadedStop][stopId]);
-            cache_get_value(i, "stopName", stopInfo[loadedStop][stopName], 32);
-            cache_get_value_int(i, "routeId", stopInfo[loadedStop][routeId]);
-            cache_get_value_float(i, "stopX", stopInfo[loadedStop][stopX]);
-            cache_get_value_float(i, "stopY", stopInfo[loadedStop][stopY]);
-            cache_get_value_float(i, "stopZ", stopInfo[loadedStop][stopZ]);
-            cache_get_value_float(i, "objX", stopInfo[loadedStop][objX]);
-            cache_get_value_float(i, "objY", stopInfo[loadedStop][objY]);
-            cache_get_value_float(i, "objZ", stopInfo[loadedStop][objZ]);
-            cache_get_value_float(i, "objA", stopInfo[loadedStop][objA]);
-            busStopObject[loadedStop] = CreateDynamicObject(1257, stopInfo[loadedStop][objX], stopInfo[loadedStop][objY], stopInfo[loadedStop][objZ], 0.00000, 0.00000, stopInfo[loadedStop][objA]);
-
-            loadedStop++;
-        }
-        printf("** [MYSQL]:Loaded %d stops from the database!", cache_num_rows());
-    }
-    return 1;
-}
-
-forward public reloadSpecificStopId();
-public reloadSpecificStopId() {
-    if(cache_num_rows() == 0) print("Bus id does not exist!");
-    else {
-        for (new i = 0; i < cache_num_rows(); i++) {
-            cache_get_value_int(i, "stopId", stopInfo[loadedStop][stopId]);
-            cache_get_value(i, "stopName", stopInfo[loadedStop][stopName], 32);
-            cache_get_value_int(i, "routeId", stopInfo[loadedStop][routeId]);
-            cache_get_value_float(i, "stopX", stopInfo[loadedStop][stopX]);
-            cache_get_value_float(i, "stopY", stopInfo[loadedStop][stopY]);
-            cache_get_value_float(i, "stopZ", stopInfo[loadedStop][stopZ]);
-            cache_get_value_float(i, "objX", stopInfo[loadedStop][objX]);
-            cache_get_value_float(i, "objY", stopInfo[loadedStop][objY]);
-            cache_get_value_float(i, "objZ", stopInfo[loadedStop][objZ]);
-            cache_get_value_float(i, "objA", stopInfo[loadedStop][objA]);
-            busStopObject[loadedStop] = CreateDynamicObject(1257, stopInfo[loadedStop][objX], stopInfo[loadedStop][objY], stopInfo[loadedStop][objZ], 0.00000, 0.00000, stopInfo[loadedStop][objA]);
-            loadedStop++;
-        }
-        printf("** [MYSQL]:Reloaded new stop!", cache_num_rows());
-    }
-    return 1;
-}
-
 public OnGameModeExit() {
     return 1;
 }
@@ -1157,12 +1073,9 @@ public OnPlayerDisconnect(playerid, reason) {
     if(pInfo[playerid][LoggedIn] == true) {
         SavePlayerData(playerid);
 
-        // stop checkpoints, and timers
-        busCheckpoint[playerid] = 0;
         PostCheckpoint[playerid] = 0;
         GarbageCheckpoint[playerid] = 0;
         dumpCheckPoint[playerid] = 0;
-        finish[playerid] = 0;
         speedoTimer[playerid] = 0;
         fuelTimer[playerid] = 0;
 
@@ -1359,39 +1272,6 @@ CMD:makeleader(playerid, params[]) {
     } else {
         TextDrawShowForPlayer(playerid, CantCommand);
         SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
-    }
-    return 1;
-}
-
-CMD:createstop(playerid, params[]) {
-    new routeeid, name[32], Float:infX, Float:infY, Float:infZ, query[1000];
-    if(pInfo[playerid][pAdminLevel] == 6) {
-        if(sscanf(params, "ds", routeeid, name)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createstop [routeid] [name]"); {
-            GetPlayerPos(playerid, infX, infY, infZ);
-
-            mysql_format(db_handle, query, sizeof(query), "INSERT INTO `busStops` (`stopName`, `routeId`, `stopX`, `stopY`, `stopZ`) VALUES ('%s', '%d', '%f','%f','%f')", name, routeid, infX, infY, infZ);
-            mysql_tquery(db_handle, query, "OnBusStopCreated", "ds", playerid, name);
-
-            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Please use the command, /createstopobject to complete the bus stop!");
-        }
-    }
-    return 1;
-}
-
-CMD:createstopobject(playerid, params[]) {
-    new stopid, Float:infX, Float:infY, Float:infZ, Float:Angle, query[1000];
-    if(pInfo[playerid][pAdminLevel] == 6) {
-        if(sscanf(params, "d", stopid)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createstopobject [stopid]"); {
-            GetPlayerFacingAngle(playerid, Angle);
-            Angle += 90;
-            GetPlayerPos(playerid, infX, infY, infZ);
-            mysql_format(db_handle, query, sizeof(query), "UPDATE `busStops` SET `objX` = '%f', `objY` = '%f', `objZ` = '%f', `objA` = '%f' WHERE `stopId` = '%d'", infX, infY, infZ, Angle, stopid);
-            mysql_query(db_handle, query);
-
-            stopid -= 1;
-
-            busStopObject[stopid] = CreateDynamicObject(1257, infX, infY, infZ, 0.00000, 0.00000, Angle);
-        }
     }
     return 1;
 }
@@ -1611,13 +1491,7 @@ CMD:route(playerid, params[]) {
             if(GetVehicleModel(vehid) == 431) { // checking if in bus
                 ShowMenuForPlayer(busdrivermenu, playerid); // show the bus menu!
                 TogglePlayerControllable(playerid, false); // freeze player so they can use the menu
-            } else {
-                TextDrawShowForPlayer(playerid, CantCommand);
-                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
             }
-        } else {
-            TextDrawShowForPlayer(playerid, CantCommand);
-            SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
         }
     }
     return 1;
@@ -1648,15 +1522,6 @@ public OnJobCreated(playerid, joName[32]) {
     }
 }
 
-
-forward public OnBusStopCreated(playerid, name[32]);
-public OnBusStopCreated(playerid, name[32]) {
-    new string[256];
-    format(string, sizeof(string), "[SERVER]:{FFFFFF} Bus Stop %s(%d) has been created!", name, cache_insert_id());
-    SendClientMessage(playerid, SERVERCOLOR, string); {
-        newBusStop(cache_insert_id());
-    }
-}
 
 public OnPlayerCommandText(playerid, cmdtext[]) {
     if(strcmp("/mycommand", cmdtext, true, 10) == 0) {
@@ -1875,21 +1740,6 @@ CMD:engine(playerid, params[]) {
                         return 1;
                     }
                 }
-                if(strcmp(GetName(playerid), vInfo[i][vOwner], true) == 0) {
-                    if(engine == 1) {
-                        SetVehicleParamsEx(vid, false, lights, alarm, doors, bonnet, boot, objective);
-                        format(string, sizeof(string), "* %s takes their key from the igntion and turns the engine off.", RPName(playerid));
-                        nearByAction(playerid, NICESKY, string);
-                        KillTimer(fuelTimer[playerid]);
-                        return 1;
-                    } else {
-                        SetVehicleParamsEx(vid, true, lights, alarm, doors, bonnet, boot, objective);
-                        format(string, sizeof(string), "* %s inserts their key into the ignition and starts the engine.", RPName(playerid));
-                        nearByAction(playerid, NICESKY, string);
-                        fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 9000, false, "dd", playerid, vInfo[i][vID]);
-                        return 1;
-                    }
-                }
             }
         }
     }
@@ -1993,74 +1843,6 @@ public OnPlayerEnterRaceCheckpoint(playerid) {
     return 1;
 }
 
-public OnPlayerEnterDynamicRaceCP(playerid, checkpointid) {
-    for (new i = 0; i < loadedStop; i++) {
-        //loop through stops...
-        // if player is finished, print finsihed
-        // if next stop loaded is not equal to routeid of player, move on to next id and check 
-        if(finish[playerid] == 1) {
-            DestroyDynamicRaceCP(checkpointid);
-            printf("player finished!");
-        }
-
-        if(stopInfo[i][routeId] == routeid[playerid]) {
-            printf("current stop id:%d, name:%s", stopInfo[i][stopId], stopInfo[i][stopName]);
-            GetNextStop(playerid, stopInfo[i][stopId]);
-            printf("next stop:%d", nextStopId[playerid]);
-            DestroyDynamicRaceCP(checkpointid);
-            busCheckpoint[playerid] = CreateDynamicRaceCP(0, stopInfo[i][stopX], stopInfo[i][stopY], stopInfo[i][stopZ], , 3, -1, -1, -1, 10000, -1);
-            return 1;
-        }
-
-
-        /*
-        if(stopInfo[i][stopId] + 1 == pInfo[playerid][StopState]) {
-            printf("checkpointid = %d", checkpointid);
-            printf("sid %d, playerstopstate %d", stopInfo[i][stopId], pInfo[playerid][StopState]);
-            DestroyDynamicRaceCP(checkpointid);
-            pInfo[playerid][StopState] += stopInfo[i + 1][stopId] - 1;
-            if(stopInfo[i + 1][routeId] == stopInfo[i][routeId]) {
-                if(stopInfo[i + 1][stopId] != 0) { // if not invalid id
-                    busCheckpoint[playerid] = CreateDynamicRaceCP(0, stopInfo[i + 1][stopX], stopInfo[i + 1][stopY], stopInfo[i + 1][stopZ], stopInfo[i + 2][stopX], stopInfo[i + 2][stopY], stopInfo[i + 2][stopZ], 3, -1, -1, -1, 10000, -1);
-                    finish[playerid] = 0;
-                } else {
-                    for (new jobpos = 0; jobpos < loadedJob; jobpos++) {
-                        if(jInfo[jobpos][jID] == 3) {
-                            busCheckpoint[playerid] = CreateDynamicRaceCP(1, jInfo[jobpos][jobIX], jInfo[jobpos][jobIY], jInfo[jobpos][jobIZ], 0, 0, 0, 3, -1, -1, -1, 10000, -1); // finish line
-                            finish[playerid] = 1;
-                        }
-                    }
-                }
-            }
-        }
-        if(finish[playerid] == 1) {
-            new string[256];
-            DestroyDynamicRaceCP(checkpointid);
-            pInfo[playerid][pJobPay] += RoutePay[stopInfo[i][routeId] - 1];
-            pInfo[playerid][StopState] = 0;
-            format(string, sizeof(string), "Thank you for completing this route!\n\nTo select another route, please type:/route and select another route!!\n\nYou will receive $%d on your next paycheck!", RoutePay[stopInfo[i][routeId] - 1]);
-            Dialog_Show(playerid, DIALOG_ROUTEFINISHED, DIALOG_STYLE_MSGBOX, "Job Complete!", string, "Continue", "");
-        }*/
-    }
-    return 1;
-}
-
-forward public GetNextStop(playerid, currentstopid);
-public GetNextStop(playerid, currentstopid) {
-    for (new i = currentstopid; i < loadedStop;) {
-        if(stopInfo[i][routeId] != routeid[playerid]) {
-            i++;
-        }
-        if(stopInfo[i][routeId] == routeid[playerid]) {
-            nextStopId[playerid] = stopInfo[i][stopId]-1;
-            return 1;
-        }
-    }
-    return 1;
-}
-
-
-
 public OnPlayerLeaveRaceCheckpoint(playerid) {
     return 1;
 }
@@ -2132,49 +1914,15 @@ public OnPlayerSelectedMenuRow(playerid, row) {
             case 0:{
                 printf("Bus route 1 started");
                 TogglePlayerControllable(playerid, true);
-                BeginBusRoute(playerid, 1);
             }
             case 1:{
                 printf("Bus route 2 started");
                 TogglePlayerControllable(playerid, true);
-                BeginBusRoute(playerid, 2);
             }
             case 2:{
                 printf("Bus route 3 started");
                 TogglePlayerControllable(playerid, true);
-                BeginBusRoute(playerid, 3);
             }
-        }
-    }
-    return 1;
-}
-
-forward public BeginBusRoute(playerid, routeeid);
-public BeginBusRoute(playerid, routeeid) {
-    // loop through all stops
-    for (new i = 0; i < loadedStop; i++) {
-        if(stopInfo[i][routeId] == routeeid) {
-            busCheckpoint[playerid] = CreateDynamicRaceCP(0, stopInfo[i][stopX], stopInfo[i][stopY], stopInfo[i][stopZ], stopInfo[i + 1][stopX], stopInfo[i + 1][stopY], stopInfo[i + 1][stopZ], 2.5, -1, -1, -1, 10000, -1);
-            new string[256];
-            if(routeeid == 1) {
-                format(string, sizeof(string), "> You have started to drive the Classic bus route.");
-                SendClientMessage(playerid, ADMINBLUE, string);
-                pInfo[playerid][StopState] = stopInfo[i][stopId];
-                routeid[playerid] = 1;
-            }
-            if(routeeid == 2) {
-                format(string, sizeof(string), "> You have started to drive the Classic Reverse bus route.");
-                SendClientMessage(playerid, ADMINBLUE, string);
-                pInfo[playerid][StopState] = stopInfo[i][stopId];
-                routeid[playerid] = 2;
-            }
-            if(routeeid == 3) {
-                format(string, sizeof(string), "> You have started to drive the Express bus route.");
-                SendClientMessage(playerid, ADMINBLUE, string);
-                pInfo[playerid][StopState] = stopInfo[i][stopId];
-                routeid[playerid] = 3;
-            }
-            return 1;
         }
     }
     return 1;
