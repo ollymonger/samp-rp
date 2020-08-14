@@ -43,7 +43,7 @@ new MySQL:db_handle;
 new Menu:busdrivermenu;
 
 new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS], GarbageCheckpoint[MAX_PLAYERS];
-new dumpCheckPoint[MAX_PLAYERS];
+new dumpCheckPoint[MAX_PLAYERS], routeId[MAX_PLAYERS], busCheckpoint[MAX_PLAYERS];
 new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS];
 
 new dumpPickup, jobPickup[MAX_JOBS];
@@ -76,6 +76,88 @@ new Float:RandomGarbageLocations[][3] = {
     {-321.9125, 1055.7777, 19.1717 },
     {-362.2701, 1165.2568, 19.2094 },
     {-208.0344, 1112.1625, 19.2098 }
+};
+
+new Float:busObject[][4] = {
+    {-229.6741, 1191.9183, 20.0188, 90.0000 },
+    {-201.5336, 1173.5541, 20.0188, 0.0000 },
+    {-216.0194, 1104.4948, 20.0188, -90.0000 },
+    {-295.6557, 1104.6432, 20.0188, -90.0000 },
+    {-232.2670, 1011.8552, 20.0188, -90.0000 },
+    {-239.2490, 853.1791, 11.8123, -50.0000 },
+    {-152.5945, 808.0464, 22.3236, 97.7057 },
+    {-52.4531, 947.8643, 19.7496, 93.6274 },
+    {-9.4309, 1057.8062, 20.0091, 181.6169 },
+    {-14.7744, 1154.5270, 19.8921, -90.0000 },
+    {-88.5759, 1204.9558, 19.8921, -90.0000 },
+    {-186.2708, 1204.6633, 19.8921, -90.0000 },
+
+    //reversed classic
+    {-226.9197, 1204.3618, 19.8348, -90.0000},
+    {-184.1718, 1182.3256, 19.7880, 180.0000},
+    {-210.5868, 1092.1892, 19.7641, 90.0000},
+    {-293.8737, 1092.1390, 19.7847, 90.0000},
+    {-232.1702, 1024.6699, 19.7841, -90.0000},
+    {-231.4198, 841.3154, 12.4896, 134.5364},
+    {-156.4139, 822.1710, 22.0595, 274.8993},
+    {-52.4531, 947.8643, 19.7496, -90.0000},
+    {-21.6457, 1063.9948, 19.7845, 180.0000},
+    {-19.2804, 1142.0730, 19.7874, 90.0000},
+    {-90.6689, 1191.9529, 20.0163, 90.0000},
+    {-213.6733, 1192.2991, 19.7808, 90.0000},
+
+    // express
+    {-254.0678, 1204.7655, 19.8921, -90.0000},
+    {-281.8794, 1081.2390, 19.7088, 0.0000},
+    {-184.4253, 1063.7166, 19.8921, 180.0000},
+    {-152.1365, 1092.1180, 19.8921, 90.0000},
+    {-59.0811, 1123.8838, 19.8921, 180.0000},
+    {54.0659, 1192.2245, 19.8921, 90.0000},
+    {65.8657, 1249.7249, 17.7258, 245.6365},
+    {-123.0387, 1230.5771, 18.7788, 6.1884}
+
+};
+
+new Float:ClassicStops[][3] = {
+    {-228.8680, 1195.8204, 19.0494 }, // 
+    {-198.2273, 1177.3270, 19.0494 }, //
+    {-215.8893, 1100.7792, 19.0494 }, // 
+    {-295.6049, 1100.8007, 19.0494 }, // 
+    {-232.1745, 1015.6179, 19.0494 }, //
+    {-237.7971, 848.2222, 11.4606 }, // 
+    {-153.9066, 813.8279, 21.3252 }, // 
+    {-52.8076, 951.3081, 18.9852 }, // 
+    {-12.9733, 1058.5865, 19.0231 }, //
+    {-16.3151, 1151.1276, 19.0231 }, //
+    {-88.8058, 1200.9838, 19.0231 },
+    {-186.0064, 1201.2749, 19.0231 }
+
+};
+
+new Float:ClassicReversedStops[][3] = {
+    {-213.5228, 1196.0015, 18.5767},
+    {-90.1101, 1195.4183, 18.5798},
+    {-19.8805, 1145.7205, 18.5850},
+    {-18.2285, 1063.9802, 18.5814},
+    {-52.8076, 951.3081, 18.9852},
+    {-155.6374, 817.4888, 20.9919},
+    {-233.7671, 844.4862, 11.1443},
+    {-231.5683, 1020.8794, 18.5825},
+    {-293.0010, 1095.6836, 18.5810},
+    {-210.5338, 1095.8163, 18.5714},
+    {-187.6063, 1182.0548, 18.5817},
+    {-227.1357, 1200.8739, 19.4712}
+};
+
+new Float:ExpressStops[][3] = {
+    {-254.1759, 1200.1873, 20.3816},
+    {-278.3591, 1082.1646, 19.3810},
+    {-187.9721, 1063.9950, 19.0946},
+    {-152.4380, 1095.5483, 19.0946},
+    {-63.0088, 1124.2401, 19.0946},
+    {54.8343, 1195.8729, 19.0946},
+    {63.3990, 1246.7830, 17.0584},
+    {-119.0424, 1229.4414, 17.9745}
 };
 
 new maleSkins[] = {
@@ -357,7 +439,7 @@ enum ENUM_PLAYER_DATA {
         CurrentState,
         PostState,
         GarbageState,
-        StopState,
+        busStopState,
 
         RentingVehicle
 }
@@ -426,6 +508,7 @@ public OnGameModeInit() {
 
     LoadJobData();
     LoadFacData();
+    CreateBusStopObjects();
     LoadVehicleData();
 
     // DUMP 
@@ -446,6 +529,8 @@ public OnGameModeInit() {
     CreateDynamicObject(1334, -102.79440, 1116.40662, 19.81580, 0.00000, 0.00000, 40.00000);*/
 
     // BUS DRIVER
+
+    CreateDynamicObject(17038, -252.32233, 1216.70703, 18.72150, 0.00000, 0.00000, 90.00000);
 
     busdrivermenu = CreateMenu("Bus Routes", 2, 200.0, 100.0, 150.0, 150.0);
 
@@ -774,6 +859,13 @@ public OnGameModeInit() {
 
 // load server data
 
+forward public CreateBusStopObjects();
+public CreateBusStopObjects() {
+    for (new i = 0; i < sizeof(busObject); i++) {
+        CreateDynamicObject(1257, busObject[i][0], busObject[i][1], busObject[i][2], 0, 0, busObject[i][3]);
+    }
+    return 1;
+}
 
 forward public LoadVehicleData();
 public LoadVehicleData() {
@@ -1843,6 +1935,97 @@ public OnPlayerEnterRaceCheckpoint(playerid) {
     return 1;
 }
 
+
+public OnPlayerEnterDynamicRaceCP(playerid, checkpointid) {
+    if(IsPlayerInDynamicRaceCP(playerid, busCheckpoint[playerid])) {
+        new classicLength = sizeof(ClassicStops);
+        new reversedLength = sizeof(ClassicReversedStops);
+        new expressLength = sizeof(ExpressStops);
+        if(routeId[playerid] == 1) {
+            if(pInfo[playerid][busStopState] < classicLength) {
+                pInfo[playerid][busStopState] += 1; // increase;
+
+                if(pInfo[playerid][busStopState] == classicLength - 1) {
+                    DestroyDynamicRaceCP(busCheckpoint[playerid]);
+                    pInfo[playerid][busStopState] = classicLength;
+                    busCheckpoint[playerid] = CreateDynamicRaceCP(0, ClassicStops[pInfo[playerid][busStopState] - 1][0], ClassicStops[pInfo[playerid][busStopState] - 1][1], ClassicStops[pInfo[playerid][busStopState] - 1][2], jInfo[2][jobIX], jInfo[2][jobIY], jInfo[2][jobIZ], 2.75, -1, -1, -1, 10000, -1); // select LAST checkpoint
+                    return 1;
+                }
+                DestroyDynamicRaceCP(busCheckpoint[playerid]);
+                busCheckpoint[playerid] = CreateDynamicRaceCP(0, ClassicStops[pInfo[playerid][busStopState]][0], ClassicStops[pInfo[playerid][busStopState]][1], ClassicStops[pInfo[playerid][busStopState]][2], ClassicStops[pInfo[playerid][busStopState] + 1][0], ClassicStops[pInfo[playerid][busStopState] + 1][1], ClassicStops[pInfo[playerid][busStopState] + 1][2], 2.75, -1, -1, -1, 10000, -1);
+                return 1;
+            }
+            if(pInfo[playerid][busStopState] == classicLength) { // if is EQUAL to length -1 
+                DestroyDynamicRaceCP(busCheckpoint[playerid]);
+                busCheckpoint[playerid] = CreateDynamicRaceCP(1, jInfo[2][jobIX], jInfo[2][jobIY], jInfo[2][jobIZ], jInfo[2][jobIX], jInfo[2][jobIY], jInfo[2][jobIZ], 2.75, -1, -1, -1, 10000, -1);
+                pInfo[playerid][busStopState] = classicLength + 1;
+                return 1;
+            }
+            if(pInfo[playerid][busStopState] > classicLength) {
+                // must be finished.
+                printf("ran through finish");
+                DestroyDynamicRaceCP(busCheckpoint[playerid]);
+                return 1;
+            }
+        }
+        if(routeId[playerid] == 2) {
+            if(pInfo[playerid][busStopState] < reversedLength) {
+                pInfo[playerid][busStopState] += 1; // increase;
+
+                if(pInfo[playerid][busStopState] == reversedLength - 1) {
+                    DestroyDynamicRaceCP(busCheckpoint[playerid]);
+                    pInfo[playerid][busStopState] = reversedLength;
+                    busCheckpoint[playerid] = CreateDynamicRaceCP(0, ClassicReversedStops[pInfo[playerid][busStopState] - 1][0], ClassicReversedStops[pInfo[playerid][busStopState] - 1][1], ClassicReversedStops[pInfo[playerid][busStopState] - 1][2], jInfo[2][jobIX], jInfo[2][jobIY], jInfo[2][jobIZ], 2.75, -1, -1, -1, 10000, -1); // select LAST checkpoint
+                    return 1;
+                }
+                DestroyDynamicRaceCP(busCheckpoint[playerid]);
+                busCheckpoint[playerid] = CreateDynamicRaceCP(0, ClassicReversedStops[pInfo[playerid][busStopState]][0], ClassicReversedStops[pInfo[playerid][busStopState]][1], ClassicReversedStops[pInfo[playerid][busStopState]][2], ClassicReversedStops[pInfo[playerid][busStopState] + 1][0], ClassicReversedStops[pInfo[playerid][busStopState] + 1][1], ClassicReversedStops[pInfo[playerid][busStopState] + 1][2], 2.75, -1, -1, -1, 10000, -1);
+                return 1;
+            }
+            if(pInfo[playerid][busStopState] == reversedLength) { // if is EQUAL to length -1 
+                DestroyDynamicRaceCP(busCheckpoint[playerid]);
+                busCheckpoint[playerid] = CreateDynamicRaceCP(1, jInfo[2][jobIX], jInfo[2][jobIY], jInfo[2][jobIZ], jInfo[2][jobIX], jInfo[2][jobIY], jInfo[2][jobIZ], 2.75, -1, -1, -1, 10000, -1);
+                pInfo[playerid][busStopState] = reversedLength + 1;
+                return 1;
+            }
+            if(pInfo[playerid][busStopState] > reversedLength) {
+                // must be finished.
+                printf("ran through finish");
+                DestroyDynamicRaceCP(busCheckpoint[playerid]);
+                return 1;
+            }
+        }
+        if(routeId[playerid] == 3) {
+            if(pInfo[playerid][busStopState] < expressLength) {
+                pInfo[playerid][busStopState] += 1; // increase;
+
+                if(pInfo[playerid][busStopState] == expressLength - 1) {
+                    DestroyDynamicRaceCP(busCheckpoint[playerid]);
+                    pInfo[playerid][busStopState] = expressLength;
+                    busCheckpoint[playerid] = CreateDynamicRaceCP(0, ExpressStops[pInfo[playerid][busStopState] - 1][0], ExpressStops[pInfo[playerid][busStopState] - 1][1], ExpressStops[pInfo[playerid][busStopState] - 1][2], jInfo[2][jobIX], jInfo[2][jobIY], jInfo[2][jobIZ], 2.75, -1, -1, -1, 10000, -1); // select LAST checkpoint
+                    return 1;
+                }
+                DestroyDynamicRaceCP(busCheckpoint[playerid]);
+                busCheckpoint[playerid] = CreateDynamicRaceCP(0, ExpressStops[pInfo[playerid][busStopState]][0], ExpressStops[pInfo[playerid][busStopState]][1], ExpressStops[pInfo[playerid][busStopState]][2], ExpressStops[pInfo[playerid][busStopState] + 1][0], ExpressStops[pInfo[playerid][busStopState] + 1][1], ExpressStops[pInfo[playerid][busStopState] + 1][2], 2.75, -1, -1, -1, 10000, -1);
+                return 1;
+            }
+            if(pInfo[playerid][busStopState] == expressLength) { // if is EQUAL to length -1 
+                DestroyDynamicRaceCP(busCheckpoint[playerid]);
+                busCheckpoint[playerid] = CreateDynamicRaceCP(1, jInfo[2][jobIX], jInfo[2][jobIY], jInfo[2][jobIZ], jInfo[2][jobIX], jInfo[2][jobIY], jInfo[2][jobIZ], 2.75, -1, -1, -1, 10000, -1);
+                pInfo[playerid][busStopState] = expressLength + 1;
+                return 1;
+            }
+            if(pInfo[playerid][busStopState] > expressLength) {
+                // must be finished.
+                printf("ran through finish");
+                DestroyDynamicRaceCP(busCheckpoint[playerid]);
+                return 1;
+            }
+        }
+    }
+    return 1;
+}
+
 public OnPlayerLeaveRaceCheckpoint(playerid) {
     return 1;
 }
@@ -1914,16 +2097,41 @@ public OnPlayerSelectedMenuRow(playerid, row) {
             case 0:{
                 printf("Bus route 1 started");
                 TogglePlayerControllable(playerid, true);
+                BeginSelectedBusRoute(playerid, 1);
             }
             case 1:{
                 printf("Bus route 2 started");
                 TogglePlayerControllable(playerid, true);
+                BeginSelectedBusRoute(playerid, 2);
             }
             case 2:{
                 printf("Bus route 3 started");
                 TogglePlayerControllable(playerid, true);
+                BeginSelectedBusRoute(playerid, 3);
             }
         }
+    }
+    return 1;
+}
+
+forward public BeginSelectedBusRoute(playerid, route);
+public BeginSelectedBusRoute(playerid, route) {
+    if(route == 1) {
+        pInfo[playerid][busStopState] = 0;
+        routeId[playerid] = route;
+        busCheckpoint[playerid] = CreateDynamicRaceCP(0, ClassicStops[0][0], ClassicStops[0][1], ClassicStops[0][2], ClassicStops[1][0], ClassicStops[1][1], ClassicStops[1][2], 2.75, -1, -1, -1, 10000, -1);
+        return 1;
+    }
+    if(route == 2) {
+        pInfo[playerid][busStopState] = 0;
+        routeId[playerid] = route;
+        busCheckpoint[playerid] = CreateDynamicRaceCP(0, ClassicReversedStops[0][0], ClassicReversedStops[0][1], ClassicReversedStops[0][2], ClassicReversedStops[1][0], ClassicReversedStops[1][1], ClassicReversedStops[1][2], 2.75, -1, -1, -1, 10000, -1);
+    }
+    if(route == 3) {        
+        pInfo[playerid][busStopState] = 0;
+        routeId[playerid] = route;
+        busCheckpoint[playerid] = CreateDynamicRaceCP(0, ExpressStops[0][0], ExpressStops[0][1], ExpressStops[0][2], ExpressStops[1][0], ExpressStops[1][1], ExpressStops[1][2], 2.75, -1, -1, -1, 10000, -1);
+
     }
     return 1;
 }
