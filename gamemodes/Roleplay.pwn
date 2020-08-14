@@ -1585,12 +1585,17 @@ CMD:dump(playerid, params[]) {
 /* bus job */
 CMD:route(playerid, params[]) {
     if(pInfo[playerid][pJobId] == 3) { // check if valid job id 
-        new vehid = GetPlayerVehicleID(playerid);
-        if(IsPlayerInVehicle(playerid, vehid)) {
-            if(GetVehicleModel(vehid) == 431) { // checking if in bus
-                ShowMenuForPlayer(busdrivermenu, playerid); // show the bus menu!
-                TogglePlayerControllable(playerid, false); // freeze player so they can use the menu
+        if(pInfo[playerid][CurrentState] == 0) { // not in state
+            new vehid = GetPlayerVehicleID(playerid);
+            if(IsPlayerInVehicle(playerid, vehid)) {
+                if(GetVehicleModel(vehid) == 431) { // checking if in bus
+                    ShowMenuForPlayer(busdrivermenu, playerid); // show the bus menu!
+                    TogglePlayerControllable(playerid, false); // freeze player so they can use the menu
+                }
             }
+        } else {
+            SendClientMessage(playerid, ADMINBLUE, "[SERVER]:{FFFFFF} You are already on a bus route!");
+            return 1;
         }
     }
     return 1;
@@ -1655,7 +1660,7 @@ public OnPlayerEnterVehicle(playerid, vehicleid, ispassenger) {
             }
 
             speedoTimer[playerid] = SetTimerEx("GetVehicleSpeed", 100, false, "dd", playerid);
-            fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 9000, false, "dd", playerid, GetPlayerVehicleID(playerid));
+            fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 100, false, "dd", playerid, GetPlayerVehicleID(playerid));
         }
     }
     return 1;
@@ -1669,12 +1674,12 @@ public SetVehicleFuel(playerid, vehid) {
             new engine, lights, alarm, doors, bonnet, boot, objective;
             GetVehicleParamsEx(vInfo[i][vID], engine, lights, alarm, doors, bonnet, boot, objective); //will check that what is the state of the engine.
             if(engine == 1) {
-                if(vInfo[i][vFuel] > 2) {
+                if(vInfo[i][vFuel] >= 1) {
                     vInfo[i][vFuel]--;
                     new fuel[32];
                     format(fuel, sizeof(fuel), "%d L", vInfo[i][vFuel]);
                     PlayerTextDrawSetString(playerid, VEHSTUFF[playerid][4], fuel);
-                    fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 9000, false, "dd", playerid, vehid);
+                    fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 17500, false, "dd", playerid, vehid);
                 } else {
                     SetVehicleParamsEx(vInfo[i][vID], false, lights, alarm, doors, bonnet, boot, objective); //will check that what is the state of the engine.
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle does not have enough fuel!");
@@ -1820,7 +1825,7 @@ CMD:engine(playerid, params[]) {
                         SetVehicleParamsEx(vid, true, lights, alarm, doors, bonnet, boot, objective);
                         format(string, sizeof(string), "* %s inserts their key into the ignition and starts the engine.", RPName(playerid));
                         nearByAction(playerid, NICESKY, string);
-                        fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 9000, false, "dd", playerid, vInfo[i][vID]);
+                        fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 17500, false, "dd", playerid, vInfo[i][vID]);
                         return 1;
                     }
                 }
@@ -1835,7 +1840,7 @@ CMD:engine(playerid, params[]) {
                         SetVehicleParamsEx(vid, true, lights, alarm, doors, bonnet, boot, objective);
                         format(string, sizeof(string), "* %s inserts their key into the ignition and starts the engine.", RPName(playerid));
                         nearByAction(playerid, NICESKY, string);
-                        fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 9000, false, "dd", playerid, vInfo[i][vID]);
+                        fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 17500, false, "dd", playerid, vInfo[i][vID]);
                         return 1;
                     }
                 }
@@ -2152,16 +2157,19 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                 SendClientMessage(playerid, ADMINBLUE, "> You have started the Classic bus route.");
                 TogglePlayerControllable(playerid, true);
                 BeginSelectedBusRoute(playerid, 1);
+                pInfo[playerid][CurrentState] = 1;
             }
             case 1:{
                 SendClientMessage(playerid, ADMINBLUE, "> You have started the Classic Reverse bus route.");
                 TogglePlayerControllable(playerid, true);
                 BeginSelectedBusRoute(playerid, 2);
+                pInfo[playerid][CurrentState] = 1;
             }
             case 2:{
                 SendClientMessage(playerid, ADMINBLUE, "> You have started the Express bus route.");
                 TogglePlayerControllable(playerid, true);
                 BeginSelectedBusRoute(playerid, 3);
+                pInfo[playerid][CurrentState] = 1;
             }
         }
     }
@@ -2227,6 +2235,11 @@ public OnVehicleStreamOut(vehicleid, forplayerid) {
 }
 
 /* 3- DIALOGS -*/
+
+Dialog:DIALOG_ROUTEFINISHED(playerid, response, listitem, inputtext[]) {
+    pInfo[playerid][CurrentState] = 0;
+    return 1;
+}
 
 Dialog:DIALOG_JOB_LIST(playerid, response, listitem, inputtext[]) {
     for (new i = 0; i < loadedJob; i++) {
