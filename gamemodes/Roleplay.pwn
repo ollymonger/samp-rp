@@ -517,6 +517,14 @@ enum ENUM_FAC_DATA {
 }
 new fInfo[MAX_FACTIONS][ENUM_FAC_DATA], loadedFac;
 
+enum ENUM_DRUG_PRICES{
+    drugId[32],
+    drugName[32],
+    drugAmount,
+    drugPrice
+};
+new drugInfo[15][ENUM_DRUG_PRICES], loadedDrug;
+
 public OnGameModeInit() {
     mysql_log(ALL);
     ManualVehicleEngineAndLights();
@@ -538,6 +546,7 @@ public OnGameModeInit() {
     LoadFacData();
     CreateBusStopObjects();
     LoadVehicleData();
+    LoadDrugPrices();
 
     // DUMP 
     dumpPickup = CreatePickup(1239, 1, 281.7589, 1411.7045, 10.5003, -1);
@@ -993,6 +1002,30 @@ public FacsReceived() {
         }
 
         printf("** [MYSQL]:Loaded %d facs from the database.", cache_num_rows());
+    }
+    return 1;
+}
+
+forward public LoadDrugPrices();
+public LoadDrugPrices(){
+    new DB_Query[900];
+
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `drugprices`");
+    mysql_tquery(db_handle, DB_Query, "DrugPricesReceived");
+}
+
+forward public DrugPricesReceived();
+public DrugPricesReceived(){
+    if(cache_num_rows() == 0) return printf("No drugs created");
+    else {
+        for(new i = 0; i < cache_num_rows(); i++){
+            cache_get_value_int(i, "drugId", drugInfo[loadedDrug][drugId]);
+            cache_get_value(i, "drugName", drugInfo[loadedDrug][drugName],32);
+            cache_get_value_int(i, "drugAmount", drugInfo[loadedDrug][drugAmount]);
+            cache_get_value_int(i, "drugPrice", drugInfo[loadedDrug][drugPrice]);
+            loadedDrug++;
+        }
+        printf("** [MYSQL] Loaded %d drugs", cache_num_rows());
     }
     return 1;
 }
@@ -1468,6 +1501,20 @@ CMD:listjobs(playerid, params[]) {
         strcat(jobList, string);
     }
     Dialog_Show(playerid, DIALOG_JOB_LIST, DIALOG_STYLE_LIST, "Available Jobs", jobList, "Accept", "Decline");
+    return 1;
+}
+//* drug dealer job */
+CMD:inventory(playerid, params[]){
+    if(IsPlayerInRangeOfPoint(playerid, 73,814.9191,1683.5012,5.2813)){
+        new drugList[256], string[256];
+        for(new i = 0; i < loadedDrug; i++){
+            format(string, sizeof(string), "Name: %s | Amount: %d | Price: %d\n", drugInfo[i][drugName], drugInfo[i][drugAmount], drugInfo[i][drugPrice]);
+            strcat(drugList, string);
+        }
+        Dialog_Show(playerid, DIALOG_CHINVENTORY, DIALOG_STYLE_MSGBOX, "Crack House Inventory", drugList, "Accept", "");
+    } else {
+       SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not near the crack house!");
+    }
     return 1;
 }
 
