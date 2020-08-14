@@ -62,7 +62,7 @@ new Text:CantCommand, Text:CantTakePost, Text:NoBinBags;
 
 new RoutePay[] = {
     300,
-    300,
+    400,
     125
 };
 
@@ -105,19 +105,24 @@ new Float:busObject[][4] = {
 
 
 
-    //reversed classic
-    {-226.9197, 1204.3618, 19.8348, -90.0000 },
-    {-184.1718, 1182.3256, 19.7880, 180.0000 },
-    {-210.5868, 1092.1892, 19.7641, 90.0000 },
-    {-293.8737, 1092.1390, 19.7847, 90.0000 },
-    {-232.1702, 1024.6699, 19.7841, -90.0000 },
-    {-231.4198, 841.3154, 12.4896, 134.5364 },
-    {-156.4139, 822.1710, 22.0595, 274.8993 },
-    {-52.4531, 947.8643, 19.7496, -90.0000 },
-    {-21.6457, 1063.9948, 19.7845, 180.0000 },
-    {-19.2804, 1142.0730, 19.7874, 90.0000 },
-    {-90.6689, 1191.9529, 20.0163, 90.0000 },
-    {-213.6733, 1192.2991, 19.7808, 90.0000 },
+    //Fort carson LOOP
+    {-201.8537, 1173.9659, 19.7763, 0.0000},
+    {-133.9370, 1091.8904, 19.8795, 90.0000},
+    {-40.9731, 1016.5122, 19.7397, 90.0000},
+    {35.9185, 1122.9139, 19.7783, 180.0000},
+    {-58.8452, 1182.4476, 19.6180, 180.0000},
+    {-220.2953, 1246.4258, 23.3962, -90.0000},
+    {-438.3150, 1474.7195, 34.2605, 180.0000},
+    {-441.7047, 1769.8910, 72.3647, 296.4569},
+    {-731.5360, 2061.5767, 60.5356, 96.8976},
+    {-890.4467, 1803.8699, 60.6641, 293.3637},
+    {-1100.1838, 1741.6031, 33.1263, 61.8473},
+    {-856.4813, 1484.9619, 17.6349, 0.0000},
+    {-655.8999, 1216.0162, 12.3312, 82.8859},
+    {-381.8099, 976.9009, 10.8624, 29.2169},
+    {-306.0473, 820.9340, 14.0127, 8.4419},
+    {-201.5049, 881.0867, 10.3240, 149.9598},
+    {-184.0526, 1117.7760, 19.7757, 180.0000},
 
     // express
     {-254.0678, 1204.7655, 19.8921, -90.0000 },
@@ -151,19 +156,24 @@ new Float:ClassicStops[][3] = {
     {38.7248, 1200.6976, 17.8346}
 };
 
-new Float:ClassicReversedStops[][3] = {
-    {-213.5228, 1196.0015, 18.5767 },
-    {-90.1101, 1195.4183, 18.5798 },
-    {-19.8805, 1145.7205, 18.5850 },
-    {-18.2285, 1063.9802, 18.5814 },
-    {-52.8076, 951.3081, 18.9852 },
-    {-155.6374, 817.4888, 20.9919 },
-    {-233.7671, 844.4862, 11.1443 },
-    {-231.5683, 1020.8794, 18.5825 },
-    {-293.0010, 1095.6836, 18.5810 },
-    {-210.5338, 1095.8163, 18.5714 },
-    {-187.6063, 1182.0548, 18.5817 },
-    {-227.1357, 1200.8739, 19.4712 }
+new Float:FortCarsonLoopStops[][3] = {
+    {-198.2140, 1173.5037, 18.5812},
+    {-134.1615, 1095.5880, 18.5823},
+    {-41.3756, 1020.7316, 18.5823},
+    {31.8862, 1122.4478, 18.5766},
+    {-62.9441, 1182.1210, 18.5359},
+    {-221.5766, 1242.3821, 22.2409},
+    {-442.4277, 1474.3597, 33.1526},
+    {-439.0397, 1763.8916, 71.0105},
+    {-733.3111, 2069.2063, 59.1679},
+    {-888.0124, 1798.8232, 59.2779},
+    {-1098.0883, 1745.4121, 31.7598},
+    {-851.1487, 1485.4338, 16.5763},
+    {-655.8133, 1220.7173, 11.1303},
+    {-376.9046, 979.2209, 9.3838},
+    {-301.8374, 822.1568, 12.8859},
+    {-204.9120, 884.6138, 9.2884},
+    {-187.7946, 1118.6029, 18.5713}
 };
 
 new Float:ExpressStops[][3] = {
@@ -555,11 +565,11 @@ public OnGameModeInit() {
     SetMenuColumnHeader(busdrivermenu, 0, "Route");
     SetMenuColumnHeader(busdrivermenu, 1, "Salary");
     AddMenuItem(busdrivermenu, 0, "Classic");
-    AddMenuItem(busdrivermenu, 1, "$500");
-    AddMenuItem(busdrivermenu, 0, "Classic Reversed");
-    AddMenuItem(busdrivermenu, 1, "$500");
+    AddMenuItem(busdrivermenu, 1, "$300");
+    AddMenuItem(busdrivermenu, 0, "Fort Carson Loop");
+    AddMenuItem(busdrivermenu, 1, "$400");
     AddMenuItem(busdrivermenu, 0, "Express");
-    AddMenuItem(busdrivermenu, 1, "$250");
+    AddMenuItem(busdrivermenu, 1, "$150");
 
     // CONTINUE LOAD
 
@@ -1966,7 +1976,7 @@ public OnPlayerEnterRaceCheckpoint(playerid) {
 public OnPlayerEnterDynamicRaceCP(playerid, checkpointid) {
     if(IsPlayerInDynamicRaceCP(playerid, busCheckpoint[playerid])) {
         new classicLength = sizeof(ClassicStops);
-        new reversedLength = sizeof(ClassicReversedStops);
+        new reversedLength = sizeof(FortCarsonLoopStops);
         new expressLength = sizeof(ExpressStops);
         new vehid = GetPlayerVehicleID(playerid);
         if(GetVehicleModel(vehid) == 431 && GetPlayerState(playerid) == PLAYER_STATE_DRIVER) { // dont do anything if not in this vehicle & NOT THE DRIVER.
@@ -2016,13 +2026,13 @@ public OnPlayerEnterDynamicRaceCP(playerid, checkpointid) {
                     if(pInfo[playerid][busStopState] == reversedLength - 1) {
                         DestroyDynamicRaceCP(busCheckpoint[playerid]);
                         pInfo[playerid][busStopState] = reversedLength;
-                        busCheckpoint[playerid] = CreateDynamicRaceCP(0, ClassicReversedStops[pInfo[playerid][busStopState] - 1][0], ClassicReversedStops[pInfo[playerid][busStopState] - 1][1], ClassicReversedStops[pInfo[playerid][busStopState] - 1][2], jInfo[2][jobIX], jInfo[2][jobIY], jInfo[2][jobIZ], 2.75, -1, -1, -1, 10000, -1); // select LAST checkpoint
+                        busCheckpoint[playerid] = CreateDynamicRaceCP(0, FortCarsonLoopStops[pInfo[playerid][busStopState] - 1][0], FortCarsonLoopStops[pInfo[playerid][busStopState] - 1][1], FortCarsonLoopStops[pInfo[playerid][busStopState] - 1][2], jInfo[2][jobIX], jInfo[2][jobIY], jInfo[2][jobIZ], 2.75, -1, -1, -1, 10000, -1); // select LAST checkpoint
                         TogglePlayerControllable(playerid, false);
                         SetTimerEx("UnfreezeAfterTime", 7500, false, "d", playerid);
                         return 1;
                     }
                     DestroyDynamicRaceCP(busCheckpoint[playerid]);
-                    busCheckpoint[playerid] = CreateDynamicRaceCP(0, ClassicReversedStops[pInfo[playerid][busStopState]][0], ClassicReversedStops[pInfo[playerid][busStopState]][1], ClassicReversedStops[pInfo[playerid][busStopState]][2], ClassicReversedStops[pInfo[playerid][busStopState] + 1][0], ClassicReversedStops[pInfo[playerid][busStopState] + 1][1], ClassicReversedStops[pInfo[playerid][busStopState] + 1][2], 2.75, -1, -1, -1, 10000, -1);
+                    busCheckpoint[playerid] = CreateDynamicRaceCP(0, FortCarsonLoopStops[pInfo[playerid][busStopState]][0], FortCarsonLoopStops[pInfo[playerid][busStopState]][1], FortCarsonLoopStops[pInfo[playerid][busStopState]][2], FortCarsonLoopStops[pInfo[playerid][busStopState] + 1][0], FortCarsonLoopStops[pInfo[playerid][busStopState] + 1][1], FortCarsonLoopStops[pInfo[playerid][busStopState] + 1][2], 2.75, -1, -1, -1, 10000, -1);
                     TogglePlayerControllable(playerid, false);
                     SetTimerEx("UnfreezeAfterTime", 7500, false, "d", playerid);
                     return 1;
@@ -2175,7 +2185,7 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                 pInfo[playerid][CurrentState] = 1;
             }
             case 1:{
-                SendClientMessage(playerid, ADMINBLUE, "> You have started the Classic Reverse bus route.");
+                SendClientMessage(playerid, ADMINBLUE, "> You have started the Fort Carson Loop bus route.");
                 TogglePlayerControllable(playerid, true);
                 BeginSelectedBusRoute(playerid, 2);
                 pInfo[playerid][CurrentState] = 1;
@@ -2202,7 +2212,7 @@ public BeginSelectedBusRoute(playerid, route) {
     if(route == 2) {
         pInfo[playerid][busStopState] = 0;
         routeId[playerid] = route;
-        busCheckpoint[playerid] = CreateDynamicRaceCP(0, ClassicReversedStops[0][0], ClassicReversedStops[0][1], ClassicReversedStops[0][2], ClassicReversedStops[1][0], ClassicReversedStops[1][1], ClassicReversedStops[1][2], 2.75, -1, -1, -1, 10000, -1);
+        busCheckpoint[playerid] = CreateDynamicRaceCP(0, FortCarsonLoopStops[0][0], FortCarsonLoopStops[0][1], FortCarsonLoopStops[0][2], FortCarsonLoopStops[1][0], FortCarsonLoopStops[1][1], FortCarsonLoopStops[1][2], 2.75, -1, -1, -1, 10000, -1);
     }
     if(route == 3) {
         pInfo[playerid][busStopState] = 0;
