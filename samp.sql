@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 4.8.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 14, 2020 at 05:25 AM
--- Server version: 10.1.29-MariaDB
--- PHP Version: 7.2.0
+-- Generation Time: Aug 14, 2020 at 04:08 PM
+-- Server version: 10.1.34-MariaDB
+-- PHP Version: 7.2.7
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -76,7 +76,7 @@ INSERT INTO `accounts` (`ID`, `pName`, `pPassword`, `pEmail`, `pAdminLevel`, `pL
 (19, 'testdialogc', '$2y$12$QDDrYibDbTblZ1jfPy60butWDkKhIn7fzb6/6qog6cXvLCTYvMbwC', 'example@example.com', 0, 0, 0, 'America', 100, 0, 1, 167, 27, 0, 50, 0, 0, 0, '', 0, 0),
 (20, 'quiztest1', '$2y$12$cSDOOkf3ThXATj.0XhDDXOd1SS1fz0i/dZ4iuAQYph2EOT1gCtRMu', '@', 0, 0, 0, 'Los Santos', 100, 0, 1, 23, 28, 0, 1000, 0, 0, 0, '', 0, 0),
 (21, 'testaccounts_1', '$2y$12$KjjyaDTEQBe1LTTDUUvGaOTqZsuFTWhrHHEa6fv0KiASgtEyJscGG', 'gmail@gmail.com', 0, 0, 0, 'Los Santos', 100, 0, 1, 72, 28, 0, 1000, 0, 0, 0, '', 0, 0),
-(22, 'testaccounts_2', '$2y$12$XFDYQjXvbjThLR/xKkjRTOarF5sW7jrTtLDUAQoj5KzHKM/NZ3rRa', 'olly@yllo.co.uk', 6, 2, 8, 'Los Santos', 70, 0, 1, 73, 28, 12983, 0, 52, 1, 7, 'Chief of Police', 3, 700),
+(22, 'testaccounts_2', '$2y$12$XFDYQjXvbjThLR/xKkjRTOarF5sW7jrTtLDUAQoj5KzHKM/NZ3rRa', 'olly@yllo.co.uk', 6, 2, 8, 'Los Santos', 55, 0, 1, 73, 28, 12983, 0, 47, 1, 7, 'Chief of Police', 3, 700),
 (23, 'testaccounts_3', '$2y$12$PEeuZSHTTVnjKDb2UEDWSunyPVyEv7lKRwTEZihlRmQmObQ2NP8n.', '@', 0, 1, 1, 'Los Santos', 100, 0, 1, 170, 28, 0, 1000, 60, 0, 0, '', 1, 0),
 (24, 'testaccounts_6', '$2y$12$YzDJSCnlPVH/ShTMXyzwOOEfQvuVt/Ty88apHkAAldDO5rmIFSJvi', '@', 0, 1, 1, 'america', 95, 0, 1, 24, 28, 0, 800, 55, 0, 0, '', 1, 172),
 (25, 'testaccount_12', '$2y$12$MUbIMBbtUDjFaTHrSS3sbeR/.2zeCYsrJAsxX95yyYweQUtXfsQRK', '@', 0, 1, 1, 'America', 100, 0, 1, 60, 28, 0, 1000, 59, 0, 0, '', 1, 50);
@@ -130,7 +130,8 @@ CREATE TABLE `jobs` (
 INSERT INTO `jobs` (`jID`, `jName`, `jPay`, `jobIX`, `jobIY`, `jobIZ`) VALUES
 (1, 'Postman', 8, -86.6549, 1132.43, 19.5934),
 (2, 'Garbageman', 12, 263.49, 1400.43, 10.5003),
-(3, 'Busdriver', 500, -240.848, 1210.12, 20.3816);
+(3, 'Busdriver', 500, -240.848, 1210.12, 20.3816),
+(4, 'Drugdealer', 0, 796.615, 1692.96, 5.28125);
 
 -- --------------------------------------------------------
 
@@ -223,7 +224,7 @@ ALTER TABLE `factions`
 -- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
-  MODIFY `jID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `jID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `vehicles`

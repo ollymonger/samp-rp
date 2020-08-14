@@ -1438,12 +1438,18 @@ CMD:takejob(playerid, params[]) {
 
 CMD:quitjob(playerid, params[]) {
     if(pInfo[playerid][pJobId] >= 1) {
-        for (new i = 0; i < loadedJob; i++) {
-            if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
-                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have quit your job!");
-                pInfo[playerid][pJobId] = 0;
-                return 1;
+        if(pInfo[playerid][CurrentState] != 1)
+        {
+            for (new i = 0; i < loadedJob; i++) {
+                if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have quit your job!");
+                    pInfo[playerid][pJobId] = 0;
+                    return 1;
+                }
             }
+        } else {
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You're current on a job! /endjob to end your job!");
+            return 1;
         }
     } else {
 
@@ -2313,6 +2319,8 @@ Dialog:DIALOG_ENDJOB(playerid, response, listitem, inputtext[]) {
         pInfo[playerid][CurrentState] = 0;
         pInfo[playerid][PostState] = 0;
         pInfo[playerid][GarbageState] = 0;
+        pInfo[playerid][busStopState] = 0;
+        DestroyDynamicRaceCP(busCheckpoint[playerid]);
         DestroyDynamicCP(PostCheckpoint[0]);
         DestroyDynamicCP(GarbageCheckpoint[0]);
         SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have ended your current job and have lost all of your collectables as a result!");

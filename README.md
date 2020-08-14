@@ -14,6 +14,8 @@ streamer plugin
 * Postman (ID1)
 * Garbageman (ID2)
 * Busdriver (ID3)
+* Drug dealer (ID4)
+
 
 ## States
 * 0 VEHICLE_NOT_RENTABLE 0 (Vehcile is either already rented or not rentable in )
