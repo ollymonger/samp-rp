@@ -13,6 +13,7 @@ streamer plugin
 ## Jobs: (in this order)
 * Postman (ID1)
 * Garbageman (ID2)
+* Busdriver (ID3)
 
 ## States
 * 0 VEHICLE_NOT_RENTABLE 0 (Vehcile is either already rented or not rentable in )
