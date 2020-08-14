@@ -456,6 +456,8 @@ enum ENUM_PLAYER_DATA {
 
         pJobId,
         pJobPay,
+        pWeedAmount,
+        pCokeAmount,
 
         pAdminLevel,
         pModerator,
@@ -1260,6 +1262,8 @@ public SaveNewPlayerData(playerid, hashed[BCRYPT_HASH_LENGTH]) {
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAge` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pAge], GetName(playerid));
     mysql_query(db_handle, query);
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pRegion` = '%e' WHERE  `pName` = '%e'", pInfo[playerid][pRegion], GetName(playerid));
+    mysql_query(db_handle, query);    
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pWeedAmount` = '%d', `pCokeAmount` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pWeedAmount], pInfo[playerid][pCokeAmount], GetName(playerid));
     mysql_query(db_handle, query);
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pLevel` = 1, `pExp` = 1, `pPayTimer` = 60, `pJobId` = 0, `pJobPay` = 0  WHERE  `pName` = '%e'", GetName(playerid));
     mysql_query(db_handle, query);
@@ -1311,6 +1315,9 @@ public SavePlayerData(playerid) {
     mysql_query(db_handle, query);
 
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pFactionId` = '%d', `pFactionRank` = '%d', `pFactionRankname` = '%e' WHERE `pName` = '%e'", pInfo[playerid][pFactionId], pInfo[playerid][pFactionRank], pInfo[playerid][pFactionRankname], GetName(playerid));
+    mysql_query(db_handle, query);
+
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pWeedAmount` = '%d', `pCokeAmount` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pWeedAmount], pInfo[playerid][pCokeAmount], GetName(playerid));
     mysql_query(db_handle, query);
 
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAdminLevel` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pAdminLevel], GetName(playerid));
@@ -1365,6 +1372,10 @@ CMD:stats(playerid, params[]) {
     return 1;
 }
 
+CMD:pockets(playerid, params[]){
+    ReturnPlayerInventory(playerid, playerid);
+    return 1;
+}
 
 CMD:help(playerid, params[]) {
     new Usage[128];
@@ -1505,18 +1516,25 @@ CMD:listjobs(playerid, params[]) {
 }
 //* drug dealer job */
 CMD:inventory(playerid, params[]){
-    if(IsPlayerInRangeOfPoint(playerid, 73,814.9191,1683.5012,5.2813)){
-        new drugList[256], string[256];
-        for(new i = 0; i < loadedDrug; i++){
-            format(string, sizeof(string), "Name: %s | Amount: %d | Price: %d\n", drugInfo[i][drugName], drugInfo[i][drugAmount], drugInfo[i][drugPrice]);
-            strcat(drugList, string);
+    if(pInfo[playerid][pJobId] == 4){ // if a drug dealer
+        if(IsPlayerInRangeOfPoint(playerid, 73,814.9191,1683.5012,5.2813)){
+            new drugList[256], string[256];
+            for(new i = 0; i < loadedDrug; i++){
+                format(string, sizeof(string), "Name: %s | Amount: %d | Price: %d\n", drugInfo[i][drugName], drugInfo[i][drugAmount], drugInfo[i][drugPrice]);
+                strcat(drugList, string);
+            }
+            Dialog_Show(playerid, DIALOG_CHINVENTORY, DIALOG_STYLE_MSGBOX, "Crack House Inventory", drugList, "Accept", "");
+        } else {
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not near the crack house!");
         }
-        Dialog_Show(playerid, DIALOG_CHINVENTORY, DIALOG_STYLE_MSGBOX, "Crack House Inventory", drugList, "Accept", "");
     } else {
-       SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not near the crack house!");
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
     }
     return 1;
 }
+
+
 
 //*postman job*/
 CMD:takepost(playerid, params[]) {
@@ -1616,9 +1634,38 @@ CMD:collect(playerid, params[]) {
         } else {
             return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You must be on foot to collect garbage!");
         }
-    } else {
+    }
+    if(pInfo[playerid][pJobId] == 4){
+        new dName[32], string[256], DB_Query[900]; 
+        if(sscanf(params, "s", dName)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /collect [DRUGNAME]"); {
+            // if player has 1 weed, allow
+            if(strcmp(dName, "Weed", true) == 0) { // Check to see if inserted amount is less than 10
+                // check if player's weed stat is less than 10.                           
+                if(drugInfo[0][drugAmount] > 0){
+                    if(pInfo[playerid][pWeedAmount] < 10){ 
+                        // if weed stat is less than amount...
+                        pInfo[playerid][pWeedAmount] += 1;
+                        format(string, sizeof(string), "[SERVER]:{FFFFFF} You have purchased %d grams of weed!", 1);
+                        SendClientMessage(playerid, SERVERCOLOR, string);
+                        drugInfo[0][drugAmount] -= 1;
+                        mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `drugprices` SET `drugAmount` = '%d' WHERE  `drugId` = 1", drugInfo[0][drugAmount]);
+                        mysql_query(db_handle, DB_Query);
+                    } else {
+                        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You cannot carry any more Weed!");
+                    }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} The crack house does not have any Weed!");
+                }
+            }
+
+        }
+        return 1;
+    }
+    if(pInfo[playerid][pJobId] != 2 || pInfo[playerid][pJobId] != 4)
+    {
         TextDrawShowForPlayer(playerid, CantCommand);
         SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+        return 1;
     }
     return 1;
 }
@@ -2763,7 +2810,8 @@ public OnPlayerLoad(playerid) {
     cache_get_value(0, "pFactionRankname", pInfo[playerid][pFactionRankname], 32);
     cache_get_value_int(0, "pJobId", pInfo[playerid][pJobId]);
     cache_get_value_int(0, "pJobPay", pInfo[playerid][pJobPay]);
-
+    cache_get_value_int(0, "pWeedAmount", pInfo[playerid][pWeedAmount]);
+    cache_get_value_int(0, "pCokeAmount", pInfo[playerid][pCokeAmount]);
 
     cache_get_value_int(0, "pAdminLevel", pInfo[playerid][pAdminLevel]);
 
@@ -3042,6 +3090,25 @@ stock GetVehicleName(vehicleid) {
     new String[256];
     format(String, sizeof(String), "%s", VehicleNames[GetVehicleModel(vehicleid) - 400]);
     return String;
+}
+
+stock ReturnPlayerInventory(playerid, target){    
+    new string[256];
+    format(string, sizeof(string), "[SERVER]:**-------- %s's POCKETS --------**", RPName(target));
+    SendClientMessage(target, SPECIALORANGE, string);
+    if(GetPlayerMoney(target) > 0){        
+        format(string, sizeof(string), "[SERVER]: $%d (CASH)", pInfo[target][pCash]);
+        SendClientMessage(target, SERVERCOLOR, string);
+    }    
+    if(pInfo[target][pWeedAmount] > 1){        
+        format(string, sizeof(string), "[SERVER]: %d/grams of Weed", pInfo[target][pWeedAmount]);
+        SendClientMessage(target, SERVERCOLOR, string);
+    }
+    if(pInfo[target][pCokeAmount] > 1){        
+        format(string, sizeof(string), "[SERVER]: %d/grams of Cocaine", pInfo[target][pCokeAmount]);
+        SendClientMessage(target, SERVERCOLOR, string);
+    }
+    return 1;
 }
 
 stock ReturnStats(playerid, target) {
