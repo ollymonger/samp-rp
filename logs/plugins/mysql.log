@@ -1,0 +1,850 @@
+[04:20:04] [INFO] changed log level from 'warning, error' to 'debug, info, warning, error'
+[04:20:04] [DEBUG] mysql_connect_file("mysql.ini")
+[04:20:04] [DEBUG] CHandleManager::CreateFromFile(this=0x594810, file_path='mysql.ini')
+[04:20:04] [INFO] Options instance with id '1' successfully created.
+[04:20:04] [DEBUG] CHandleManager::CreateFromFile - new options = 0x588f90 (id '1')
+[04:20:04] [DEBUG] CHandleManager::Create(this=0x594810, host='localhost', user='root', pass='****', db='samp', options=0x588f90)
+[04:20:04] [INFO] Creating new connection handle...
+[04:20:04] [WARNING] mysql_connect_file: no password specified
+[04:20:04] [DEBUG] CConnection::CConnection(this=0x55eea8, host='localhost', user='root', passw='****', db='samp', options=0x588f90)
+[04:20:04] [DEBUG] CConnection::CConnection - new connection = 0x595a28
+[04:20:04] [DEBUG] CConnection::CConnection(this=0x3da0020, host='localhost', user='root', passw='****', db='samp', options=0x588f90)
+[04:20:04] [DEBUG] CConnection::CConnection - new connection = 0x5b2dd8
+[04:20:04] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3da0020, connection=0x3da0020)
+[04:20:04] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3da0020, connection=0x3da0020)
+[04:20:04] [DEBUG] CConnectionPool::CConnectionPool(size=2, this=0x55ef28)
+[04:20:04] [DEBUG] CConnection::CConnection(this=0x3f7b020, host='localhost', user='root', passw='****', db='samp', options=0x588f90)
+[04:20:04] [DEBUG] CConnection::CConnection - new connection = 0x5fa118
+[04:20:04] [DEBUG] CThreadedConnection::WorkerFunc(this=0x3f7b020, connection=0x3f7b020)
+[04:20:04] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x3f7b020, connection=0x3f7b020)
+[04:20:04] [DEBUG] CConnection::CConnection(this=0x414e020, host='localhost', user='root', passw='****', db='samp', options=0x588f90)
+[04:20:04] [DEBUG] CConnection::CConnection - new connection = 0x600cd0
+[04:20:04] [DEBUG] CThreadedConnection::WorkerFunc(this=0x414e020, connection=0x414e020)
+[04:20:04] [DEBUG] CThreadedConnection::CThreadedConnection(this=0x414e020, connection=0x414e020)
+[04:20:04] [INFO] Connection handle with id '1' successfully created.
+[04:20:04] [DEBUG] CHandleManager::Create - new handle = 0x586410
+[04:20:04] [DEBUG] mysql_connect_file: return value: '1'
+[04:20:04] [DEBUG] mysql_errno(1)
+[04:20:04] [DEBUG] CHandle::GetErrorId(this=0x586410)
+[04:20:04] [DEBUG] CConnection::GetError(this=0x55eea8, connection=0x595a28)
+[04:20:04] [DEBUG] CHandle::GetErrorId - return value: true, error id: '0', error msg: ''
+[04:20:04] [DEBUG] mysql_errno: return value: '0'
+[04:20:04] [DEBUG] mysql_format(1, 0x03B54CA8, 900, "SELECT * FROM `jobs`")
+[04:20:04] [DEBUG] mysql_format: return value: '20'
+[04:20:04] [DEBUG] mysql_tquery(1, "SELECT * FROM `jobs`", "JobsReceived", "")
+[04:20:04] [DEBUG] CCallback::Create(amx=0x29faf78, name='JobsReceived', format='', params=0x3b54c94, param_offset=5)
+[04:20:04] [DEBUG] CCallback::Create - callback index for 'JobsReceived': 12
+[04:20:04] [INFO] Callback 'JobsReceived' set up for delayed execution.
+[04:20:04] [DEBUG] created delayed callback with 0 parameter
+[04:20:04] [DEBUG] CHandle::Execute(this=0x586410, type=1, query=0x58ce88)
+[04:20:04] [DEBUG] CHandle::Execute - return value: true
+[04:20:04] [DEBUG] mysql_tquery: return value: '1'
+[04:20:04] [DEBUG] mysql_format(1, 0x03B54CA8, 900, "SELECT * FROM `factions`")
+[04:20:04] [DEBUG] mysql_format: return value: '24'
+[04:20:04] [DEBUG] mysql_tquery(1, "SELECT * FROM `factions`", "FacsReceived", "")
+[04:20:04] [DEBUG] CCallback::Create(amx=0x29faf78, name='FacsReceived', format='', params=0x3b54c94, param_offset=5)
+[04:20:04] [DEBUG] CCallback::Create - callback index for 'FacsReceived': 6
+[04:20:04] [INFO] Callback 'FacsReceived' set up for delayed execution.
+[04:20:04] [DEBUG] created delayed callback with 0 parameter
+[04:20:04] [DEBUG] CHandle::Execute(this=0x586410, type=1, query=0x597820)
+[04:20:04] [DEBUG] CHandle::Execute - return value: true
+[04:20:04] [DEBUG] CConnection::Execute(query=0x58ce88, this=0x3da0020, connection=0x5b2dd8)
+[04:20:04] [DEBUG] mysql_tquery: return value: '1'
+[04:20:04] [DEBUG] CQuery::Execute(this=0x58ce88, connection=0x5b2dd8)
+[04:20:04] [INFO] query "SELECT * FROM `jobs`" successfully executed within 0.327 milliseconds
+[04:20:04] [DEBUG] mysql_format(1, 0x03B54CA8, 900, "SELECT * FROM `vehicles`")
+[04:20:04] [DEBUG] CResultSet::Create(connection=0x5b2dd8, query_str='SELECT * FROM `jobs`')
+[04:20:04] [DEBUG] created new resultset '0x5957a8'
+[04:20:04] [DEBUG] mysql_format: return value: '24'
+[04:20:04] [DEBUG] mysql_tquery(1, "SELECT * FROM `vehicles`", "VehsReceived", "")
+[04:20:04] [DEBUG] CCallback::Create(amx=0x29faf78, name='VehsReceived', format='', params=0x3b54c94, param_offset=5)
+[04:20:04] [DEBUG] fetched MySQL result '0x5827f8'
+[04:20:04] [DEBUG] CCallback::Create - callback index for 'VehsReceived': 82
+[04:20:04] [INFO] Callback 'VehsReceived' set up for delayed execution.
+[04:20:04] [DEBUG] created delayed callback with 0 parameter
+[04:20:04] [DEBUG] CHandle::Execute(this=0x586410, type=1, query=0x60a5a0)
+[04:20:04] [DEBUG] CHandle::Execute - return value: true
+[04:20:04] [DEBUG] mysql_tquery: return value: '1'
+[04:20:04] [DEBUG] allocated 228 bytes for PAWN result
+[04:20:04] [DEBUG] CConnection::Execute(query=0x597820, this=0x3da0020, connection=0x5b2dd8)
+[04:20:04] [DEBUG] CQuery::Execute(this=0x597820, connection=0x5b2dd8)
+[04:20:04] [INFO] query "SELECT * FROM `factions`" successfully executed within 0.205 milliseconds
+[04:20:04] [DEBUG] CCallback::Execute(amx=0x29faf78, index=12, num_params=0)
+[04:20:04] [DEBUG] CResultSet::Create(connection=0x5b2dd8, query_str='SELECT * FROM `factions`')
+[04:20:04] [DEBUG] created new resultset '0x5952a0'
+[04:20:04] [INFO] Executing callback 'JobsReceived' with 0 parameter...
+[04:20:04] [DEBUG] executing AMX callback with index '12'
+[04:20:04] [DEBUG] fetched MySQL result '0x58a9e0'
+[04:20:04] [DEBUG] allocated 392 bytes for PAWN result
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AF0)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(0, "jID", 0x03AF85C8)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(0, "jName", 0x03AF85F4, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'Postman'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(0, "jPay", 0x03AF8674)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '8'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(0, "jobIX", 0x03AF8678)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '-86.6549'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(0, "jobIY", 0x03AF867C)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '1132.43'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(0, "jobIZ", 0x03AF8680)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '19.5934'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(1, "jID", 0x03AF8684)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '2'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(1, "jName", 0x03AF86B0, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'Garbageman'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(1, "jPay", 0x03AF8730)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '12'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(1, "jobIX", 0x03AF8734)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '263.49'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(1, "jobIY", 0x03AF8738)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '1400.43'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(1, "jobIZ", 0x03AF873C)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '10.5003'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(2, "jID", 0x03AF8740)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '3'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(2, "jName", 0x03AF876C, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'Busdriver'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(2, "jPay", 0x03AF87EC)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '500'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(2, "jobIX", 0x03AF87F0)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '-240.848'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(2, "jobIY", 0x03AF87F4)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '1210.12'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(2, "jobIZ", 0x03AF87F8)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '20.3816'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AF0)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] AMX callback executed with error '0'
+[04:20:04] [INFO] Callback successfully executed.
+[04:20:04] [DEBUG] CConnection::Execute(query=0x60a5a0, this=0x3da0020, connection=0x5b2dd8)
+[04:20:04] [DEBUG] CQuery::Execute(this=0x60a5a0, connection=0x5b2dd8)
+[04:20:04] [INFO] query "SELECT * FROM `vehicles`" successfully executed within 0.326 milliseconds
+[04:20:04] [DEBUG] CResultSet::Create(connection=0x5b2dd8, query_str='SELECT * FROM `vehicles`')
+[04:20:04] [DEBUG] created new resultset '0x595620'
+[04:20:04] [DEBUG] fetched MySQL result '0x609b78'
+[04:20:04] [DEBUG] allocated 1820 bytes for PAWN result
+[04:20:04] [DEBUG] CCallback::Execute(amx=0x29faf78, index=6, num_params=0)
+[04:20:04] [INFO] Executing callback 'FacsReceived' with 0 parameter...
+[04:20:04] [DEBUG] executing AMX callback with index '6'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AF0)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(0, "fID", 0x03B30E80)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(0, "fName", 0x03B30F00, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'Fort Carson Sheriff's Office'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(0, "fRank1Name", 0x03B30F84, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'Cadet'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(0, "fRank2Name", 0x03B31004, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'Sheriff I'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(0, "fRank3Name", 0x03B31084, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'Sheriff II'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(0, "fRank4Name", 0x03B31104, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'Sergeant I'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(0, "fRank5Name", 0x03B31184, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'Sergeant II'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(0, "fRank6Name", 0x03B31204, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'Commander'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(0, "fRank7Name", 0x03B31284, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'Chief of Police'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(1, "fID", 0x03B31304)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '2'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(1, "fName", 0x03B31384, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'Fort Carson EMS'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(1, "fRank1Name", 0x03B31408, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'EMS Cadet'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(1, "fRank2Name", 0x03B31488, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'EMS Responder I'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(1, "fRank3Name", 0x03B31508, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'EMS Responder II'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(1, "fRank4Name", 0x03B31588, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'EMS Sergeant I'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(1, "fRank5Name", 0x03B31608, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'EMS Sergeant II'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(1, "fRank6Name", 0x03B31688, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'Station Commander'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(1, "fRank7Name", 0x03B31708, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'Station Chief'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AF0)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] AMX callback executed with error '0'
+[04:20:04] [INFO] Callback successfully executed.
+[04:20:04] [DEBUG] CCallback::Execute(amx=0x29faf78, index=82, num_params=0)
+[04:20:04] [INFO] Executing callback 'VehsReceived' with 0 parameter...
+[04:20:04] [DEBUG] executing AMX callback with index '82'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AF0)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(0, "vID", 0x03AFB254)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(0, "vModelId", 0x03AFB2D4)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '462'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(0, "vOwner", 0x03AFB2D8, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(0, "vFuel", 0x03AFB358)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '100'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(0, "vJobId", 0x03AFB35C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(0, "vFacId", 0x03AFB360)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(0, "vPlate", 0x03AFB364, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'RPOST1R'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(0, "vParkedX", 0x03AFB3E4)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '-80.5683'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(0, "vParkedY", 0x03AFB3E8)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '1132.52'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(0, "vParkedZ", 0x03AFB3EC)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '19.8'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(0, "vAngle", 0x03AFB3F0)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '90'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(0, "vColor1", 0x03AFB3F4)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(0, "vColor2", 0x03AFB3F8)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(0, "vRentalState", 0x03AFB404)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(0, "vRentalPrice", 0x03AFB408)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '200'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(1, "vID", 0x03AFB40C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '2'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(1, "vModelId", 0x03AFB48C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '462'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(1, "vOwner", 0x03AFB490, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(1, "vFuel", 0x03AFB510)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '100'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(1, "vJobId", 0x03AFB514)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(1, "vFacId", 0x03AFB518)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(1, "vPlate", 0x03AFB51C, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'RPOST2R'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(1, "vParkedX", 0x03AFB59C)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '-80.5683'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(1, "vParkedY", 0x03AFB5A0)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '1128.49'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(1, "vParkedZ", 0x03AFB5A4)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '19.8'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(1, "vAngle", 0x03AFB5A8)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '90'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(1, "vColor1", 0x03AFB5AC)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(1, "vColor2", 0x03AFB5B0)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(1, "vRentalState", 0x03AFB5BC)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(1, "vRentalPrice", 0x03AFB5C0)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '200'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(2, "vID", 0x03AFB5C4)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '3'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(2, "vModelId", 0x03AFB644)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '462'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(2, "vOwner", 0x03AFB648, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(2, "vFuel", 0x03AFB6C8)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '100'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(2, "vJobId", 0x03AFB6CC)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(2, "vFacId", 0x03AFB6D0)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(2, "vPlate", 0x03AFB6D4, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'RPOST3R'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(2, "vParkedX", 0x03AFB754)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '-80.5683'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(2, "vParkedY", 0x03AFB758)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '1124.51'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(2, "vParkedZ", 0x03AFB75C)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '19.8'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(2, "vAngle", 0x03AFB760)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '90'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(2, "vColor1", 0x03AFB764)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(2, "vColor2", 0x03AFB768)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(2, "vRentalState", 0x03AFB774)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(2, "vRentalPrice", 0x03AFB778)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '200'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(3, "vID", 0x03AFB77C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '4'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(3, "vModelId", 0x03AFB7FC)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '462'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(3, "vOwner", 0x03AFB800, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(3, "vFuel", 0x03AFB880)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '100'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(3, "vJobId", 0x03AFB884)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(3, "vFacId", 0x03AFB888)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(3, "vPlate", 0x03AFB88C, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'RPOST4R'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(3, "vParkedX", 0x03AFB90C)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '-80.5683'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(3, "vParkedY", 0x03AFB910)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '1120.42'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(3, "vParkedZ", 0x03AFB914)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '19.8'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(3, "vAngle", 0x03AFB918)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '90'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(3, "vColor1", 0x03AFB91C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(3, "vColor2", 0x03AFB920)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(3, "vRentalState", 0x03AFB92C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(3, "vRentalPrice", 0x03AFB930)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '200'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(4, "vID", 0x03AFB934)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '5'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(4, "vModelId", 0x03AFB9B4)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '462'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(4, "vOwner", 0x03AFB9B8, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(4, "vFuel", 0x03AFBA38)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '100'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(4, "vJobId", 0x03AFBA3C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(4, "vFacId", 0x03AFBA40)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(4, "vPlate", 0x03AFBA44, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'RPOST5R'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(4, "vParkedX", 0x03AFBAC4)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '-80.5683'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(4, "vParkedY", 0x03AFBAC8)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '1116.56'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(4, "vParkedZ", 0x03AFBACC)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '19.8'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(4, "vAngle", 0x03AFBAD0)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '90'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(4, "vColor1", 0x03AFBAD4)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(4, "vColor2", 0x03AFBAD8)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(4, "vRentalState", 0x03AFBAE4)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(4, "vRentalPrice", 0x03AFBAE8)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '200'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(5, "vID", 0x03AFBAEC)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '6'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(5, "vModelId", 0x03AFBB6C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '462'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(5, "vOwner", 0x03AFBB70, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(5, "vFuel", 0x03AFBBF0)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '100'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(5, "vJobId", 0x03AFBBF4)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(5, "vFacId", 0x03AFBBF8)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(5, "vPlate", 0x03AFBBFC, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'RGARB1R'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(5, "vParkedX", 0x03AFBC7C)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '-80.5683'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(5, "vParkedY", 0x03AFBC80)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '1112.7'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(5, "vParkedZ", 0x03AFBC84)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '19.8'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(5, "vAngle", 0x03AFBC88)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '90'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(5, "vColor1", 0x03AFBC8C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(5, "vColor2", 0x03AFBC90)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(5, "vRentalState", 0x03AFBC9C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(5, "vRentalPrice", 0x03AFBCA0)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '200'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(6, "vID", 0x03AFBCA4)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '7'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(6, "vModelId", 0x03AFBD24)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '408'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(6, "vOwner", 0x03AFBD28, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(6, "vFuel", 0x03AFBDA8)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '100'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(6, "vJobId", 0x03AFBDAC)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '2'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(6, "vFacId", 0x03AFBDB0)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(6, "vPlate", 0x03AFBDB4, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'RGARB2R'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(6, "vParkedX", 0x03AFBE34)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '282.319'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(6, "vParkedY", 0x03AFBE38)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '1390.42'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(6, "vParkedZ", 0x03AFBE3C)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '11.6413'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(6, "vAngle", 0x03AFBE40)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(6, "vColor1", 0x03AFBE44)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(6, "vColor2", 0x03AFBE48)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(6, "vRentalState", 0x03AFBE54)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(6, "vRentalPrice", 0x03AFBE58)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '70'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(7, "vID", 0x03AFBE5C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '8'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(7, "vModelId", 0x03AFBEDC)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '408'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(7, "vOwner", 0x03AFBEE0, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(7, "vFuel", 0x03AFBF60)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '100'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(7, "vJobId", 0x03AFBF64)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '2'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(7, "vFacId", 0x03AFBF68)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(7, "vPlate", 0x03AFBF6C, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'RGARB3R
+'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(7, "vParkedX", 0x03AFBFEC)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '276.352'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(7, "vParkedY", 0x03AFBFF0)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '1390.42'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(7, "vParkedZ", 0x03AFBFF4)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '11.6413'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(7, "vAngle", 0x03AFBFF8)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(7, "vColor1", 0x03AFBFFC)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(7, "vColor2", 0x03AFC000)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(7, "vRentalState", 0x03AFC00C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(7, "vRentalPrice", 0x03AFC010)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '70'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(8, "vID", 0x03AFC014)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '9'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(8, "vModelId", 0x03AFC094)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '408'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(8, "vOwner", 0x03AFC098, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(8, "vFuel", 0x03AFC118)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '100'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(8, "vJobId", 0x03AFC11C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '2'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(8, "vFacId", 0x03AFC120)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(8, "vPlate", 0x03AFC124, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'RGARB4R
+'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(8, "vParkedX", 0x03AFC1A4)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '270.268'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(8, "vParkedY", 0x03AFC1A8)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '1390.42'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(8, "vParkedZ", 0x03AFC1AC)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '11.6413'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(8, "vAngle", 0x03AFC1B0)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(8, "vColor1", 0x03AFC1B4)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(8, "vColor2", 0x03AFC1B8)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(8, "vRentalState", 0x03AFC1C4)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(8, "vRentalPrice", 0x03AFC1C8)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '70'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(9, "vID", 0x03AFC1CC)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '10'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(9, "vModelId", 0x03AFC24C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '408'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(9, "vOwner", 0x03AFC250, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(9, "vFuel", 0x03AFC2D0)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '100'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(9, "vJobId", 0x03AFC2D4)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '2'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(9, "vFacId", 0x03AFC2D8)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(9, "vPlate", 0x03AFC2DC, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'RGARB5R
+'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(9, "vParkedX", 0x03AFC35C)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '264.652'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(9, "vParkedY", 0x03AFC360)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '1390.42'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(9, "vParkedZ", 0x03AFC364)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '11.6413'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(9, "vAngle", 0x03AFC368)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(9, "vColor1", 0x03AFC36C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(9, "vColor2", 0x03AFC370)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(9, "vRentalState", 0x03AFC37C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(9, "vRentalPrice", 0x03AFC380)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '70'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(10, "vID", 0x03AFC384)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '11'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(10, "vModelId", 0x03AFC404)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '431'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(10, "vOwner", 0x03AFC408, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(10, "vFuel", 0x03AFC488)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '100'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(10, "vJobId", 0x03AFC48C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '3'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(10, "vFacId", 0x03AFC490)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(10, "vPlate", 0x03AFC494, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'RBUS1R
+'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(10, "vParkedX", 0x03AFC514)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '10000'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(10, "vParkedY", 0x03AFC518)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '10000'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(10, "vParkedZ", 0x03AFC51C)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '10000'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(10, "vAngle", 0x03AFC520)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '180'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(10, "vColor1", 0x03AFC524)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(10, "vColor2", 0x03AFC528)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(10, "vRentalState", 0x03AFC534)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(10, "vRentalPrice", 0x03AFC538)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(11, "vID", 0x03AFC53C)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '12'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(11, "vModelId", 0x03AFC5BC)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '431'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(11, "vOwner", 0x03AFC5C0, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(11, "vFuel", 0x03AFC640)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '100'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(11, "vJobId", 0x03AFC644)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '3'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(11, "vFacId", 0x03AFC648)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(11, "vPlate", 0x03AFC64C, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'RBUS2R
+'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(11, "vParkedX", 0x03AFC6CC)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '-235.389'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(11, "vParkedY", 0x03AFC6D0)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '1217.78'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(11, "vParkedZ", 0x03AFC6D4)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '19.9383'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(11, "vAngle", 0x03AFC6D8)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '180'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(11, "vColor1", 0x03AFC6DC)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(11, "vColor2", 0x03AFC6E0)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(11, "vRentalState", 0x03AFC6EC)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(11, "vRentalPrice", 0x03AFC6F0)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(12, "vID", 0x03AFC6F4)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '13'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(12, "vModelId", 0x03AFC774)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '431'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(12, "vOwner", 0x03AFC778, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'NULL'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(12, "vFuel", 0x03AFC7F8)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '100'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(12, "vJobId", 0x03AFC7FC)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '3'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(12, "vFacId", 0x03AFC800)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name(12, "vPlate", 0x03AFC804, 32)
+[04:20:04] [DEBUG] cache_get_value_name: assigned value: 'RBUS3R
+'
+[04:20:04] [DEBUG] cache_get_value_name: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(12, "vParkedX", 0x03AFC884)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '-229.89'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(12, "vParkedY", 0x03AFC888)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '1217.78'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(12, "vParkedZ", 0x03AFC88C)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '19.9383'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_float(12, "vAngle", 0x03AFC890)
+[04:20:04] [DEBUG] cache_get_value_name_float: assigned value: '180'
+[04:20:04] [DEBUG] cache_get_value_name_float: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(12, "vColor1", 0x03AFC894)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(12, "vColor2", 0x03AFC898)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(12, "vRentalState", 0x03AFC8A4)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_value_name_int(12, "vRentalPrice", 0x03AFC8A8)
+[04:20:04] [DEBUG] cache_get_value_name_int: assigned value: '0'
+[04:20:04] [DEBUG] cache_get_value_name_int: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AE8)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] cache_get_row_count(0x03B55AF0)
+[04:20:04] [DEBUG] cache_get_row_count: return value: '1'
+[04:20:04] [DEBUG] AMX callback executed with error '0'
+[04:20:04] [INFO] Callback successfully executed.
