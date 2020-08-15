@@ -1717,12 +1717,15 @@ CMD:collect(playerid, params[]) {
 
 forward public BeginDrugDealing(playerid);
 public BeginDrugDealing(playerid){
-    if(pInfo[playerid][pWeedAmount] > 1 || pInfo[playerid][pCokeAmount] > 1){
+    if(pInfo[playerid][pWeedAmount] >= 1 || pInfo[playerid][pCokeAmount] >= 1){
         new rand;
         new sizeOf = sizeof(randomdrugdeals);
         rand = random(sizeOf - 1);
+        printf("%d", rand);
+        KillTimer(drugDealTimer[playerid]);
         drugDeal[playerid] = CreateDynamicCP(randomdrugdeals[rand][0], randomdrugdeals[rand][1], randomdrugdeals[rand][2], 2, -1, -1, -1, 10000);
-        SendPlayerText(pInfo[playerid][pPhoneNumber], "Hey, you about? The usual at our normal spot.", 00000);
+        SendPlayerText(pInfo[playerid][pPhoneNumber], "Hey, you about? The usual at our normal spot.", 0);
+        drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
     }
     return 1;
 }
@@ -1732,8 +1735,14 @@ public SendPlayerText(tnumber, message[100], from){
         if(pInfo[i][pPhoneNumber] == tnumber)
         {
             new string[256];
-            format(string, sizeof(string), "Text msg received: %s, from: %d", message, from);
-            SendClientMessage(i, SERVERCOLOR, string);
+            if(from == 0){
+                format(string, sizeof(string), "Text msg received: %s, from: Unknown", message);
+                SendClientMessage(i, SERVERCOLOR, string);
+            }
+            else {                
+                format(string, sizeof(string), "Text msg received: %s, from: Unknown", message, from);
+                SendClientMessage(i, SERVERCOLOR, string);
+            }
         }
     }
     return 1;
