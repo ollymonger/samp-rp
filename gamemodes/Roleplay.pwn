@@ -556,6 +556,7 @@ public OnGameModeInit() {
     CreateBusStopObjects();
     LoadVehicleData();
     LoadDrugPrices();
+    
 
     // DUMP 
     dumpPickup = CreatePickup(1239, 1, 281.7589, 1411.7045, 10.5003, -1);
@@ -1015,6 +1016,7 @@ public FacsReceived() {
     return 1;
 }
 
+
 forward public LoadDrugPrices();
 public LoadDrugPrices(){
     new DB_Query[900];
@@ -1105,97 +1107,111 @@ public OnPlayerRequestClass(playerid, classid) {
 }
 
 public OnPlayerConnect(playerid) {
-    new query[200];
-    pInfo[playerid][pMuted] = 1;
-    new name[MAX_PLAYER_NAME + 1];
-    GetPlayerName(playerid, name, sizeof(name));
+    if(!IsPlayerNPC(playerid))
+    {
+        new query[200];
+        pInfo[playerid][pMuted] = 1;
+        new name[MAX_PLAYER_NAME + 1];
+        GetPlayerName(playerid, name, sizeof(name));
 
-    SetPlayerSkin(playerid, maleSkins[random(11)]);
-    SetPlayerPos(playerid, 163.984863, 1213.388305, 21.501449);
-    SetPlayerFacingAngle(playerid, 221.263046);
-    InterpolateCameraPos(playerid, 163.4399, 1179.7891, 23.3623, 178.1042, 1187.0188, 22.1915, 15000, CAMERA_MOVE);
-    InterpolateCameraLookAt(playerid, 163.5655, 1180.7781, 23.2423, 177.8423, 1187.9811, 22.0065, 15000, CAMERA_MOVE);
-
-
-    LoadMapIcons(playerid);
-
-    ApplyAnimation(playerid, "SMOKING", "M_smklean_loop", 4.0, true, false, false, false, 0, false); // Smoke
-
-    mysql_format(db_handle, query, sizeof(query), "SELECT * FROM `accounts` where `pName` = '%s'", name); // Get the player's name
-    mysql_tquery(db_handle, query, "checkIfExists", "d", playerid); // Send to check if exists function
+        SetPlayerSkin(playerid, maleSkins[random(11)]);
+        SetPlayerPos(playerid, 163.984863, 1213.388305, 21.501449);
+        SetPlayerFacingAngle(playerid, 221.263046);
+        InterpolateCameraPos(playerid, 163.4399, 1179.7891, 23.3623, 178.1042, 1187.0188, 22.1915, 15000, CAMERA_MOVE);
+        InterpolateCameraLookAt(playerid, 163.5655, 1180.7781, 23.2423, 177.8423, 1187.9811, 22.0065, 15000, CAMERA_MOVE);
 
 
-    // remove buildings
+        LoadMapIcons(playerid);
 
-    VEHSTUFF[playerid][0] = CreatePlayerTextDraw(playerid, 595.000000, 359.000000, "~n~~n~~n~");
-    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][0], 1);
-    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][0], -0.004166, 1.500000);
-    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][0], 483.500000, 93.500000);
-    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][0], 1);
-    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][0], 0);
-    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][0], 1);
-    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][0], -1);
-    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][0], 255);
-    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][0], 50);
-    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][0], 1);
-    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][0], 1);
-    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][0], 0);
+        ApplyAnimation(playerid, "SMOKING", "M_smklean_loop", 4.0, true, false, false, false, 0, false); // Smoke
 
-    VEHSTUFF[playerid][1] = CreatePlayerTextDraw(playerid, 492.000000, 359.000000, "NAME:~n~SPEED:~n~FUEL:~n~");
-    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][1], 1);
-    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][1], 0.370833, 1.500000);
-    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][1], 163.500000, 88.500000);
-    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][1], 1);
-    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][1], 0);
-    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][1], 1);
-    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][1], -2686721);
-    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][1], 255);
-    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][1], 50);
-    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][1], 0);
-    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][1], 1);
-    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][1], 0);
+        mysql_format(db_handle, query, sizeof(query), "SELECT * FROM `accounts` where `pName` = '%s'", name); // Get the player's name
+        mysql_tquery(db_handle, query, "checkIfExists", "d", playerid); // Send to check if exists function
 
-    VEHSTUFF[playerid][2] = CreatePlayerTextDraw(playerid, 533.000000, 361.000000, "INFERNUS");
-    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][2], 1);
-    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][2], 0.320832, 1.100000);
-    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][2], 400.000000, 17.000000);
-    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][2], 1);
-    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][2], 0);
-    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][2], 1);
-    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][2], -1);
-    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][2], 255);
-    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][2], 50);
-    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][2], 0);
-    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][2], 1);
-    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][2], 0);
 
-    VEHSTUFF[playerid][3] = CreatePlayerTextDraw(playerid, 581.000000, 376.000000, "0 KM/H");
-    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][3], 1);
-    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][3], 0.320832, 1.100000);
-    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][3], 400.000000, 17.000000);
-    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][3], 1);
-    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][3], 0);
-    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][3], 3);
-    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][3], -1);
-    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][3], 255);
-    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][3], 50);
-    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][3], 0);
-    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][3], 1);
-    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][3], 0);
+        // remove buildings
 
-    VEHSTUFF[playerid][4] = CreatePlayerTextDraw(playerid, 558.000000, 389.000000, "0 L");
-    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][4], 1);
-    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][4], 0.320832, 1.100000);
-    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][4], 400.000000, 17.000000);
-    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][4], 1);
-    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][4], 0);
-    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][4], 3);
-    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][4], -1);
-    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][4], 255);
-    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][4], 50);
-    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][4], 0);
-    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][4], 1);
-    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][4], 0);
+        VEHSTUFF[playerid][0] = CreatePlayerTextDraw(playerid, 595.000000, 359.000000, "~n~~n~~n~");
+        PlayerTextDrawFont(playerid, VEHSTUFF[playerid][0], 1);
+        PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][0], -0.004166, 1.500000);
+        PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][0], 483.500000, 93.500000);
+        PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][0], 1);
+        PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][0], 0);
+        PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][0], 1);
+        PlayerTextDrawColor(playerid, VEHSTUFF[playerid][0], -1);
+        PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][0], 255);
+        PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][0], 50);
+        PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][0], 1);
+        PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][0], 1);
+        PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][0], 0);
+
+        VEHSTUFF[playerid][1] = CreatePlayerTextDraw(playerid, 492.000000, 359.000000, "NAME:~n~SPEED:~n~FUEL:~n~");
+        PlayerTextDrawFont(playerid, VEHSTUFF[playerid][1], 1);
+        PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][1], 0.370833, 1.500000);
+        PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][1], 163.500000, 88.500000);
+        PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][1], 1);
+        PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][1], 0);
+        PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][1], 1);
+        PlayerTextDrawColor(playerid, VEHSTUFF[playerid][1], -2686721);
+        PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][1], 255);
+        PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][1], 50);
+        PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][1], 0);
+        PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][1], 1);
+        PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][1], 0);
+
+        VEHSTUFF[playerid][2] = CreatePlayerTextDraw(playerid, 533.000000, 361.000000, "INFERNUS");
+        PlayerTextDrawFont(playerid, VEHSTUFF[playerid][2], 1);
+        PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][2], 0.320832, 1.100000);
+        PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][2], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][2], 1);
+        PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][2], 0);
+        PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][2], 1);
+        PlayerTextDrawColor(playerid, VEHSTUFF[playerid][2], -1);
+        PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][2], 255);
+        PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][2], 50);
+        PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][2], 0);
+        PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][2], 1);
+        PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][2], 0);
+
+        VEHSTUFF[playerid][3] = CreatePlayerTextDraw(playerid, 581.000000, 376.000000, "0 KM/H");
+        PlayerTextDrawFont(playerid, VEHSTUFF[playerid][3], 1);
+        PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][3], 0.320832, 1.100000);
+        PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][3], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][3], 1);
+        PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][3], 0);
+        PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][3], 3);
+        PlayerTextDrawColor(playerid, VEHSTUFF[playerid][3], -1);
+        PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][3], 255);
+        PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][3], 50);
+        PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][3], 0);
+        PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][3], 1);
+        PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][3], 0);
+
+        VEHSTUFF[playerid][4] = CreatePlayerTextDraw(playerid, 558.000000, 389.000000, "0 L");
+        PlayerTextDrawFont(playerid, VEHSTUFF[playerid][4], 1);
+        PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][4], 0.320832, 1.100000);
+        PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][4], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][4], 1);
+        PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][4], 0);
+        PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][4], 3);
+        PlayerTextDrawColor(playerid, VEHSTUFF[playerid][4], -1);
+        PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][4], 255);
+        PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][4], 50);
+        PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][4], 0);
+        PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][4], 1);
+        PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][4], 0);
+    } 
+    if(IsPlayerNPC(playerid)){
+        new name[MAX_PLAYER_NAME + 1];
+        GetPlayerName(playerid, name, sizeof(name));/*
+        if(strcmp(name, "0", true) == 0){
+            SetSpawnInfo(playerid, 0, 29, randomdrugdeals[0][0], randomdrugdeals[0][1], randomdrugdeals[0][2], 0, 0, 0,0 ,0 ,0 ,0);
+            SpawnPlayer(playerid);
+            printf("player is NPC and name = 1");
+        }*/ 
+        printf("%s", name);
+    }
+
     return 1;
 }
 
@@ -1342,13 +1358,19 @@ public SavePlayerData(playerid) {
 }
 
 public OnPlayerSpawn(playerid) {
-    if(pInfo[playerid][LoggedIn] == true) {
-        pInfo[playerid][pMuted] = 0;
-        pInfo[playerid][CurrentState] = 0;
-        pInfo[playerid][RentingVehicle] = INVALID_VEHICLE_ID;
+    if(!IsPlayerNPC(playerid)){
+        if(pInfo[playerid][LoggedIn] == true) {
+            pInfo[playerid][pMuted] = 0;
+            pInfo[playerid][CurrentState] = 0;
+            pInfo[playerid][RentingVehicle] = INVALID_VEHICLE_ID;
 
-        SetTimerEx("SavePlayerData", 300000, false, "ds", playerid, "SA-MP"); //called "function" when 5 mins elapsed
-        SetTimerEx("payPlayerTimer", 30000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
+            SetTimerEx("SavePlayerData", 300000, false, "ds", playerid, "SA-MP"); //called "function" when 5 mins elapsed
+            SetTimerEx("payPlayerTimer", 30000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
+        }
+    }
+    if(IsPlayerNPC(playerid)){
+        printf("NPC: %d has connected to the server.", playerid);
+        return 1;
     }
     return 1;
 }
@@ -1720,12 +1742,13 @@ public BeginDrugDealing(playerid){
     if(pInfo[playerid][pWeedAmount] >= 1 || pInfo[playerid][pCokeAmount] >= 1){
         new rand;
         new sizeOf = sizeof(randomdrugdeals);
-        rand = random(sizeOf - 1);
+        rand = random(sizeOf - 1) + 1;
         printf("%d", rand);
         KillTimer(drugDealTimer[playerid]);
         drugDeal[playerid] = CreateDynamicCP(randomdrugdeals[rand][0], randomdrugdeals[rand][1], randomdrugdeals[rand][2], 2, -1, -1, -1, 10000);
         SendPlayerText(pInfo[playerid][pPhoneNumber], "Hey, you about? The usual at our normal spot.", 0);
         drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+
     }
     return 1;
 }
@@ -2112,10 +2135,10 @@ public OnPlayerEnterCheckpoint(playerid) {
 }
 
 public OnPlayerEnterDynamicCP(playerid, checkpointid) {
-    if(checkpointid == GarbageCheckpoint[0]) {
+    if(checkpointid == GarbageCheckpoint[playerid]) {
         GameTextForPlayer(playerid, "/collect", 3000, 5);
     }
-    if(checkpointid == PostCheckpoint[0]) //This checks what checkpoint it is before it continues
+    if(checkpointid == PostCheckpoint[playerid]) //This checks what checkpoint it is before it continues
     {
         for (new i = 0; i < loadedJob; i++) {
             if(pInfo[playerid][CurrentState] == 1) {
@@ -2135,9 +2158,76 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
         }
         return 1;
     }
-    if(checkpointid == JobCheckpoint[0]) {
+    if(checkpointid == JobCheckpoint[playerid]) {
         GameTextForPlayer(playerid, "/takejob", 3000, 5);
         DestroyDynamicCP(JobCheckpoint[0]);
+    }
+    if(checkpointid == drugDeal[playerid]){
+        DestroyDynamicCP(drugDeal[playerid]); // destroy drug CP for player.
+        new availabletobuy = 0;
+        // Send police message after 2 seconds of arriving...
+        if(pInfo[playerid][pWeedAmount] >= 1){ 
+            availabletobuy = 1; // only got weed.
+        }
+        if(pInfo[playerid][pCokeAmount] >= 1){
+            availabletobuy = 2; // has only got coke
+        }
+        if(pInfo[playerid][pWeedAmount] >= 1 && pInfo[playerid][pCokeAmount] >= 1)
+        {
+            availabletobuy = 3;// has both weed and coke
+        }
+
+        if(availabletobuy == 1){
+            // only got weed.
+            new string[256], giveMoney, money, randomWant;
+            randomWant = random(pInfo[playerid][pWeedAmount] - 1) + 1;
+            money = drugInfo[0][drugPrice] + (20 / 100 * drugInfo[0][drugPrice]);
+            giveMoney = randomWant * money;
+            SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the weed there! I'll be there in 2!", 0);
+            GivePlayerMoney(playerid, giveMoney);
+            format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of weed for $%d!", randomWant, giveMoney);
+            SendClientMessage(playerid, SERVERCOLOR, string);
+            return 1;
+        }
+        if(availabletobuy == 2){
+            // only got coke
+            new string[256], giveMoney, money, randomWant;
+            randomWant = random(pInfo[playerid][pCokeAmount] - 1) + 1;
+            money = drugInfo[1][drugPrice] - (20 / 100 * drugInfo[1][drugPrice]);            
+            giveMoney = randomWant * money;
+            SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the coke there! I'll be there in 2!", 0);
+            GivePlayerMoney(playerid, giveMoney);
+            format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of coke for $%d!", randomWant, giveMoney);
+            SendClientMessage(playerid, SERVERCOLOR, string);
+            return 1;
+        }
+        if(availabletobuy == 3){
+            // has both.
+            new randsel;
+            randsel = random(2 - 1) + 1;
+            if(randsel == 1){                    
+                new string[256], giveMoney, money, randomWant;
+                randomWant = random(pInfo[playerid][pCokeAmount] - 1) + 1;
+                money = drugInfo[0][drugPrice] - (20 / 100 * drugInfo[0][drugPrice]);
+                giveMoney = randomWant * money;
+                SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the weed there! I'll be there in 2!", 0);
+                GivePlayerMoney(playerid, giveMoney);
+                format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of weed for $%d!", randomWant, giveMoney);
+                SendClientMessage(playerid, SERVERCOLOR, string);
+            }
+            if(randsel == 2){                    
+                new string[256], giveMoney, money, randomWant;
+                randomWant = random(pInfo[playerid][pCokeAmount] - 1) + 1;
+                money = drugInfo[1][drugPrice] - (20 / 100 * drugInfo[1][drugPrice]);
+                giveMoney = randomWant * money;
+                SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the coke there! I'll be there in 2!", 0);
+                GivePlayerMoney(playerid, giveMoney);
+                format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of coke for $%d!", randomWant, giveMoney);
+                SendClientMessage(playerid, SERVERCOLOR, string);
+            }
+            return 1;
+        }
+        return 1;
     }
     return 1;
 }
