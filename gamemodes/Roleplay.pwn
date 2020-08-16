@@ -46,6 +46,8 @@ new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS], GarbageCheckpoint[M
 new dumpCheckPoint[MAX_PLAYERS], routeId[MAX_PLAYERS], busCheckpoint[MAX_PLAYERS], drugDeal[MAX_PLAYERS];
 new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS], drugDealTimer[MAX_PLAYERS];
 
+new policeCall[MAX_PLAYERS];
+
 new dumpPickup, jobPickup[MAX_JOBS];
 
 new PlayerText:VEHSTUFF[MAX_PLAYERS][5];
@@ -435,10 +437,6 @@ new VehicleNames[][] = {
 
 new tries[MAX_PLAYERS], passwordForFinalReg[MAX_PLAYERS][BCRYPT_HASH_LENGTH], quizAttempts[MAX_PLAYERS];
 
-enum ENUM_CALL_DATA {
-    callcode[32],
-    callstring[32]
-}
 
 enum ENUM_PLAYER_DATA {
     ID[32],
@@ -467,6 +465,9 @@ enum ENUM_PLAYER_DATA {
         pJobPay,
         pWeedAmount,
         pCokeAmount,
+
+        pAlertCall,
+        pAlertMsg[64],
 
         pAdminLevel,
         pModerator,
@@ -1410,6 +1411,31 @@ CMD:stats(playerid, params[]) {
     return 1;
 }
 
+CMD:takecall(playerid, params[]){
+    new target;
+    if(pInfo[playerid][pFactionId] == 1){
+        if(sscanf(params, "d", target)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /takecall [callcode]"); {
+            if(pInfo[target][pAlertCall] == 1)
+            {                        
+                new Float:tX, Float:tY, Float:tZ;
+                GetPlayerPos(target, tX, tY, tZ);
+                policeCall[0] = CreateDynamicCP(tX, tY, tZ, 2, -1, -1, -1, 10000);
+                for(new i = 0; i < MAX_PLAYERS; i++){
+                    if(pInfo[i][pFactionId] == 1){
+                        new string[256];
+                        format(string, sizeof(string), "{FFFFFF}Radio: %s has taken call code: %d!", RPName(playerid), target);
+                        SendClientMessage(i, SERVERCOLOR, string);
+                    }
+                }
+            } else {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This is not a valid call code!");
+                return 1;
+            }
+        }
+    }
+    return 1;
+}
+
 CMD:pockets(playerid, params[]){
     ReturnPlayerInventory(playerid, playerid);
     return 1;
@@ -1742,6 +1768,7 @@ CMD:collect(playerid, params[]) {
 forward public BeginDrugDealing(playerid);
 public BeginDrugDealing(playerid){
     if(pInfo[playerid][pWeedAmount] >= 1 || pInfo[playerid][pCokeAmount] >= 1){
+        pInfo[playerid][CurrentState] = 1;
         new rand;
         new sizeOf = sizeof(randomdrugdeals);
         rand = random(sizeOf - 1) + 1;
@@ -1750,7 +1777,6 @@ public BeginDrugDealing(playerid){
         drugDeal[playerid] = CreateDynamicCP(randomdrugdeals[rand][0], randomdrugdeals[rand][1], randomdrugdeals[rand][2], 2, -1, -1, -1, 10000);
         SendPlayerText(pInfo[playerid][pPhoneNumber], "Hey, you about? The usual at our normal spot.", 0);
         drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
-
     }
     return 1;
 }
@@ -2154,102 +2180,124 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
         GameTextForPlayer(playerid, "/takejob", 3000, 5);
         DestroyDynamicCP(JobCheckpoint[0]);
     }
-    if(checkpointid == drugDeal[playerid]){
-        DestroyDynamicCP(drugDeal[playerid]); // destroy drug CP for player.
-        new availabletobuy = 0;
-        // Send police message after 2 seconds of arriving...
-        TogglePlayerControllable(playerid, false);
-        SetTimerEx("AlertPolice", 2000, false, "ds", playerid, "Possible drug dealing in progress!");
-        SetTimerEx("UnfreezeAfterTime", 7500, false, "d", playerid);
-
-
-
-        if(pInfo[playerid][pWeedAmount] >= 1){ 
-            availabletobuy = 1; // only got weed.
-        }
-        if(pInfo[playerid][pCokeAmount] >= 1){
-            availabletobuy = 2; // has only got coke
-        }
-        if(pInfo[playerid][pWeedAmount] >= 1 && pInfo[playerid][pCokeAmount] >= 1)
-        {
-            availabletobuy = 3;// has both weed and coke
-        }
-
-        if(availabletobuy == 1){
-            // only got weed.
-            new string[256], giveMoney, money, randomWant;
-            randomWant = random(pInfo[playerid][pWeedAmount] - 1) + 1;
-            money = drugInfo[0][drugPrice] + (20 / 100 * drugInfo[0][drugPrice]);
-            giveMoney = randomWant * money;
-            SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the weed there! I'll be there in 2!", 0);
-            GivePlayerMoney(playerid, giveMoney);
-            format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of weed for $%d!", randomWant, giveMoney);
-            SendClientMessage(playerid, SERVERCOLOR, string);
-
+    if(checkpointid == drugDeal[0]){
+        if(pInfo[playerid][CurrentState] == 1){
+            DestroyDynamicCP(drugDeal[0]); // destroy drug CP for player.
             KillTimer(drugDealTimer[playerid]);
-            drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+            pInfo[playerid][CurrentState] = 0;
+            new availabletobuy = 0;
+            // Send police message after 2 seconds of arriving...
+            TogglePlayerControllable(playerid, false);
+            new Float:px, Float:py, Float:pz;
+            GetPlayerPos(playerid, px, py, pz);
+            SetTimerEx("AlertPolice", 2000, false, "dsfff", playerid, "Possible drug dealing in progress!", px, py, pz);
+            SetTimerEx("UnfreezeAfterTime", 7500, false, "d", playerid);
 
-            return 1;
-        }
-        if(availabletobuy == 2){
-            // only got coke
-            new string[256], giveMoney, money, randomWant;
-            randomWant = random(pInfo[playerid][pCokeAmount] - 1) + 1;
-            money = drugInfo[1][drugPrice] - (20 / 100 * drugInfo[1][drugPrice]);            
-            giveMoney = randomWant * money;
-            SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the coke there! I'll be there in 2!", 0);
-            GivePlayerMoney(playerid, giveMoney);
-            format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of coke for $%d!", randomWant, giveMoney);
-            SendClientMessage(playerid, SERVERCOLOR, string);
+            if(pInfo[playerid][pWeedAmount] >= 1){ 
+                availabletobuy = 1; // only got weed.
+            }
+            if(pInfo[playerid][pCokeAmount] >= 1){
+                availabletobuy = 2; // has only got coke
+            }
+            if(pInfo[playerid][pWeedAmount] >= 1 && pInfo[playerid][pCokeAmount] >= 1)
+            {
+                availabletobuy = 3;// has both weed and coke
+            }
 
-            KillTimer(drugDealTimer[playerid]);
-            drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
-
-            return 1;
-        }
-        if(availabletobuy == 3){
-            // has both.
-            new randsel;
-            randsel = random(2 - 1) + 1;
-            KillTimer(drugDealTimer[playerid]);
-            drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
-
-            if(randsel == 1){                    
+            if(availabletobuy == 1){
+                // only got weed.
                 new string[256], giveMoney, money, randomWant;
-                randomWant = random(pInfo[playerid][pCokeAmount] - 1) + 1;
-                money = drugInfo[0][drugPrice] - (20 / 100 * drugInfo[0][drugPrice]);
+                randomWant = random(pInfo[playerid][pWeedAmount] - 1) + 1;
+                money = drugInfo[0][drugPrice] + (20 / 100 * drugInfo[0][drugPrice]);
                 giveMoney = randomWant * money;
                 SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the weed there! I'll be there in 2!", 0);
                 GivePlayerMoney(playerid, giveMoney);
                 format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of weed for $%d!", randomWant, giveMoney);
                 SendClientMessage(playerid, SERVERCOLOR, string);
-                            
 
+                drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+
+                return 1;
             }
-            if(randsel == 2){                    
+            if(availabletobuy == 2){
+                // only got coke
                 new string[256], giveMoney, money, randomWant;
                 randomWant = random(pInfo[playerid][pCokeAmount] - 1) + 1;
-                money = drugInfo[1][drugPrice] - (20 / 100 * drugInfo[1][drugPrice]);
+                money = drugInfo[1][drugPrice] - (20 / 100 * drugInfo[1][drugPrice]);            
                 giveMoney = randomWant * money;
                 SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the coke there! I'll be there in 2!", 0);
                 GivePlayerMoney(playerid, giveMoney);
                 format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of coke for $%d!", randomWant, giveMoney);
                 SendClientMessage(playerid, SERVERCOLOR, string);
+
+                drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+
+                return 1;
+            }
+            if(availabletobuy == 3){
+                // has both.
+                new randsel;
+                randsel = random(2 - 1) + 1;
+                drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+
+                if(randsel == 1){                    
+                    new string[256], giveMoney, money, randomWant;
+                    randomWant = random(pInfo[playerid][pCokeAmount] - 1) + 1;
+                    money = drugInfo[0][drugPrice] - (20 / 100 * drugInfo[0][drugPrice]);
+                    giveMoney = randomWant * money;
+                    SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the weed there! I'll be there in 2!", 0);
+                    GivePlayerMoney(playerid, giveMoney);
+                    format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of weed for $%d!", randomWant, giveMoney);
+                    SendClientMessage(playerid, SERVERCOLOR, string);
+                                
+
+                }
+                if(randsel == 2){                    
+                    new string[256], giveMoney, money, randomWant;
+                    randomWant = random(pInfo[playerid][pCokeAmount] - 1) + 1;
+                    money = drugInfo[1][drugPrice] - (20 / 100 * drugInfo[1][drugPrice]);
+                    giveMoney = randomWant * money;
+                    SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the coke there! I'll be there in 2!", 0);
+                    GivePlayerMoney(playerid, giveMoney);
+                    format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of coke for $%d!", randomWant, giveMoney);
+                    SendClientMessage(playerid, SERVERCOLOR, string);
+                }
+                return 1;
             }
             return 1;
         }
+    }
+
+    if(checkpointid == policeCall[0]){
         return 1;
     }
     return 1;
 }
 
-forward public AlertPolice(playerid, message[32]);
-public AlertPolice(playerid, message[32]){
+forward public AlertPolice(playerid, message[32], Float:cX, Float:cY, Float:cZ);
+public AlertPolice(playerid, message[32], Float:cX, Float:cY, Float:cZ){
     new string[256];
+    pInfo[playerid][pAlertCall] = 1;
+    format(pInfo[playerid][pAlertMsg], 64, "%s", message);
+
     for(new i = 0; i < MAX_PLAYERS; i++){
-        if(pInfo[i][pFactionId] == 1){
-            format(string, sizeof(string), "{FFFFFF}Radio: %s, callcode 1.");
+        if(pInfo[i][pFactionId] == 1){ // if player is a police officer
+            format(string, sizeof(string), "{FFFFFF}Radio: %s, call code: %d", message, playerid);
             SendClientMessage(i, SERVERCOLOR, string);
+            return 1;
+        }
+    }
+    return 1;
+}
+
+CMD:listallcalls(playerid, params[]){
+    new string[256];
+    
+    SendClientMessage(playerid, SPECIALORANGE, "**-----AVAILABLE CALLS-----**");
+    for(new i = 0; i < MAX_PLAYERS; i++){
+        if(pInfo[i][pAlertCall] == 1){
+            format(string, sizeof(string), "Call code: %d,", playerid);
+            SendClientMessage(playerid, SERVERCOLOR, string);
             return 1;
         }
     }
