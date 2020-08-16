@@ -109,8 +109,6 @@ new Float:busObject[][4] = {
     {192.2281, 1170.1422, 14.9482, 325.8821},
     {38.0655, 1204.9498, 19.2712, 271.8622},
 
-
-
     //Fort carson LOOP
     {-201.8537, 1173.9659, 19.7763, 0.0000},
     {-133.9370, 1091.8904, 19.8795, 90.0000},
@@ -139,7 +137,6 @@ new Float:busObject[][4] = {
     { 54.0659, 1192.2245, 19.8921, 90.0000 },
     { 65.8657, 1249.7249, 17.7258, 245.6365 },
     {-123.0387, 1230.5771, 18.7788, 6.1884 }
-
 };
 
 new Float:ClassicStops[][3] = {
@@ -437,6 +434,11 @@ new VehicleNames[][] = {
 };
 
 new tries[MAX_PLAYERS], passwordForFinalReg[MAX_PLAYERS][BCRYPT_HASH_LENGTH], quizAttempts[MAX_PLAYERS];
+
+enum ENUM_CALL_DATA {
+    callcode[32],
+    callstring[32]
+}
 
 enum ENUM_PLAYER_DATA {
     ID[32],
@@ -1956,20 +1958,7 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
     vehicleid = GetPlayerVehicleID(playerid); // check vehicle id;
     vehicleid -= 1; // taking one away to select correct veh;
 
-    if(newstate == PLAYER_STATE_DRIVER) { // IF PLAYER IS DRIVER
-        if(vInfo[vehicleid][vJobId] != pInfo[playerid][pJobId]) { // check if player job vehicle
-            if(vInfo[vehicleid][vRentalState] == VEHICLE_RENTABLE && vInfo[vehicleid][vRented] == VEHICLE_NOT_RENTED) { // check if vehicle is rentable + not rented NOT JOB RENTAL{
-                RemovePlayerFromVehicle(playerid);
-                PlayerTextDrawHide(playerid, VEHSTUFF[playerid][0]);
-                PlayerTextDrawHide(playerid, VEHSTUFF[playerid][1]);
-                PlayerTextDrawHide(playerid, VEHSTUFF[playerid][2]);
-                PlayerTextDrawHide(playerid, VEHSTUFF[playerid][3]);
-                PlayerTextDrawHide(playerid, VEHSTUFF[playerid][4]);
-                return 1;
-            }
-            RemovePlayerFromVehicle(playerid);
-            return 1;
-        }
+    if(newstate == PLAYER_STATE_DRIVER) { // IF PLAYER IS DRIVER    
         if(vInfo[vehicleid][vRentalState] == VEHICLE_RENTABLE && vInfo[vehicleid][vRented] == VEHICLE_NOT_RENTED) { // check if vehicle is rentable + not rented NOT JOB RENTAL{
             new string[256];
             format(string, sizeof(string), "[SERVER]:{FFFFFF} This vehicle is rentable for {00FF00}$%d{FFFFFF}. Type /rentcar to rent it.", vInfo[vehicleid][vRentalPrice]);
@@ -1977,7 +1966,11 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
             TurnVehicleEngineOff(vehicleid + 1);
             return 1;
         }
-        if(vInfo[vehicleid][vJobId] == pInfo[playerid][pJobId]) { // check if player job vehicle
+        if(vInfo[vehicleid][vJobId] >= 1 && vInfo[vehicleid][vJobId] != pInfo[playerid][pJobId]) { // check if job vehicle has been set. check if player not in right job.
+            RemovePlayerFromVehicle(playerid);
+            return 1;
+        }
+        if(vInfo[vehicleid][vJobId] >= 1 && vInfo[vehicleid][vJobId] == pInfo[playerid][pJobId]) { // check if a job vehicle and job id == player job id
             if(vInfo[vehicleid][vRentalState] == VEHICLE_RENTABLE && vInfo[vehicleid][vRented] == VEHICLE_NOT_RENTED) { // check if vehicle is rentable + not rented NOT JOB RENTAL{
                 new string[256];
                 format(string, sizeof(string), "[SERVER]:{FFFFFF} This vehicle is rentable for {00FF00}$%d{FFFFFF}. Type /rentcar to rent it.", vInfo[vehicleid][vRentalPrice]);
@@ -1986,8 +1979,7 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
                 return 1;
             }
         }
-
-        if(vInfo[vehicleid][vJobId] == 0 && vInfo[vehicleid][vFacId] >= 1) {
+        if(vInfo[vehicleid][vJobId] == 0 && vInfo[vehicleid][vFacId] >= 1) { // check if not a job id and if fac id has been set.
             if(pInfo[playerid][pFactionId] == vInfo[vehicleid][vFacId]) {
 
             }
@@ -2167,7 +2159,7 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
         new availabletobuy = 0;
         // Send police message after 2 seconds of arriving...
         TogglePlayerControllable(playerid, false);
-        SetTimerEx("AlertPolice", 7500, false, "ds", playerid, "Possible drug dealing in progress!");
+        SetTimerEx("AlertPolice", 2000, false, "ds", playerid, "Possible drug dealing in progress!");
         SetTimerEx("UnfreezeAfterTime", 7500, false, "d", playerid);
 
 
@@ -2194,6 +2186,9 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
             format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of weed for $%d!", randomWant, giveMoney);
             SendClientMessage(playerid, SERVERCOLOR, string);
 
+            KillTimer(drugDealTimer[playerid]);
+            drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+
             return 1;
         }
         if(availabletobuy == 2){
@@ -2206,12 +2201,19 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
             GivePlayerMoney(playerid, giveMoney);
             format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of coke for $%d!", randomWant, giveMoney);
             SendClientMessage(playerid, SERVERCOLOR, string);
+
+            KillTimer(drugDealTimer[playerid]);
+            drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+
             return 1;
         }
         if(availabletobuy == 3){
             // has both.
             new randsel;
             randsel = random(2 - 1) + 1;
+            KillTimer(drugDealTimer[playerid]);
+            drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+
             if(randsel == 1){                    
                 new string[256], giveMoney, money, randomWant;
                 randomWant = random(pInfo[playerid][pCokeAmount] - 1) + 1;
@@ -2221,6 +2223,8 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
                 GivePlayerMoney(playerid, giveMoney);
                 format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of weed for $%d!", randomWant, giveMoney);
                 SendClientMessage(playerid, SERVERCOLOR, string);
+                            
+
             }
             if(randsel == 2){                    
                 new string[256], giveMoney, money, randomWant;
@@ -2239,8 +2243,8 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
     return 1;
 }
 
-forward public AlertPolice(playerid, message);
-public AlertPolice(playerid, message){
+forward public AlertPolice(playerid, message[32]);
+public AlertPolice(playerid, message[32]){
     new string[256];
     for(new i = 0; i < MAX_PLAYERS; i++){
         if(pInfo[i][pFactionId] == 1){
