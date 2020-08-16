@@ -2166,6 +2166,12 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
         DestroyDynamicCP(drugDeal[playerid]); // destroy drug CP for player.
         new availabletobuy = 0;
         // Send police message after 2 seconds of arriving...
+        TogglePlayerControllable(playerid, false);
+        SetTimerEx("AlertPolice", 7500, false, "ds", playerid, "Possible drug dealing in progress!");
+        SetTimerEx("UnfreezeAfterTime", 7500, false, "d", playerid);
+
+
+
         if(pInfo[playerid][pWeedAmount] >= 1){ 
             availabletobuy = 1; // only got weed.
         }
@@ -2187,6 +2193,7 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
             GivePlayerMoney(playerid, giveMoney);
             format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of weed for $%d!", randomWant, giveMoney);
             SendClientMessage(playerid, SERVERCOLOR, string);
+
             return 1;
         }
         if(availabletobuy == 2){
@@ -2228,6 +2235,19 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
             return 1;
         }
         return 1;
+    }
+    return 1;
+}
+
+forward public AlertPolice(playerid, message);
+public AlertPolice(playerid, message){
+    new string[256];
+    for(new i = 0; i < MAX_PLAYERS; i++){
+        if(pInfo[i][pFactionId] == 1){
+            format(string, sizeof(string), "{FFFFFF}Radio: %s, callcode 1.");
+            SendClientMessage(i, SERVERCOLOR, string);
+            return 1;
+        }
     }
     return 1;
 }
