@@ -43,8 +43,10 @@ new MySQL:db_handle;
 new Menu:busdrivermenu;
 
 new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS], GarbageCheckpoint[MAX_PLAYERS];
-new dumpCheckPoint[MAX_PLAYERS], routeId[MAX_PLAYERS], busCheckpoint[MAX_PLAYERS];
-new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS];
+new dumpCheckPoint[MAX_PLAYERS], routeId[MAX_PLAYERS], busCheckpoint[MAX_PLAYERS], drugDeal[MAX_PLAYERS];
+new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS], drugDealTimer[MAX_PLAYERS];
+
+new policeCall[MAX_PLAYERS];
 
 new dumpPickup, jobPickup[MAX_JOBS];
 
@@ -84,6 +86,12 @@ new Float:RandomGarbageLocations[][3] = {
     {-208.0344, 1112.1625, 19.2098 }
 };
 
+new Float:randomdrugdeals[][3] = {
+    {-14.3074, 1226.7869, 18.4454},
+    {23.2193, 1164.6573, 18.5577},
+    {-51.8717, 1165.2013, 18.6198}
+};
+
 new Float:busObject[][4] = {
     {-281.6187, 1170.1730, 19.7832, 0.0000},
     {-351.6738, 1122.1995, 19.7832, 0.0000},
@@ -102,8 +110,6 @@ new Float:busObject[][4] = {
     {482.0066, 1659.7740, 14.7270, 299.9181},
     {192.2281, 1170.1422, 14.9482, 325.8821},
     {38.0655, 1204.9498, 19.2712, 271.8622},
-
-
 
     //Fort carson LOOP
     {-201.8537, 1173.9659, 19.7763, 0.0000},
@@ -133,7 +139,6 @@ new Float:busObject[][4] = {
     { 54.0659, 1192.2245, 19.8921, 90.0000 },
     { 65.8657, 1249.7249, 17.7258, 245.6365 },
     {-123.0387, 1230.5771, 18.7788, 6.1884 }
-
 };
 
 new Float:ClassicStops[][3] = {
@@ -432,6 +437,7 @@ new VehicleNames[][] = {
 
 new tries[MAX_PLAYERS], passwordForFinalReg[MAX_PLAYERS][BCRYPT_HASH_LENGTH], quizAttempts[MAX_PLAYERS];
 
+
 enum ENUM_PLAYER_DATA {
     ID[32],
         pName[MAX_PLAYER_NAME],
@@ -449,13 +455,20 @@ enum ENUM_PLAYER_DATA {
         pBank,
         pCash,
         pPayTimer,
+        pPhoneNumber,
 
         pFactionId,
         pFactionRank,
         pFactionRankname[32],
+        pFactionPay,
 
         pJobId,
         pJobPay,
+        pWeedAmount,
+        pCokeAmount,
+
+        pAlertCall,
+        pAlertMsg[64],
 
         pAdminLevel,
         pModerator,
@@ -517,6 +530,14 @@ enum ENUM_FAC_DATA {
 }
 new fInfo[MAX_FACTIONS][ENUM_FAC_DATA], loadedFac;
 
+enum ENUM_DRUG_PRICES{
+    drugId[32],
+    drugName[32],
+    drugAmount,
+    drugPrice
+};
+new drugInfo[15][ENUM_DRUG_PRICES], loadedDrug;
+
 public OnGameModeInit() {
     mysql_log(ALL);
     ManualVehicleEngineAndLights();
@@ -538,6 +559,8 @@ public OnGameModeInit() {
     LoadFacData();
     CreateBusStopObjects();
     LoadVehicleData();
+    LoadDrugPrices();
+    
 
     // DUMP 
     dumpPickup = CreatePickup(1239, 1, 281.7589, 1411.7045, 10.5003, -1);
@@ -997,6 +1020,31 @@ public FacsReceived() {
     return 1;
 }
 
+
+forward public LoadDrugPrices();
+public LoadDrugPrices(){
+    new DB_Query[900];
+
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `drugprices`");
+    mysql_tquery(db_handle, DB_Query, "DrugPricesReceived");
+}
+
+forward public DrugPricesReceived();
+public DrugPricesReceived(){
+    if(cache_num_rows() == 0) return printf("No drugs created");
+    else {
+        for(new i = 0; i < cache_num_rows(); i++){
+            cache_get_value_int(i, "drugId", drugInfo[loadedDrug][drugId]);
+            cache_get_value(i, "drugName", drugInfo[loadedDrug][drugName],32);
+            cache_get_value_int(i, "drugAmount", drugInfo[loadedDrug][drugAmount]);
+            cache_get_value_int(i, "drugPrice", drugInfo[loadedDrug][drugPrice]);
+            loadedDrug++;
+        }
+        printf("** [MYSQL] Loaded %d drugs", cache_num_rows());
+    }
+    return 1;
+}
+
 forward public LoadJobData();
 public LoadJobData() {
     new DB_Query[900];
@@ -1063,97 +1111,111 @@ public OnPlayerRequestClass(playerid, classid) {
 }
 
 public OnPlayerConnect(playerid) {
-    new query[200];
-    pInfo[playerid][pMuted] = 1;
-    new name[MAX_PLAYER_NAME + 1];
-    GetPlayerName(playerid, name, sizeof(name));
+    if(!IsPlayerNPC(playerid))
+    {
+        new query[200];
+        pInfo[playerid][pMuted] = 1;
+        new name[MAX_PLAYER_NAME + 1];
+        GetPlayerName(playerid, name, sizeof(name));
 
-    SetPlayerSkin(playerid, maleSkins[random(11)]);
-    SetPlayerPos(playerid, 163.984863, 1213.388305, 21.501449);
-    SetPlayerFacingAngle(playerid, 221.263046);
-    InterpolateCameraPos(playerid, 163.4399, 1179.7891, 23.3623, 178.1042, 1187.0188, 22.1915, 15000, CAMERA_MOVE);
-    InterpolateCameraLookAt(playerid, 163.5655, 1180.7781, 23.2423, 177.8423, 1187.9811, 22.0065, 15000, CAMERA_MOVE);
-
-
-    LoadMapIcons(playerid);
-
-    ApplyAnimation(playerid, "SMOKING", "M_smklean_loop", 4.0, true, false, false, false, 0, false); // Smoke
-
-    mysql_format(db_handle, query, sizeof(query), "SELECT * FROM `accounts` where `pName` = '%s'", name); // Get the player's name
-    mysql_tquery(db_handle, query, "checkIfExists", "d", playerid); // Send to check if exists function
+        SetPlayerSkin(playerid, maleSkins[random(11)]);
+        SetPlayerPos(playerid, 163.984863, 1213.388305, 21.501449);
+        SetPlayerFacingAngle(playerid, 221.263046);
+        InterpolateCameraPos(playerid, 163.4399, 1179.7891, 23.3623, 178.1042, 1187.0188, 22.1915, 15000, CAMERA_MOVE);
+        InterpolateCameraLookAt(playerid, 163.5655, 1180.7781, 23.2423, 177.8423, 1187.9811, 22.0065, 15000, CAMERA_MOVE);
 
 
-    // remove buildings
+        LoadMapIcons(playerid);
 
-    VEHSTUFF[playerid][0] = CreatePlayerTextDraw(playerid, 595.000000, 359.000000, "~n~~n~~n~");
-    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][0], 1);
-    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][0], -0.004166, 1.500000);
-    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][0], 483.500000, 93.500000);
-    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][0], 1);
-    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][0], 0);
-    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][0], 1);
-    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][0], -1);
-    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][0], 255);
-    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][0], 50);
-    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][0], 1);
-    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][0], 1);
-    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][0], 0);
+        ApplyAnimation(playerid, "SMOKING", "M_smklean_loop", 4.0, true, false, false, false, 0, false); // Smoke
 
-    VEHSTUFF[playerid][1] = CreatePlayerTextDraw(playerid, 492.000000, 359.000000, "NAME:~n~SPEED:~n~FUEL:~n~");
-    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][1], 1);
-    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][1], 0.370833, 1.500000);
-    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][1], 163.500000, 88.500000);
-    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][1], 1);
-    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][1], 0);
-    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][1], 1);
-    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][1], -2686721);
-    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][1], 255);
-    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][1], 50);
-    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][1], 0);
-    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][1], 1);
-    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][1], 0);
+        mysql_format(db_handle, query, sizeof(query), "SELECT * FROM `accounts` where `pName` = '%s'", name); // Get the player's name
+        mysql_tquery(db_handle, query, "checkIfExists", "d", playerid); // Send to check if exists function
 
-    VEHSTUFF[playerid][2] = CreatePlayerTextDraw(playerid, 533.000000, 361.000000, "INFERNUS");
-    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][2], 1);
-    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][2], 0.320832, 1.100000);
-    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][2], 400.000000, 17.000000);
-    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][2], 1);
-    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][2], 0);
-    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][2], 1);
-    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][2], -1);
-    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][2], 255);
-    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][2], 50);
-    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][2], 0);
-    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][2], 1);
-    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][2], 0);
 
-    VEHSTUFF[playerid][3] = CreatePlayerTextDraw(playerid, 581.000000, 376.000000, "0 KM/H");
-    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][3], 1);
-    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][3], 0.320832, 1.100000);
-    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][3], 400.000000, 17.000000);
-    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][3], 1);
-    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][3], 0);
-    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][3], 3);
-    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][3], -1);
-    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][3], 255);
-    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][3], 50);
-    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][3], 0);
-    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][3], 1);
-    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][3], 0);
+        // remove buildings
 
-    VEHSTUFF[playerid][4] = CreatePlayerTextDraw(playerid, 558.000000, 389.000000, "0 L");
-    PlayerTextDrawFont(playerid, VEHSTUFF[playerid][4], 1);
-    PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][4], 0.320832, 1.100000);
-    PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][4], 400.000000, 17.000000);
-    PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][4], 1);
-    PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][4], 0);
-    PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][4], 3);
-    PlayerTextDrawColor(playerid, VEHSTUFF[playerid][4], -1);
-    PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][4], 255);
-    PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][4], 50);
-    PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][4], 0);
-    PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][4], 1);
-    PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][4], 0);
+        VEHSTUFF[playerid][0] = CreatePlayerTextDraw(playerid, 595.000000, 359.000000, "~n~~n~~n~");
+        PlayerTextDrawFont(playerid, VEHSTUFF[playerid][0], 1);
+        PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][0], -0.004166, 1.500000);
+        PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][0], 483.500000, 93.500000);
+        PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][0], 1);
+        PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][0], 0);
+        PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][0], 1);
+        PlayerTextDrawColor(playerid, VEHSTUFF[playerid][0], -1);
+        PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][0], 255);
+        PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][0], 50);
+        PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][0], 1);
+        PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][0], 1);
+        PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][0], 0);
+
+        VEHSTUFF[playerid][1] = CreatePlayerTextDraw(playerid, 492.000000, 359.000000, "NAME:~n~SPEED:~n~FUEL:~n~");
+        PlayerTextDrawFont(playerid, VEHSTUFF[playerid][1], 1);
+        PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][1], 0.370833, 1.500000);
+        PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][1], 163.500000, 88.500000);
+        PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][1], 1);
+        PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][1], 0);
+        PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][1], 1);
+        PlayerTextDrawColor(playerid, VEHSTUFF[playerid][1], -2686721);
+        PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][1], 255);
+        PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][1], 50);
+        PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][1], 0);
+        PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][1], 1);
+        PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][1], 0);
+
+        VEHSTUFF[playerid][2] = CreatePlayerTextDraw(playerid, 533.000000, 361.000000, "INFERNUS");
+        PlayerTextDrawFont(playerid, VEHSTUFF[playerid][2], 1);
+        PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][2], 0.320832, 1.100000);
+        PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][2], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][2], 1);
+        PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][2], 0);
+        PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][2], 1);
+        PlayerTextDrawColor(playerid, VEHSTUFF[playerid][2], -1);
+        PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][2], 255);
+        PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][2], 50);
+        PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][2], 0);
+        PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][2], 1);
+        PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][2], 0);
+
+        VEHSTUFF[playerid][3] = CreatePlayerTextDraw(playerid, 581.000000, 376.000000, "0 KM/H");
+        PlayerTextDrawFont(playerid, VEHSTUFF[playerid][3], 1);
+        PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][3], 0.320832, 1.100000);
+        PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][3], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][3], 1);
+        PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][3], 0);
+        PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][3], 3);
+        PlayerTextDrawColor(playerid, VEHSTUFF[playerid][3], -1);
+        PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][3], 255);
+        PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][3], 50);
+        PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][3], 0);
+        PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][3], 1);
+        PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][3], 0);
+
+        VEHSTUFF[playerid][4] = CreatePlayerTextDraw(playerid, 558.000000, 389.000000, "0 L");
+        PlayerTextDrawFont(playerid, VEHSTUFF[playerid][4], 1);
+        PlayerTextDrawLetterSize(playerid, VEHSTUFF[playerid][4], 0.320832, 1.100000);
+        PlayerTextDrawTextSize(playerid, VEHSTUFF[playerid][4], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, VEHSTUFF[playerid][4], 1);
+        PlayerTextDrawSetShadow(playerid, VEHSTUFF[playerid][4], 0);
+        PlayerTextDrawAlignment(playerid, VEHSTUFF[playerid][4], 3);
+        PlayerTextDrawColor(playerid, VEHSTUFF[playerid][4], -1);
+        PlayerTextDrawBackgroundColor(playerid, VEHSTUFF[playerid][4], 255);
+        PlayerTextDrawBoxColor(playerid, VEHSTUFF[playerid][4], 50);
+        PlayerTextDrawUseBox(playerid, VEHSTUFF[playerid][4], 0);
+        PlayerTextDrawSetProportional(playerid, VEHSTUFF[playerid][4], 1);
+        PlayerTextDrawSetSelectable(playerid, VEHSTUFF[playerid][4], 0);
+    } 
+    if(IsPlayerNPC(playerid)){
+        new name[MAX_PLAYER_NAME + 1];
+        GetPlayerName(playerid, name, sizeof(name));/*
+        if(strcmp(name, "0", true) == 0){
+            SetSpawnInfo(playerid, 0, 29, randomdrugdeals[0][0], randomdrugdeals[0][1], randomdrugdeals[0][2], 0, 0, 0,0 ,0 ,0 ,0);
+            SpawnPlayer(playerid);
+            printf("player is NPC and name = 1");
+        }*/ 
+        printf("%s", name);
+    }
+
     return 1;
 }
 
@@ -1227,6 +1289,10 @@ public SaveNewPlayerData(playerid, hashed[BCRYPT_HASH_LENGTH]) {
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAge` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pAge], GetName(playerid));
     mysql_query(db_handle, query);
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pRegion` = '%e' WHERE  `pName` = '%e'", pInfo[playerid][pRegion], GetName(playerid));
+    mysql_query(db_handle, query);   
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pPhoneNumber` = 0 WHERE  `pName` = '%e'", GetName(playerid));
+    mysql_query(db_handle, query); 
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pWeedAmount` = '%d', `pCokeAmount` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pWeedAmount], pInfo[playerid][pCokeAmount], GetName(playerid));
     mysql_query(db_handle, query);
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pLevel` = 1, `pExp` = 1, `pPayTimer` = 60, `pJobId` = 0, `pJobPay` = 0  WHERE  `pName` = '%e'", GetName(playerid));
     mysql_query(db_handle, query);
@@ -1242,9 +1308,12 @@ public SaveNewPlayerData(playerid, hashed[BCRYPT_HASH_LENGTH]) {
     pInfo[playerid][pExp] = 1;
     pInfo[playerid][pFactionId] = 0;
     pInfo[playerid][pFactionRank] = 0;
+    pInfo[playerid][pFactionPay] = 0;
     pInfo[playerid][pJobId] = 0;
     pInfo[playerid][pJobPay] = 0;
     pInfo[playerid][pPayTimer] = 60;
+    
+    pInfo[playerid][pPhoneNumber] = 0;
 
     pInfo[playerid][CurrentState] = 0;
     pInfo[playerid][PostState] = 0;
@@ -1277,7 +1346,13 @@ public SavePlayerData(playerid) {
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pJobId` = '%d', `pJobPay` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pJobId], pInfo[playerid][pJobPay], GetName(playerid));
     mysql_query(db_handle, query);
 
-    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pFactionId` = '%d', `pFactionRank` = '%d', `pFactionRankname` = '%e' WHERE `pName` = '%e'", pInfo[playerid][pFactionId], pInfo[playerid][pFactionRank], pInfo[playerid][pFactionRankname], GetName(playerid));
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pFactionId` = '%d', `pFactionRank` = '%d', `pFactionRankname` = '%e', `pFactionPay` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pFactionId], pInfo[playerid][pFactionRank], pInfo[playerid][pFactionRankname], pInfo[playerid][pFactionPay], GetName(playerid));
+    mysql_query(db_handle, query);
+    
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pPhoneNumber` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pPhoneNumber], GetName(playerid));
+    mysql_query(db_handle, query);
+
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pWeedAmount` = '%d', `pCokeAmount` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pWeedAmount], pInfo[playerid][pCokeAmount], GetName(playerid));
     mysql_query(db_handle, query);
 
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAdminLevel` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pAdminLevel], GetName(playerid));
@@ -1288,13 +1363,19 @@ public SavePlayerData(playerid) {
 }
 
 public OnPlayerSpawn(playerid) {
-    if(pInfo[playerid][LoggedIn] == true) {
-        pInfo[playerid][pMuted] = 0;
-        pInfo[playerid][CurrentState] = 0;
-        pInfo[playerid][RentingVehicle] = INVALID_VEHICLE_ID;
+    if(!IsPlayerNPC(playerid)){
+        if(pInfo[playerid][LoggedIn] == true) {
+            pInfo[playerid][pMuted] = 0;
+            pInfo[playerid][CurrentState] = 0;
+            pInfo[playerid][RentingVehicle] = INVALID_VEHICLE_ID;
 
-        SetTimerEx("SavePlayerData", 300000, false, "ds", playerid, "SA-MP"); //called "function" when 5 mins elapsed
-        SetTimerEx("payPlayerTimer", 30000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
+            SetTimerEx("SavePlayerData", 300000, false, "ds", playerid, "SA-MP"); //called "function" when 5 mins elapsed
+            SetTimerEx("payPlayerTimer", 30000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
+        }
+    }
+    if(IsPlayerNPC(playerid)){
+        printf("NPC: %d has connected to the server.", playerid);
+        return 1;
     }
     return 1;
 }
@@ -1332,6 +1413,35 @@ CMD:stats(playerid, params[]) {
     return 1;
 }
 
+CMD:takecall(playerid, params[]){
+    new target;
+    if(pInfo[playerid][pFactionId] == 1){
+        if(sscanf(params, "d", target)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /takecall [callcode]"); {
+            if(pInfo[target][pAlertCall] == 1)
+            {                        
+                new Float:tX, Float:tY, Float:tZ;
+                GetPlayerPos(target, tX, tY, tZ);
+                policeCall[0] = CreateDynamicCP(tX, tY, tZ, 2, -1, -1, -1, 10000);
+                for(new i = 0; i < MAX_PLAYERS; i++){
+                    if(pInfo[i][pFactionId] == 1){
+                        new string[256];
+                        format(string, sizeof(string), "{FFFFFF}Radio: %s has taken call code: %d!", RPName(playerid), target);
+                        SendClientMessage(i, SERVERCOLOR, string);
+                    }
+                }
+            } else {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This is not a valid call code!");
+                return 1;
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:pockets(playerid, params[]){
+    ReturnPlayerInventory(playerid, playerid);
+    return 1;
+}
 
 CMD:help(playerid, params[]) {
     new Usage[128];
@@ -1380,6 +1490,7 @@ CMD:help(playerid, params[]) {
     }
     return 1;
 }
+
 
 CMD:makeleader(playerid, params[]) {
     new target, facid, string[256];
@@ -1438,12 +1549,18 @@ CMD:takejob(playerid, params[]) {
 
 CMD:quitjob(playerid, params[]) {
     if(pInfo[playerid][pJobId] >= 1) {
-        for (new i = 0; i < loadedJob; i++) {
-            if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
-                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have quit your job!");
-                pInfo[playerid][pJobId] = 0;
-                return 1;
+        if(pInfo[playerid][CurrentState] != 1)
+        {
+            for (new i = 0; i < loadedJob; i++) {
+                if(pInfo[playerid][pJobId] == jInfo[i][jID]) {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have quit your job!");
+                    pInfo[playerid][pJobId] = 0;
+                    return 1;
+                }
             }
+        } else {
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You're current on a job! /endjob to end your job!");
+            return 1;
         }
     } else {
 
@@ -1464,6 +1581,27 @@ CMD:listjobs(playerid, params[]) {
     Dialog_Show(playerid, DIALOG_JOB_LIST, DIALOG_STYLE_LIST, "Available Jobs", jobList, "Accept", "Decline");
     return 1;
 }
+//* drug dealer job */
+CMD:inventory(playerid, params[]){
+    if(pInfo[playerid][pJobId] == 4){ // if a drug dealer
+        if(IsPlayerInRangeOfPoint(playerid, 73,814.9191,1683.5012,5.2813)){
+            new drugList[256], string[256];
+            for(new i = 0; i < loadedDrug; i++){
+                format(string, sizeof(string), "Name: %s | Amount: %d | Price: %d\n", drugInfo[i][drugName], drugInfo[i][drugAmount], drugInfo[i][drugPrice]);
+                strcat(drugList, string);
+            }
+            Dialog_Show(playerid, DIALOG_CHINVENTORY, DIALOG_STYLE_MSGBOX, "Crack House Inventory", drugList, "Accept", "");
+        } else {
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not near the crack house!");
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 1;
+}
+
+
 
 //*postman job*/
 CMD:takepost(playerid, params[]) {
@@ -1563,9 +1701,111 @@ CMD:collect(playerid, params[]) {
         } else {
             return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You must be on foot to collect garbage!");
         }
-    } else {
+    }
+    if(pInfo[playerid][pJobId] == 4){
+        new dName[32], string[256], DB_Query[900]; 
+        if(sscanf(params, "s", dName)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /collect [DRUGNAME]"); {
+            // if player has 1 weed, allow
+            if(strcmp(dName, "Weed", true) == 0) { // Check to see if inserted amount is less than 10
+                // check if player's weed stat is less than 10.                           
+                if(drugInfo[0][drugAmount] > 0){                  
+                    if(GetPlayerMoney(playerid) >= drugInfo[0][drugPrice]){
+                        if(pInfo[playerid][pWeedAmount] < 10){ 
+                            // if weed stat is less than amount...
+                            pInfo[playerid][pWeedAmount] += 1;
+                            format(string, sizeof(string), "[SERVER]:{FFFFFF} You have purchased %d grams of weed!", 1);
+                            SendClientMessage(playerid, SERVERCOLOR, string);
+                            drugInfo[0][drugAmount] -= 1;
+                            GivePlayerMoney(playerid, -drugInfo[0][drugPrice])
+                            mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `drugprices` SET `drugAmount` = '%d' WHERE  `drugId` = 1", drugInfo[0][drugAmount]);
+                            mysql_query(db_handle, DB_Query);
+                            if(pInfo[playerid][pPhoneNumber] != 0){
+                                KillTimer(drugDealTimer[playerid]);
+                                drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+                            } else {
+                                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have a phone, and therefore will not receive drug deal messages!");
+                                return 1;
+                            }
+                        } else {
+                            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You cannot carry any more Weed!");
+                        }
+                    } else {
+                        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash!");
+                    }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} The crack house does not have any Weed!");
+                }
+            } else if(strcmp(dName, "Cocaine", true) == 0) { 
+                if(drugInfo[1][drugAmount] > 0){
+                    if(GetPlayerMoney(playerid) >= drugInfo[1][drugPrice]){
+
+                        if(pInfo[playerid][pCokeAmount] < 10){ 
+                                // if coke stat is less than 10...
+                                pInfo[playerid][pCokeAmount] += 1;
+                                format(string, sizeof(string), "[SERVER]:{FFFFFF} You have purchased %d grams of cocaine!", 1);
+                                SendClientMessage(playerid, SERVERCOLOR, string);
+                                drugInfo[1][drugAmount] -= 1;
+                                GivePlayerMoney(playerid, -drugInfo[1][drugPrice])
+                                mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `drugprices` SET `drugAmount` = '%d' WHERE  `drugId` = 2", drugInfo[0][drugAmount]);
+                                mysql_query(db_handle, DB_Query);
+                                if(pInfo[playerid][pPhoneNumber] != 0){
+                                    KillTimer(drugDealTimer[playerid]);
+                                    drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+                                } else {
+                                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have a phone, and therefore will not receive drug deal messages!");
+                                    return 1;
+                                }
+                            } else {
+                                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You cannot carry any more Cocaine!");
+                            }
+                        } 
+                    } else {
+                        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash!");
+                    }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} The crack house does not have any Cocaine!");
+                }
+            }
+            return 1;
+    }
+    if(pInfo[playerid][pJobId] != 2 || pInfo[playerid][pJobId] != 4)
+    {
         TextDrawShowForPlayer(playerid, CantCommand);
         SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+        return 1;
+    }
+    return 1;
+}
+
+forward public BeginDrugDealing(playerid);
+public BeginDrugDealing(playerid){
+    if(pInfo[playerid][pWeedAmount] >= 1 || pInfo[playerid][pCokeAmount] >= 1){
+        pInfo[playerid][CurrentState] = 1;
+        new rand;
+        new sizeOf = sizeof(randomdrugdeals);
+        rand = random(sizeOf - 1) + 1;
+        KillTimer(drugDealTimer[playerid]);
+        drugDeal[playerid] = CreateDynamicCP(randomdrugdeals[rand][0], randomdrugdeals[rand][1], randomdrugdeals[rand][2], 2, -1, -1, -1, 10000);
+        SendPlayerText(pInfo[playerid][pPhoneNumber], "Hey, you about? The usual at our normal spot.", 0);
+        drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+    }
+    return 1;
+}
+forward public SendPlayerText(tnumber, message[100], from);
+public SendPlayerText(tnumber, message[100], from){
+    for (new i = 0; i < MAX_PLAYERS; i++){
+        if(pInfo[i][pPhoneNumber] == tnumber)
+        {
+            new string[256];
+            if(from == 0){
+                format(string, sizeof(string), "Text msg received: %s, from: Unknown", message);
+                SendClientMessage(i, SERVERCOLOR, string);
+            }
+            else {                
+                format(string, sizeof(string), "Text msg received: %s, from: %d", message, from);
+                SendClientMessage(i, SERVERCOLOR, string);
+            }
+        }
     }
     return 1;
 }
@@ -1755,20 +1995,7 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
     vehicleid = GetPlayerVehicleID(playerid); // check vehicle id;
     vehicleid -= 1; // taking one away to select correct veh;
 
-    if(newstate == PLAYER_STATE_DRIVER) { // IF PLAYER IS DRIVER
-        if(vInfo[vehicleid][vJobId] != pInfo[playerid][pJobId]) { // check if player job vehicle
-            if(vInfo[vehicleid][vRentalState] == VEHICLE_RENTABLE && vInfo[vehicleid][vRented] == VEHICLE_NOT_RENTED) { // check if vehicle is rentable + not rented NOT JOB RENTAL{
-                RemovePlayerFromVehicle(playerid);
-                PlayerTextDrawHide(playerid, VEHSTUFF[playerid][0]);
-                PlayerTextDrawHide(playerid, VEHSTUFF[playerid][1]);
-                PlayerTextDrawHide(playerid, VEHSTUFF[playerid][2]);
-                PlayerTextDrawHide(playerid, VEHSTUFF[playerid][3]);
-                PlayerTextDrawHide(playerid, VEHSTUFF[playerid][4]);
-                return 1;
-            }
-            RemovePlayerFromVehicle(playerid);
-            return 1;
-        }
+    if(newstate == PLAYER_STATE_DRIVER) { // IF PLAYER IS DRIVER    
         if(vInfo[vehicleid][vRentalState] == VEHICLE_RENTABLE && vInfo[vehicleid][vRented] == VEHICLE_NOT_RENTED) { // check if vehicle is rentable + not rented NOT JOB RENTAL{
             new string[256];
             format(string, sizeof(string), "[SERVER]:{FFFFFF} This vehicle is rentable for {00FF00}$%d{FFFFFF}. Type /rentcar to rent it.", vInfo[vehicleid][vRentalPrice]);
@@ -1776,7 +2003,11 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
             TurnVehicleEngineOff(vehicleid + 1);
             return 1;
         }
-        if(vInfo[vehicleid][vJobId] == pInfo[playerid][pJobId]) { // check if player job vehicle
+        if(vInfo[vehicleid][vJobId] >= 1 && vInfo[vehicleid][vJobId] != pInfo[playerid][pJobId]) { // check if job vehicle has been set. check if player not in right job.
+            RemovePlayerFromVehicle(playerid);
+            return 1;
+        }
+        if(vInfo[vehicleid][vJobId] >= 1 && vInfo[vehicleid][vJobId] == pInfo[playerid][pJobId]) { // check if a job vehicle and job id == player job id
             if(vInfo[vehicleid][vRentalState] == VEHICLE_RENTABLE && vInfo[vehicleid][vRented] == VEHICLE_NOT_RENTED) { // check if vehicle is rentable + not rented NOT JOB RENTAL{
                 new string[256];
                 format(string, sizeof(string), "[SERVER]:{FFFFFF} This vehicle is rentable for {00FF00}$%d{FFFFFF}. Type /rentcar to rent it.", vInfo[vehicleid][vRentalPrice]);
@@ -1785,8 +2016,7 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
                 return 1;
             }
         }
-
-        if(vInfo[vehicleid][vJobId] == 0 && vInfo[vehicleid][vFacId] >= 1) {
+        if(vInfo[vehicleid][vJobId] == 0 && vInfo[vehicleid][vFacId] >= 1) { // check if not a job id and if fac id has been set.
             if(pInfo[playerid][pFactionId] == vInfo[vehicleid][vFacId]) {
 
             }
@@ -1934,10 +2164,10 @@ public OnPlayerEnterCheckpoint(playerid) {
 }
 
 public OnPlayerEnterDynamicCP(playerid, checkpointid) {
-    if(checkpointid == GarbageCheckpoint[0]) {
+    if(checkpointid == GarbageCheckpoint[playerid]) {
         GameTextForPlayer(playerid, "/collect", 3000, 5);
     }
-    if(checkpointid == PostCheckpoint[0]) //This checks what checkpoint it is before it continues
+    if(checkpointid == PostCheckpoint[playerid]) //This checks what checkpoint it is before it continues
     {
         for (new i = 0; i < loadedJob; i++) {
             if(pInfo[playerid][CurrentState] == 1) {
@@ -1957,9 +2187,141 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
         }
         return 1;
     }
-    if(checkpointid == JobCheckpoint[0]) {
+    if(checkpointid == JobCheckpoint[playerid]) {
         GameTextForPlayer(playerid, "/takejob", 3000, 5);
         DestroyDynamicCP(JobCheckpoint[0]);
+    }
+    if(checkpointid == drugDeal[0]){
+        if(pInfo[playerid][CurrentState] == 1){
+            DestroyDynamicCP(drugDeal[0]); // destroy drug CP for player.
+            KillTimer(drugDealTimer[playerid]);
+            pInfo[playerid][CurrentState] = 0;
+            new availabletobuy = 0;
+            // Send police message after 2 seconds of arriving...
+            TogglePlayerControllable(playerid, false);
+            new Float:px, Float:py, Float:pz;
+            GetPlayerPos(playerid, px, py, pz);
+            SetTimerEx("AlertPolice", 2000, false, "dsfff", playerid, "Possible drug dealing in progress!", px, py, pz);
+            SetTimerEx("UnfreezeAfterTime", 7500, false, "d", playerid);
+
+            if(pInfo[playerid][pWeedAmount] >= 1){ 
+                availabletobuy = 1; // only got weed.
+            }
+            if(pInfo[playerid][pCokeAmount] >= 1){
+                availabletobuy = 2; // has only got coke
+            }
+            if(pInfo[playerid][pWeedAmount] >= 1 && pInfo[playerid][pCokeAmount] >= 1)
+            {
+                availabletobuy = 3;// has both weed and coke
+            }
+
+            if(availabletobuy == 1){
+                // only got weed.
+                new string[256], giveMoney, money, randomWant;
+                randomWant = random(pInfo[playerid][pWeedAmount] - 1) + 1;
+                money = drugInfo[0][drugPrice] + (20 / 100 * drugInfo[0][drugPrice]);
+                giveMoney = randomWant * money;
+                SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the weed there! I'll be there in 2!", 0);
+                GivePlayerMoney(playerid, giveMoney);
+                format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of weed for $%d!", randomWant, giveMoney);
+                SendClientMessage(playerid, SERVERCOLOR, string);
+
+                drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+
+                return 1;
+            }
+            if(availabletobuy == 2){
+                // only got coke
+                new string[256], giveMoney, money, randomWant;
+                randomWant = random(pInfo[playerid][pCokeAmount] - 1) + 1;
+                money = drugInfo[1][drugPrice] - (20 / 100 * drugInfo[1][drugPrice]);            
+                giveMoney = randomWant * money;
+                SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the coke there! I'll be there in 2!", 0);
+                GivePlayerMoney(playerid, giveMoney);
+                format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of coke for $%d!", randomWant, giveMoney);
+                SendClientMessage(playerid, SERVERCOLOR, string);
+
+                drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+
+                return 1;
+            }
+            if(availabletobuy == 3){
+                // has both.
+                new randsel;
+                randsel = random(2 - 1) + 1;
+                drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+
+                if(randsel == 1){                    
+                    new string[256], giveMoney, money, randomWant;
+                    randomWant = random(pInfo[playerid][pCokeAmount] - 1) + 1;
+                    money = drugInfo[0][drugPrice] - (20 / 100 * drugInfo[0][drugPrice]);
+                    giveMoney = randomWant * money;
+                    SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the weed there! I'll be there in 2!", 0);
+                    GivePlayerMoney(playerid, giveMoney);
+                    format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of weed for $%d!", randomWant, giveMoney);
+                    SendClientMessage(playerid, SERVERCOLOR, string);
+                                
+
+                }
+                if(randsel == 2){                    
+                    new string[256], giveMoney, money, randomWant;
+                    randomWant = random(pInfo[playerid][pCokeAmount] - 1) + 1;
+                    money = drugInfo[1][drugPrice] - (20 / 100 * drugInfo[1][drugPrice]);
+                    giveMoney = randomWant * money;
+                    SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the coke there! I'll be there in 2!", 0);
+                    GivePlayerMoney(playerid, giveMoney);
+                    format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of coke for $%d!", randomWant, giveMoney);
+                    SendClientMessage(playerid, SERVERCOLOR, string);
+                }
+                return 1;
+            }
+            return 1;
+        }
+    }
+
+    if(checkpointid == policeCall[0]){
+        if(pInfo[playerid][pFactionId] == 1)
+        {
+            for(new i = 0; i < MAX_PLAYERS; i++){
+                if(pInfo[i][pFactionId] == 1){
+                    new string[256];
+                    format(string, sizeof(string), "Radio: %s %s has arrived on the scene, over.", pInfo[playerid][pFactionRankname], RPName(playerid));
+                    SendClientMessage(playerid, SERVERCOLOR, string);
+                    pInfo[playerid][pFactionPay] += 50;
+                }
+            }
+        }
+        return 1;
+    }
+    return 1;
+}
+
+forward public AlertPolice(playerid, message[32], Float:cX, Float:cY, Float:cZ);
+public AlertPolice(playerid, message[32], Float:cX, Float:cY, Float:cZ){
+    new string[256];
+    pInfo[playerid][pAlertCall] = 1;
+    format(pInfo[playerid][pAlertMsg], 64, "%s", message);
+
+    for(new i = 0; i < MAX_PLAYERS; i++){
+        if(pInfo[i][pFactionId] == 1){ // if player is a police officer
+            format(string, sizeof(string), "{FFFFFF}Radio: %s, call code: %d", message, playerid);
+            SendClientMessage(i, SERVERCOLOR, string);
+            return 1;
+        }
+    }
+    return 1;
+}
+
+CMD:listallcalls(playerid, params[]){
+    new string[256];
+    
+    SendClientMessage(playerid, SPECIALORANGE, "**-----AVAILABLE CALLS-----**");
+    for(new i = 0; i < MAX_PLAYERS; i++){
+        if(pInfo[i][pAlertCall] == 1){
+            format(string, sizeof(string), "Call code: %d,", playerid);
+            SendClientMessage(playerid, SERVERCOLOR, string);
+            return 1;
+        }
     }
     return 1;
 }
@@ -2313,6 +2675,8 @@ Dialog:DIALOG_ENDJOB(playerid, response, listitem, inputtext[]) {
         pInfo[playerid][CurrentState] = 0;
         pInfo[playerid][PostState] = 0;
         pInfo[playerid][GarbageState] = 0;
+        pInfo[playerid][busStopState] = 0;
+        DestroyDynamicRaceCP(busCheckpoint[playerid]);
         DestroyDynamicCP(PostCheckpoint[0]);
         DestroyDynamicCP(GarbageCheckpoint[0]);
         SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have ended your current job and have lost all of your collectables as a result!");
@@ -2702,13 +3066,15 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pAge", pInfo[playerid][pAge]);
     cache_get_value_int(0, "pBank", pInfo[playerid][pBank]);
     cache_get_value_int(0, "pCash", pInfo[playerid][pCash]);
-    cache_get_value_int(0, "pPayTimer", pInfo[playerid][pPayTimer]);
+    cache_get_value_int(0, "pPayTimer", pInfo[playerid][pPayTimer]);    
+    cache_get_value_int(0, "pPhoneNumber", pInfo[playerid][pPhoneNumber]);
     cache_get_value_int(0, "pFactionId", pInfo[playerid][pFactionId]);
     cache_get_value_int(0, "pFactionRank", pInfo[playerid][pFactionRank]);
     cache_get_value(0, "pFactionRankname", pInfo[playerid][pFactionRankname], 32);
     cache_get_value_int(0, "pJobId", pInfo[playerid][pJobId]);
     cache_get_value_int(0, "pJobPay", pInfo[playerid][pJobPay]);
-
+    cache_get_value_int(0, "pWeedAmount", pInfo[playerid][pWeedAmount]);
+    cache_get_value_int(0, "pCokeAmount", pInfo[playerid][pCokeAmount]);
 
     cache_get_value_int(0, "pAdminLevel", pInfo[playerid][pAdminLevel]);
 
@@ -2944,17 +3310,23 @@ public payPlayer(playerid) {
     if(pInfo[playerid][pJobId] >= 1) {
         salary += pInfo[playerid][pJobPay]; // adding up their job's pay
         tax = (salary / 500) * 100;
-        format(string, sizeof(string), "[SERVER]:{ABCDEF}Job Pay: +$%d | Job Tax: -$%d", pInfo[playerid][pJobPay], tax);
+        format(string, sizeof(string), "[SERVER]:{ABCDEF} Job Pay: +$%d | Job Tax: -$%d", pInfo[playerid][pJobPay], tax);
         SendClientMessage(playerid, SPECIALORANGE, string);
+        pInfo[playerid][pJobPay] = 0;
     }
-    //if(pInfo[playerid][pFac] > 1){ start faction pay here}
+    if(pInfo[playerid][pFactionId] >= 1){
+        salary += pInfo[playerid][pFactionPay];
+        tax = (salary / 500) * 100;
+        format(string, sizeof(string), "[SERVER]:{ABCDEF} Faction Pay: +$%d | Job Tax: -$%d", pInfo[playerid][pFactionPay], tax);
+        SendClientMessage(playerid, SPECIALORANGE, string);
+        pInfo[playerid][pFactionPay] = 0;
+    }
     tax = (salary / 500) * 100;
     totalpay = salary - tax; // taxing their job's pay
     format(string, sizeof(string), "[SERVER]:{ABCDEF} Income: $%d | Tax: -$%d | Total Pay: +$%d", salary, tax, totalpay);
     SendClientMessage(playerid, SPECIALORANGE, string);
     pInfo[playerid][pPayTimer] = 60;
     pInfo[playerid][pBank] += totalpay;
-    pInfo[playerid][pJobPay] = 0;
     SetTimerEx("payPlayerTimer", 60000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
 
     if(pInfo[playerid][pExp] >= 8) {
@@ -2987,6 +3359,25 @@ stock GetVehicleName(vehicleid) {
     new String[256];
     format(String, sizeof(String), "%s", VehicleNames[GetVehicleModel(vehicleid) - 400]);
     return String;
+}
+
+stock ReturnPlayerInventory(playerid, target){    
+    new string[256];
+    format(string, sizeof(string), "[SERVER]:**-------- %s's POCKETS --------**", RPName(target));
+    SendClientMessage(target, SPECIALORANGE, string);
+    if(GetPlayerMoney(target) > 0){        
+        format(string, sizeof(string), "[SERVER]: $%d (CASH)", pInfo[target][pCash]);
+        SendClientMessage(target, SERVERCOLOR, string);
+    }    
+    if(pInfo[target][pWeedAmount] >= 1){        
+        format(string, sizeof(string), "[SERVER]: %d/grams of Weed", pInfo[target][pWeedAmount]);
+        SendClientMessage(target, SERVERCOLOR, string);
+    }
+    if(pInfo[target][pCokeAmount] >= 1){        
+        format(string, sizeof(string), "[SERVER]: %d/grams of Cocaine", pInfo[target][pCokeAmount]);
+        SendClientMessage(target, SERVERCOLOR, string);
+    }
+    return 1;
 }
 
 stock ReturnStats(playerid, target) {

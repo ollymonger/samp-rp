@@ -14,6 +14,11 @@ streamer plugin
 * Postman (ID1)
 * Garbageman (ID2)
 * Busdriver (ID3)
+* Drug dealer (ID4)
+
+## Factions: (in this order)
+* Fort Caron Sheriff's Office (ID1)
+* Fort Carson EMS (ID2)
 
 ## States
 * 0 VEHICLE_NOT_RENTABLE 0 (Vehcile is either already rented or not rentable in )

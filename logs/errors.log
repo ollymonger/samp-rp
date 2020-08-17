@@ -1,0 +1,1 @@
+[13:19:04] [plugins/mysql] error #2013 while executing query "UPDATE `accounts` SET `pHealth` = '0.000000', `pArmour` = '0.000000', `pCash` = '0', `pBank` = '14283' WHERE `pName` = ''": Lost connection to MySQL server during query
