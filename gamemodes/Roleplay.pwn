@@ -1491,6 +1491,7 @@ CMD:help(playerid, params[]) {
     return 1;
 }
 
+
 CMD:makeleader(playerid, params[]) {
     new target, facid, string[256];
     if(pInfo[playerid][pAdminLevel] == 6) {
@@ -1718,8 +1719,13 @@ CMD:collect(playerid, params[]) {
                             GivePlayerMoney(playerid, -drugInfo[0][drugPrice])
                             mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `drugprices` SET `drugAmount` = '%d' WHERE  `drugId` = 1", drugInfo[0][drugAmount]);
                             mysql_query(db_handle, DB_Query);
-                            KillTimer(drugDealTimer[playerid]);
-                            drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+                            if(pInfo[playerid][pPhoneNumber] != 0){
+                                KillTimer(drugDealTimer[playerid]);
+                                drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+                            } else {
+                                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have a phone, and therefore will not receive drug deal messages!");
+                                return 1;
+                            }
                         } else {
                             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You cannot carry any more Weed!");
                         }
@@ -1742,9 +1748,13 @@ CMD:collect(playerid, params[]) {
                                 GivePlayerMoney(playerid, -drugInfo[1][drugPrice])
                                 mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `drugprices` SET `drugAmount` = '%d' WHERE  `drugId` = 2", drugInfo[0][drugAmount]);
                                 mysql_query(db_handle, DB_Query);
-                                KillTimer(drugDealTimer[playerid]);
-                                drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
-
+                                if(pInfo[playerid][pPhoneNumber] != 0){
+                                    KillTimer(drugDealTimer[playerid]);
+                                    drugDealTimer[playerid] = SetTimerEx("BeginDrugDealing", 300000, false, "d", playerid);
+                                } else {
+                                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have a phone, and therefore will not receive drug deal messages!");
+                                    return 1;
+                                }
                             } else {
                                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You cannot carry any more Cocaine!");
                             }
@@ -3359,11 +3369,11 @@ stock ReturnPlayerInventory(playerid, target){
         format(string, sizeof(string), "[SERVER]: $%d (CASH)", pInfo[target][pCash]);
         SendClientMessage(target, SERVERCOLOR, string);
     }    
-    if(pInfo[target][pWeedAmount] > 1){        
+    if(pInfo[target][pWeedAmount] >= 1){        
         format(string, sizeof(string), "[SERVER]: %d/grams of Weed", pInfo[target][pWeedAmount]);
         SendClientMessage(target, SERVERCOLOR, string);
     }
-    if(pInfo[target][pCokeAmount] > 1){        
+    if(pInfo[target][pCokeAmount] >= 1){        
         format(string, sizeof(string), "[SERVER]: %d/grams of Cocaine", pInfo[target][pCokeAmount]);
         SendClientMessage(target, SERVERCOLOR, string);
     }
