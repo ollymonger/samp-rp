@@ -457,6 +457,7 @@ enum ENUM_PLAYER_DATA {
         pPayTimer,
         pPhoneNumber,
         pPhoneModel,
+        pGpsModel,
 
         pFactionId,
         pFactionRank,
@@ -601,6 +602,19 @@ public OnGameModeInit() {
     AddMenuItem(phonemenu, 1, "$250");
     AddMenuItem(phonemenu, 0, "iFruit X");
     AddMenuItem(phonemenu, 1, "$300");
+
+    gpsmenu = CreateMenu("Hardware Store", 2, 200.0, 100.0, 100.0, 100.0);   
+    SetMenuColumnHeader(gpsmenu, 0, "Name");
+    SetMenuColumnHeader(gpsmenu, 1, "Price");  
+    AddMenuItem(gpsmenu, 0, "TomTom");
+    AddMenuItem(gpsmenu, 1, "$400");   
+    AddMenuItem(gpsmenu, 0, "GoClever");
+    AddMenuItem(gpsmenu, 1, "$280");  
+    AddMenuItem(gpsmenu, 0, "NavRoad");
+    AddMenuItem(gpsmenu, 1, "$310");   
+    AddMenuItem(gpsmenu, 0, "GARMIN");
+    AddMenuItem(gpsmenu, 1, "$410"); 
+
 
     busdrivermenu = CreateMenu("Bus Routes", 2, 200.0, 75.0, 150.0, 100.0);
 
@@ -1368,7 +1382,7 @@ public SavePlayerData(playerid) {
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pFactionId` = '%d', `pFactionRank` = '%d', `pFactionRankname` = '%e', `pFactionPay` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pFactionId], pInfo[playerid][pFactionRank], pInfo[playerid][pFactionRankname], pInfo[playerid][pFactionPay], GetName(playerid));
     mysql_query(db_handle, query);
     
-    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pPhoneNumber` = '%d', `pPhoneModel` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pPhoneNumber], pInfo[playerid][pPhoneModel], GetName(playerid));
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pPhoneNumber` = '%d', `pPhoneModel` = '%d', `pGpsModel` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pPhoneNumber], pInfo[playerid][pPhoneModel], pInfo[playerid][pGpsModel], GetName(playerid));
     mysql_query(db_handle, query);
 
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pWeedAmount` = '%d', `pCokeAmount` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pWeedAmount], pInfo[playerid][pCokeAmount], GetName(playerid));
@@ -2616,6 +2630,7 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                 ShowMenuForPlayer(phonemenu, playerid);
             }
             case 1:{
+                // gps menu
                 ShowMenuForPlayer(gpsmenu, playerid);
             }
         }
@@ -2696,6 +2711,63 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                 } else {
                     ShowMenuForPlayer(phonemenu, playerid);
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash for this phone! Choose another.");
+                }
+            }
+        }
+    }
+    if(currentMenu == gpsmenu){
+        new string[256];
+        switch(row){
+            case 0: { // tomtom
+                if(GetPlayerMoney(playerid) >= 400){
+                    format(string, sizeof(string), "> You have purchased a TomTom GPS!");
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    pInfo[playerid][pGpsModel] = 1;
+                    GivePlayerMoney(playerid, -400);
+                    TogglePlayerControllable(playerid, 1);
+                    return 1;
+                } else {
+                    ShowMenuForPlayer(gpsmenu, playerid);
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash for this GPS! Choose another.");
+                }
+            }
+            case 1: { // goclever
+                if(GetPlayerMoney(playerid) >= 280){
+                    format(string, sizeof(string), "> You have purchased a GoClever GPS!");
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    pInfo[playerid][pGpsModel] = 2;
+                    GivePlayerMoney(playerid, -280);
+                    TogglePlayerControllable(playerid, 1);
+                    return 1;
+                } else {
+                    ShowMenuForPlayer(gpsmenu, playerid);
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash for this GPS! Choose another.");
+                }
+            }
+            case 2: { // navroad
+                if(GetPlayerMoney(playerid) >= 310){
+                    format(string, sizeof(string), "> You have purchased a NavRoad GPS!");
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    pInfo[playerid][pGpsModel] = 3;
+                    GivePlayerMoney(playerid, -310);
+                    TogglePlayerControllable(playerid, 1);
+                    return 1;
+                } else {
+                    ShowMenuForPlayer(gpsmenu, playerid);
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash for this GPS! Choose another.");
+                }
+            }            
+            case 3: { // GARMIN
+                if(GetPlayerMoney(playerid) >= 410){
+                    format(string, sizeof(string), "> You have purchased a GARMIN GPS!");
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    pInfo[playerid][pGpsModel] = 3;
+                    GivePlayerMoney(playerid, -410);
+                    TogglePlayerControllable(playerid, 1);
+                    return 1;
+                } else {
+                    ShowMenuForPlayer(gpsmenu, playerid);
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash for this GPS! Choose another.");
                 }
             }
         }
@@ -3220,6 +3292,7 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pPayTimer", pInfo[playerid][pPayTimer]);    
     cache_get_value_int(0, "pPhoneNumber", pInfo[playerid][pPhoneNumber]);
     cache_get_value_int(0, "pPhoneModel", pInfo[playerid][pPhoneModel]);
+    cache_get_value_int(0, "pGpsModel", pInfo[playerid][pGpsModel]);
     cache_get_value_int(0, "pFactionId", pInfo[playerid][pFactionId]);
     cache_get_value_int(0, "pFactionRank", pInfo[playerid][pFactionRank]);
     cache_get_value(0, "pFactionRankname", pInfo[playerid][pFactionRankname], 32);
@@ -3540,6 +3613,24 @@ stock ReturnPlayerInventory(playerid, target){
         }
         if(pInfo[target][pPhoneModel] == 5){
             format(string, sizeof(string), "[SERVER]: iFruit X (MOBILE)");
+            SendClientMessage(playerid, SERVERCOLOR, string);
+        }
+    }
+    if(pInfo[target][pGpsModel] >= 1){
+        if(pInfo[target][pGpsModel] == 1){            
+            format(string, sizeof(string), "[SERVER]: TomTom (GPS)");
+            SendClientMessage(playerid, SERVERCOLOR, string);
+        }
+        if(pInfo[target][pGpsModel] == 2){            
+            format(string, sizeof(string), "[SERVER]: GoClever (GPS)");
+            SendClientMessage(playerid, SERVERCOLOR, string);
+        }
+        if(pInfo[target][pGpsModel] == 3){            
+            format(string, sizeof(string), "[SERVER]: NavRoad (GPS)");
+            SendClientMessage(playerid, SERVERCOLOR, string);
+        }
+        if(pInfo[target][pGpsModel] == 4){            
+            format(string, sizeof(string), "[SERVER]: GARMIN (GPS)");
             SendClientMessage(playerid, SERVERCOLOR, string);
         }
     }
