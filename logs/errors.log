@@ -1,1 +1,2 @@
-[13:19:04] [plugins/mysql] error #2013 while executing query "UPDATE `accounts` SET `pHealth` = '0.000000', `pArmour` = '0.000000', `pCash` = '0', `pBank` = '14283' WHERE `pName` = ''": Lost connection to MySQL server during query
+[22:51:00] [plugins/mysql] error #1054 while executing query "UPDATE `accounts` SET `pFactionId` = '1', `pFactionRank` = '7', `pFactionRankname` = 'Chief of Police', `pFactionPay` = '0' WHERE `pName` = 'testaccounts_2'": Unknown column 'pFactionPay' in 'field list'
+[22:52:51] [plugins/mysql] error #1054 while executing query "UPDATE `accounts` SET `pFactionId` = '1', `pFactionRank` = '7', `pFactionRankname` = 'Chief of Police', `pFactionPay` = '0' WHERE `pName` = ''": Unknown column 'pFactionPay' in 'field list'

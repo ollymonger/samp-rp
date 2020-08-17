@@ -40,7 +40,7 @@ main() {
 /* 1- NEWS -*/
 new MySQL:db_handle;
 
-new Menu:busdrivermenu;
+new Menu:busdrivermenu, Menu:hardwaremenu, Menu:phonemenu, Menu:gpsmenu;
 
 new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS], GarbageCheckpoint[MAX_PLAYERS];
 new dumpCheckPoint[MAX_PLAYERS], routeId[MAX_PLAYERS], busCheckpoint[MAX_PLAYERS], drugDeal[MAX_PLAYERS];
@@ -456,6 +456,7 @@ enum ENUM_PLAYER_DATA {
         pCash,
         pPayTimer,
         pPhoneNumber,
+        pPhoneModel,
 
         pFactionId,
         pFactionRank,
@@ -583,7 +584,25 @@ public OnGameModeInit() {
 
     CreateDynamicObject(17038, -252.32233, 1216.70703, 18.72150, 0.00000, 0.00000, 90.00000);
 
-    busdrivermenu = CreateMenu("Bus Routes", 2, 200.0, 100.0, 150.0, 150.0);
+    hardwaremenu = CreateMenu("Hardware Store", 2, 200.0, 100.0, 100.0, 100.0);
+    AddMenuItem(hardwaremenu, 0, "Phones");
+    AddMenuItem(hardwaremenu, 0, "GPS");
+
+    phonemenu = CreateMenu("Hardware Store", 2, 200.0, 100.0, 100.0, 100.0);    
+    SetMenuColumnHeader(phonemenu, 0, "Name");
+    SetMenuColumnHeader(phonemenu, 1, "Price");
+    AddMenuItem(phonemenu, 0, "Nokia");
+    AddMenuItem(phonemenu, 1, "$150");
+    AddMenuItem(phonemenu, 0, "LG");
+    AddMenuItem(phonemenu, 1, "$180");
+    AddMenuItem(phonemenu, 0, "Sony");
+    AddMenuItem(phonemenu, 1, "$200");
+    AddMenuItem(phonemenu, 0, "Samsung");
+    AddMenuItem(phonemenu, 1, "$250");
+    AddMenuItem(phonemenu, 0, "iFruit X");
+    AddMenuItem(phonemenu, 1, "$300");
+
+    busdrivermenu = CreateMenu("Bus Routes", 2, 200.0, 75.0, 150.0, 100.0);
 
     SetMenuColumnHeader(busdrivermenu, 0, "Route");
     SetMenuColumnHeader(busdrivermenu, 1, "Salary");
@@ -1349,7 +1368,7 @@ public SavePlayerData(playerid) {
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pFactionId` = '%d', `pFactionRank` = '%d', `pFactionRankname` = '%e', `pFactionPay` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pFactionId], pInfo[playerid][pFactionRank], pInfo[playerid][pFactionRankname], pInfo[playerid][pFactionPay], GetName(playerid));
     mysql_query(db_handle, query);
     
-    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pPhoneNumber` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pPhoneNumber], GetName(playerid));
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pPhoneNumber` = '%d', `pPhoneModel` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pPhoneNumber], pInfo[playerid][pPhoneModel], GetName(playerid));
     mysql_query(db_handle, query);
 
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pWeedAmount` = '%d', `pCokeAmount` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pWeedAmount], pInfo[playerid][pCokeAmount], GetName(playerid));
@@ -1409,6 +1428,10 @@ public OnPlayerText(playerid, text[]) {
 
 /* SHOP CMDS */
 CMD:shop(playerid, params[]){
+    // ifplayerinrangeofpoint (check if they are near a shop/hardware store)
+    ShowMenuForPlayer(hardwaremenu, playerid); // show the hardware menu!
+    TogglePlayerControllable(playerid, false); // freeze player so they can use the menu
+
     return 1;
 }
 
@@ -2541,6 +2564,26 @@ public OnVehicleRespray(playerid, vehicleid, color1, color2) {
     return 1;
 }
 
+forward public AssignPlayerPhoneNumber(playerid);
+public AssignPlayerPhoneNumber(playerid){
+    new n1[2],n2[2],n3[3],n4[4],n5[5], n6[6], phonestring[32];
+    format(n1, sizeof(n1), "%d", random(9 - 1) + 1);
+    strcat(phonestring, n1);
+    format(n2, sizeof(n2), "%d", random(9 - 1) + 1);
+    strcat(phonestring, n2);
+    format(n3, sizeof(n3), "%d", random(9 - 1) + 1);
+    strcat(phonestring, n3);
+    format(n4, sizeof(n4), "%d", random(9 - 1) + 1);
+    strcat(phonestring, n4);
+    format(n5, sizeof(n5), "%d", random(9 - 1) + 1);
+    strcat(phonestring, n5);    
+    format(n6, sizeof(n6), "%d", random(9 - 1) + 1);
+    strcat(phonestring, n6);
+    pInfo[playerid][pPhoneNumber] = strval(phonestring);
+    printf("** [INFO] New player number: %d saved.", strval(phonestring));
+    return 1;
+}
+
 public OnPlayerSelectedMenuRow(playerid, row) {
     new Menu:currentMenu = GetPlayerMenu(playerid);
     // BUS DRIVER MENU
@@ -2563,6 +2606,97 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                 TogglePlayerControllable(playerid, true);
                 BeginSelectedBusRoute(playerid, 3);
                 pInfo[playerid][CurrentState] = 1;
+            }
+        }
+    }
+    if(currentMenu == hardwaremenu){
+        switch(row){
+            case 0:{
+                // phones menu
+                ShowMenuForPlayer(phonemenu, playerid);
+            }
+            case 1:{
+                ShowMenuForPlayer(gpsmenu, playerid);
+            }
+        }
+    }
+    if(currentMenu == phonemenu){
+        new string[256];
+        switch(row){
+            case 0: {
+                //nokia
+                if(GetPlayerMoney(playerid) >= 150){
+                    AssignPlayerPhoneNumber(playerid);
+                    format(string, sizeof(string), "> You have purchased a Nokia, your new phone number is: %d", pInfo[playerid][pPhoneNumber]);
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    pInfo[playerid][pPhoneModel] = 1;
+                    GivePlayerMoney(playerid, -150);
+                    TogglePlayerControllable(playerid, 1);
+                    return 1;
+                } else {
+                    ShowMenuForPlayer(phonemenu, playerid);
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash for this phone! Choose another.");
+                }
+            }
+            case 1: {
+                //LG
+                if(GetPlayerMoney(playerid) >= 180){
+                    AssignPlayerPhoneNumber(playerid);
+                    format(string, sizeof(string), "> You have purchased a LG, your new phone number is: %d", pInfo[playerid][pPhoneNumber]);
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    pInfo[playerid][pPhoneModel] = 2;
+                    GivePlayerMoney(playerid, -180);
+                    TogglePlayerControllable(playerid, 1);
+                    return 1;
+                } else {
+                    ShowMenuForPlayer(phonemenu, playerid);
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash for this phone! Choose another.");
+                }
+            }
+            case 2: {
+                //Sony
+                if(GetPlayerMoney(playerid) >= 200){
+                    AssignPlayerPhoneNumber(playerid);
+                    format(string, sizeof(string), "> You have purchased a LG, your new phone number is: %d", pInfo[playerid][pPhoneNumber]);
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    pInfo[playerid][pPhoneModel] = 3;
+                    GivePlayerMoney(playerid, -200);
+                    TogglePlayerControllable(playerid, 1);
+                    return 1;
+                } else {
+                    ShowMenuForPlayer(phonemenu, playerid);
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash for this phone! Choose another.");
+                }
+            }
+            case 3: {
+                //Samsung
+                if(GetPlayerMoney(playerid) >= 250){                    
+                    AssignPlayerPhoneNumber(playerid);
+                    format(string, sizeof(string), "> You have purchased a Samsung, your new phone number is: %d", pInfo[playerid][pPhoneNumber]);
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    pInfo[playerid][pPhoneModel] = 4;
+                    GivePlayerMoney(playerid, -250);
+                    TogglePlayerControllable(playerid, 1);
+                    return 1;
+                } else {
+                    ShowMenuForPlayer(phonemenu, playerid);
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash for this phone! Choose another.");
+                }
+            }
+            case 4: {
+                //ifruit X
+                if(GetPlayerMoney(playerid) >= 300){                                 
+                    AssignPlayerPhoneNumber(playerid);
+                    format(string, sizeof(string), "> You have purchased an iFruit X, your new phone number is: %d", pInfo[playerid][pPhoneNumber]);
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    pInfo[playerid][pPhoneModel] = 5;
+                    GivePlayerMoney(playerid, -250);
+                    TogglePlayerControllable(playerid, 1);
+                    return 1;
+                } else {
+                    ShowMenuForPlayer(phonemenu, playerid);
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash for this phone! Choose another.");
+                }
             }
         }
     }
@@ -2591,7 +2725,18 @@ public BeginSelectedBusRoute(playerid, route) {
     return 1;
 }
 
-public OnPlayerExitedMenu(playerid) {
+public OnPlayerExitedMenu(playerid)
+{
+    new Menu:currentMenu = GetPlayerMenu(playerid);
+    if(currentMenu == phonemenu){
+        ShowMenuForPlayer(hardwaremenu, playerid);
+        return 1;
+    }
+    if(currentMenu == gpsmenu){
+        ShowMenuForPlayer(hardwaremenu, playerid);
+        return 1;
+    }
+    TogglePlayerControllable(playerid,1); // unfreeze the player when they exit a menu
     return 1;
 }
 
@@ -3074,6 +3219,7 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pCash", pInfo[playerid][pCash]);
     cache_get_value_int(0, "pPayTimer", pInfo[playerid][pPayTimer]);    
     cache_get_value_int(0, "pPhoneNumber", pInfo[playerid][pPhoneNumber]);
+    cache_get_value_int(0, "pPhoneModel", pInfo[playerid][pPhoneModel]);
     cache_get_value_int(0, "pFactionId", pInfo[playerid][pFactionId]);
     cache_get_value_int(0, "pFactionRank", pInfo[playerid][pFactionRank]);
     cache_get_value(0, "pFactionRankname", pInfo[playerid][pFactionRankname], 32);
