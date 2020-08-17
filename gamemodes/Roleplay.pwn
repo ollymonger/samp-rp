@@ -1407,6 +1407,12 @@ public OnPlayerText(playerid, text[]) {
     return 0;
 }
 
+/* SHOP CMDS */
+CMD:shop(playerid, params[]){
+    return 1;
+}
+
+
 /* COMMANDS */
 CMD:stats(playerid, params[]) {
     ReturnStats(playerid, playerid);
