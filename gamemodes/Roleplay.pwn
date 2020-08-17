@@ -3516,18 +3516,40 @@ stock GetVehicleName(vehicleid) {
 stock ReturnPlayerInventory(playerid, target){    
     new string[256];
     format(string, sizeof(string), "[SERVER]:**-------- %s's POCKETS --------**", RPName(target));
-    SendClientMessage(target, SPECIALORANGE, string);
+    SendClientMessage(playerid, SPECIALORANGE, string);
     if(GetPlayerMoney(target) > 0){        
         format(string, sizeof(string), "[SERVER]: $%d (CASH)", pInfo[target][pCash]);
-        SendClientMessage(target, SERVERCOLOR, string);
-    }    
+        SendClientMessage(playerid, SERVERCOLOR, string);
+    }
+    if(pInfo[target][pPhoneModel] >= 1){
+        if(pInfo[target][pPhoneModel] == 1){
+            format(string, sizeof(string), "[SERVER]: Nokia (MOBILE)");
+            SendClientMessage(playerid, SERVERCOLOR, string);
+        }
+        if(pInfo[target][pPhoneModel] == 2){
+            format(string, sizeof(string), "[SERVER]: LG (MOBILE)");
+            SendClientMessage(playerid, SERVERCOLOR, string);
+        }
+        if(pInfo[target][pPhoneModel] == 3){
+            format(string, sizeof(string), "[SERVER]: Sony (MOBILE)");
+            SendClientMessage(playerid, SERVERCOLOR, string);
+        }
+        if(pInfo[target][pPhoneModel] == 4){
+            format(string, sizeof(string), "[SERVER]: Samsung (MOBILE)");
+            SendClientMessage(playerid, SERVERCOLOR, string);
+        }
+        if(pInfo[target][pPhoneModel] == 5){
+            format(string, sizeof(string), "[SERVER]: iFruit X (MOBILE)");
+            SendClientMessage(playerid, SERVERCOLOR, string);
+        }
+    }
     if(pInfo[target][pWeedAmount] >= 1){        
         format(string, sizeof(string), "[SERVER]: %d/grams of Weed", pInfo[target][pWeedAmount]);
-        SendClientMessage(target, SERVERCOLOR, string);
+        SendClientMessage(playerid, SERVERCOLOR, string);
     }
     if(pInfo[target][pCokeAmount] >= 1){        
         format(string, sizeof(string), "[SERVER]: %d/grams of Cocaine", pInfo[target][pCokeAmount]);
-        SendClientMessage(target, SERVERCOLOR, string);
+        SendClientMessage(playerid, SERVERCOLOR, string);
     }
     return 1;
 }
