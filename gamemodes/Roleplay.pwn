@@ -460,6 +460,7 @@ enum ENUM_PLAYER_DATA {
         pFactionId,
         pFactionRank,
         pFactionRankname[32],
+        pFactionPay,
 
         pJobId,
         pJobPay,
@@ -1307,6 +1308,7 @@ public SaveNewPlayerData(playerid, hashed[BCRYPT_HASH_LENGTH]) {
     pInfo[playerid][pExp] = 1;
     pInfo[playerid][pFactionId] = 0;
     pInfo[playerid][pFactionRank] = 0;
+    pInfo[playerid][pFactionPay] = 0;
     pInfo[playerid][pJobId] = 0;
     pInfo[playerid][pJobPay] = 0;
     pInfo[playerid][pPayTimer] = 60;
@@ -1344,7 +1346,7 @@ public SavePlayerData(playerid) {
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pJobId` = '%d', `pJobPay` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pJobId], pInfo[playerid][pJobPay], GetName(playerid));
     mysql_query(db_handle, query);
 
-    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pFactionId` = '%d', `pFactionRank` = '%d', `pFactionRankname` = '%e' WHERE `pName` = '%e'", pInfo[playerid][pFactionId], pInfo[playerid][pFactionRank], pInfo[playerid][pFactionRankname], GetName(playerid));
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pFactionId` = '%d', `pFactionRank` = '%d', `pFactionRankname` = '%e', `pFactionPay` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pFactionId], pInfo[playerid][pFactionRank], pInfo[playerid][pFactionRankname], pInfo[playerid][pFactionPay], GetName(playerid));
     mysql_query(db_handle, query);
     
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pPhoneNumber` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pPhoneNumber], GetName(playerid));
@@ -1772,7 +1774,6 @@ public BeginDrugDealing(playerid){
         new rand;
         new sizeOf = sizeof(randomdrugdeals);
         rand = random(sizeOf - 1) + 1;
-        printf("%d", rand);
         KillTimer(drugDealTimer[playerid]);
         drugDeal[playerid] = CreateDynamicCP(randomdrugdeals[rand][0], randomdrugdeals[rand][1], randomdrugdeals[rand][2], 2, -1, -1, -1, 10000);
         SendPlayerText(pInfo[playerid][pPhoneNumber], "Hey, you about? The usual at our normal spot.", 0);
@@ -1791,7 +1792,7 @@ public SendPlayerText(tnumber, message[100], from){
                 SendClientMessage(i, SERVERCOLOR, string);
             }
             else {                
-                format(string, sizeof(string), "Text msg received: %s, from: Unknown", message, from);
+                format(string, sizeof(string), "Text msg received: %s, from: %d", message, from);
                 SendClientMessage(i, SERVERCOLOR, string);
             }
         }
@@ -2269,6 +2270,17 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
     }
 
     if(checkpointid == policeCall[0]){
+        if(pInfo[playerid][pFactionId] == 1)
+        {
+            for(new i = 0; i < MAX_PLAYERS; i++){
+                if(pInfo[i][pFactionId] == 1){
+                    new string[256];
+                    format(string, sizeof(string), "Radio: %s %s has arrived on the scene, over.", pInfo[playerid][pFactionRankname], RPName(playerid));
+                    SendClientMessage(playerid, SERVERCOLOR, string);
+                    pInfo[playerid][pFactionPay] += 50;
+                }
+            }
+        }
         return 1;
     }
     return 1;
@@ -3288,17 +3300,23 @@ public payPlayer(playerid) {
     if(pInfo[playerid][pJobId] >= 1) {
         salary += pInfo[playerid][pJobPay]; // adding up their job's pay
         tax = (salary / 500) * 100;
-        format(string, sizeof(string), "[SERVER]:{ABCDEF}Job Pay: +$%d | Job Tax: -$%d", pInfo[playerid][pJobPay], tax);
+        format(string, sizeof(string), "[SERVER]:{ABCDEF} Job Pay: +$%d | Job Tax: -$%d", pInfo[playerid][pJobPay], tax);
         SendClientMessage(playerid, SPECIALORANGE, string);
+        pInfo[playerid][pJobPay] = 0;
     }
-    //if(pInfo[playerid][pFac] > 1){ start faction pay here}
+    if(pInfo[playerid][pFactionId] >= 1){
+        salary += pInfo[playerid][pFactionPay];
+        tax = (salary / 500) * 100;
+        format(string, sizeof(string), "[SERVER]:{ABCDEF} Faction Pay: +$%d | Job Tax: -$%d", pInfo[playerid][pFactionPay], tax);
+        SendClientMessage(playerid, SPECIALORANGE, string);
+        pInfo[playerid][pFactionPay] = 0;
+    }
     tax = (salary / 500) * 100;
     totalpay = salary - tax; // taxing their job's pay
     format(string, sizeof(string), "[SERVER]:{ABCDEF} Income: $%d | Tax: -$%d | Total Pay: +$%d", salary, tax, totalpay);
     SendClientMessage(playerid, SPECIALORANGE, string);
     pInfo[playerid][pPayTimer] = 60;
     pInfo[playerid][pBank] += totalpay;
-    pInfo[playerid][pJobPay] = 0;
     SetTimerEx("payPlayerTimer", 60000, false, "ds", playerid, "SA-MP"); //called "function" when 10 seconds elapsed
 
     if(pInfo[playerid][pExp] >= 8) {

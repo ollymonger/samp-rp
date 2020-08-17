@@ -10459,3 +10459,145 @@ v0.3.7-R2, (C)2005-2015 SA-MP Team
 
 [15:54:54]  ===============================
 
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[19:21:42] 
+[19:21:42] Server Plugins
+[19:21:42] --------------
+[19:21:42]  Loading plugin: mysql.dll
+[19:21:42]  >> plugin.mysql: R41-4 successfully loaded.
+[19:21:42]   Loaded.
+[19:21:42]  Loading plugin: crashdetect
+[19:21:42]   CrashDetect plugin 4.20
+[19:21:42]   Loaded.
+[19:21:42]  Loading plugin: streamer
+[19:21:42] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[19:21:42]   Loaded.
+[19:21:42]  Loading plugin: bcrypt-samp.dll
+[19:21:42]   plugin.bcrypt v2.2.3 was loaded.
+[19:21:42]   plugin.bcrypt: 4 cores detected, 3 threads will be used.
+[19:21:42]   Loaded.
+[19:21:42]  Loading plugin: sscanf
+[19:21:43] 
+
+[19:21:43]  ===============================
+
+[19:21:43]       sscanf plugin loaded.     
+
+[19:21:43]          Version:  2.8.3        
+
+[19:21:43]   (c) 2018 Alex "Y_Less" Cole  
+
+[19:21:43]  ===============================
+
+[19:21:43]   Loaded.
+[19:21:43]  Loaded 5 plugins.
+
+[19:21:43] 
+[19:21:43] Filterscripts
+[19:21:43] ---------------
+[19:21:43]   Loading filterscript 'VehicleSpawner.amx'...
+[19:21:43]   Unable to load filterscript 'VehicleSpawner.amx'.
+[19:21:43]   Loading filterscript 'CLOCK.amx'...
+[19:21:43] Clock loaded
+[19:21:43]   Loaded 1 filterscripts.
+
+[19:21:45] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[19:21:45] [debug] Long callback execution detected (hang or performance issue)
+[19:21:45] [debug] AMX backtrace:
+[19:21:45] [debug] #0 0000b7d0 in public CreateBusStopObjects () in Roleplay.amx
+[19:21:45] [debug] #1 0000745c in public SSCANF_OnGameModeInit () in Roleplay.amx
+[19:21:45] [debug] #2 00001674 in public zcmd_OnGameModeInit () in Roleplay.amx
+[19:21:45] [debug] #3 native CallLocalFunction () in samp-server.exe
+[19:21:45] [debug] #4 00000e74 in public BCRYPT_OnGameModeInit () in Roleplay.amx
+[19:21:45] [debug] #5 native CallLocalFunction () in samp-server.exe
+[19:21:45] [debug] #6 0000089c in public OnGameModeInit () in Roleplay.amx
+[19:21:45] 
+----------------------------------
+[19:21:45]  Gamemode started... please wait...
+[19:21:45] ----------------------------------
+
+[19:21:45] Number of vehicle models: 0
+[19:21:45] plugin.bcrypt: Version check failed.
+[19:21:45] ** [MYSQL]:Loaded 4 jobs from the database.
+[19:21:45] ** [MYSQL]:Loaded 2 facs from the database.
+[19:21:46] [debug] Long callback execution detected (hang or performance issue)
+[19:21:46] [debug] AMX backtrace:
+[19:21:46] [debug] #0 0000bdd0 in public VehsReceived () in Roleplay.amx
+[19:21:47] ** [MYSQL] Loaded 13 vehicles from the database!
+[19:21:47] ** [MYSQL] Loaded 2 drugs
+[19:22:08] [connection] 127.0.0.1:51610 requests connection cookie.
+[19:22:09] [connection] incoming connection: 127.0.0.1:51610 id: 0
+[19:22:09] [join] testaccounts_2 has joined the server (0:127.0.0.1)
+[19:26:20] [debug] Long callback execution detected (hang or performance issue)
+[19:26:20] [debug] AMX backtrace:
+[19:26:20] [debug] #0 00023f40 in ?? (0, -1029514497, 3428724, 1094713344) in Roleplay.amx
+[19:26:20] [debug] #1 00018660 in public cmd_engine (0, 3413752) in Roleplay.amx
+[19:26:20] [debug] #2 native CallLocalFunction () in samp-server.exe
+[19:26:20] [debug] #3 00001180 in public OnPlayerCommandText (0, 3413720) in Roleplay.amx
+[19:28:09] sscanf warning: Strings without a length are deprecated, please add a destination size.
+[19:30:27] [debug] Long callback execution detected (hang or performance issue)
+[19:30:27] [debug] AMX backtrace:
+[19:30:27] [debug] #0 00017114 in public GetVehicleSpeed (0, 4336) in Roleplay.amx
+[19:33:33] 2
+[19:33:33] [debug] Long callback execution detected (hang or performance issue)
+[19:33:33] [debug] AMX backtrace:
+[19:33:33] [debug] #0 00015a8c in public SendPlayerText (999999, 3360772, 0) in Roleplay.amx
+[19:33:33] [debug] #1 000159b0 in public BeginDrugDealing (0) in Roleplay.amx
+[19:34:01] [debug] Long callback execution detected (hang or performance issue)
+[19:34:01] [debug] AMX backtrace:
+[19:34:01] [debug] #0 0000004c in ?? (0, 100) in Roleplay.amx
+[19:34:01] [debug] #1 000172d0 in public GetVehicleSpeed (0, 4336) in Roleplay.amx
+[19:36:44] ** Unrenting vehicle..
+[19:36:44] ** [MYSQL] Player:testaccounts_2 data has been saved! Disconnecting user...
+[19:36:44] [part] testaccounts_2 has left the server (0:1)
+[19:39:29] 1
+[22:42:03] 1
+[22:42:03] [debug] Long callback execution detected (hang or performance issue)
+[22:42:03] [debug] AMX backtrace:
+[22:42:03] [debug] #0 00015aa8 in public SendPlayerText (999999, 3360772, 0) in Roleplay.amx
+[22:42:03] [debug] #1 000159b0 in public BeginDrugDealing (0) in Roleplay.amx
+[22:42:03] 2
+[13:19:11] 2
+[13:19:11] [debug] Long callback execution detected (hang or performance issue)
+[13:19:11] [debug] AMX backtrace:
+[13:19:11] [debug] #0 00015a68 in public SendPlayerText (999999, 3360772, 0) in Roleplay.amx
+[13:19:11] [debug] #1 000159b0 in public BeginDrugDealing (0) in Roleplay.amx
+[13:19:11] 2
+[13:19:11] [debug] Long callback execution detected (hang or performance issue)
+[13:19:12] [debug] AMX backtrace:
+[13:19:12] [debug] #0 00015a7c in public SendPlayerText (999999, 3360772, 0) in Roleplay.amx
+[13:19:12] [debug] #1 000159b0 in public BeginDrugDealing (0) in Roleplay.amx
+[13:20:07] [debug] Server received interrupt signal
+[13:20:08] [debug] Native backtrace:
+[13:20:08] [debug] #0 7736ad7c in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[13:20:08] [debug] #1 751fa29f in ?? () in C:\WINDOWS\System32\KERNELBASE.dll
+[13:20:08] [debug] #2 0048d53c in ?? () in samp-server.exe
+[13:20:08] [debug] #3 0049b4a1 in ?? () in samp-server.exe
+[13:20:08] [debug] #4 0049b4b1 in ?? () in samp-server.exe
+[13:20:08] --- Server Shutting Down.
+[13:20:08] plugin.mysql: Unloading plugin...
+[13:20:08] plugin.mysql: Plugin unloaded.
+[13:20:08] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[13:20:08] plugin.bcrypt: Plugin unloaded.
+[13:20:08] 
+
+[13:20:08]  ===============================
+
+[13:20:08]      sscanf plugin unloaded.    
+
+[13:20:08]  ===============================
+
