@@ -20,6 +20,14 @@ streamer plugin
 * Fort Caron Sheriff's Office (ID1)
 * Fort Carson EMS (ID2)
 
+## Businesses: (in this order)
+* Hardware store (TYPE 1) :
+    Ability to buy phones, gps
+* General Store (TYPE 2)
+    Ability to buy cigarretes, lotto tickets, rope, masks, ect
+* Ammunation (type 3)
+    Ability to buy guns if you have gun license.
+
 ## States
 * 0 VEHICLE_NOT_RENTABLE 0 (Vehcile is either already rented or not rentable in )
 * 1 VEHICLE_RENTABLE 1 (Vehicle is rentable, either a job rentcar or normal rentcar available for all players)

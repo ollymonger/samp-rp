@@ -1,1 +1,0 @@
-[23:22:31] [plugins/mysql] error #1054 while executing query "UPDATE `accounts` SET `pFactionId` = '1', `pFactionRank` = '7', `pFactionRankname` = 'Chief of Police', `pFactionPay` = '0' WHERE `pName` = 'testaccounts_2'": Unknown column 'pFactionPay' in 'field list'

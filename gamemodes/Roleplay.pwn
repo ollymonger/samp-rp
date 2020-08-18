@@ -49,8 +49,22 @@ new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS], drugDealTimer[MAX_PLAYERS]
 new policeCall[MAX_PLAYERS];
 
 new dumpPickup, jobPickup[MAX_JOBS];
+new busInfoPickup[50], busEntPickup[50], busExitPickup[50], busUsePickup[50];
 
 new PlayerText:VEHSTUFF[MAX_PLAYERS][5];
+
+new PlayerText:PlayerAddress[MAX_PLAYERS][4];
+new PlayerText:businessBox[MAX_PLAYERS];
+new PlayerText:addressName[MAX_PLAYERS];
+new PlayerText:addressNameString[MAX_PLAYERS];
+new PlayerText:addressBox[MAX_PLAYERS];
+new PlayerText:addressString[MAX_PLAYERS];
+new PlayerText:addressStatus[MAX_PLAYERS];
+new PlayerText:addressType[MAX_PLAYERS];
+new PlayerText:addressPrice[MAX_PLAYERS];
+
+
+new Text:accessDoor;
 new Text:PublicTD[3];
 new Text:sheriffsoffice[4];
 new Text:hospital[3];
@@ -469,6 +483,16 @@ enum ENUM_PLAYER_DATA {
         pWeedAmount,
         pCokeAmount,
 
+        pCigAmount,
+        pRopeAmount,
+        pHasMask,
+        pLottoNumbers,
+
+        pDrivingLicense,
+        pHeavyLicense,
+        pPilotLicense,
+        pGunLicense,
+
         pAlertCall,
         pAlertMsg[64],
 
@@ -518,6 +542,28 @@ enum ENUM_VEH_DATA {
 }
 new vInfo[500][ENUM_VEH_DATA], loadedVeh;
 
+enum ENUM_BUS_DATA {
+    bId[32],
+    bName[32],
+    bAddress,
+    bPrice,
+    bOwner[32],
+    bType,
+    Float:bInfoX,
+    Float:bInfoY,
+    Float:bInfoZ,
+    Float:bEntX,
+    Float:bEntY,
+    Float:bEntZ,
+    Float:bUseX,
+    Float:bUseY,
+    Float:bUseZ,
+    Float:bExitX,
+    Float:bExitY,
+    Float:bExitZ
+};
+new bInfo[50][ENUM_BUS_DATA], loadedBus;
+
 enum ENUM_FAC_DATA {
     fID[32],
         fName[32],
@@ -559,6 +605,7 @@ public OnGameModeInit() {
 
     LoadJobData();
     LoadFacData();
+    LoadBusData();
     CreateBusStopObjects();
     LoadVehicleData();
     LoadDrugPrices();
@@ -628,6 +675,21 @@ public OnGameModeInit() {
     AddMenuItem(busdrivermenu, 1, "$150");
 
     // CONTINUE LOAD
+
+    
+    accessDoor = TextDrawCreate(29.000000, 139.000000, "Access Door: SPACE");
+    TextDrawFont(accessDoor, 1);
+    TextDrawLetterSize(accessDoor, 0.491666, 1.900000);
+    TextDrawTextSize(accessDoor, 272.000000, 12.500000);
+    TextDrawSetOutline(accessDoor, 1);
+    TextDrawSetShadow(accessDoor, 0);
+    TextDrawAlignment(accessDoor, 1);
+    TextDrawColor(accessDoor, -1);
+    TextDrawBackgroundColor(accessDoor, 255);
+    TextDrawBoxColor(accessDoor, 50);
+    TextDrawUseBox(accessDoor, 1);
+    TextDrawSetProportional(accessDoor, 1);
+    TextDrawSetSelectable(accessDoor, 0);
 
     PMuted = TextDrawCreate(230.000000, 366.000000, "You are muted!");
     TextDrawBackgroundColor(PMuted, 255);
@@ -995,6 +1057,87 @@ public VehsReceived() {
     }
 }
 
+forward public LoadBusData();
+public LoadBusData(){
+    new DB_Query[900];
+    
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `businesses`");
+    mysql_tquery(db_handle, DB_Query, "BusReceived");
+}
+
+forward public BusReceived();
+public BusReceived() {
+    if(cache_num_rows() == 0) print("No businesses created!");
+    else {
+        for (new i = 0; i < cache_num_rows(); i++) {
+            cache_get_value_int(i, "bId", bInfo[i][bId]);
+            cache_get_value(i, "bName", bInfo[i][bName], 32);
+            cache_get_value_int(i, "bAddress", bInfo[i][bAddress]);
+            cache_get_value_int(i, "bPrice", bInfo[i][bPrice]);
+            cache_get_value(i, "bOwner", bInfo[i][bOwner], 32);
+            cache_get_value_int(i, "bType", bInfo[i][bType]);
+            cache_get_value_float(i, "bInfoX", bInfo[i][bInfoX]);
+            cache_get_value_float(i, "bInfoY", bInfo[i][bInfoY]);
+            cache_get_value_float(i, "bInfoZ", bInfo[i][bInfoZ]);
+            cache_get_value_float(i, "bEntX", bInfo[i][bEntX]);
+            cache_get_value_float(i, "bEntY", bInfo[i][bEntY]);
+            cache_get_value_float(i, "bEntZ", bInfo[i][bEntZ]);
+            cache_get_value_float(i, "bUseX", bInfo[i][bUseX]);
+            cache_get_value_float(i, "bUseY", bInfo[i][bUseY]);
+            cache_get_value_float(i, "bUseZ", bInfo[i][bUseZ]);
+            cache_get_value_float(i, "bExitX", bInfo[i][bExitX]);
+            cache_get_value_float(i, "bExitY", bInfo[i][bExitY]);
+            cache_get_value_float(i, "bExitZ", bInfo[i][bExitZ]);
+            busInfoPickup[i] = CreateDynamicPickup(1239, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1);
+            busEntPickup[i] = CreateDynamicPickup(1559, 1, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ], -1);
+            busUsePickup[i] = CreateDynamicPickup(1239, 1, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ], -1);
+            busExitPickup[i] = CreateDynamicPickup(1559, 1, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ], -1);
+            loadedBus++;
+        }
+
+        printf("** [MYSQL]:Loaded %d businesses from the database.", cache_num_rows());
+    }
+    return 1;
+}
+
+forward public LoadNewBusData(id);
+public LoadNewBusData(id) {
+    new DB_Query[900];
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `businesses` WHERE `fID` = '%d'", id);
+    mysql_tquery(db_handle, DB_Query, "newBus");
+}
+
+forward public newBus();
+public newBus() {
+    if(cache_num_rows() == 0) print("Not a valid business id!");
+    else {
+        for (new i = 0; i < cache_num_rows(); i++) {
+            cache_get_value_int(i, "bId", bInfo[i][bId]);
+            cache_get_value(i, "bName", bInfo[i][bName], 32);
+            cache_get_value_int(i, "bAddress", bInfo[i][bAddress]);
+            cache_get_value_int(i, "bPrice", bInfo[i][bPrice]);
+            cache_get_value(i, "bOwner", bInfo[i][bOwner], 32);
+            cache_get_value_int(i, "bType", bInfo[i][bType]);
+            cache_get_value_float(i, "bInfoX", bInfo[i][bInfoX]);
+            cache_get_value_float(i, "bInfoY", bInfo[i][bInfoY]);
+            cache_get_value_float(i, "bInfoZ", bInfo[i][bInfoZ]);
+            cache_get_value_float(i, "bEntX", bInfo[i][bEntX]);
+            cache_get_value_float(i, "bEntY", bInfo[i][bEntY]);
+            cache_get_value_float(i, "bEntZ", bInfo[i][bEntZ]);
+            cache_get_value_float(i, "bUseX", bInfo[i][bUseX]);
+            cache_get_value_float(i, "bUseY", bInfo[i][bUseY]);
+            cache_get_value_float(i, "bUseZ", bInfo[i][bUseZ]);
+            cache_get_value_float(i, "bExitX", bInfo[i][bExitX]);
+            cache_get_value_float(i, "bExitY", bInfo[i][bExitY]);
+            cache_get_value_float(i, "bExitZ", bInfo[i][bExitZ]);
+            busInfoPickup[i] = CreateDynamicPickup(1239, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1);            loadedBus++;
+        }
+
+        printf("** [MYSQL]:Reloaded %d businesss from the database.", cache_num_rows());
+    }
+    return 1;
+}
+
 forward public LoadFacData();
 public LoadFacData() {
     new DB_Query[900];
@@ -1167,6 +1310,176 @@ public OnPlayerConnect(playerid) {
 
 
         // remove buildings
+
+        businessBox[playerid] = CreatePlayerTextDraw(playerid, 63.000000, 141.000000, "`");
+        PlayerTextDrawFont(playerid, businessBox[playerid], 0);
+        PlayerTextDrawLetterSize(playerid, businessBox[playerid], 0.600000, 10.400004);
+        PlayerTextDrawTextSize(playerid, businessBox[playerid], 206.500000, 5.000000);
+        PlayerTextDrawSetOutline(playerid, businessBox[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, businessBox[playerid], 0);
+        PlayerTextDrawAlignment(playerid, businessBox[playerid], 1);
+        PlayerTextDrawColor(playerid, businessBox[playerid], -1);
+        PlayerTextDrawBackgroundColor(playerid, businessBox[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, businessBox[playerid], 50);
+        PlayerTextDrawUseBox(playerid, businessBox[playerid], 1);
+        PlayerTextDrawSetProportional(playerid, businessBox[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, businessBox[playerid], 0);
+
+
+        addressBox[playerid] = CreatePlayerTextDraw(playerid, 64.000000, 155.000000, "`");
+        PlayerTextDrawFont(playerid, addressBox[playerid], 0);
+        PlayerTextDrawLetterSize(playerid, addressBox[playerid], 0.600000, 9.049999);
+        PlayerTextDrawTextSize(playerid, addressBox[playerid], 206.500000, 5.000000);
+        PlayerTextDrawSetOutline(playerid, addressBox[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, addressBox[playerid], 0);
+        PlayerTextDrawAlignment(playerid, addressBox[playerid], 1);
+        PlayerTextDrawColor(playerid, addressBox[playerid], -1);
+        PlayerTextDrawBackgroundColor(playerid, addressBox[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, addressBox[playerid], 50);
+        PlayerTextDrawUseBox(playerid, addressBox[playerid], 1);
+        PlayerTextDrawSetProportional(playerid, addressBox[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, addressBox[playerid], 0);
+
+        addressName[playerid] = CreatePlayerTextDraw(playerid, 66.000000, 142.000000, "Name:");
+        PlayerTextDrawFont(playerid, addressName[playerid], 1);
+        PlayerTextDrawLetterSize(playerid, addressName[playerid], 0.345833, 1.799998);
+        PlayerTextDrawTextSize(playerid, addressName[playerid], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, addressName[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, addressName[playerid], 0);
+        PlayerTextDrawAlignment(playerid, addressName[playerid], 1);
+        PlayerTextDrawColor(playerid, addressName[playerid], -2686721);
+        PlayerTextDrawBackgroundColor(playerid, addressName[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, addressName[playerid], 50);
+        PlayerTextDrawUseBox(playerid, addressName[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, addressName[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, addressName[playerid], 0);
+
+        addressNameString[playerid] = CreatePlayerTextDraw(playerid, 106.000000, 142.000000, "Hardware Store");
+        PlayerTextDrawFont(playerid, addressNameString[playerid], 1);
+        PlayerTextDrawLetterSize(playerid, addressNameString[playerid], 0.345833, 1.799998);
+        PlayerTextDrawTextSize(playerid, addressNameString[playerid], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, addressNameString[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, addressNameString[playerid], 0);
+        PlayerTextDrawAlignment(playerid, addressNameString[playerid], 1);
+        PlayerTextDrawColor(playerid, addressNameString[playerid], -1);
+        PlayerTextDrawBackgroundColor(playerid, addressNameString[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, addressNameString[playerid], 50);
+        PlayerTextDrawUseBox(playerid, addressNameString[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, addressNameString[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, addressNameString[playerid], 0);
+
+
+        addressString[playerid] = CreatePlayerTextDraw(playerid, 66.000000, 158.000000, "Address:");
+        PlayerTextDrawFont(playerid, addressString[playerid], 1);
+        PlayerTextDrawLetterSize(playerid, addressString[playerid], 0.345833, 1.799998);
+        PlayerTextDrawTextSize(playerid, addressString[playerid], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, addressString[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, addressString[playerid], 0);
+        PlayerTextDrawAlignment(playerid, addressString[playerid], 1);
+        PlayerTextDrawColor(playerid, addressString[playerid], -2686721);
+        PlayerTextDrawBackgroundColor(playerid, addressString[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, addressString[playerid], 50);
+        PlayerTextDrawUseBox(playerid, addressString[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, addressString[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, addressString[playerid], 0);
+
+        addressStatus[playerid] = CreatePlayerTextDraw(playerid, 76.000000, 175.000000, "Status:");
+        PlayerTextDrawFont(playerid, addressStatus[playerid], 1);
+        PlayerTextDrawLetterSize(playerid, addressStatus[playerid], 0.345833, 1.799998);
+        PlayerTextDrawTextSize(playerid, addressStatus[playerid], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, addressStatus[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, addressStatus[playerid], 0);
+        PlayerTextDrawAlignment(playerid, addressStatus[playerid], 1);
+        PlayerTextDrawColor(playerid, addressStatus[playerid], -2686721);
+        PlayerTextDrawBackgroundColor(playerid, addressStatus[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, addressStatus[playerid], 50);
+        PlayerTextDrawUseBox(playerid, addressStatus[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, addressStatus[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, addressStatus[playerid], 0);
+
+        addressType[playerid] = CreatePlayerTextDraw(playerid, 84.000000, 191.000000, "Type:");
+        PlayerTextDrawFont(playerid, addressType[playerid], 1);
+        PlayerTextDrawLetterSize(playerid, addressType[playerid], 0.345833, 1.799998);
+        PlayerTextDrawTextSize(playerid, addressType[playerid], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, addressType[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, addressType[playerid], 0);
+        PlayerTextDrawAlignment(playerid, addressType[playerid], 1);
+        PlayerTextDrawColor(playerid, addressType[playerid], -2686721);
+        PlayerTextDrawBackgroundColor(playerid, addressType[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, addressType[playerid], 50);
+        PlayerTextDrawUseBox(playerid, addressType[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, addressType[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, addressType[playerid], 0);
+
+        addressPrice[playerid] = CreatePlayerTextDraw(playerid, 83.000000, 211.000000, "Price:");
+        PlayerTextDrawFont(playerid, addressPrice[playerid], 1);
+        PlayerTextDrawLetterSize(playerid, addressPrice[playerid], 0.345833, 1.799998);
+        PlayerTextDrawTextSize(playerid, addressPrice[playerid], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, addressPrice[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, addressPrice[playerid], 0);
+        PlayerTextDrawAlignment(playerid, addressPrice[playerid], 1);
+        PlayerTextDrawColor(playerid, addressPrice[playerid], -2686721);
+        PlayerTextDrawBackgroundColor(playerid, addressPrice[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, addressPrice[playerid], 50);
+        PlayerTextDrawUseBox(playerid, addressPrice[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, addressPrice[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, addressPrice[playerid], 0);
+
+        PlayerAddress[playerid][0] = CreatePlayerTextDraw(playerid, 125.000000, 158.000000, "3000.street");
+        PlayerTextDrawFont(playerid, PlayerAddress[playerid][0], 1);
+        PlayerTextDrawLetterSize(playerid, PlayerAddress[playerid][0], 0.345833, 1.799998);
+        PlayerTextDrawTextSize(playerid, PlayerAddress[playerid][0], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, PlayerAddress[playerid][0], 1);
+        PlayerTextDrawSetShadow(playerid, PlayerAddress[playerid][0], 0);
+        PlayerTextDrawAlignment(playerid, PlayerAddress[playerid][0], 1);
+        PlayerTextDrawColor(playerid, PlayerAddress[playerid][0], -1);
+        PlayerTextDrawBackgroundColor(playerid, PlayerAddress[playerid][0], 255);
+        PlayerTextDrawBoxColor(playerid, PlayerAddress[playerid][0], 50);
+        PlayerTextDrawUseBox(playerid, PlayerAddress[playerid][0], 0);
+        PlayerTextDrawSetProportional(playerid, PlayerAddress[playerid][0], 1);
+        PlayerTextDrawSetSelectable(playerid, PlayerAddress[playerid][0], 0);
+
+        PlayerAddress[playerid][1] = CreatePlayerTextDraw(playerid, 125.000000, 176.000000, "For Sale");
+        PlayerTextDrawFont(playerid, PlayerAddress[playerid][1], 1);
+        PlayerTextDrawLetterSize(playerid, PlayerAddress[playerid][1], 0.345833, 1.799998);
+        PlayerTextDrawTextSize(playerid, PlayerAddress[playerid][1], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, PlayerAddress[playerid][1], 1);
+        PlayerTextDrawSetShadow(playerid, PlayerAddress[playerid][1], 0);
+        PlayerTextDrawAlignment(playerid, PlayerAddress[playerid][1], 1);
+        PlayerTextDrawColor(playerid, PlayerAddress[playerid][1], -1);
+        PlayerTextDrawBackgroundColor(playerid, PlayerAddress[playerid][1], 255);
+        PlayerTextDrawBoxColor(playerid, PlayerAddress[playerid][1], 50);
+        PlayerTextDrawUseBox(playerid, PlayerAddress[playerid][1], 0);
+        PlayerTextDrawSetProportional(playerid, PlayerAddress[playerid][1], 1);
+        PlayerTextDrawSetSelectable(playerid, PlayerAddress[playerid][1], 0);
+
+        PlayerAddress[playerid][2] = CreatePlayerTextDraw(playerid, 125.000000, 194.000000, "Business");
+        PlayerTextDrawFont(playerid, PlayerAddress[playerid][2], 1);
+        PlayerTextDrawLetterSize(playerid, PlayerAddress[playerid][2], 0.345833, 1.799998);
+        PlayerTextDrawTextSize(playerid, PlayerAddress[playerid][2], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, PlayerAddress[playerid][2], 1);
+        PlayerTextDrawSetShadow(playerid, PlayerAddress[playerid][2], 0);
+        PlayerTextDrawAlignment(playerid, PlayerAddress[playerid][2], 1);
+        PlayerTextDrawColor(playerid, PlayerAddress[playerid][2], -1);
+        PlayerTextDrawBackgroundColor(playerid, PlayerAddress[playerid][2], 255);
+        PlayerTextDrawBoxColor(playerid, PlayerAddress[playerid][2], 50);
+        PlayerTextDrawUseBox(playerid, PlayerAddress[playerid][2], 0);
+        PlayerTextDrawSetProportional(playerid, PlayerAddress[playerid][2], 1);
+        PlayerTextDrawSetSelectable(playerid, PlayerAddress[playerid][2], 0);
+
+        PlayerAddress[playerid][3] = CreatePlayerTextDraw(playerid, 125.000000, 212.000000, "$100000");
+        PlayerTextDrawFont(playerid, PlayerAddress[playerid][3], 1);
+        PlayerTextDrawLetterSize(playerid, PlayerAddress[playerid][3], 0.345833, 1.799998);
+        PlayerTextDrawTextSize(playerid, PlayerAddress[playerid][3], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, PlayerAddress[playerid][3], 1);
+        PlayerTextDrawSetShadow(playerid, PlayerAddress[playerid][3], 0);
+        PlayerTextDrawAlignment(playerid, PlayerAddress[playerid][3], 1);
+        PlayerTextDrawColor(playerid, PlayerAddress[playerid][3], -1);
+        PlayerTextDrawBackgroundColor(playerid, PlayerAddress[playerid][3], 255);
+        PlayerTextDrawBoxColor(playerid, PlayerAddress[playerid][3], 50);
+        PlayerTextDrawUseBox(playerid, PlayerAddress[playerid][3], 0);
+        PlayerTextDrawSetProportional(playerid, PlayerAddress[playerid][3], 1);
+        PlayerTextDrawSetSelectable(playerid, PlayerAddress[playerid][3], 0);
 
         VEHSTUFF[playerid][0] = CreatePlayerTextDraw(playerid, 595.000000, 359.000000, "~n~~n~~n~");
         PlayerTextDrawFont(playerid, VEHSTUFF[playerid][0], 1);
@@ -1387,6 +1700,12 @@ public SavePlayerData(playerid) {
 
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pWeedAmount` = '%d', `pCokeAmount` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pWeedAmount], pInfo[playerid][pCokeAmount], GetName(playerid));
     mysql_query(db_handle, query);
+    
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pCigAmount` = '%d', `pRopeAmount` = '%d', `pHasMask` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pCigAmount], pInfo[playerid][pRopeAmount], pInfo[playerid][pHasMask], GetName(playerid));
+    mysql_query(db_handle, query);
+    
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pDrivingLicense` = '%d', `pHeavyLicense` = '%d', `pPilotLicense` = '%d', `pGunLicense` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pDrivingLicense], pInfo[playerid][pHeavyLicense], pInfo[playerid][pPilotLicense], pInfo[playerid][pGunLicense], pInfo[playerid][pHasMask], GetName(playerid));
+    mysql_query(db_handle, query);
 
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAdminLevel` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pAdminLevel], GetName(playerid));
     mysql_query(db_handle, query);
@@ -1443,12 +1762,70 @@ public OnPlayerText(playerid, text[]) {
 /* SHOP CMDS */
 CMD:shop(playerid, params[]){
     // ifplayerinrangeofpoint (check if they are near a shop/hardware store)
-    ShowMenuForPlayer(hardwaremenu, playerid); // show the hardware menu!
-    TogglePlayerControllable(playerid, false); // freeze player so they can use the menu
+    for(new i = 0; i < loadedBus; i++){
+        if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+            SwitchBetweenBusinessType(playerid, bInfo[i][bType]);
+        }
+    }
 
     return 1;
 }
 
+forward public SwitchBetweenBusinessType(playerid, bustype);
+public SwitchBetweenBusinessType(playerid, bustype){
+    switch(bustype){
+        case 1: {
+            ShowMenuForPlayer(hardwaremenu, playerid); // show the hardware menu!
+            TogglePlayerControllable(playerid, false); // freeze player so they can use the menu
+            return 1;
+        }
+        case 2: {
+            // 24/7 general store
+            Dialog_Show(playerid, DIALOG_247, DIALOG_STYLE_LIST, "General Store", "Cigarretes ($14)\n\nRope ($30)\n\nMask ($150)\n\nLottery Ticket ($17)", "Purchase", "Decline");
+            return 1;
+        }
+        case 3: {
+            // ammunation
+        }
+    }
+    return 1;
+}
+
+CMD:createbus(playerid, params[]){
+    new name[32], type, address,price, Float:infX, Float:infY, Float:infZ, query[900];
+    if(pInfo[playerid][pAdminLevel] >= 5){
+        if(sscanf(params, "sddd", name, type, address, price)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createbus [bName] [bType] [bAddress] [bPrice]"); {
+            GetPlayerPos(playerid, infX, infY, infZ);
+
+            mysql_format(db_handle, query, sizeof(query), "INSERT INTO `businesses` (`bName`,`bType`,`bOwner`, `bAddress`, `bPrice`, `bInfoX`,`bInfoY`,`bInfoZ`) VALUES ('%s', '%d', 'NULL', '%d', '%d','%f','%f','%f')", name, type,address,price, infX, infY, infZ);
+            mysql_tquery(db_handle, query, "OnBusCreated", "dsddd", playerid, name, type, address, price);
+
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 1;
+}
+
+CMD:setbusentr(playerid, params[]){
+    new id, Float:infX, Float:infY, Float:infZ, query[900];
+    if(pInfo[playerid][pAdminLevel] >= 5){
+        if(sscanf(params, "d", id)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /setbusentr [bId]"); {
+            GetPlayerPos(playerid, infX, infY, infZ);
+
+            mysql_format(db_handle, query, sizeof(query),  "UPDATE `businesses` SET `bEntX` = '%f',`bEntY` = '%f',`bEntZ` = '%f' WHERE  `bId` = %d", infX, infY, infZ, id);
+            mysql_query(db_handle, query);
+
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have set this business' entrance point");
+            return 1;
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 1;
+}
 
 /* COMMANDS */
 CMD:stats(playerid, params[]) {
@@ -1923,6 +2300,15 @@ CMD:endjob(playerid, params[]) {
         SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
     }
     return 1;
+}
+
+forward public OnBusCreated(playerid, busName[32], type, address, price);
+public OnBusCreated(playerid, busName[32], type, address, price){
+    new string[256];
+    format(string, sizeof(string), "[SERVER]:{FFFFFF} Business %s(%d TYPE %d ADDRESS %d.Street PRICE $%d) has beenb created!", busName, cache_insert_id(), type, address, price);
+    SendClientMessage(playerid, -1, string); {
+        LoadNewBusData(cache_insert_id());
+    }
 }
 
 forward public OnJobCreated(playerid, joName[32]);
@@ -2562,6 +2948,59 @@ public OnPlayerPickUpDynamicPickup(playerid, pickupid) { // check if player pick
             GameTextForPlayer(playerid, "/takejob", 3000, 5);
             return 1;
         }
+    }      
+    for(new i = 0; i < loadedBus; i++){
+        if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ])){ // display bus info(price ect)
+            new busName[32], busAdd[32], busOwner[32], busType[32], busPrice[32], string[32];
+
+            format(busName, sizeof(busName), "%s", bInfo[i][bName]);
+            PlayerTextDrawSetString(playerid, addressNameString[playerid], busName);
+
+            format(busAdd, sizeof(busAdd), "%d.Street", bInfo[i][bAddress]);
+            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][0], busAdd);
+
+            if(!strcmp(bInfo[i][bOwner], "NULL", true)){
+                format(busOwner, sizeof(busOwner), "For Sale");
+                PlayerTextDrawSetString(playerid, PlayerAddress[playerid][1], busOwner);
+            }
+            if(strcmp(bInfo[i][bOwner], "NULL", true)){
+                format(busOwner, sizeof(busOwner), "Sold");
+                PlayerTextDrawSetString(playerid, PlayerAddress[playerid][1], busOwner);
+            }
+            
+            format(busType, sizeof(busType), "Business");
+            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][2], busType);
+            
+            format(busPrice, sizeof(busPrice), "$%d", bInfo[i][bPrice]);
+            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][3], busPrice);
+            
+            PlayerTextDrawShow(playerid, businessBox[playerid]);
+            PlayerTextDrawShow(playerid, addressName[playerid]);
+            PlayerTextDrawShow(playerid, addressString[playerid]);
+            PlayerTextDrawShow(playerid, addressStatus[playerid]);
+            PlayerTextDrawShow(playerid, addressType[playerid]);
+            PlayerTextDrawShow(playerid, addressPrice[playerid]);
+
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][0]);
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][1]);
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][2]);
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][3]);
+            PlayerTextDrawShow(playerid, addressNameString[playerid]);
+            
+            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
+        }
+        if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ])){ // display entrance stuff
+            TextDrawShowForPlayer(playerid, accessDoor);
+            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
+        }
+        if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ])){ // display entrance stuff
+            TextDrawShowForPlayer(playerid, accessDoor);
+            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
+        }
+        if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){ // display entrance stuff
+            TextDrawShowForPlayer(playerid, accessDoor);
+            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
+        }
     }
     return 1;
 }
@@ -2817,6 +3256,22 @@ public OnPlayerInteriorChange(playerid, newinteriorid, oldinteriorid) {
 }
 
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
+    if(newkeys & KEY_SPRINT){
+        for(new i = 0; i < loadedBus; i++){
+            if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ])){
+                TogglePlayerControllable(playerid, false);
+                SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
+                SetPlayerPos(playerid, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ]);
+                return 1;
+            }
+            if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ])){
+                TogglePlayerControllable(playerid, false);
+                SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
+                SetPlayerPos(playerid, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ]);
+                return 1;
+            }
+        }
+    }
     return 1;
 }
 
@@ -2845,6 +3300,50 @@ public OnVehicleStreamOut(vehicleid, forplayerid) {
 }
 
 /* 3- DIALOGS -*/
+
+Dialog:DIALOG_247(playerid, response, listitem, inputtext[]){
+    if(response){
+        if(listitem == 0){
+            if(pInfo[playerid][pCigAmount] <= 20){ // has got less than 1 pack
+                if(GetPlayerMoney(playerid) >= 14){
+                    SendClientMessage(playerid, ADMINBLUE, "> You have purchased a pack of 20 cigarettes.");
+                    pInfo[playerid][pCigAmount] = 20;
+                    GivePlayerMoney(playerid, -14);
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash!");
+                }
+            } else {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You already have a pack of cigarettes, finish that one first!");
+            }
+        }
+        if(listitem == 1){
+            if(GetPlayerMoney(playerid) >= 30){
+                pInfo[playerid][pRopeAmount] += 1;
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have purchased a metre of rope!");
+                GivePlayerMoney(playerid, -30);
+            } else {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash!");
+            }
+        }
+        if(listitem == 2){
+            if(pInfo[playerid][pHasMask] != 1){
+                if(GetPlayerMoney(playerid) >= 150){
+                    pInfo[playerid][pHasMask] = 1;
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have purchased a mask!");
+                    GivePlayerMoney(playerid, -150);
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash!");
+                }
+            } else {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You already have a mask!");
+            }
+        }
+        if(listitem == 3){
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Lottery in development. Stay up to date on our forums.");
+        }
+    }
+    return 1;
+}
 
 Dialog:DIALOG_ROUTEFINISHED(playerid, response, listitem, inputtext[]) {
     pInfo[playerid][CurrentState] = 0;
@@ -3300,6 +3799,9 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pJobPay", pInfo[playerid][pJobPay]);
     cache_get_value_int(0, "pWeedAmount", pInfo[playerid][pWeedAmount]);
     cache_get_value_int(0, "pCokeAmount", pInfo[playerid][pCokeAmount]);
+    cache_get_value_int(0, "pCigAmount", pInfo[playerid][pCigAmount]);
+    cache_get_value_int(0, "pRopeAmount", pInfo[playerid][pRopeAmount]);
+    cache_get_value_int(0, "pHasMask", pInfo[playerid][pHasMask]);
 
     cache_get_value_int(0, "pAdminLevel", pInfo[playerid][pAdminLevel]);
 
@@ -3634,6 +4136,18 @@ stock ReturnPlayerInventory(playerid, target){
             SendClientMessage(playerid, SERVERCOLOR, string);
         }
     }
+    if(pInfo[target][pCigAmount] >= 1){
+        format(string, sizeof(string), "[SERVER]: %d cigarettes", pInfo[target][pCigAmount]);
+        SendClientMessage(playerid, SERVERCOLOR, string);
+    }
+    if(pInfo[target][pRopeAmount] >= 1){
+        format(string, sizeof(string), "[SERVER]: %d/m of Rope", pInfo[playerid][pRopeAmount]);
+        SendClientMessage(playerid, SERVERCOLOR, string);
+    }
+    if(pInfo[target][pHasMask] == 1){
+        format(string, sizeof(string), "[SERVER]: Mask");
+        SendClientMessage(playerid, SERVERCOLOR, string);
+    }
     if(pInfo[target][pWeedAmount] >= 1){        
         format(string, sizeof(string), "[SERVER]: %d/grams of Weed", pInfo[target][pWeedAmount]);
         SendClientMessage(playerid, SERVERCOLOR, string);
@@ -3704,6 +4218,22 @@ public RemoveTextdrawAfterTime(playerid) {
     TextDrawHideForPlayer(playerid, Text:NoReports);
     TextDrawHideForPlayer(playerid, Text:CantTakePost);
     TextDrawHideForPlayer(playerid, Text:NoBinBags);
+    TextDrawHideForPlayer(playerid, Text:accessDoor);
+
+    PlayerTextDrawHide(playerid, businessBox[playerid]);
+    PlayerTextDrawHide(playerid, addressBox[playerid]);
+    PlayerTextDrawHide(playerid, addressString[playerid]);
+    PlayerTextDrawHide(playerid, addressStatus[playerid]);
+    PlayerTextDrawHide(playerid, addressType[playerid]);
+    PlayerTextDrawHide(playerid, addressPrice[playerid]);
+    PlayerTextDrawHide(playerid, addressName[playerid]);
+
+    PlayerTextDrawHide(playerid, PlayerAddress[playerid][0]);
+    PlayerTextDrawHide(playerid, PlayerAddress[playerid][1]);
+    PlayerTextDrawHide(playerid, PlayerAddress[playerid][2]);
+    PlayerTextDrawHide(playerid, PlayerAddress[playerid][3]);
+    PlayerTextDrawHide(playerid, addressNameString[playerid]);
+
     return 1;
 }
 
