@@ -1,0 +1,39 @@
+//After your includes/defines add
+new Menu:Rifles;
+    
+//OnGameModeInt()
+Rifles = CreateMenu("Ammunation", 2, 30.000000, 160.000000, 90.000000, 90.000000);
+AddMenuItem(Rifles, 0, "Rifle");
+AddMenuItem(Rifles, 1, "$4500");
+    
+//Add This after OnPlayerSelectedMenuRow(playerid, row)
+    new Menu:CurrentMenu = GetPlayerMenu(playerid);
+    if(CurrentMenu == Rifles)
+    {
+        switch(row)
+        {
+            case 0:
+            {
+                // rifle
+                if(GetPlayerMoney(playerid) >= 4500){
+                    GivePlayerWeapon(playerid, 33, 15);
+                    GivePlayerMoney(playerid, -4500);
+                    SendClientMessage(playerid, ADMINBLUE, "> You have purchased a new Rifle with 15 bullets!");
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 4500;
+                            return 1;
+                        }
+                    }
+
+                    return 1;
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash!");
+                    return 1;
+                }
+            }
+        }
+    }
+    
+Menu was created with Scott's In-Game Menu filterscript.
+Thanks for using it, www.sa-mp.lt.
