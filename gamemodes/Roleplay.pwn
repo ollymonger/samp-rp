@@ -2103,6 +2103,80 @@ CMD:startjob(playerid, params[]) {
     return 1;
 }
 
+CMD:properties(playerid, params[]){
+    new name[32];
+    GetPlayerName(playerid, name, sizeof(name));
+    SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Owned Properties ::.");
+    for(new i = 0; i < loadedBus; i++){
+        if(!strcmp(name, bInfo[i][bOwner])){
+            new string[256];
+            format(string, sizeof(string), "[BUSINESSES]: Address: %d.street | Name: %s ", bInfo[i][bAddress], bInfo[i][bName]);
+            SendClientMessage(playerid, SERVERCOLOR, string);
+        }
+    }
+    return 1;
+}
+
+CMD:buyproperty(playerid, params[]){
+    new add;
+    new name[32];
+    GetPlayerName(playerid, name, sizeof(name));
+    if(sscanf(params, "d", add)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /buyproperty [Address]"); {
+        for(new i = 0; i < loadedBus; i++){
+            if(bInfo[i][bAddress] == add){
+                if(!strcmp(bInfo[i][bOwner], "NULL", true)){
+                    if(GetPlayerMoney(playerid) >= bInfo[i][bPrice]){
+                        new string[256], DB_Query[900];
+                        format(string, sizeof(string), "> You have purchased %d.street for $%d!", bInfo[i][bAddress], bInfo[i][bPrice]);
+                        SendClientMessage(playerid, ADMINBLUE, string);
+                        GivePlayerMoney(playerid, -bInfo[i][bPrice]);
+                        format(bInfo[i][bOwner], 32, name);
+                        DestroyDynamicPickup(busInfoPickup[bInfo[i][bId]-1]);
+                        busInfoPickup[bInfo[i][bId]-1] = CreateDynamicPickup(1239, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1);
+                        mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `businesses` SET `bOwner` = 'NULL' WHERE  `bId` = '%d'", bInfo[i][bId]);
+                        mysql_query(db_handle, DB_Query);
+                    } else {
+                        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You do not have enough cash to purchase this property!");
+                        return 1;
+                    }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This property is already owned!");
+                    return 1;
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:sellproperty(playerid, params[]){
+    // if in range of city hall
+    new add;
+    new name[32];
+    GetPlayerName(playerid, name, sizeof(name));
+    if(sscanf(params, "d", add)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /sellproperty [Address]"); {
+        for(new i = 0; i < loadedBus; i++){
+            if(bInfo[i][bAddress] == add){
+                if(!strcmp(name, bInfo[i][bOwner])){
+                    new string[256], DB_Query[900];
+                    format(string, sizeof(string), "> You have sold %d.street for $%d!", bInfo[i][bAddress], bInfo[i][bPrice]);
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    format(bInfo[i][bOwner], 32, "NULL");
+                    GivePlayerMoney(playerid, bInfo[i][bPrice]);
+                    DestroyDynamicPickup(busInfoPickup[bInfo[i][bId]-1]);
+                    busInfoPickup[bInfo[i][bId]-1] = CreateDynamicPickup(1273, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1);
+                    mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `businesses` SET `bOwner` = 'NULL' WHERE  `bId` = '%d'", bInfo[i][bId]);
+                    mysql_query(db_handle, DB_Query);
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You do not own this property!");
+                    return 1;
+                }
+            }
+        }
+    }
+    return 1;
+}
+
 CMD:collectsal(playerid, params[]){
     new name[32];
     GetPlayerName(playerid, name, sizeof(name));
@@ -2226,7 +2300,7 @@ CMD:collect(playerid, params[]) {
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} The crack house does not have any Cocaine!");
                 }
             }
-            return 1;
+        return 1;
     }
     if(pInfo[playerid][pJobId] != 2 || pInfo[playerid][pJobId] != 4)
     {
@@ -2991,7 +3065,7 @@ public OnPlayerPickUpDynamicPickup(playerid, pickupid) { // check if player pick
     }      
     for(new i = 0; i < loadedBus; i++){
         if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ])){ // display bus info(price ect)
-            new busName[32], busAdd[32], busOwner[32], busType[32], busPrice[32], string[32];
+            new busName[32], busAdd[32], busOwner[32], busType[32], busPrice[32];
 
             format(busName, sizeof(busName), "%s", bInfo[i][bName]);
             PlayerTextDrawSetString(playerid, addressNameString[playerid], busName);
