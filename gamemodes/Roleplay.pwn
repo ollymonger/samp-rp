@@ -500,6 +500,9 @@ enum ENUM_PLAYER_DATA {
         pWeaponSlot3,
         pWeaponSlot3Ammo,
 
+        pVehicleSlotsUsed,
+        pVehicleSlots,
+
         pAlertCall,
         pAlertMsg[64],
 
@@ -1773,6 +1776,8 @@ public SaveNewPlayerData(playerid, hashed[BCRYPT_HASH_LENGTH]) {
     pInfo[playerid][pJobId] = 0;
     pInfo[playerid][pJobPay] = 0;
     pInfo[playerid][pPayTimer] = 60;
+
+    pInfo[playerid][pVehicleSlots] = 4;
     
     pInfo[playerid][pPhoneNumber] = 0;
 
@@ -1819,7 +1824,10 @@ public SavePlayerData(playerid) {
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pCigAmount` = '%d', `pRopeAmount` = '%d', `pHasMask` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pCigAmount], pInfo[playerid][pRopeAmount], pInfo[playerid][pHasMask], GetName(playerid));
     mysql_query(db_handle, query);
     
-    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pDrivingLicense` = '%d', `pHeavyLicense` = '%d', `pPilotLicense` = '%d', `pGunLicense` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pDrivingLicense], pInfo[playerid][pHeavyLicense], pInfo[playerid][pPilotLicense], pInfo[playerid][pGunLicense], pInfo[playerid][pHasMask], GetName(playerid));
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pDrivingLicense` = '%d', `pHeavyLicense` = '%d', `pPilotLicense` = '%d', `pGunLicense` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pDrivingLicense], pInfo[playerid][pHeavyLicense], pInfo[playerid][pPilotLicense], pInfo[playerid][pGunLicense], GetName(playerid));
+    mysql_query(db_handle, query);
+    
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pVehicleSlots` = '%d', `pVehicleSlotsUsed` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pVehicleSlots], pInfo[playerid][pVehicleSlotsUsed], GetName(playerid));
     mysql_query(db_handle, query);
 
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAdminLevel` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pAdminLevel], GetName(playerid));
@@ -1932,6 +1940,16 @@ public SwitchBetweenBusinessType(playerid, bustype){
                 return 1;
             } else {
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You do not have a gun license!");
+                return 1;
+            }
+        }
+        case 5:{
+            // car dealership
+            if(pInfo[playerid][pVehicleSlotsUsed] < pInfo[playerid][pVehicleSlots]){
+                // player has less than or equal to their vehicleslots.
+
+            } else {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have used all of your available vehicle slots!");
                 return 1;
             }
         }
@@ -4358,10 +4376,14 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pWeaponSlot3", pInfo[playerid][pWeaponSlot3]);
     cache_get_value_int(0, "pWeaponSlot3Ammo", pInfo[playerid][pWeaponSlot3Ammo]);
 
+    cache_get_value_int(0, "pVehicleSlots", pInfo[playerid][pVehicleSlots]);
+    cache_get_value_int(0, "pVehicleSlotsUsed", pInfo[playerid][pVehicleSlotsUsed]);
+
     cache_get_value_int(0, "pAdminLevel", pInfo[playerid][pAdminLevel]);
 
     pInfo[playerid][LoggedIn] = true;
     SendClientMessage(playerid, -1, "Logged in");
+    SetPlayerScore(playerid, pInfo[playerid][pLevel]);
     SetPlayerHealth(playerid, pInfo[playerid][pHealth]);
     SetPlayerArmour(playerid, pInfo[playerid][pArmour]);
     GivePlayerMoney(playerid, pInfo[playerid][pCash]);
@@ -4747,9 +4769,10 @@ stock ReturnStats(playerid, target) {
                 format(string, sizeof(string), "[JOB]:{ABCDEF} Job ID: %d | Job name: %s", pInfo[target][pJobId], jInfo[i][jName]);
                 SendClientMessage(playerid, SPECIALORANGE, string);
             }
-            return 1;
         }
     }
+    format(string, sizeof(string), "[VEHICLES]:{ABCDEF} Vehicle slots: %d/%d", pInfo[target][pVehicleSlotsUsed], pInfo[target][pVehicleSlots]);
+    SendClientMessage(playerid, SPECIALORANGE, string);
     return 1;
 }
 
