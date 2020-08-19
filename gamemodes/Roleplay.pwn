@@ -1112,7 +1112,7 @@ public newVeh(){
                 -1
             );
             vInfo[loadedVeh][vRentingPlayer] = INVALID_PLAYER_ID;
-            SetVehicleNumberPlate(vehicleid, vInfo[i][vPlate]);
+            SetVehicleNumberPlate(vehicleid, vInfo[loadedVeh][vPlate]);
             loadedVeh++;
         }
         printf("** [MYSQL] Reloaded %d vehicles from the database!", cache_num_rows());
@@ -1944,8 +1944,8 @@ CMD:createrentalvehicle(playerid, params[]){
     if(pInfo[playerid][pAdminLevel] >= 5){
         GetPlayerPos(playerid, px, py, pz);
         GetPlayerFacingAngle(playerid, pa);
-        if(sscanf(params, "ddds", vehid, busId, price,plate)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createrentalvehicle [vehid] [busid] [price] [plate]");{
-            mysql_format(db_handle, query, sizeof(query), "INSERT INTO `vehicles` (`vModelId`,`vOwner`,`vFuel`, `vBusId`,`vPlate`,`vRentalPrice`, `vParkedX`,`vParkedY`,`vParkedZ`, `vAngle`, `vRentalState`) VALUES ('%d', 'NULL', '100', '%d','%d','%d','%f','%f','%f', '%f', '1')", vehid, busId,plate,price, px,py,pz,pa);
+        if(sscanf(params, "ddds[32]", vehid, busId, price, plate)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createrentalvehicle [vehid] [busid] [price] [plate]");{
+            mysql_format(db_handle, query, sizeof(query), "INSERT INTO `vehicles` (`vModelId`,`vOwner`,`vFuel`, `vBusId`,`vPlate`,`vRentalPrice`, `vParkedX`,`vParkedY`,`vParkedZ`, `vAngle`, `vRentalState`) VALUES ('%d', 'NULL', '100', '%d','%s','%d','%f','%f','%f', '%f', '1')", vehid, busId,plate,price, px,py,pz,pa);
             mysql_tquery(db_handle, query, "OnRentalVehCreated", "dddd", playerid,vehid, busId, price);
         }
         return 1;
