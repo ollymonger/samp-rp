@@ -547,6 +547,7 @@ enum ENUM_BUS_DATA {
     bName[32],
     bAddress,
     bPrice,
+    bSalary,
     bOwner[32],
     bType,
     Float:bInfoX,
@@ -1074,6 +1075,7 @@ public BusReceived() {
             cache_get_value(i, "bName", bInfo[i][bName], 32);
             cache_get_value_int(i, "bAddress", bInfo[i][bAddress]);
             cache_get_value_int(i, "bPrice", bInfo[i][bPrice]);
+            cache_get_value_int(i, "bSalary", bInfo[i][bSalary]);
             cache_get_value(i, "bOwner", bInfo[i][bOwner], 32);
             cache_get_value_int(i, "bType", bInfo[i][bType]);
             cache_get_value_float(i, "bInfoX", bInfo[i][bInfoX]);
@@ -1116,6 +1118,7 @@ public newBus() {
             cache_get_value(i, "bName", bInfo[i][bName], 32);
             cache_get_value_int(i, "bAddress", bInfo[i][bAddress]);
             cache_get_value_int(i, "bPrice", bInfo[i][bPrice]);
+            cache_get_value_int(i, "bSalary", bInfo[i][bSalary]);
             cache_get_value(i, "bOwner", bInfo[i][bOwner], 32);
             cache_get_value_int(i, "bType", bInfo[i][bType]);
             cache_get_value_float(i, "bInfoX", bInfo[i][bInfoX]);
@@ -1767,7 +1770,6 @@ CMD:shop(playerid, params[]){
             SwitchBetweenBusinessType(playerid, bInfo[i][bType]);
         }
     }
-
     return 1;
 }
 
@@ -1887,9 +1889,12 @@ CMD:help(playerid, params[]) {
         if(strcmp(Usage, "General", true) == 0) {
             SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} General Commands ::.");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/help, /admins, /mods, /helpers, /staff");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/shop, /stats, /pockets, /rentcar, /unrentcar");
         } else if(strcmp(Usage, "Job", true) == 0) {
             SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
-            if(pInfo[playerid][pJobId] == 3) {
+            if(pInfo[playerid][pJobId] == 4){
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /quitjob, /inventory, /collect");
+            } else if(pInfo[playerid][pJobId] == 3) {
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /quitjob, /route");
             } else if(pInfo[playerid][pJobId] == 2) {
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /startjob, /collect, /dump, /quitjob");
@@ -1901,9 +1906,11 @@ CMD:help(playerid, params[]) {
         } else if(strcmp(Usage, "Admin", true) == 0) {
             if(pInfo[playerid][pAdminLevel] > 1) {
                 SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Admin Commands ::.");
+                if(pInfo[playerid][pAdminLevel] == 5){
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createbus, /setbusentr");
+                }
                 if(pInfo[playerid][pAdminLevel] == 6) {
-                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/createjob, /makeleader");
-
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createjob, /makeleader");
                 }
             }
         }
@@ -2081,6 +2088,28 @@ CMD:startjob(playerid, params[]) {
     } else {
         TextDrawShowForPlayer(playerid, CantCommand);
         SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 1;
+}
+
+CMD:collectsal(playerid, params[]){
+    new name[32];
+    GetPlayerName(playerid, name, sizeof(name));
+    for(new i = 0; i < loadedBus; i++){
+        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ])){
+            if(!strcmp(name, bInfo[i][bOwner])){
+                // if b owner
+                GivePlayerMoney(playerid, bInfo[i][bSalary]);
+                new string[256];                
+                format(string, sizeof(string), "[SERVER]:{FFFFFF} You have collected $%d from your business!");
+                SendClientMessage(playerid, SERVERCOLOR, string);
+                bInfo[i][bSalary] = 0;                            
+                new DB_Query[900];
+                mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `businesses` SET `bSalary` = '%d' WHERE  `bId` = '%d'", bInfo[i][bSalary], bInfo[i][bId]);
+                mysql_query(db_handle, DB_Query);
+                return 1;
+            }
+        }
     }
     return 1;
 }
@@ -3309,6 +3338,15 @@ Dialog:DIALOG_247(playerid, response, listitem, inputtext[]){
                     SendClientMessage(playerid, ADMINBLUE, "> You have purchased a pack of 20 cigarettes.");
                     pInfo[playerid][pCigAmount] = 20;
                     GivePlayerMoney(playerid, -14);
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX],bInfo[i][bUseY],bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 14;                            
+                            new DB_Query[900];
+                            mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `businesses` SET `bSalary` = '%d' WHERE  `bId` = '%d'", bInfo[i][bSalary], bInfo[i][bId]);
+                            mysql_query(db_handle, DB_Query);
+                            return 1;
+                        }
+                    }
                 } else {
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash!");
                 }
@@ -3321,6 +3359,15 @@ Dialog:DIALOG_247(playerid, response, listitem, inputtext[]){
                 pInfo[playerid][pRopeAmount] += 1;
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have purchased a metre of rope!");
                 GivePlayerMoney(playerid, -30);
+                for(new i = 0; i < loadedBus; i++){
+                    if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX],bInfo[i][bUseY],bInfo[i][bUseZ])){
+                        bInfo[i][bSalary] += 30;                            
+                        new DB_Query[900];
+                        mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `businesses` SET `bSalary` = '%d' WHERE  `bId` = '%d'", bInfo[i][bSalary], bInfo[i][bId]);
+                        mysql_query(db_handle, DB_Query);
+                        return 1;
+                    }
+                }
             } else {
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash!");
             }
@@ -3331,6 +3378,15 @@ Dialog:DIALOG_247(playerid, response, listitem, inputtext[]){
                     pInfo[playerid][pHasMask] = 1;
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have purchased a mask!");
                     GivePlayerMoney(playerid, -150);
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX],bInfo[i][bUseY],bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 150;                            
+                            new DB_Query[900];
+                            mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `businesses` SET `bSalary` = '%d' WHERE  `bId` = '%d'", bInfo[i][bSalary], bInfo[i][bId]);
+                            mysql_query(db_handle, DB_Query);
+                            return 1;
+                        }
+                    }
                 } else {
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash!");
                 }
