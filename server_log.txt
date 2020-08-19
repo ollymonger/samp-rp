@@ -1,0 +1,14 @@
+[16:18:11] plugin.mysql: Plugin unloaded.
+[16:18:11] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[16:18:11] plugin.bcrypt: Plugin unloaded.
+[16:18:11] 
+
+[16:18:11]  ===============================
+
+[16:18:11]      sscanf plugin unloaded.    
+
+[16:18:11]  ===============================
+
