@@ -3115,6 +3115,11 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     pInfo[playerid][pPhoneModel] = 1;
                     GivePlayerMoney(playerid, -150);
                     TogglePlayerControllable(playerid, 1);
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 150;
+                        }
+                    }
                     return 1;
                 } else {
                     ShowMenuForPlayer(phonemenu, playerid);
@@ -3130,6 +3135,11 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     pInfo[playerid][pPhoneModel] = 2;
                     GivePlayerMoney(playerid, -180);
                     TogglePlayerControllable(playerid, 1);
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 180;
+                        }
+                    }
                     return 1;
                 } else {
                     ShowMenuForPlayer(phonemenu, playerid);
@@ -3145,6 +3155,11 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     pInfo[playerid][pPhoneModel] = 3;
                     GivePlayerMoney(playerid, -200);
                     TogglePlayerControllable(playerid, 1);
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 200;
+                        }
+                    }
                     return 1;
                 } else {
                     ShowMenuForPlayer(phonemenu, playerid);
@@ -3160,6 +3175,11 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     pInfo[playerid][pPhoneModel] = 4;
                     GivePlayerMoney(playerid, -250);
                     TogglePlayerControllable(playerid, 1);
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 250;
+                        }
+                    }
                     return 1;
                 } else {
                     ShowMenuForPlayer(phonemenu, playerid);
@@ -3173,8 +3193,13 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     format(string, sizeof(string), "> You have purchased an iFruit X, your new phone number is: %d", pInfo[playerid][pPhoneNumber]);
                     SendClientMessage(playerid, ADMINBLUE, string);
                     pInfo[playerid][pPhoneModel] = 5;
-                    GivePlayerMoney(playerid, -250);
+                    GivePlayerMoney(playerid, -300);
                     TogglePlayerControllable(playerid, 1);
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 300;
+                        }
+                    }
                     return 1;
                 } else {
                     ShowMenuForPlayer(phonemenu, playerid);
@@ -3193,6 +3218,11 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     pInfo[playerid][pGpsModel] = 1;
                     GivePlayerMoney(playerid, -400);
                     TogglePlayerControllable(playerid, 1);
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 400;
+                        }
+                    }
                     return 1;
                 } else {
                     ShowMenuForPlayer(gpsmenu, playerid);
@@ -3206,6 +3236,11 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     pInfo[playerid][pGpsModel] = 2;
                     GivePlayerMoney(playerid, -280);
                     TogglePlayerControllable(playerid, 1);
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 280;
+                        }
+                    }
                     return 1;
                 } else {
                     ShowMenuForPlayer(gpsmenu, playerid);
@@ -3219,6 +3254,11 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     pInfo[playerid][pGpsModel] = 3;
                     GivePlayerMoney(playerid, -310);
                     TogglePlayerControllable(playerid, 1);
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 310;
+                        }
+                    }
                     return 1;
                 } else {
                     ShowMenuForPlayer(gpsmenu, playerid);
@@ -3232,6 +3272,11 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     pInfo[playerid][pGpsModel] = 3;
                     GivePlayerMoney(playerid, -410);
                     TogglePlayerControllable(playerid, 1);
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 310;
+                        }
+                    }
                     return 1;
                 } else {
                     ShowMenuForPlayer(gpsmenu, playerid);

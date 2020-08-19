@@ -1,0 +1,1 @@
+[01:51:44] [plugins/mysql] error #1054 while executing query "UPDATE `accounts` SET `pDrivingLicense` = '0', `pHeavyLicense` = '0', `pPilotLicense` = '0', `pGunLicense` = '0' WHERE  `pName` = ''": Unknown column 'pDrivingLicense' in 'field list'
