@@ -1073,6 +1073,52 @@ public CreateBusStopObjects() {
     return 1;
 }
 
+forward public LoadNewVehData(id);
+public LoadNewVehData(id){
+    new DB_Query[900];
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `vehicles` WHERE `vID` = '%d'", id);
+    mysql_tquery(db_handle, DB_Query, "newVeh");
+}
+
+forward public newVeh();
+public newVeh(){
+    
+    if(cache_num_rows() == 0) print("Not a valid vehicle id!");
+    else {
+        for (new i = 0; i < cache_num_rows(); i++) {
+            cache_get_value_int(i, "vID", vInfo[loadedVeh][vID]);
+            cache_get_value_int(i, "vModelId", vInfo[loadedVeh][vModelId]);
+            cache_get_value(i, "vOwner", vInfo[loadedVeh][vOwner], 32);
+            cache_get_value_int(i, "vFuel", vInfo[loadedVeh][vFuel]);
+            cache_get_value_int(i, "vJobId", vInfo[loadedVeh][vJobId]);
+            cache_get_value_int(i, "vFacId", vInfo[loadedVeh][vFacId]);
+            cache_get_value_int(i, "vBusId", vInfo[loadedVeh][vBusId]);
+            cache_get_value(i, "vPlate", vInfo[loadedVeh][vPlate], 32);
+            cache_get_value_float(i, "vParkedX", vInfo[loadedVeh][vParkedX]);
+            cache_get_value_float(i, "vParkedY", vInfo[loadedVeh][vParkedY]);
+            cache_get_value_float(i, "vParkedZ", vInfo[loadedVeh][vParkedZ]);
+            cache_get_value_float(i, "vAngle", vInfo[loadedVeh][vAngle]);
+            cache_get_value_int(i, "vColor1", vInfo[loadedVeh][vColor1]);
+            cache_get_value_int(i, "vColor2", vInfo[loadedVeh][vColor2]);
+            cache_get_value_int(i, "vRentalState", vInfo[loadedVeh][vRentalState]);
+            cache_get_value_int(i, "vRentalPrice", vInfo[loadedVeh][vRentalPrice]);
+            new vehicleid = CreateVehicle(vInfo[loadedVeh][vModelId],
+                vInfo[loadedVeh][vParkedX],
+                vInfo[loadedVeh][vParkedY],
+                vInfo[loadedVeh][vParkedZ],
+                vInfo[loadedVeh][vAngle],
+                vInfo[loadedVeh][vColor1],
+                vInfo[loadedVeh][vColor2],
+                -1
+            );
+            vInfo[loadedVeh][vRentingPlayer] = INVALID_PLAYER_ID;
+            SetVehicleNumberPlate(vehicleid, vInfo[i][vPlate]);
+            loadedVeh++;
+        }
+        printf("** [MYSQL] Reloaded %d vehicles from the database!", cache_num_rows());
+    }
+}
+
 forward public LoadVehicleData();
 public LoadVehicleData() {
     new DB_Query[900];
@@ -1893,6 +1939,20 @@ public SwitchBetweenBusinessType(playerid, bustype){
     return 1;
 }
 
+CMD:createrentalvehicle(playerid, params[]){
+    new vehid, busId, price,plate[32],query[900], Float:px, Float:py, Float:pz, Float:pa;
+    if(pInfo[playerid][pAdminLevel] >= 5){
+        GetPlayerPos(playerid, px, py, pz);
+        GetPlayerFacingAngle(playerid, pa);
+        if(sscanf(params, "ddds", vehid, busId, price,plate)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createrentalvehicle [vehid] [busid] [price] [plate]");{
+            mysql_format(db_handle, query, sizeof(query), "INSERT INTO `vehicles` (`vModelId`,`vOwner`,`vFuel`, `vBusId`,`vPlate`,`vRentalPrice`, `vParkedX`,`vParkedY`,`vParkedZ`, `vAngle`, `vRentalState`) VALUES ('%d', 'NULL', '100', '%d','%d','%d','%f','%f','%f', '%f', '1')", vehid, busId,plate,price, px,py,pz,pa);
+            mysql_tquery(db_handle, query, "OnRentalVehCreated", "dddd", playerid,vehid, busId, price);
+        }
+        return 1;
+    }
+    return 1;
+}
+
 CMD:createbus(playerid, params[]){
     new name[32], type, address,price, Float:infX, Float:infY, Float:infZ, query[900];
     if(pInfo[playerid][pAdminLevel] >= 5){
@@ -2008,7 +2068,7 @@ CMD:help(playerid, params[]) {
             if(pInfo[playerid][pAdminLevel] > 1) {
                 SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Admin Commands ::.");
                 if(pInfo[playerid][pAdminLevel] == 5){
-                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createbus, /setbusentr");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createbus, /setbusentr, /createrentalvehicle");
                 }
                 if(pInfo[playerid][pAdminLevel] == 6) {
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createjob, /makeleader");
@@ -2510,6 +2570,15 @@ CMD:endjob(playerid, params[]) {
     return 1;
 }
 
+forward public OnRentalVehCreated(playerid, vid, busid, price);
+public OnRentalVehCreated(playerid, vid, busid, price){
+    new string[256];
+    format(string, sizeof(string), "[SERVER]:{FFFFFF} Rental vehicle (bid: %d price: %d) created!", busid, price);
+    SendClientMessage(playerid, -1, string); {
+        LoadNewVehData(cache_insert_id());
+    }
+}
+
 forward public OnBusCreated(playerid, busName[32], type, address, price);
 public OnBusCreated(playerid, busName[32], type, address, price){
     new string[256];
@@ -2793,7 +2862,25 @@ public RentCar(playerid, vehicleid) {
 
         for(new i = 0; i < loadedBus; i++){
             if(bInfo[i][bId] == vInfo[vehicleid][vBusId]){
+                new DB_Query[900];
                 bInfo[i][bSalary] += vInfo[vehicleid][vRentalPrice];
+
+                mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `businesses` SET `bSalary` = '%d' WHERE  `bId` = '%d'", bInfo[i][bSalary], bInfo[i][bId]);
+                mysql_query(db_handle, DB_Query);
+
+                //alert bus owner
+                new busowner[32], name[32];
+                format(busowner, sizeof(busowner), "%s", bInfo[i][bOwner]);
+
+                for(new pi = 0; pi < MAX_PLAYERS; pi++){
+                    GetPlayerName(pi, name, sizeof(name));
+                    if(!strcmp(busowner, name, true)){
+                        new string[100];
+                        format(string, sizeof(string), "PLATE: %s has left the car lot! Rented by: %s for $%d", vInfo[vehicleid][vPlate], RPName(playerid), vInfo[vehicleid][vRentalPrice]);
+                        SendPlayerText(pInfo[pi][pPhoneNumber], string, 0);
+                        return 1;
+                    }
+                }
                 return 1;
             }
         }
