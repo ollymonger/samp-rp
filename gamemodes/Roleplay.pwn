@@ -8,6 +8,7 @@
 #include <easyDialog>
 #include <bcrypt>
 #include <zcmd>
+#include <betterdialogs>
 #include <sscanf2>
 #include <streamer>
 
@@ -451,6 +452,34 @@ new VehicleNames[][] = {
 
 new tries[MAX_PLAYERS], passwordForFinalReg[MAX_PLAYERS][BCRYPT_HASH_LENGTH], quizAttempts[MAX_PLAYERS];
 
+enum ENUM_CARDEAL_DATA {
+    VEHICLE_MODELID,
+    VEHICLE_NAME[32],
+    VEHICLE_PRICE,
+    VEHICLE_ID
+};
+
+new const BUS_DEALERSHIP[][ENUM_CARDEAL_DATA] = {
+    {400, "Landstalker", 4500, 400},
+    {404, "Perennial", 3950, 404},
+    {412, "Voodoo", 3600, 412},
+    {413, "Boxville", 4750, 413},
+    {415, "Cheetah", 61295, 415},
+    {418, "Moonbeam", 6250, 418},
+    {421, "Washington", 7500, 421},
+    {422, "Bobcat", 6000, 422},
+    {429, "Banshee", 62599, 429},
+    {444, "Monster", 72100, 444},
+    {451, "Turismo", 82999, 451},
+    {461, "PCJ-600", 16500, 461},
+    {463, "Freeway", 15599, 463},
+    {468, "Sanchez", 13599, 468},
+    {470, "Patriot", 56950, 470},
+    {475, "Sabre", 10195, 475},
+    {477, "ZR-350", 59520, 477},
+    {489, "Rancher", 25900, 489},
+    {496, "Blista Compact", 18500, 496}
+};
 
 enum ENUM_PLAYER_DATA {
     ID[32],
@@ -1947,7 +1976,17 @@ public SwitchBetweenBusinessType(playerid, bustype){
             // car dealership
             if(pInfo[playerid][pVehicleSlotsUsed] < pInfo[playerid][pVehicleSlots]){
                 // player has less than or equal to their vehicleslots.
+                new subString[64]; 
+                static string[sizeof(BUS_DEALERSHIP) * sizeof(subString)];
 
+                if(string[0] == EOS){           
+                    for (new i; i < sizeof(BUS_DEALERSHIP); i++) {
+                        format(subString, sizeof(subString), "%i(0.0, 0.0, -50.0, 1.5)\t%s~n~~g~~h~$%i\n", BUS_DEALERSHIP[i][VEHICLE_MODELID], BUS_DEALERSHIP[i][VEHICLE_NAME], BUS_DEALERSHIP[i][VEHICLE_PRICE]);
+                        strcat(string, subString);
+                    }
+                }
+
+                return ShowPlayerDialog(playerid, 9999, DIALOG_STYLE_PREVIEW_MODEL, "Car Dealership", string, "Purchase", "Decline");
             } else {
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have used all of your available vehicle slots!");
                 return 1;
@@ -2188,7 +2227,7 @@ CMD:listjobs(playerid, params[]) {
         format(string, sizeof(string), "JOB:%s {FFFFFF}(%d)\n", jInfo[i][jName], jInfo[i][jID]);
         strcat(jobList, string);
     }
-    Dialog_Show(playerid, DIALOG_JOB_LIST, DIALOG_STYLE_LIST, "Available Jobs", jobList, "Accept", "Decline");
+    Dialog_Show(playerid, DIALOG_CARDEALER, DIALOG_STYLE_LIST, "Available Jobs", jobList, "Accept", "Decline");
     return 1;
 }
 //* drug dealer job */
@@ -2588,6 +2627,11 @@ CMD:endjob(playerid, params[]) {
     return 1;
 }
 
+forward public OnPlayerBuyVehicle(playerid, playername[32]);
+public OnPlayerBuyVehicle(playerid, playername[32]){
+    LoadNewVehData(cache_insert_id());
+}
+
 forward public OnRentalVehCreated(playerid, vid, busid, price);
 public OnRentalVehCreated(playerid, vid, busid, price){
     new string[256];
@@ -2809,6 +2853,21 @@ CMD:engine(playerid, params[]) {
                     }
                 }
                 if(vInfo[i][vJobId] == pInfo[playerid][pJobId]) {
+                    if(engine == 1) {
+                        SetVehicleParamsEx(vid, false, lights, alarm, doors, bonnet, boot, objective);
+                        format(string, sizeof(string), "* %s takes their key from the igntion and turns the engine off.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        KillTimer(fuelTimer[playerid]);
+                        return 1;
+                    } else {
+                        SetVehicleParamsEx(vid, true, lights, alarm, doors, bonnet, boot, objective);
+                        format(string, sizeof(string), "* %s inserts their key into the ignition and starts the engine.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 17500, false, "dd", playerid, vInfo[i][vID]);
+                        return 1;
+                    }
+                }
+                if(!strcmp(vInfo[i][vOwner], GetName(playerid), true)){
                     if(engine == 1) {
                         SetVehicleParamsEx(vid, false, lights, alarm, doors, bonnet, boot, objective);
                         format(string, sizeof(string), "* %s takes their key from the igntion and turns the engine off.", RPName(playerid));
@@ -3834,6 +3893,10 @@ public OnVehicleStreamOut(vehicleid, forplayerid) {
 }
 
 /* 3- DIALOGS -*/
+Dialog:DIALOG_CARDEALER(playerid, response, listitem, inputtext[]){
+    
+    return 1;
+}
 
 Dialog:DIALOG_247(playerid, response, listitem, inputtext[]){
     if(response){
@@ -4823,6 +4886,34 @@ public RemoveTextdrawAfterTime(playerid) {
 }
 
 public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
+    if(dialogid == 9999){
+        if(response){
+            if(pInfo[playerid][pBank] < BUS_DEALERSHIP[listitem][VEHICLE_PRICE]){
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You cannot afford this vehicle!");
+                return ShowPlayerDialog(playerid, 9999, DIALOG_STYLE_PREVIEW_MODEL, "Car Dealership", string, "Purchase", "Decline");
+            }
+
+            new query[900], num_plate[9];
+            for(new i; i < 3; i++){
+                num_plate[i] = 'A'+random('Z'-'A');
+            }
+            num_plate[3] = '-';
+            for(new i = 4; i < sizeof(num_plate); i++){
+                num_plate[i] = '0'+random('9'-'0');
+            }
+
+            for(new i = 0; i < loadedBus; i++){
+                if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                    mysql_format(db_handle, query, sizeof(query), "INSERT INTO `vehicles` (`vModelId`, `vOwner`, `vRentalState`, `vPlate`, `vParkedX`, `vParkedY`, `vParkedZ`, `vAngle`) VALUES ('%d', '%s', '2', '%s', '%f', '%f', '%f', '90')", BUS_DEALERSHIP[listitem][VEHICLE_MODELID], GetName(playerid), num_plate, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ]);
+                    mysql_tquery(db_handle, query, "OnPlayerBuyVehicle","ds", playerid, GetName(playerid));
+                    GameTextForPlayer(playerid, "~g~VEHICLE PURCHASED!", 3000, 3);
+                    bInfo[i][bSalary] += BUS_DEALERSHIP[listitem][VEHICLE_PRICE];
+                    pInfo[playerid][pVehicleSlotsUsed]++;
+                    pInfo[playerid][pBank] -= BUS_DEALERSHIP[listitem][VEHICLE_PRICE];
+                }
+            }
+        }
+    }
     return 1;
 }
 
