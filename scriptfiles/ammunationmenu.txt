@@ -1,0 +1,37 @@
+//After your includes/defines add
+new Menu:AmmunationMenu;
+    
+//OnGameModeInt()
+AmmunationMenu = CreateMenu("Ammunation", 1, 30.000000, 160.000000, 320.000000, 0.000000);
+AddMenuItem(AmmunationMenu, 0, "Pistols");
+AddMenuItem(AmmunationMenu, 0, "SMGS");
+AddMenuItem(AmmunationMenu, 0, "Rifles");
+AddMenuItem(AmmunationMenu, 0, "Armour");
+    
+//Add This after OnPlayerSelectedMenuRow(playerid, row)
+    new Menu:CurrentMenu = GetPlayerMenu(playerid);
+    if(CurrentMenu == AmmunationMenu)
+    {
+        switch(row)
+        {
+            case 0:
+            {
+                ShowMenuForPlayer(Pistols, playerid);
+            }
+            case 1:
+            {
+                ShowMenuForPlayer(SMGS, playerid);
+            }
+            case 2:
+            {
+                ShowMenuForPlayer(Rifles, playerid);
+            }
+            case 3:
+            {
+                ShowMenuForPlayer(Armour, playerid);
+            }
+        }
+    }
+    
+Menu was created with Scott's In-Game Menu filterscript.
+Thanks for using it, www.sa-mp.lt.

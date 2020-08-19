@@ -1,0 +1,29 @@
+//After your includes/defines add
+new Menu:armour;
+    
+//OnGameModeInt()
+armour = CreateMenu("Ammunation", 2, 30.000000, 160.000000, 90.000000, 90.000000);
+AddMenuItem(armour, 0, "Heavy Armour");
+AddMenuItem(armour, 1, "$1000");
+AddMenuItem(armour, 0, "Light Armour");
+AddMenuItem(armour, 1, "$350");
+    
+//Add This after OnPlayerSelectedMenuRow(playerid, row)
+    new Menu:CurrentMenu = GetPlayerMenu(playerid);
+    if(CurrentMenu == armour)
+    {
+        switch(row)
+        {
+            case 0:
+            {
+                //Your Code Here
+            }
+            case 1:
+            {
+                //Your Code Here
+            }
+        }
+    }
+    
+Menu was created with Scott's In-Game Menu filterscript.
+Thanks for using it, www.sa-mp.lt.

@@ -582,21 +582,6 @@ enum ENUM_VEH_DATA {
 }
 new vInfo[500][ENUM_VEH_DATA], loadedVeh;
 
-enum ENUM_HOUSE_DATA{
-    hId[32],
-    hAddress,
-    hType,
-    hOwner[32],
-    hLockedState,
-    Float:hInfoX,
-    Float:hInfoY,
-    Float:hInfoZ,
-    Float:hEntX,
-    Float:hEntY,
-    Float:hEntZ,
-};
-new hInfo[500][ENUM_HOUSE_DATA], loadedHouse;
-
 enum ENUM_BUS_DATA {
     bId[32],
     bName[32],
