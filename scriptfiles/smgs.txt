@@ -1,0 +1,37 @@
+//After your includes/defines add
+new Menu:SMGS;
+    
+//OnGameModeInt()
+SMGS = CreateMenu("Ammunation", 2, 30.000000, 160.000000, 90.000000, 90.000000);
+AddMenuItem(SMGS, 0, "MP5");
+AddMenuItem(SMGS, 1, "$5000");
+    
+//Add This after OnPlayerSelectedMenuRow(playerid, row)
+    new Menu:CurrentMenu = GetPlayerMenu(playerid);
+    if(CurrentMenu == SMGS)
+    {
+        switch(row)
+        {
+            case 0:
+            {
+                if(GetPlayerMoney(playerid) >= 5000){
+                    GivePlayerWeapon(playerid, 29, 64);
+                    GivePlayerMoney(playerid, -5000);
+                    SendClientMessage(playerid, ADMINBLUE, "> You have purchased a new MP5 with 64 bullets!");
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 1250;
+                            return 1;
+                        }
+                    }
+                    return 1;
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash!");
+                    return 1;
+                }
+            }
+        }
+    }
+    
+Menu was created with Scott's In-Game Menu filterscript.
+Thanks for using it, www.sa-mp.lt.

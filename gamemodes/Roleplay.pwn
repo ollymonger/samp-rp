@@ -40,7 +40,7 @@ main() {
 /* 1- NEWS -*/
 new MySQL:db_handle;
 
-new Menu:busdrivermenu, Menu:hardwaremenu, Menu:phonemenu, Menu:gpsmenu;
+new Menu:busdrivermenu, Menu:hardwaremenu, Menu:phonemenu, Menu:gpsmenu, Menu:AmmunationMenu, Menu:Pistols, Menu:SMGS, Menu:shotguns, Menu:Rifles, Menu:Armour;
 
 new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS], GarbageCheckpoint[MAX_PLAYERS];
 new dumpCheckPoint[MAX_PLAYERS], routeId[MAX_PLAYERS], busCheckpoint[MAX_PLAYERS], drugDeal[MAX_PLAYERS];
@@ -493,6 +493,13 @@ enum ENUM_PLAYER_DATA {
         pPilotLicense,
         pGunLicense,
 
+        pWeaponSlot1,
+        pWeaponSlot1Ammo,
+        pWeaponSlot2,
+        pWeaponSlot2Ammo,
+        pWeaponSlot3,
+        pWeaponSlot3Ammo,
+
         pAlertCall,
         pAlertMsg[64],
 
@@ -590,6 +597,7 @@ new drugInfo[15][ENUM_DRUG_PRICES], loadedDrug;
 public OnGameModeInit() {
     mysql_log(ALL);
     ManualVehicleEngineAndLights();
+    //DisableInteriorEnterExits();
     // Don't use these lines if it's a filterscript
     SetGameModeText("Roleplay | v1");
 
@@ -632,6 +640,56 @@ public OnGameModeInit() {
     // BUS DRIVER
 
     CreateDynamicObject(17038, -252.32233, 1216.70703, 18.72150, 0.00000, 0.00000, 90.00000);
+
+
+    AmmunationMenu = CreateMenu("Ammunation", 1, 30.000000, 160.000000, 160.000000, 0.000000);
+    AddMenuItem(AmmunationMenu, 0, "Pistols");
+    AddMenuItem(AmmunationMenu, 0, "SMGS");
+    AddMenuItem(AmmunationMenu, 0, "Shotguns");
+    AddMenuItem(AmmunationMenu, 0, "Rifles");
+    AddMenuItem(AmmunationMenu, 0, "Armour");
+
+
+    Pistols = CreateMenu("Ammunation", 2, 30.000000, 160.000000, 90.000000, 90.000000);
+   
+    SetMenuColumnHeader(Pistols, 0, "Name");
+    SetMenuColumnHeader(Pistols, 1, "Price");
+    AddMenuItem(Pistols, 0, "Glock-18");
+    AddMenuItem(Pistols, 1, "$750");
+    AddMenuItem(Pistols, 0, "Desert Eagle");
+    AddMenuItem(Pistols, 1, "$1250");
+
+    
+    SMGS = CreateMenu("Ammunation", 2, 30.000000, 160.000000, 90.000000, 90.000000);
+      
+    SetMenuColumnHeader(SMGS, 0, "Name");
+    SetMenuColumnHeader(SMGS, 1, "Price");
+    AddMenuItem(SMGS, 0, "MP5");
+    AddMenuItem(SMGS, 1, "$5000");
+    
+    shotguns = CreateMenu("Ammunation", 2, 30.000000, 160.000000, 90.000000, 90.000000);
+        
+    SetMenuColumnHeader(shotguns, 0, "Name");
+    SetMenuColumnHeader(shotguns, 1, "Price");
+    AddMenuItem(shotguns, 0, "Shotgun");
+    AddMenuItem(shotguns, 1, "$3000");
+
+    Rifles = CreateMenu("Ammunation", 2, 30.000000, 160.000000, 90.000000, 90.000000);
+    
+    SetMenuColumnHeader(Rifles, 0, "Name");
+    SetMenuColumnHeader(Rifles, 1, "Price");
+    AddMenuItem(Rifles, 0, "Rifle");
+    AddMenuItem(Rifles, 1, "$4500");
+
+
+    Armour = CreateMenu("Ammunation", 2, 30.000000, 160.000000, 90.000000, 90.000000);
+        
+    SetMenuColumnHeader(Armour, 0, "Name");
+    SetMenuColumnHeader(Armour, 1, "Price");
+    AddMenuItem(Armour, 0, "Heavy Armour");
+    AddMenuItem(Armour, 1, "$1000");
+    AddMenuItem(Armour, 0, "Light Armour");
+    AddMenuItem(Armour, 1, "$350");
 
     hardwaremenu = CreateMenu("Hardware Store", 2, 200.0, 100.0, 100.0, 100.0);
     AddMenuItem(hardwaremenu, 0, "Phones");
@@ -1718,6 +1776,32 @@ public SavePlayerData(playerid) {
 
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAdminLevel` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pAdminLevel], GetName(playerid));
     mysql_query(db_handle, query);
+    
+    new weaponSlot[6][2];
+    for(new i = 1; i < 5; i++){
+        if(i == 2){
+            GetPlayerWeaponData(playerid, i, weaponSlot[i][0], weaponSlot[i][1]);
+            pInfo[playerid][pWeaponSlot1] = weaponSlot[i][0];
+            pInfo[playerid][pWeaponSlot1Ammo] = weaponSlot[i][1];
+            mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pWeaponSlot1` = '%d', `pWeaponSlot1Ammo` = '%d' WHERE  `pName` = '%e'",pInfo[playerid][pWeaponSlot1], pInfo[playerid][pWeaponSlot1Ammo], GetName(playerid));
+            mysql_query(db_handle, query);
+        }
+        if(i == 3){
+            GetPlayerWeaponData(playerid, i, weaponSlot[i][0], weaponSlot[i][1]);
+            pInfo[playerid][pWeaponSlot2] = weaponSlot[i][0];
+            pInfo[playerid][pWeaponSlot2Ammo] = weaponSlot[i][1];
+            mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pWeaponSlot2` = '%d', `pWeaponSlot2Ammo` = '%d' WHERE  `pName` = '%e'",pInfo[playerid][pWeaponSlot2], pInfo[playerid][pWeaponSlot2Ammo], GetName(playerid));
+            mysql_query(db_handle, query);
+        }
+        if(i == 4){
+            GetPlayerWeaponData(playerid, i, weaponSlot[i][0], weaponSlot[i][1]);
+            pInfo[playerid][pWeaponSlot3] = weaponSlot[i][0];
+            pInfo[playerid][pWeaponSlot3Ammo] = weaponSlot[i][1];
+            mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pWeaponSlot3` = '%d', `pWeaponSlot3Ammo` = '%d' WHERE  `pName` = '%e'",pInfo[playerid][pWeaponSlot3], pInfo[playerid][pWeaponSlot3Ammo], GetName(playerid));
+            mysql_query(db_handle, query);
+        }
+    }
+
     SetTimerEx("SavePlayerData", 300000, false, "ds", playerid, "SA-MP"); //called "function" when 5 mins elapsed
 
     return 1;
@@ -1794,6 +1878,14 @@ public SwitchBetweenBusinessType(playerid, bustype){
         }
         case 3: {
             // ammunation
+            if(pInfo[playerid][pGunLicense] == 1){
+                ShowMenuForPlayer(AmmunationMenu, playerid);
+                TogglePlayerControllable(playerid, false); // freeze player so they can use the menu
+                return 1;
+            } else {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You do not have a gun license!");
+                return 1;
+            }
         }
     }
     return 1;
@@ -3370,6 +3462,155 @@ public OnPlayerSelectedMenuRow(playerid, row) {
             }
         }
     }
+    if(currentMenu == AmmunationMenu){
+        switch(row)
+        {
+            case 0:
+            {
+                ShowMenuForPlayer(Pistols, playerid);
+            }
+            case 1:
+            {
+                ShowMenuForPlayer(SMGS, playerid);
+            }
+            case 2:
+            {
+                ShowMenuForPlayer(shotguns, playerid);
+            }
+            case 3:
+            {
+                ShowMenuForPlayer(Rifles, playerid);
+            }
+            case 4:
+            {
+                ShowMenuForPlayer(Armour, playerid);
+            }
+        }
+    }
+    if(currentMenu == Pistols){
+        switch(row)
+        {
+            case 0:
+            {
+                if(GetPlayerMoney(playerid) >= 750){
+                    GivePlayerWeapon(playerid, 22, 50);
+                    GivePlayerMoney(playerid, -750);
+                    SendClientMessage(playerid, ADMINBLUE, "> You have purchased a new Glock 18 with 50 bullets!");
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 750;
+                            return 1;
+                        }
+                    }
+                    return 1;
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash!");
+                    return 1;
+                }
+            }
+            case 1:
+            {
+                // deagle
+                if(GetPlayerMoney(playerid) >= 1250){
+                    GivePlayerWeapon(playerid, 24, 32);
+                    GivePlayerMoney(playerid, -1250);
+                    SendClientMessage(playerid, ADMINBLUE, "> You have purchased a new Desert Eagle with 32 bullets!");
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 1250;
+                            return 1;
+                        }
+                    }
+                    return 1;
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash!");
+                    return 1;
+                }
+            }
+        }
+    }
+    if(currentMenu == SMGS){
+        switch(row){
+            case 0: {
+                if(GetPlayerMoney(playerid) >= 5000){
+                    GivePlayerWeapon(playerid, 29, 64);
+                    GivePlayerMoney(playerid, -5000);
+                    SendClientMessage(playerid, ADMINBLUE, "> You have purchased a new MP5 with 64 bullets!");
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 1250;
+                            return 1;
+                        }
+                    }
+                    return 1;
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash!");
+                    return 1;
+                }
+            }
+        }
+    }
+    if(currentMenu == shotguns){
+        switch(row)
+        {
+            case 0:
+            {
+                if(GetPlayerMoney(playerid) >= 3000){
+                    GivePlayerWeapon(playerid, 25, 18);
+                    GivePlayerMoney(playerid, -3000);
+                    SendClientMessage(playerid, ADMINBLUE, "> You have purchased a new Shotgun with 18 bullets!");  
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 3000;
+                            return 1;
+                        }
+                    }
+                    return 1;
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash!");
+                    return 1;
+                }
+            }
+        }
+    }
+    if(currentMenu == Rifles){
+        switch(row)
+        {
+            case 0:
+            {
+                // rifle
+                if(GetPlayerMoney(playerid) >= 4500){
+                    GivePlayerWeapon(playerid, 33, 15);
+                    GivePlayerMoney(playerid, -4500);
+                    SendClientMessage(playerid, ADMINBLUE, "> You have purchased a new Rifle with 15 bullets!");
+                    for(new i = 0; i < loadedBus; i++){
+                        if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
+                            bInfo[i][bSalary] += 4500;
+                            return 1;
+                        }
+                    }
+
+                    return 1;
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You don't have enough cash!");
+                    return 1;
+                }
+            }
+        }
+    }
+    if(currentMenu == Armour){
+        switch(row)
+        {
+            case 0:
+            {
+                //Your Code Here
+            }
+            case 1:
+            {
+                //Your Code Here
+            }
+        }
+    }
     return 1;
 }
 
@@ -3404,6 +3645,26 @@ public OnPlayerExitedMenu(playerid)
     }
     if(currentMenu == gpsmenu){
         ShowMenuForPlayer(hardwaremenu, playerid);
+        return 1;
+    }
+    if(currentMenu == Pistols){
+        ShowMenuForPlayer(AmmunationMenu, playerid);
+        return 1;
+    }
+    if(currentMenu == SMGS){
+        ShowMenuForPlayer(AmmunationMenu, playerid);
+        return 1;
+    }
+    if(currentMenu == shotguns){
+        ShowMenuForPlayer(AmmunationMenu, playerid);
+        return 1;
+    }
+    if(currentMenu == Rifles){
+        ShowMenuForPlayer(AmmunationMenu, playerid);
+        return 1;
+    }
+    if(currentMenu == Armour){
+        ShowMenuForPlayer(AmmunationMenu, playerid);
         return 1;
     }
     TogglePlayerControllable(playerid,1); // unfreeze the player when they exit a menu
@@ -3989,6 +4250,18 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pRopeAmount", pInfo[playerid][pRopeAmount]);
     cache_get_value_int(0, "pHasMask", pInfo[playerid][pHasMask]);
 
+    cache_get_value_int(0, "pDrivingLicense", pInfo[playerid][pDrivingLicense]);
+    cache_get_value_int(0, "pHeavyLicense", pInfo[playerid][pHeavyLicense]);
+    cache_get_value_int(0, "pPilotLicense", pInfo[playerid][pPilotLicense]);
+    cache_get_value_int(0, "pGunLicense", pInfo[playerid][pGunLicense]);
+    
+    cache_get_value_int(0, "pWeaponSlot1", pInfo[playerid][pWeaponSlot1]);
+    cache_get_value_int(0, "pWeaponSlot1Ammo", pInfo[playerid][pWeaponSlot1Ammo]);
+    cache_get_value_int(0, "pWeaponSlot2", pInfo[playerid][pWeaponSlot2]);
+    cache_get_value_int(0, "pWeaponSlot2Ammo", pInfo[playerid][pWeaponSlot2Ammo]);
+    cache_get_value_int(0, "pWeaponSlot3", pInfo[playerid][pWeaponSlot3]);
+    cache_get_value_int(0, "pWeaponSlot3Ammo", pInfo[playerid][pWeaponSlot3Ammo]);
+
     cache_get_value_int(0, "pAdminLevel", pInfo[playerid][pAdminLevel]);
 
     pInfo[playerid][LoggedIn] = true;
@@ -3996,7 +4269,7 @@ public OnPlayerLoad(playerid) {
     SetPlayerHealth(playerid, pInfo[playerid][pHealth]);
     SetPlayerArmour(playerid, pInfo[playerid][pArmour]);
     GivePlayerMoney(playerid, pInfo[playerid][pCash]);
-    SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -204.5334, 1119.1626, 23.2031, 269.15, 0, 0, 0, 0, 0, 0);
+    SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -204.5334, 1119.1626, 23.2031, 269.15, pInfo[playerid][pWeaponSlot1], pInfo[playerid][pWeaponSlot1Ammo], pInfo[playerid][pWeaponSlot2], pInfo[playerid][pWeaponSlot2Ammo], pInfo[playerid][pWeaponSlot3], pInfo[playerid][pWeaponSlot3Ammo]);
     SpawnPlayer(playerid);
     return 1;
 }
@@ -4014,6 +4287,13 @@ forward OnPlayerRegister(playerid);
 public OnPlayerRegister(playerid) {
     Dialog_Show(playerid, DIALOG_EMAIL, DIALOG_STYLE_INPUT, "Email Registration", "Please insert your email below, this is used to link your account to our website!\n\n Example: 'example@example.com'!", "Continue", "Quit");
     return 1;
+}
+
+stock IsValidWeapon(weaponid){
+    if((weaponid > 0 && weaponid < 19) || (weaponid > 21 && weaponid < 47))
+        return 1; // it's valid weapon id so return 1
+
+    return 0; // Invalid return 0
 }
 
 stock SetFactionRanknameByRank(playerid, facid, rank) {
