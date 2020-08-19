@@ -1090,7 +1090,13 @@ public BusReceived() {
             cache_get_value_float(i, "bExitX", bInfo[i][bExitX]);
             cache_get_value_float(i, "bExitY", bInfo[i][bExitY]);
             cache_get_value_float(i, "bExitZ", bInfo[i][bExitZ]);
-            busInfoPickup[i] = CreateDynamicPickup(1239, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1);
+
+            if(!strcmp(bInfo[i][bOwner], "NULL", true)){
+                busInfoPickup[i] = CreateDynamicPickup(1273, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1);
+            }
+            if(strcmp(bInfo[i][bOwner], "NULL", true)){            
+                busInfoPickup[i] = CreateDynamicPickup(1239, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1);
+            }
             busEntPickup[i] = CreateDynamicPickup(1559, 1, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ], -1);
             busUsePickup[i] = CreateDynamicPickup(1239, 1, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ], -1);
             busExitPickup[i] = CreateDynamicPickup(1559, 1, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ], -1);
@@ -1890,6 +1896,7 @@ CMD:help(playerid, params[]) {
             SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} General Commands ::.");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/help, /admins, /mods, /helpers, /staff");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/shop, /stats, /pockets, /rentcar, /unrentcar");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/properties, /buyproperty, /sellproperty");
         } else if(strcmp(Usage, "Job", true) == 0) {
             SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
             if(pInfo[playerid][pJobId] == 4){
@@ -1913,6 +1920,10 @@ CMD:help(playerid, params[]) {
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createjob, /makeleader");
                 }
             }
+        } else if(strcmp(Usage, "Business", true) == 0){
+            SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Business Commands ::.");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/collectsal");
+
         }
     }
     return 1;
@@ -2101,7 +2112,7 @@ CMD:collectsal(playerid, params[]){
                 // if b owner
                 GivePlayerMoney(playerid, bInfo[i][bSalary]);
                 new string[256];                
-                format(string, sizeof(string), "[SERVER]:{FFFFFF} You have collected $%d from your business!");
+                format(string, sizeof(string), "[SERVER]:{FFFFFF} You have collected $%d from your business!", bInfo[i][bSalary]);
                 SendClientMessage(playerid, SERVERCOLOR, string);
                 bInfo[i][bSalary] = 0;                            
                 new DB_Query[900];
