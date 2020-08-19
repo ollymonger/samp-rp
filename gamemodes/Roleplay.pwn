@@ -535,6 +535,7 @@ enum ENUM_VEH_DATA {
         vFuel,
         vJobId,
         vFacId,
+        vBusId,
         vPlate[32],
         Float:vParkedX,
         Float:vParkedY,
@@ -1090,6 +1091,7 @@ public VehsReceived() {
             cache_get_value_int(i, "vFuel", vInfo[loadedVeh][vFuel]);
             cache_get_value_int(i, "vJobId", vInfo[loadedVeh][vJobId]);
             cache_get_value_int(i, "vFacId", vInfo[loadedVeh][vFacId]);
+            cache_get_value_int(i, "vBusId", vInfo[loadedVeh][vBusId]);
             cache_get_value(i, "vPlate", vInfo[loadedVeh][vPlate], 32);
             cache_get_value_float(i, "vParkedX", vInfo[loadedVeh][vParkedX]);
             cache_get_value_float(i, "vParkedY", vInfo[loadedVeh][vParkedY]);
@@ -2788,6 +2790,13 @@ public RentCar(playerid, vehicleid) {
         vInfo[vehicleid][vRentingPlayer] = playerid;
         TurnVehicleEngineOff(vehicleid);
         SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have rented the vehicle.");
+
+        for(new i = 0; i < loadedBus; i++){
+            if(bInfo[i][bId] == vInfo[vehicleid][vBusId]){
+                bInfo[i][bSalary] += vInfo[vehicleid][vRentalPrice];
+                return 1;
+            }
+        }
         return 1;
     } else {
         return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not in a vehicle! (This vehicle may be job-specific)");
