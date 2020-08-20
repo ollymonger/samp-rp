@@ -15,8 +15,8 @@
 #define BCRYPT_COST 12
 #define lenull(%1) \
 ((!( % 1[0])) || ((( % 1[0]) == '\1') && (!( % 1[1]))))
-#define MAX_JOBS 50
-#define MAX_FACTIONS 50
+#define MAX_JOBS 100
+#define MAX_FACTIONS 100
 
 
 #define GREY 			0xCECECEFF
@@ -50,7 +50,7 @@ new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS], drugDealTimer[MAX_PLAYERS]
 new policeCall[MAX_PLAYERS];
 
 new dumpPickup, jobPickup[MAX_JOBS];
-new busInfoPickup[50], busEntPickup[50], busExitPickup[50], busUsePickup[50];
+new busInfoPickup[500], busEntPickup[500], busExitPickup[500], busUsePickup[500];
 new houseInfoPickup[500], houseEntPickup[500], houseExitPickup[500];
 
 new PlayerText:VEHSTUFF[MAX_PLAYERS][5];
@@ -606,7 +606,7 @@ new hInfo[500][ENUM_HOUSE_DATA], loadedHouse;
 
 enum ENUM_BUS_DATA {
     bId[32],
-    bName[32],
+    bName[50],
     bAddress,
     bPrice,
     bSalary,
@@ -625,7 +625,7 @@ enum ENUM_BUS_DATA {
     Float:bExitY,
     Float:bExitZ
 };
-new bInfo[50][ENUM_BUS_DATA], loadedBus;
+new bInfo[500][ENUM_BUS_DATA], loadedBus;
 
 enum ENUM_FAC_DATA {
     fID[32],
@@ -1255,6 +1255,7 @@ public BusReceived() {
             if(!strcmp(bInfo[i][bOwner], "NULL", true)){
                 busInfoPickup[i] = CreateDynamicPickup(1273, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1);
             }
+
             if(strcmp(bInfo[i][bOwner], "NULL", true)){            
                 busInfoPickup[i] = CreateDynamicPickup(1239, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1);
             }
@@ -1499,13 +1500,13 @@ public newJob() {
     if(cache_num_rows() == 0) print("Job does not exist");
     else {
         for (new i = 0; i < cache_num_rows(); i++) {
-            cache_get_value_int(i, "jID", jInfo[loadedJob][jID]);
-            cache_get_value(i, "jName", jInfo[loadedJob][jName], 32);
-            cache_get_value_int(i, "jPay", jInfo[loadedJob][jPay]);
-            cache_get_value_float(i, "jobIX", jInfo[loadedJob][jobIX]);
-            cache_get_value_float(i, "jobIY", jInfo[loadedJob][jobIY]);
-            cache_get_value_float(i, "jobIZ", jInfo[loadedJob][jobIZ]);
-            jobPickup[loadedJob] = CreateDynamicPickup(1239, 1, jInfo[loadedJob][jobIX], jInfo[loadedJob][jobIY], jInfo[loadedJob][jobIZ], -1);
+            cache_get_value_int(i, "jID", jInfo[i][jID]);
+            cache_get_value(i, "jName", jInfo[i][jName], 32);
+            cache_get_value_int(i, "jPay", jInfo[i][jPay]);
+            cache_get_value_float(i, "jobIX", jInfo[i][jobIX]);
+            cache_get_value_float(i, "jobIY", jInfo[i][jobIY]);
+            cache_get_value_float(i, "jobIZ", jInfo[i][jobIZ]);
+            jobPickup[i] = CreateDynamicPickup(1239, 1, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ], -1);
             loadedJob++;
             //`CreateDynamicPickup(19526, 1, factionInfo[i][facX], factionInfo[i][facY], factionInfo[i][facZ], 0, 0);
 
@@ -1519,13 +1520,13 @@ public JobsReceived() {
     if(cache_num_rows() == 0) print("No jobs have been created!");
     else {
         for (new i = 0; i < cache_num_rows(); i++) {
-            cache_get_value_int(i, "jID", jInfo[loadedJob][jID]);
-            cache_get_value(i, "jName", jInfo[loadedJob][jName], 32);
-            cache_get_value_int(i, "jPay", jInfo[loadedJob][jPay]);
-            cache_get_value_float(i, "jobIX", jInfo[loadedJob][jobIX]);
-            cache_get_value_float(i, "jobIY", jInfo[loadedJob][jobIY]);
-            cache_get_value_float(i, "jobIZ", jInfo[loadedJob][jobIZ]);
-            jobPickup[loadedJob] = CreateDynamicPickup(1239, 1, jInfo[loadedJob][jobIX], jInfo[loadedJob][jobIY], jInfo[loadedJob][jobIZ], -1);
+            cache_get_value_int(i, "jID", jInfo[i][jID]);
+            cache_get_value(i, "jName", jInfo[i][jName], 32);
+            cache_get_value_int(i, "jPay", jInfo[i][jPay]);
+            cache_get_value_float(i, "jobIX", jInfo[i][jobIX]);
+            cache_get_value_float(i, "jobIY", jInfo[i][jobIY]);
+            cache_get_value_float(i, "jobIZ", jInfo[i][jobIZ]);
+            jobPickup[i] = CreateDynamicPickup(1239, 1, jInfo[i][jobIX], jInfo[i][jobIY], jInfo[i][jobIZ], -1);
             loadedJob++;
 
         }
@@ -2372,7 +2373,7 @@ CMD:listjobs(playerid, params[]) {
         format(string, sizeof(string), "JOB:%s {FFFFFF}(%d)\n", jInfo[i][jName], jInfo[i][jID]);
         strcat(jobList, string);
     }
-    Dialog_Show(playerid, DIALOG_CARDEALER, DIALOG_STYLE_LIST, "Available Jobs", jobList, "Accept", "Decline");
+    Dialog_Show(playerid, DIALOG_JOB_LIST, DIALOG_STYLE_LIST, "Available Jobs", jobList, "Accept", "Decline");
     return 1;
 }
 //* drug dealer job */
@@ -2513,6 +2514,7 @@ CMD:buyproperty(playerid, params[]){
                         format(string, sizeof(string), "> You have purchased %d.street for $%d!", bInfo[i][bAddress], bInfo[i][bPrice]);
                         SendClientMessage(playerid, ADMINBLUE, string);
                         GivePlayerMoney(playerid, -bInfo[i][bPrice]);
+                        pInfo[playerid][pCash] -= bInfo[i][bPrice];
                         format(bInfo[i][bOwner], 32, name);
                         DestroyDynamicPickup(busInfoPickup[bInfo[i][bId]-1]);
                         busInfoPickup[bInfo[i][bId]-1] = CreateDynamicPickup(1239, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1);
@@ -2536,6 +2538,7 @@ CMD:buyproperty(playerid, params[]){
                         format(string, sizeof(string), "> You have purchased %d.street for $%d!", hInfo[i][hAddress], hInfo[i][hPrice]);
                         SendClientMessage(playerid, ADMINBLUE, string);
                         GivePlayerMoney(playerid, -hInfo[i][hPrice]);
+                        pInfo[playerid][pCash] -= hInfo[i][hPrice];
                         format(hInfo[i][hOwner], 32, name);
                         pInfo[playerid][pPreferredSpawn] = add;
                         DestroyDynamicPickup(houseInfoPickup[hInfo[i][hId]-1]);
@@ -2570,6 +2573,7 @@ CMD:sellproperty(playerid, params[]){
                     SendClientMessage(playerid, ADMINBLUE, string);
                     format(bInfo[i][bOwner], 32, "NULL");
                     GivePlayerMoney(playerid, bInfo[i][bPrice]);
+                    pInfo[playerid][pCash] += bInfo[i][bPrice];
                     DestroyDynamicPickup(busInfoPickup[bInfo[i][bId]-1]);
                     busInfoPickup[bInfo[i][bId]-1] = CreateDynamicPickup(1273, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1);
                     mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `businesses` SET `bOwner` = 'NULL' WHERE  `bId` = '%d'", bInfo[i][bId]);
@@ -2587,6 +2591,7 @@ CMD:sellproperty(playerid, params[]){
                     format(string, sizeof(string), "> You have sold %d.street for $%d!", hInfo[i][hAddress], hInfo[i][hPrice]);
                     SendClientMessage(playerid, ADMINBLUE, string);
                     GivePlayerMoney(playerid, hInfo[i][hPrice]);
+                    pInfo[playerid][pCash] += hInfo[i][hPrice];
                     format(hInfo[i][hOwner], 32, "NULL");
                     pInfo[playerid][pPreferredSpawn] = 0;
                     DestroyDynamicPickup(houseInfoPickup[hInfo[i][hId]-1]);
@@ -2611,6 +2616,7 @@ CMD:collectsal(playerid, params[]){
             if(!strcmp(name, bInfo[i][bOwner])){
                 // if b owner
                 GivePlayerMoney(playerid, bInfo[i][bSalary]);
+                pInfo[playerid][pCash] += bInfo[i][bSalary];
                 new string[256];                
                 format(string, sizeof(string), "[SERVER]:{FFFFFF} You have collected $%d from your business!", bInfo[i][bSalary]);
                 SendClientMessage(playerid, SERVERCOLOR, string);
@@ -2677,6 +2683,7 @@ CMD:collect(playerid, params[]) {
                             SendClientMessage(playerid, SERVERCOLOR, string);
                             drugInfo[0][drugAmount] -= 1;
                             GivePlayerMoney(playerid, -drugInfo[0][drugPrice])
+                            pInfo[playerid][pCash] -= drugInfo[0][drugPrice];
                             mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `drugprices` SET `drugAmount` = '%d' WHERE  `drugId` = 1", drugInfo[0][drugAmount]);
                             mysql_query(db_handle, DB_Query);
                             if(pInfo[playerid][pPhoneNumber] != 0){
@@ -2706,6 +2713,7 @@ CMD:collect(playerid, params[]) {
                                 SendClientMessage(playerid, SERVERCOLOR, string);
                                 drugInfo[1][drugAmount] -= 1;
                                 GivePlayerMoney(playerid, -drugInfo[1][drugPrice])
+                                pInfo[playerid][pCash] -= drugInfo[1][drugPrice];
                                 mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `drugprices` SET `drugAmount` = '%d' WHERE  `drugId` = 2", drugInfo[0][drugAmount]);
                                 mysql_query(db_handle, DB_Query);
                                 if(pInfo[playerid][pPhoneNumber] != 0){
@@ -3146,6 +3154,7 @@ public RentCar(playerid, vehicleid) {
         }
 
         GivePlayerMoney(playerid, -vInfo[vehicleid][vRentalPrice]);
+        pInfo[playerid][pCash] -= vInfo[vehicleid][vRentalPrice];
         pInfo[playerid][RentingVehicle] = vehicleid;
         vInfo[vehicleid][vRented] = VEHICLE_RENTED;
         vInfo[vehicleid][vRentingPlayer] = playerid;
@@ -3246,6 +3255,7 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
                 giveMoney = randomWant * money;
                 SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the weed there! I'll be there in 2!", 0);
                 GivePlayerMoney(playerid, giveMoney);
+                pInfo[playerid][pCash] += giveMoney;
                 format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of weed for $%d!", randomWant, giveMoney);
                 SendClientMessage(playerid, SERVERCOLOR, string);
 
@@ -3261,6 +3271,7 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
                 giveMoney = randomWant * money;
                 SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the coke there! I'll be there in 2!", 0);
                 GivePlayerMoney(playerid, giveMoney);
+                pInfo[playerid][pCash] += giveMoney;
                 format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of coke for $%d!", randomWant, giveMoney);
                 SendClientMessage(playerid, SERVERCOLOR, string);
 
@@ -3281,6 +3292,7 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
                     giveMoney = randomWant * money;
                     SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the weed there! I'll be there in 2!", 0);
                     GivePlayerMoney(playerid, giveMoney);
+                    pInfo[playerid][pCash] += giveMoney;
                     format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of weed for $%d!", randomWant, giveMoney);
                     SendClientMessage(playerid, SERVERCOLOR, string);
                                 
@@ -3293,6 +3305,7 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
                     giveMoney = randomWant * money;
                     SendPlayerText(pInfo[playerid][pPhoneNumber], "The cash is behind the bins, leave the coke there! I'll be there in 2!", 0);
                     GivePlayerMoney(playerid, giveMoney);
+                    pInfo[playerid][pCash] += giveMoney;
                     format(string, sizeof(string), "[SERVER]:{FFFFFF} You have sold %d/grams of coke for $%d!", randomWant, giveMoney);
                     SendClientMessage(playerid, SERVERCOLOR, string);
                 }
@@ -3524,6 +3537,107 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
     }
     return 1;
 }
+forward public CheckBusiness(playerid);
+public CheckBusiness(playerid){
+    for(new i = 0; i < loadedBus; i++){
+        if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bInfoX],bInfo[i][bInfoY], bInfo[i][bInfoZ])){
+            new busName[32], busAdd[32], busOwner[32], busType[32], busPrice[32];
+
+            format(busName, sizeof(busName), "%s", bInfo[i][bName]);
+            PlayerTextDrawSetString(playerid, addressNameString[playerid], busName);
+
+            format(busAdd, sizeof(busAdd), "%d.Street", bInfo[i][bAddress]);
+            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][0], busAdd);
+
+            if(!strcmp(bInfo[i][bOwner], "NULL", true)){
+                format(busOwner, sizeof(busOwner), "For Sale");
+                PlayerTextDrawSetString(playerid, PlayerAddress[playerid][1], busOwner);
+            }
+            if(strcmp(bInfo[i][bOwner], "NULL", true)){
+                format(busOwner, sizeof(busOwner), "Sold");
+                PlayerTextDrawSetString(playerid, PlayerAddress[playerid][1], busOwner);
+            }
+                
+            format(busType, sizeof(busType), "Business");
+            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][2], busType);
+                
+            format(busPrice, sizeof(busPrice), "$%d", bInfo[i][bPrice]);
+            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][3], busPrice);
+                
+            PlayerTextDrawShow(playerid, businessBox[playerid]);
+            PlayerTextDrawShow(playerid, addressName[playerid]);
+            PlayerTextDrawShow(playerid, addressString[playerid]);
+            PlayerTextDrawShow(playerid, addressStatus[playerid]);
+            PlayerTextDrawShow(playerid, addressType[playerid]);
+            PlayerTextDrawShow(playerid, addressPrice[playerid]);
+
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][0]);
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][1]);
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][2]);
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][3]);
+            PlayerTextDrawShow(playerid, addressNameString[playerid]);
+                
+            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
+            return 1;
+        }
+        if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ])){ // display entrance stuff
+            TextDrawShowForPlayer(playerid, accessDoor);
+            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
+        }
+        if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ])){ // display entrance stuff
+            TextDrawShowForPlayer(playerid, accessDoor);
+            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
+        }
+        if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){ // display entrance stuff
+            TextDrawShowForPlayer(playerid, accessDoor);
+            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
+        }
+    }
+    return 1;
+}
+
+forward public CheckHouse(playerid);
+public CheckHouse(playerid){
+    for(new hi = 0; hi < loadedHouse; hi++){
+        if(IsPlayerInRangeOfPoint(playerid,3, hInfo[hi][hInfoX], hInfo[hi][hInfoY], hInfo[hi][hInfoZ])){
+            new houseAdd[32], houseOwner[32], houseType[32], housePrice[32];
+
+            format(houseAdd, sizeof(houseAdd), "%d.Street", hInfo[hi][hAddress]);
+            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][0], houseAdd);
+
+            if(!strcmp(hInfo[hi][hOwner], "NULL", true)){
+                format(houseOwner, sizeof(houseOwner), "For Sale");
+                PlayerTextDrawSetString(playerid, PlayerAddress[playerid][1], houseOwner);
+            }
+            if(strcmp(hInfo[hi][hOwner], "NULL", true)){
+                format(houseOwner, sizeof(houseOwner), "Sold");
+                PlayerTextDrawSetString(playerid, PlayerAddress[playerid][1], houseOwner);
+            }
+                
+            format(houseType, sizeof(houseType), "House");
+            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][2], houseType);
+                
+            format(housePrice, sizeof(housePrice), "$%d", hInfo[hi][hPrice]);
+            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][3], housePrice);
+
+            PlayerTextDrawShow(playerid, addressBox[playerid]);
+            PlayerTextDrawShow(playerid, addressString[playerid]);
+            PlayerTextDrawShow(playerid, addressStatus[playerid]);
+            PlayerTextDrawShow(playerid, addressType[playerid]);
+            PlayerTextDrawShow(playerid, addressPrice[playerid]);
+
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][0]);
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][1]);
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][2]);
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][3]);
+                
+            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
+            
+            return 1;
+        }
+    }
+    return 1;
+}
 
 public OnPlayerPickUpDynamicPickup(playerid, pickupid) { // check if player picked up pickup
     if(pickupid == jobPickup[pickupid - 1]) {
@@ -3542,95 +3656,9 @@ public OnPlayerPickUpDynamicPickup(playerid, pickupid) { // check if player pick
             GameTextForPlayer(playerid, "/takejob", 3000, 5);
             return 1;
         }
-    }      
-    for(new i = 0; i < loadedBus; i++){
-        if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ])){ // display bus info(price ect)
-            new busName[32], busAdd[32], busOwner[32], busType[32], busPrice[32];
-
-            format(busName, sizeof(busName), "%s", bInfo[i][bName]);
-            PlayerTextDrawSetString(playerid, addressNameString[playerid], busName);
-
-            format(busAdd, sizeof(busAdd), "%d.Street", bInfo[i][bAddress]);
-            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][0], busAdd);
-
-            if(!strcmp(bInfo[i][bOwner], "NULL", true)){
-                format(busOwner, sizeof(busOwner), "For Sale");
-                PlayerTextDrawSetString(playerid, PlayerAddress[playerid][1], busOwner);
-            }
-            if(strcmp(bInfo[i][bOwner], "NULL", true)){
-                format(busOwner, sizeof(busOwner), "Sold");
-                PlayerTextDrawSetString(playerid, PlayerAddress[playerid][1], busOwner);
-            }
-            
-            format(busType, sizeof(busType), "Business");
-            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][2], busType);
-            
-            format(busPrice, sizeof(busPrice), "$%d", bInfo[i][bPrice]);
-            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][3], busPrice);
-            
-            PlayerTextDrawShow(playerid, businessBox[playerid]);
-            PlayerTextDrawShow(playerid, addressName[playerid]);
-            PlayerTextDrawShow(playerid, addressString[playerid]);
-            PlayerTextDrawShow(playerid, addressStatus[playerid]);
-            PlayerTextDrawShow(playerid, addressType[playerid]);
-            PlayerTextDrawShow(playerid, addressPrice[playerid]);
-
-            PlayerTextDrawShow(playerid, PlayerAddress[playerid][0]);
-            PlayerTextDrawShow(playerid, PlayerAddress[playerid][1]);
-            PlayerTextDrawShow(playerid, PlayerAddress[playerid][2]);
-            PlayerTextDrawShow(playerid, PlayerAddress[playerid][3]);
-            PlayerTextDrawShow(playerid, addressNameString[playerid]);
-            
-            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
-        }
-        if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ])){ // display entrance stuff
-            TextDrawShowForPlayer(playerid, accessDoor);
-            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
-        }
-        if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ])){ // display entrance stuff
-            TextDrawShowForPlayer(playerid, accessDoor);
-            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
-        }
-        if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){ // display entrance stuff
-            TextDrawShowForPlayer(playerid, accessDoor);
-            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
-        }
-    }
-    for(new i = 0; i < loadedHouse; i++){
-        if(IsPlayerInRangeOfPoint(playerid,3, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ])){
-            new houseAdd[32], houseOwner[32], houseType[32], housePrice[32];
-
-            format(houseAdd, sizeof(houseAdd), "%d.Street", hInfo[i][hAddress]);
-            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][0], houseAdd);
-
-            if(!strcmp(hInfo[i][hOwner], "NULL", true)){
-                format(houseOwner, sizeof(houseOwner), "For Sale");
-                PlayerTextDrawSetString(playerid, PlayerAddress[playerid][1], houseOwner);
-            }
-            if(strcmp(hInfo[i][hOwner], "NULL", true)){
-                format(houseOwner, sizeof(houseOwner), "Sold");
-                PlayerTextDrawSetString(playerid, PlayerAddress[playerid][1], houseOwner);
-            }
-            
-            format(houseType, sizeof(houseType), "House");
-            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][2], houseType);
-            
-            format(housePrice, sizeof(housePrice), "$%d", hInfo[i][hPrice]);
-            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][3], housePrice);
-
-            PlayerTextDrawShow(playerid, addressBox[playerid]);
-            PlayerTextDrawShow(playerid, addressString[playerid]);
-            PlayerTextDrawShow(playerid, addressStatus[playerid]);
-            PlayerTextDrawShow(playerid, addressType[playerid]);
-            PlayerTextDrawShow(playerid, addressPrice[playerid]);
-
-            PlayerTextDrawShow(playerid, PlayerAddress[playerid][0]);
-            PlayerTextDrawShow(playerid, PlayerAddress[playerid][1]);
-            PlayerTextDrawShow(playerid, PlayerAddress[playerid][2]);
-            PlayerTextDrawShow(playerid, PlayerAddress[playerid][3]);
-            
-            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
-        }
+    } else { 
+        CheckBusiness(playerid);
+        CheckHouse(playerid);
     }
     return 1;
 }
@@ -3715,6 +3743,8 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     SendClientMessage(playerid, ADMINBLUE, string);
                     pInfo[playerid][pPhoneModel] = 1;
                     GivePlayerMoney(playerid, -150);
+                    
+                    pInfo[playerid][pCash] -= 150;
                     TogglePlayerControllable(playerid, 1);
                     for(new i = 0; i < loadedBus; i++){
                         if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
@@ -3735,6 +3765,7 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     SendClientMessage(playerid, ADMINBLUE, string);
                     pInfo[playerid][pPhoneModel] = 2;
                     GivePlayerMoney(playerid, -180);
+                    pInfo[playerid][pCash] -= 180;
                     TogglePlayerControllable(playerid, 1);
                     for(new i = 0; i < loadedBus; i++){
                         if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
@@ -3755,6 +3786,7 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     SendClientMessage(playerid, ADMINBLUE, string);
                     pInfo[playerid][pPhoneModel] = 3;
                     GivePlayerMoney(playerid, -200);
+                    pInfo[playerid][pCash] -= 200;
                     TogglePlayerControllable(playerid, 1);
                     for(new i = 0; i < loadedBus; i++){
                         if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
@@ -3774,7 +3806,8 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     format(string, sizeof(string), "> You have purchased a Samsung, your new phone number is: %d", pInfo[playerid][pPhoneNumber]);
                     SendClientMessage(playerid, ADMINBLUE, string);
                     pInfo[playerid][pPhoneModel] = 4;
-                    GivePlayerMoney(playerid, -250);
+                    GivePlayerMoney(playerid, -250);                    
+                    pInfo[playerid][pCash] -= 250;
                     TogglePlayerControllable(playerid, 1);
                     for(new i = 0; i < loadedBus; i++){
                         if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
@@ -3795,6 +3828,7 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     SendClientMessage(playerid, ADMINBLUE, string);
                     pInfo[playerid][pPhoneModel] = 5;
                     GivePlayerMoney(playerid, -300);
+                    pInfo[playerid][pCash] -= 300;
                     TogglePlayerControllable(playerid, 1);
                     for(new i = 0; i < loadedBus; i++){
                         if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
@@ -3818,6 +3852,7 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     SendClientMessage(playerid, ADMINBLUE, string);
                     pInfo[playerid][pGpsModel] = 1;
                     GivePlayerMoney(playerid, -400);
+                    pInfo[playerid][pCash] -= 400;
                     TogglePlayerControllable(playerid, 1);
                     for(new i = 0; i < loadedBus; i++){
                         if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
@@ -3836,6 +3871,7 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     SendClientMessage(playerid, ADMINBLUE, string);
                     pInfo[playerid][pGpsModel] = 2;
                     GivePlayerMoney(playerid, -280);
+                    pInfo[playerid][pCash] -= 280;
                     TogglePlayerControllable(playerid, 1);
                     for(new i = 0; i < loadedBus; i++){
                         if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
@@ -3854,6 +3890,7 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     SendClientMessage(playerid, ADMINBLUE, string);
                     pInfo[playerid][pGpsModel] = 3;
                     GivePlayerMoney(playerid, -310);
+                    pInfo[playerid][pCash] -= 310;
                     TogglePlayerControllable(playerid, 1);
                     for(new i = 0; i < loadedBus; i++){
                         if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
@@ -3872,6 +3909,7 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                     SendClientMessage(playerid, ADMINBLUE, string);
                     pInfo[playerid][pGpsModel] = 3;
                     GivePlayerMoney(playerid, -410);
+                    pInfo[playerid][pCash] -= 410;
                     TogglePlayerControllable(playerid, 1);
                     for(new i = 0; i < loadedBus; i++){
                         if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
@@ -3919,6 +3957,7 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                 if(GetPlayerMoney(playerid) >= 750){
                     GivePlayerWeapon(playerid, 22, 50);
                     GivePlayerMoney(playerid, -750);
+                    pInfo[playerid][pCash] -= 750;
                     SendClientMessage(playerid, ADMINBLUE, "> You have purchased a new Glock 18 with 50 bullets!");
                     for(new i = 0; i < loadedBus; i++){
                         if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
@@ -3937,7 +3976,8 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                 // deagle
                 if(GetPlayerMoney(playerid) >= 1250){
                     GivePlayerWeapon(playerid, 24, 32);
-                    GivePlayerMoney(playerid, -1250);
+                    GivePlayerMoney(playerid, -1250);                    
+                    pInfo[playerid][pCash] -= 1250;
                     SendClientMessage(playerid, ADMINBLUE, "> You have purchased a new Desert Eagle with 32 bullets!");
                     for(new i = 0; i < loadedBus; i++){
                         if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
@@ -3959,6 +3999,7 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                 if(GetPlayerMoney(playerid) >= 5000){
                     GivePlayerWeapon(playerid, 29, 64);
                     GivePlayerMoney(playerid, -5000);
+                    pInfo[playerid][pCash] -= 5000;
                     SendClientMessage(playerid, ADMINBLUE, "> You have purchased a new MP5 with 64 bullets!");
                     for(new i = 0; i < loadedBus; i++){
                         if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
@@ -3982,6 +4023,7 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                 if(GetPlayerMoney(playerid) >= 3000){
                     GivePlayerWeapon(playerid, 25, 18);
                     GivePlayerMoney(playerid, -3000);
+                    pInfo[playerid][pCash] -= 3000;
                     SendClientMessage(playerid, ADMINBLUE, "> You have purchased a new Shotgun with 18 bullets!");  
                     for(new i = 0; i < loadedBus; i++){
                         if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
@@ -4006,6 +4048,7 @@ public OnPlayerSelectedMenuRow(playerid, row) {
                 if(GetPlayerMoney(playerid) >= 4500){
                     GivePlayerWeapon(playerid, 33, 15);
                     GivePlayerMoney(playerid, -4500);
+                    pInfo[playerid][pCash] -= 4500;
                     SendClientMessage(playerid, ADMINBLUE, "> You have purchased a new Rifle with 15 bullets!");
                     for(new i = 0; i < loadedBus; i++){
                         if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){
@@ -4157,6 +4200,8 @@ Dialog:DIALOG_247(playerid, response, listitem, inputtext[]){
                     SendClientMessage(playerid, ADMINBLUE, "> You have purchased a pack of 20 cigarettes.");
                     pInfo[playerid][pCigAmount] = 20;
                     GivePlayerMoney(playerid, -14);
+                    
+                    pInfo[playerid][pCash] -= 14;
                     for(new i = 0; i < loadedBus; i++){
                         if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX],bInfo[i][bUseY],bInfo[i][bUseZ])){
                             bInfo[i][bSalary] += 14;                            
@@ -4178,6 +4223,7 @@ Dialog:DIALOG_247(playerid, response, listitem, inputtext[]){
                 pInfo[playerid][pRopeAmount] += 1;
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have purchased a metre of rope!");
                 GivePlayerMoney(playerid, -30);
+                pInfo[playerid][pCash] -= 30;
                 for(new i = 0; i < loadedBus; i++){
                     if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX],bInfo[i][bUseY],bInfo[i][bUseZ])){
                         bInfo[i][bSalary] += 30;                            
@@ -4197,6 +4243,7 @@ Dialog:DIALOG_247(playerid, response, listitem, inputtext[]){
                     pInfo[playerid][pHasMask] = 1;
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have purchased a mask!");
                     GivePlayerMoney(playerid, -150);
+                    pInfo[playerid][pCash] -= 150;
                     for(new i = 0; i < loadedBus; i++){
                         if(IsPlayerInRangeOfPoint(playerid, 5, bInfo[i][bUseX],bInfo[i][bUseY],bInfo[i][bUseZ])){
                             bInfo[i][bSalary] += 150;                            
