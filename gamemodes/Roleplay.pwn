@@ -51,6 +51,7 @@ new policeCall[MAX_PLAYERS];
 
 new dumpPickup, jobPickup[MAX_JOBS];
 new busInfoPickup[50], busEntPickup[50], busExitPickup[50], busUsePickup[50];
+new houseInfoPickup[500], houseEntPickup[500];
 
 new PlayerText:VEHSTUFF[MAX_PLAYERS][5];
 
@@ -587,6 +588,7 @@ enum ENUM_HOUSE_DATA{
     hAddress,
     hType,
     hOwner[32],
+    hPrice,
     hLockedState,
     Float:hInfoX,
     Float:hInfoY,
@@ -662,6 +664,7 @@ public OnGameModeInit() {
 
     LoadJobData();
     LoadFacData();
+    LoadHouseData();
     LoadBusData();
     CreateBusStopObjects();
     LoadVehicleData();
@@ -1296,6 +1299,85 @@ public newBus() {
         }
 
         printf("** [MYSQL]:Reloaded %d businesss from the database.", cache_num_rows());
+    }
+    return 1;
+}
+forward public LoadNewHouseData(id);
+public LoadNewHouseData(id){
+    new DB_Query[900];
+
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `houses` WHERE `hId` = '%d'", id);
+    mysql_tquery(db_handle, DB_Query, "newHouse");
+}
+
+
+forward public newHouse();
+public newHouse() {
+    if(cache_num_rows() == 0) print("Not a valid house!");
+    else {
+        for (new i = 0; i < cache_num_rows(); i++) {
+            cache_get_value_int(i, "hId", hInfo[i][hId]);
+            cache_get_value(i, "hOwner", hInfo[i][hOwner], 32);
+            cache_get_value_int(i, "hAddress", hInfo[i][hAddress]);
+            cache_get_value_int(i, "hPrice", hInfo[i][hPrice]);
+            cache_get_value_int(i, "hType", hInfo[i][hType]);
+            cache_get_value_float(i, "hInfoX", hInfo[i][hInfoX]);
+            cache_get_value_float(i, "hInfoY", hInfo[i][hInfoY]);
+            cache_get_value_float(i, "hInfoZ", hInfo[i][hInfoZ]);
+            cache_get_value_float(i, "hEntX", hInfo[i][hEntX]);
+            cache_get_value_float(i, "hEntY", hInfo[i][hEntY]);
+            cache_get_value_float(i, "hEntZ", hInfo[i][hEntZ]);
+            if(!strcmp(hInfo[i][hOwner], "NULL", true)){
+                houseInfoPickup[i] = CreateDynamicPickup(1273, 1, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], -1);
+            }
+            if(strcmp(hInfo[i][hOwner], "NULL", true)){            
+                houseInfoPickup[i] = CreateDynamicPickup(1239, 1, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], -1);
+            }
+            houseEntPickup[i] = CreateDynamicPickup(1559, 1, hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ], -1);
+            loadedHouse++;
+        }
+
+        printf("** [MYSQL]:Loaded %d houses from the database.", cache_num_rows());
+    }
+    return 1;
+}
+
+forward public LoadHouseData();
+public LoadHouseData(){
+    new DB_Query[900];
+
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `houses`");
+    mysql_tquery(db_handle, DB_Query, "HousesReceived");
+}
+
+
+forward public HousesReceived();
+public HousesReceived() {
+    if(cache_num_rows() == 0) print("No houses created!");
+    else {
+        for (new i = 0; i < cache_num_rows(); i++) {
+            cache_get_value_int(i, "hId", hInfo[i][hId]);
+            cache_get_value(i, "hOwner", hInfo[i][hOwner], 32);
+            cache_get_value_int(i, "hAddress", hInfo[i][hAddress]);
+            cache_get_value_int(i, "hPrice", hInfo[i][hPrice]);
+            cache_get_value_int(i, "hType", hInfo[i][hType]);
+            cache_get_value_float(i, "hInfoX", hInfo[i][hInfoX]);
+            cache_get_value_float(i, "hInfoY", hInfo[i][hInfoY]);
+            cache_get_value_float(i, "hInfoZ", hInfo[i][hInfoZ]);
+            cache_get_value_float(i, "hEntX", hInfo[i][hEntX]);
+            cache_get_value_float(i, "hEntY", hInfo[i][hEntY]);
+            cache_get_value_float(i, "hEntZ", hInfo[i][hEntZ]);
+            if(!strcmp(hInfo[i][hOwner], "NULL", true)){
+                houseInfoPickup[i] = CreateDynamicPickup(1273, 1, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], -1);
+            }
+            if(strcmp(hInfo[i][hOwner], "NULL", true)){            
+                houseInfoPickup[i] = CreateDynamicPickup(1239, 1, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], -1);
+            }
+            houseEntPickup[i] = CreateDynamicPickup(1559, 1, hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ], -1);
+            loadedHouse++;
+        }
+
+        printf("** [MYSQL]:Loaded %d houses from the database.", cache_num_rows());
     }
     return 1;
 }
@@ -2025,6 +2107,31 @@ CMD:createrentalvehicle(playerid, params[]){
     return 1;
 }
 
+CMD:createhouse(playerid, params[]){
+    new address, type, price, Float:px, Float:py, Float:pz, query[900];
+    if(pInfo[playerid][pAdminLevel] >= 5){
+        if(sscanf(params, "ddd", address, type, price)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createhouse [hAddress] [hType] [hPrice]"); {
+            GetPlayerPos(playerid, px, py, pz);
+            mysql_format(db_handle, query, sizeof(query), "INSERT INTO `houses` (`hAddress`,`hType`,`hOwner`, `hPrice`, `hInfoX`,`hInfoY`,`hInfoZ`) VALUES ('%d', '%d', 'NULL', '%d','%f','%f','%f')", address,type, price, px, py, pz);
+            mysql_tquery(db_handle, query, "OnHouseCreated", "dddd", playerid, address, type, price);
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 1;
+}
+
+forward public OnHouseCreated(playerid, address, type, price);
+public OnHouseCreated(playerid, address, type, price){
+    new string[256];
+    format(string, sizeof(string), "[SERVER]:{FFFFFF} House: %d.street (%d) has been created for price: $%d!", address, cache_insert_id(), price);
+    SendClientMessage(playerid, SERVERCOLOR, string);{
+        LoadNewHouseData(cache_insert_id());
+    }
+    return 1;
+}
+
 CMD:createbus(playerid, params[]){
     new name[32], type, address,price, Float:infX, Float:infY, Float:infZ, query[900];
     if(pInfo[playerid][pAdminLevel] >= 5){
@@ -2140,7 +2247,7 @@ CMD:help(playerid, params[]) {
             if(pInfo[playerid][pAdminLevel] > 1) {
                 SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Admin Commands ::.");
                 if(pInfo[playerid][pAdminLevel] == 5){
-                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createbus, /setbusentr, /createrentalvehicle");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createbus, /setbusentr, /createrentalvehicle, /createhouse");
                 }
                 if(pInfo[playerid][pAdminLevel] == 6) {
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createjob, /makeleader");
@@ -2340,6 +2447,13 @@ CMD:properties(playerid, params[]){
             SendClientMessage(playerid, SERVERCOLOR, string);
         }
     }
+    for(new i = 0; i < loadedHouse; i++){
+        if(!strcmp(name, hInfo[i][hOwner])){
+            new string[256];
+            format(string, sizeof(string), "[BUSINESSES]: Address: %d.street ", hInfo[i][hAddress]);
+            SendClientMessage(playerid, SERVERCOLOR, string);
+        }
+    }
     return 1;
 }
 
@@ -2359,7 +2473,30 @@ CMD:buyproperty(playerid, params[]){
                         format(bInfo[i][bOwner], 32, name);
                         DestroyDynamicPickup(busInfoPickup[bInfo[i][bId]-1]);
                         busInfoPickup[bInfo[i][bId]-1] = CreateDynamicPickup(1239, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1);
-                        mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `businesses` SET `bOwner` = 'NULL' WHERE  `bId` = '%d'", bInfo[i][bId]);
+                        mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `businesses` SET `bOwner` = '%s' WHERE  `bId` = '%d'",name, bInfo[i][bId]);
+                        mysql_query(db_handle, DB_Query);
+                    } else {
+                        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You do not have enough cash to purchase this property!");
+                        return 1;
+                    }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This property is already owned!");
+                    return 1;
+                }
+            }
+        }
+        for(new i = 0; i < loadedHouse; i++){
+            if(hInfo[i][hAddress] == add){
+                if(!strcmp(hInfo[i][hOwner], "NULL", true)){
+                    if(GetPlayerMoney(playerid) >= hInfo[i][hPrice]){                        
+                        new string[256], DB_Query[900];
+                        format(string, sizeof(string), "> You have purchased %d.street for $%d!", hInfo[i][hAddress], hInfo[i][hPrice]);
+                        SendClientMessage(playerid, ADMINBLUE, string);
+                        GivePlayerMoney(playerid, -hInfo[i][hPrice]);
+                        format(hInfo[i][hOwner], 32, name);
+                        DestroyDynamicPickup(houseInfoPickup[hInfo[i][hId]-1]);
+                        houseInfoPickup[hInfo[i][hId]-1] = CreateDynamicPickup(1239, 1, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], -1);
+                        mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `houses` SET `hOwner` = '%s' WHERE  `hId` = '%d'",name, hInfo[i][hId]);
                         mysql_query(db_handle, DB_Query);
                     } else {
                         SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You do not have enough cash to purchase this property!");
@@ -2392,6 +2529,24 @@ CMD:sellproperty(playerid, params[]){
                     DestroyDynamicPickup(busInfoPickup[bInfo[i][bId]-1]);
                     busInfoPickup[bInfo[i][bId]-1] = CreateDynamicPickup(1273, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1);
                     mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `businesses` SET `bOwner` = 'NULL' WHERE  `bId` = '%d'", bInfo[i][bId]);
+                    mysql_query(db_handle, DB_Query);
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You do not own this property!");
+                    return 1;
+                }
+            }
+        }
+        for(new i = 0; i < loadedHouse; i++){
+            if(hInfo[i][hAddress] == add){
+                if(!strcmp(name, hInfo[i][hOwner])){                       
+                    new string[256], DB_Query[900];
+                    format(string, sizeof(string), "> You have sold %d.street for $%d!", hInfo[i][hAddress], hInfo[i][hPrice]);
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    GivePlayerMoney(playerid, hInfo[i][hPrice]);
+                    format(hInfo[i][hOwner], 32, "NULL");
+                    DestroyDynamicPickup(houseInfoPickup[hInfo[i][hId]-1]);
+                    houseInfoPickup[hInfo[i][hId]-1] = CreateDynamicPickup(1273, 1, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], -1);
+                    mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `houses` SET `hOwner` = 'NULL' WHERE  `hId` = '%d'", hInfo[i][hId]);
                     mysql_query(db_handle, DB_Query);
                 } else {
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You do not own this property!");
@@ -3393,6 +3548,42 @@ public OnPlayerPickUpDynamicPickup(playerid, pickupid) { // check if player pick
         }
         if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ])){ // display entrance stuff
             TextDrawShowForPlayer(playerid, accessDoor);
+            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
+        }
+    }
+    for(new i = 0; i < loadedHouse; i++){
+        if(IsPlayerInRangeOfPoint(playerid,3, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ])){
+            new houseAdd[32], houseOwner[32], houseType[32], housePrice[32];
+
+            format(houseAdd, sizeof(houseAdd), "%d.Street", hInfo[i][hAddress]);
+            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][0], houseAdd);
+
+            if(!strcmp(hInfo[i][hOwner], "NULL", true)){
+                format(houseOwner, sizeof(houseOwner), "For Sale");
+                PlayerTextDrawSetString(playerid, PlayerAddress[playerid][1], houseOwner);
+            }
+            if(strcmp(hInfo[i][hOwner], "NULL", true)){
+                format(houseOwner, sizeof(houseOwner), "Sold");
+                PlayerTextDrawSetString(playerid, PlayerAddress[playerid][1], houseOwner);
+            }
+            
+            format(houseType, sizeof(houseType), "House");
+            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][2], houseType);
+            
+            format(housePrice, sizeof(housePrice), "$%d", hInfo[i][hPrice]);
+            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][3], housePrice);
+
+            PlayerTextDrawShow(playerid, addressBox[playerid]);
+            PlayerTextDrawShow(playerid, addressString[playerid]);
+            PlayerTextDrawShow(playerid, addressStatus[playerid]);
+            PlayerTextDrawShow(playerid, addressType[playerid]);
+            PlayerTextDrawShow(playerid, addressPrice[playerid]);
+
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][0]);
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][1]);
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][2]);
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][3]);
+            
             SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
         }
     }
@@ -4905,7 +5096,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
         if(response){
             if(pInfo[playerid][pBank] < BUS_DEALERSHIP[listitem][VEHICLE_PRICE]){
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You cannot afford this vehicle!");
-                return ShowPlayerDialog(playerid, 9999, DIALOG_STYLE_PREVIEW_MODEL, "Car Dealership", string, "Purchase", "Decline");
+                return 1;
             }
 
             new query[900], num_plate[9];
