@@ -51,7 +51,7 @@ new policeCall[MAX_PLAYERS];
 
 new dumpPickup, jobPickup[MAX_JOBS];
 new busInfoPickup[50], busEntPickup[50], busExitPickup[50], busUsePickup[50];
-new houseInfoPickup[500], houseEntPickup[500];
+new houseInfoPickup[500], houseEntPickup[500], houseExitPickup[500];
 
 new PlayerText:VEHSTUFF[MAX_PLAYERS][5];
 
@@ -533,6 +533,8 @@ enum ENUM_PLAYER_DATA {
         pVehicleSlotsUsed,
         pVehicleSlots,
 
+        pPreferredSpawn,
+
         pAlertCall,
         pAlertMsg[64],
 
@@ -596,6 +598,9 @@ enum ENUM_HOUSE_DATA{
     Float:hEntX,
     Float:hEntY,
     Float:hEntZ,
+    Float:hExitX,
+    Float:hExitY,
+    Float:hExitZ
 };
 new hInfo[500][ENUM_HOUSE_DATA], loadedHouse;
 
@@ -1327,6 +1332,9 @@ public newHouse() {
             cache_get_value_float(i, "hEntX", hInfo[i][hEntX]);
             cache_get_value_float(i, "hEntY", hInfo[i][hEntY]);
             cache_get_value_float(i, "hEntZ", hInfo[i][hEntZ]);
+            cache_get_value_float(i, "hExitX", hInfo[i][hExitX]);
+            cache_get_value_float(i, "hExitY", hInfo[i][hExitY]);
+            cache_get_value_float(i, "hExitZ", hInfo[i][hExitZ]);
             if(!strcmp(hInfo[i][hOwner], "NULL", true)){
                 houseInfoPickup[i] = CreateDynamicPickup(1273, 1, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], -1);
             }
@@ -1334,6 +1342,7 @@ public newHouse() {
                 houseInfoPickup[i] = CreateDynamicPickup(1239, 1, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], -1);
             }
             houseEntPickup[i] = CreateDynamicPickup(1559, 1, hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ], -1);
+            houseExitPickup[i] = CreateDynamicPickup(1559, 1, hInfo[i][hExitX], hInfo[i][hExitY], hInfo[i][hExitZ], -1);
             loadedHouse++;
         }
 
@@ -1367,6 +1376,9 @@ public HousesReceived() {
             cache_get_value_float(i, "hEntX", hInfo[i][hEntX]);
             cache_get_value_float(i, "hEntY", hInfo[i][hEntY]);
             cache_get_value_float(i, "hEntZ", hInfo[i][hEntZ]);
+            cache_get_value_float(i, "hExitX", hInfo[i][hExitX]);
+            cache_get_value_float(i, "hExitY", hInfo[i][hExitY]);
+            cache_get_value_float(i, "hExitZ", hInfo[i][hExitZ]);
             if(!strcmp(hInfo[i][hOwner], "NULL", true)){
                 houseInfoPickup[i] = CreateDynamicPickup(1273, 1, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], -1);
             }
@@ -1374,6 +1386,7 @@ public HousesReceived() {
                 houseInfoPickup[i] = CreateDynamicPickup(1239, 1, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], -1);
             }
             houseEntPickup[i] = CreateDynamicPickup(1559, 1, hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ], -1);
+            houseExitPickup[i] = CreateDynamicPickup(1559, 1, hInfo[i][hExitX], hInfo[i][hExitY], hInfo[i][hExitZ], -1);
             loadedHouse++;
         }
 
@@ -1824,6 +1837,13 @@ public LoadMapIcons(playerid) {
             
         }
     }
+    for(new i = 0; i < loadedHouse; i++){
+        if(!strcmp(hInfo[i][hOwner], "NULL")){
+            SetPlayerMapIcon(playerid, hInfo[i][hId]+10, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], 31, 0, MAPICON_GLOBAL);
+        } else {
+            SetPlayerMapIcon(playerid, hInfo[i][hId]+10, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], 32, 0, MAPICON_GLOBAL);
+        }
+    }
     return 1;
 }
 
@@ -1954,6 +1974,9 @@ public SavePlayerData(playerid) {
     mysql_query(db_handle, query);
     
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pVehicleSlots` = '%d', `pVehicleSlotsUsed` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pVehicleSlots], pInfo[playerid][pVehicleSlotsUsed], GetName(playerid));
+    mysql_query(db_handle, query);
+
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pPreferredSpawn` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pPreferredSpawn], GetName(playerid));
     mysql_query(db_handle, query);
 
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAdminLevel` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pAdminLevel], GetName(playerid));
@@ -2457,6 +2480,26 @@ CMD:properties(playerid, params[]){
     return 1;
 }
 
+CMD:spawnpoint(playerid, params[]){
+    new add, name[32];
+    GetPlayerName(playerid, name, sizeof(name));
+    if(sscanf(params, "d", add)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /spawnpoint [Address]");{
+        for(new i = 0; i < loadedHouse; i++){
+            if(hInfo[i][hAddress] == add){
+                if(!strcmp(hInfo[i][hOwner], name)){
+                    new string[256];
+                    format(string, sizeof(string), "> You have set your spawn point to: %d.street!", hInfo[i][hAddress]);
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    pInfo[playerid][pPreferredSpawn] = add;
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You do not own this property!");
+                }
+            }
+        }
+    }
+    return 1;
+}
+
 CMD:buyproperty(playerid, params[]){
     new add;
     new name[32];
@@ -2494,6 +2537,7 @@ CMD:buyproperty(playerid, params[]){
                         SendClientMessage(playerid, ADMINBLUE, string);
                         GivePlayerMoney(playerid, -hInfo[i][hPrice]);
                         format(hInfo[i][hOwner], 32, name);
+                        pInfo[playerid][pPreferredSpawn] = add;
                         DestroyDynamicPickup(houseInfoPickup[hInfo[i][hId]-1]);
                         houseInfoPickup[hInfo[i][hId]-1] = CreateDynamicPickup(1239, 1, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], -1);
                         mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `houses` SET `hOwner` = '%s' WHERE  `hId` = '%d'",name, hInfo[i][hId]);
@@ -2544,6 +2588,7 @@ CMD:sellproperty(playerid, params[]){
                     SendClientMessage(playerid, ADMINBLUE, string);
                     GivePlayerMoney(playerid, hInfo[i][hPrice]);
                     format(hInfo[i][hOwner], 32, "NULL");
+                    pInfo[playerid][pPreferredSpawn] = 0;
                     DestroyDynamicPickup(houseInfoPickup[hInfo[i][hId]-1]);
                     houseInfoPickup[hInfo[i][hId]-1] = CreateDynamicPickup(1273, 1, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], -1);
                     mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `houses` SET `hOwner` = 'NULL' WHERE  `hId` = '%d'", hInfo[i][hId]);
@@ -4648,6 +4693,9 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pVehicleSlots", pInfo[playerid][pVehicleSlots]);
     cache_get_value_int(0, "pVehicleSlotsUsed", pInfo[playerid][pVehicleSlotsUsed]);
 
+    
+    cache_get_value_int(0, "pPreferredSpawn", pInfo[playerid][pPreferredSpawn]);
+
     cache_get_value_int(0, "pAdminLevel", pInfo[playerid][pAdminLevel]);
 
     pInfo[playerid][LoggedIn] = true;
@@ -4656,8 +4704,19 @@ public OnPlayerLoad(playerid) {
     SetPlayerHealth(playerid, pInfo[playerid][pHealth]);
     SetPlayerArmour(playerid, pInfo[playerid][pArmour]);
     GivePlayerMoney(playerid, pInfo[playerid][pCash]);
-    SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -204.5334, 1119.1626, 23.2031, 269.15, pInfo[playerid][pWeaponSlot1], pInfo[playerid][pWeaponSlot1Ammo], pInfo[playerid][pWeaponSlot2], pInfo[playerid][pWeaponSlot2Ammo], pInfo[playerid][pWeaponSlot3], pInfo[playerid][pWeaponSlot3Ammo]);
-    SpawnPlayer(playerid);
+    new name[32];
+    GetPlayerName(playerid, name, sizeof(name));
+    if(pInfo[playerid][pPreferredSpawn] != 0){
+        for(new i = 0; i < loadedHouse; i++){
+            if(hInfo[i][hAddress] == pInfo[playerid][pPreferredSpawn]){
+                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], 269.15, pInfo[playerid][pWeaponSlot1], pInfo[playerid][pWeaponSlot1Ammo], pInfo[playerid][pWeaponSlot2], pInfo[playerid][pWeaponSlot2Ammo], pInfo[playerid][pWeaponSlot3], pInfo[playerid][pWeaponSlot3Ammo]);
+                SpawnPlayer(playerid);
+            }
+        }
+    } else {
+        SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -204.5334, 1119.1626, 23.2031, 269.15, pInfo[playerid][pWeaponSlot1], pInfo[playerid][pWeaponSlot1Ammo], pInfo[playerid][pWeaponSlot2], pInfo[playerid][pWeaponSlot2Ammo], pInfo[playerid][pWeaponSlot3], pInfo[playerid][pWeaponSlot3Ammo]);
+        SpawnPlayer(playerid);
+    }
     return 1;
 }
 
