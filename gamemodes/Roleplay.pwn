@@ -2390,6 +2390,7 @@ CMD:help(playerid, params[]) {
                 SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Admin Commands ::.");
                 if(pInfo[playerid][pAdminLevel] == 5){
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createbus, /setbusentr, /createrentalvehicle, /createhouse");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /sethouseentr");
                 }
                 if(pInfo[playerid][pAdminLevel] == 6) {
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createjob, /makeleader");
