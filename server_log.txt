@@ -1,0 +1,9 @@
+[18:25:12] [debug] Server received interrupt signal
+[18:25:12] [debug] Native backtrace:
+[18:25:12] [debug] #0 7736ad7c in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[18:25:12] [debug] #1 751fa29f in ?? () in C:\WINDOWS\System32\KERNELBASE.dll
+[18:25:12] [debug] #2 0048d53c in ?? () in samp-server.exe
+[18:25:12] [debug] #3 0049b4a1 in ?? () in samp-server.exe
+[18:25:12] [debug] #4 0049b4b1 in ?? () in samp-server.exe
+[18:25:12] --- Server Shutting Down.
+[18:25:12] plugin.mysql: Unloading plugin...
