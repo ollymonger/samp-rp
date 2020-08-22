@@ -652,7 +652,7 @@ new drugInfo[15][ENUM_DRUG_PRICES], loadedDrug;
 public OnGameModeInit() {
     mysql_log(ALL);
     ManualVehicleEngineAndLights();
-    //DisableInteriorEnterExits();
+    DisableInteriorEnterExits();
     // Don't use these lines if it's a filterscript
     SetGameModeText("Roleplay | v1");
 
@@ -2135,9 +2135,25 @@ CMD:createhouse(playerid, params[]){
     new address, type, price, Float:px, Float:py, Float:pz, query[900];
     if(pInfo[playerid][pAdminLevel] >= 5){
         if(sscanf(params, "ddd", address, type, price)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createhouse [hAddress] [hType] [hPrice]"); {
-            GetPlayerPos(playerid, px, py, pz);
-            mysql_format(db_handle, query, sizeof(query), "INSERT INTO `houses` (`hAddress`,`hType`,`hOwner`, `hPrice`, `hInfoX`,`hInfoY`,`hInfoZ`) VALUES ('%d', '%d', 'NULL', '%d','%f','%f','%f')", address,type, price, px, py, pz);
-            mysql_tquery(db_handle, query, "OnHouseCreated", "dddd", playerid, address, type, price);
+            if(type != 5 && type != 2 && type != 1) {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} House types: 1(Sweets), 2(Ryders), 5 (Ganghouse)");
+                return 1;
+            }
+            if(type == 1){
+                GetPlayerPos(playerid, px, py, pz);
+                mysql_format(db_handle, query, sizeof(query), "INSERT INTO `houses` (`hAddress`,`hType`,`hOwner`, `hPrice`, `hInfoX`,`hInfoY`,`hInfoZ`, `hExitX`, `hExitY`,`hExitZ`) VALUES ('%d', '%d', 'NULL', '%d','%f','%f','%f', '2527.654052','-1679.388305','1015.498596')", address,type, price, px, py, pz);
+                mysql_tquery(db_handle, query, "OnHouseCreated", "dddd", playerid, address, type, price);
+            }
+            if(type == 2){
+                GetPlayerPos(playerid, px, py, pz);
+                mysql_format(db_handle, query, sizeof(query), "INSERT INTO `houses` (`hAddress`,`hType`,`hOwner`, `hPrice`, `hInfoX`,`hInfoY`,`hInfoZ`, `hExitX`, `hExitY`,`hExitZ`) VALUES ('%d', '%d', 'NULL', '%d','%f','%f','%f', '2454.717041','-1700.871582','1013.515197')", address,type, price, px, py, pz);
+                mysql_tquery(db_handle, query, "OnHouseCreated", "dddd", playerid, address, type, price);
+            }
+            if(type == 5){
+                GetPlayerPos(playerid, px, py, pz);
+                mysql_format(db_handle, query, sizeof(query), "INSERT INTO `houses` (`hAddress`,`hType`,`hOwner`, `hPrice`, `hInfoX`,`hInfoY`,`hInfoZ`, `hExitX`, `hExitY`,`hExitZ`) VALUES ('%d', '%d', 'NULL', '%d','%f','%f','%f', '2350.339843','-1181.649902','1027.976562')", address,type, price, px, py, pz);
+                mysql_tquery(db_handle, query, "OnHouseCreated", "dddd", playerid, address, type, price);
+            }
         }
     } else {
         TextDrawShowForPlayer(playerid, CantCommand);
@@ -2169,6 +2185,31 @@ CMD:createbus(playerid, params[]){
     } else {
         TextDrawShowForPlayer(playerid, CantCommand);
         SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 1;
+}
+
+CMD:sethouseentr(playerid, params[]){
+    new add, Float:px, Float:py, Float:pz, query[900];
+    if(pInfo[playerid][pAdminLevel] >= 5){
+        if(sscanf(params, "d", add)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /sethouseentr [address]"); {
+            GetPlayerPos(playerid, px,py,pz);
+
+            mysql_format(db_handle, query, sizeof(query), "UPDATE `houses` SET `hEntX` = '%f', `hEntY` = '%f', `hEntZ` = '%f' WHERE `hAddress` = '%d'", px,py,pz, add);
+            mysql_query(db_handle, query);
+
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have set this house's entrance point!");
+            for(new i = 0; i < loadedHouse; i++){
+                if(hInfo[i][hAddress] == add){
+                    hInfo[i][hEntX] = px;
+                    hInfo[i][hEntY] = py;
+                    hInfo[i][hEntZ] = pz;
+                    houseEntPickup[hInfo[i][hId]-1] = CreateDynamicPickup(1559, 1, hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ], -1);
+                    return 1;
+                }
+            }
+
+        }
     }
     return 1;
 }
@@ -3635,6 +3676,17 @@ public CheckHouse(playerid){
             
             return 1;
         }
+        
+        if(IsPlayerInRangeOfPoint(playerid, 3, hInfo[hi][hEntX], hInfo[hi][hEntY], hInfo[hi][hEntZ])){ // display entrance stuff
+            TextDrawShowForPlayer(playerid, accessDoor);
+            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
+            return 1;
+        }
+        if(IsPlayerInRangeOfPoint(playerid, 3, hInfo[hi][hEntX], hInfo[hi][hEntY], hInfo[hi][hEntZ])){ // display entrance stuff
+            TextDrawShowForPlayer(playerid, accessDoor);
+            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
+            return 1;
+        }
     }
     return 1;
 }
@@ -4156,6 +4208,34 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
                 SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
                 SetPlayerPos(playerid, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ]);
                 return 1;
+            }
+        }
+        for(new i = 0; i < loadedHouse; i++){
+            if(IsPlayerInRangeOfPoint(playerid, 3, hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ])){                
+                TogglePlayerControllable(playerid, false);
+                SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
+                if(hInfo[i][hLockedState] == 0){
+                    if(hInfo[i][hType] == 5 || hInfo[i][hType] == 2 || hInfo[i][hType] == 1){
+                        SetPlayerPos(playerid, hInfo[i][hExitX], hInfo[i][hExitY], hInfo[i][hExitZ]);
+                        SetPlayerInterior(playerid, hInfo[i][hType]);               
+                        SetPlayerVirtualWorld(playerid, hInfo[i][hId]);     
+                    }
+                    if(hInfo[i][hType] != 5 && hInfo[i][hType] != 2 && hInfo[i][hType] != 1){
+                        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: Contact administration, reason: House type not set.");
+                        //send to admins?
+                    }
+                }
+                return 1;
+            }
+            if(GetPlayerVirtualWorld(playerid) == hInfo[i][hId]){// if they are in that vw
+                if(IsPlayerInRangeOfPoint(playerid, 3, hInfo[i][hExitX], hInfo[i][hExitY], hInfo[i][hExitZ])){ // and in range of the exit definition                
+                    TogglePlayerControllable(playerid, false);
+                    SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
+                    SetPlayerPos(playerid, hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ]);
+                    SetPlayerInterior(playerid, 0); 
+                    SetPlayerVirtualWorld(playerid, 0);
+                    return 1;
+                }
             }
         }
     }
@@ -4756,7 +4836,9 @@ public OnPlayerLoad(playerid) {
     if(pInfo[playerid][pPreferredSpawn] != 0){
         for(new i = 0; i < loadedHouse; i++){
             if(hInfo[i][hAddress] == pInfo[playerid][pPreferredSpawn]){
-                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], 269.15, pInfo[playerid][pWeaponSlot1], pInfo[playerid][pWeaponSlot1Ammo], pInfo[playerid][pWeaponSlot2], pInfo[playerid][pWeaponSlot2Ammo], pInfo[playerid][pWeaponSlot3], pInfo[playerid][pWeaponSlot3Ammo]);
+                SetPlayerVirtualWorld(playerid, hInfo[i][hId]);
+                SetPlayerInterior(playerid, hInfo[i][hType]);
+                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], hInfo[i][hExitX], hInfo[i][hExitY], hInfo[i][hExitZ], 269.15, pInfo[playerid][pWeaponSlot1], pInfo[playerid][pWeaponSlot1Ammo], pInfo[playerid][pWeaponSlot2], pInfo[playerid][pWeaponSlot2Ammo], pInfo[playerid][pWeaponSlot3], pInfo[playerid][pWeaponSlot3Ammo]);
                 SpawnPlayer(playerid);
             }
         }

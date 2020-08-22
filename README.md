@@ -31,6 +31,9 @@ streamer plugin
     Ability to gain money from rental cars if the rental car has an assigned business. if none, it must be a job specific rental car, and players will not be able to earn business salary from it.
 * Car Dealership (type 5)
     Owner can gain money from players buying vehicles! 
+
+## House Types
+    5 - Ganghouse, exit point: 2350.339843,-1181.649902,1027.976562
 ## States
 * 0 VEHICLE_NOT_RENTABLE 0 (Vehcile is either already rented or not rentable in )
 * 1 VEHICLE_RENTABLE 1 (Vehicle is rentable, either a job rentcar or normal rentcar available for all players)
