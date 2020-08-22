@@ -1275,7 +1275,7 @@ public BusReceived() {
 forward public LoadNewBusData(id);
 public LoadNewBusData(id) {
     new DB_Query[900];
-    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `businesses` WHERE `fID` = '%d'", id);
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `businesses` WHERE `bID` = '%d'", id);
     mysql_tquery(db_handle, DB_Query, "newBus");
 }
 
@@ -1304,7 +1304,8 @@ public newBus() {
             cache_get_value_float(i, "bExitX", bInfo[i][bExitX]);
             cache_get_value_float(i, "bExitY", bInfo[i][bExitY]);
             cache_get_value_float(i, "bExitZ", bInfo[i][bExitZ]);
-            busInfoPickup[i] = CreateDynamicPickup(1239, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1);            loadedBus++;
+            busInfoPickup[i] = CreateDynamicPickup(1239, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1); 
+            loadedBus++;
         }
 
         printf("** [MYSQL]:Reloaded %d businesss from the database.", cache_num_rows());
@@ -2204,13 +2205,28 @@ public OnHouseCreated(playerid, address, type, price){
 }
 
 CMD:createbus(playerid, params[]){
-    new name[32], type, address,price, Float:infX, Float:infY, Float:infZ, query[900];
+    new name[32], type, address, intid, price, Float:infX, Float:infY, Float:infZ, query[900];
     if(pInfo[playerid][pAdminLevel] >= 5){
-        if(sscanf(params, "sddd", name, type, address, price)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createbus [bName] [bType] [bAddress] [bPrice]"); {
+        if(sscanf(params, "sdddd", name, type, address, price, intid)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createbus [bName] [bType] [bAddress] [bPrice] [bIntId (0, 16, 6)]"); {
             GetPlayerPos(playerid, infX, infY, infZ);
-
-            mysql_format(db_handle, query, sizeof(query), "INSERT INTO `businesses` (`bName`,`bType`,`bOwner`, `bAddress`, `bPrice`, `bInfoX`,`bInfoY`,`bInfoZ`) VALUES ('%s', '%d', 'NULL', '%d', '%d','%f','%f','%f')", name, type,address,price, infX, infY, infZ);
-            mysql_tquery(db_handle, query, "OnBusCreated", "dsddd", playerid, name, type, address, price);
+            if(intid == 0){ // no mapping, or mapping MUST be set.
+                mysql_format(db_handle, query, sizeof(query), "INSERT INTO `businesses` (`bName`,`bType`,`bOwner`, `bAddress`, `bPrice`, `bInfoX`,`bInfoY`,`bInfoZ`, `bIntId`) VALUES ('%s', '%d', 'NULL', '%d', '%d','%f','%f','%f', 0)", name, type,address,price, infX, infY, infZ);
+                mysql_tquery(db_handle, query, "OnBusCreated", "dsddd", playerid, name, type, address, price);
+            }
+            if(intid == 16){ // 24/7
+                mysql_format(db_handle, query, sizeof(query), "INSERT INTO `businesses` (`bName`,`bType`,`bOwner`, `bAddress`, `bPrice`, `bInfoX`,`bInfoY`,`bInfoZ`, `bIntId`, `bExitX`, `bExitY`, `bExitZ`) VALUES ('%s', '%d', 'NULL', '%d', '%d','%f','%f','%f', '%d', '-25.132598', '-139.066986', '1003.546875')", name, type,address,price, infX, infY, infZ, intid);
+                mysql_tquery(db_handle, query, "OnBusCreated", "dsddd", playerid, name, type, address, price);
+            }
+            if(intid == 6){ // ammunation OR hardware store!
+                if(type == 1){ // is a hardware store
+                    mysql_format(db_handle, query, sizeof(query), "INSERT INTO `businesses` (`bName`,`bType`,`bOwner`, `bAddress`, `bPrice`, `bInfoX`,`bInfoY`,`bInfoZ`, `bIntId`, `bExitX`, `bExitY`, `bExitZ`) VALUES ('%s', '%d', 'NULL', '%d', '%d','%f','%f','%f', '%d', '-2240.468505', '137.060440', '1035.414062')", name, type,address,price, infX, infY, infZ, intid);
+                    mysql_tquery(db_handle, query, "OnBusCreated", "dsddd", playerid, name, type, address, price);
+                }
+                if(type == 3){ // is ammunation type.
+                    mysql_format(db_handle, query, sizeof(query), "INSERT INTO `businesses` (`bName`,`bType`,`bOwner`, `bAddress`, `bPrice`, `bInfoX`,`bInfoY`,`bInfoZ`, `bIntId`, `bExitX`, `bExitY`, `bExitZ`) VALUES ('%s', '%d', 'NULL', '%d', '%d','%f','%f','%f', '%d', '296.919982', '-108.071998', '1001.515625')", name, type,address,price, infX, infY, infZ, intid);
+                    mysql_tquery(db_handle, query, "OnBusCreated", "dsddd", playerid, name, type, address, price);
+                }
+            }
 
         }
     } else {
@@ -2245,6 +2261,28 @@ CMD:sethouseentr(playerid, params[]){
     return 1;
 }
 
+CMD:setbususe(playerid, params[]){
+    new add, Float:px, Float:py, Float:pz, query[900];
+    if(pInfo[playerid][pAdminLevel] >= 5){
+        if(sscanf(params, "d", add)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /setbususe [bAddress]"); {
+            GetPlayerPos(playerid, px,py,pz);
+            
+            mysql_format(db_handle, query, sizeof(query),  "UPDATE `businesses` SET `bUseX` = '%f',`bUseY` = '%f',`bUseZ` = '%f' WHERE  `bId` = %d", px, py, pz, add);
+            mysql_query(db_handle, query);
+
+            for(new i = 0; i < loadedBus; i++){
+                if(bInfo[i][bAddress] == add){
+                    bInfo[i][bUseX] = px;
+                    bInfo[i][bUseY] = py;
+                    bInfo[i][bUseZ] = pz;
+                    busUsePickup[bInfo[i][bId] - 1] = CreateDynamicPickup(1239, 1, px, py, pz, -1);
+                }
+            }
+        }
+    }
+    return 1;
+}
+
 CMD:setbusentr(playerid, params[]){
     new id, Float:infX, Float:infY, Float:infZ, query[900];
     if(pInfo[playerid][pAdminLevel] >= 5){
@@ -2255,6 +2293,14 @@ CMD:setbusentr(playerid, params[]){
             mysql_query(db_handle, query);
 
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have set this business' entrance point");
+            for(new i = 0; i < loadedBus; i++){
+                if(bInfo[i][bId] == id){
+                    bInfo[i][bEntX] = infX;
+                    bInfo[i][bEntY] = infY;
+                    bInfo[i][bEntZ] = infZ;
+                    busUsePickup[bInfo[i][bId] - 1] = CreateDynamicPickup(1559, 1, infX, infY, infZ, -1);
+                }
+            }
             return 1;
         }
     } else {
@@ -4235,13 +4281,19 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
             if(IsPlayerInRangeOfPoint(playerid, 1.5, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ])){
                 TogglePlayerControllable(playerid, false);
                 SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
+                SetPlayerInterior(playerid, bInfo[i][bIntId]);               
+                SetPlayerVirtualWorld(playerid, bInfo[i][bId]);            
                 SetPlayerPos(playerid, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ]);
                 return 1;
             }
-            if(IsPlayerInRangeOfPoint(playerid, 1.5, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ])){
-                TogglePlayerControllable(playerid, false);
-                SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
-                SetPlayerPos(playerid, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ]);
+            if(GetPlayerVirtualWorld(playerid) == bInfo[i][bId]){
+                if(IsPlayerInRangeOfPoint(playerid, 1.5, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ])){
+                    TogglePlayerControllable(playerid, false);
+                    SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
+                    SetPlayerInterior(playerid, 0);               
+                    SetPlayerVirtualWorld(playerid, 0);            
+                    SetPlayerPos(playerid, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ]);
+                }
                 return 1;
             }
         }
