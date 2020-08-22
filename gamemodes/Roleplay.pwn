@@ -612,6 +612,7 @@ enum ENUM_BUS_DATA {
     bSalary,
     bOwner[32],
     bType,
+    bIntId,
     Float:bInfoX,
     Float:bInfoY,
     Float:bInfoZ,
@@ -1239,6 +1240,7 @@ public BusReceived() {
             cache_get_value_int(i, "bSalary", bInfo[i][bSalary]);
             cache_get_value(i, "bOwner", bInfo[i][bOwner], 32);
             cache_get_value_int(i, "bType", bInfo[i][bType]);
+            cache_get_value_int(i, "bIntId", bInfo[i][bIntId]);
             cache_get_value_float(i, "bInfoX", bInfo[i][bInfoX]);
             cache_get_value_float(i, "bInfoY", bInfo[i][bInfoY]);
             cache_get_value_float(i, "bInfoZ", bInfo[i][bInfoZ]);
@@ -1289,6 +1291,7 @@ public newBus() {
             cache_get_value_int(i, "bSalary", bInfo[i][bSalary]);
             cache_get_value(i, "bOwner", bInfo[i][bOwner], 32);
             cache_get_value_int(i, "bType", bInfo[i][bType]);
+            cache_get_value_int(i, "bIntId", bInfo[i][bIntId]);
             cache_get_value_float(i, "bInfoX", bInfo[i][bInfoX]);
             cache_get_value_float(i, "bInfoY", bInfo[i][bInfoY]);
             cache_get_value_float(i, "bInfoZ", bInfo[i][bInfoZ]);
@@ -2131,6 +2134,34 @@ CMD:createrentalvehicle(playerid, params[]){
     return 1;
 }
 
+CMD:lockhouse(playerid, params[]){
+    new name[32], string[256];
+    for(new i = 0; i < loadedHouse; i++){
+        if(IsPlayerInRangeOfPoint(playerid, 3, hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ])){
+            GetPlayerName(playerid, name, sizeof(name));
+            if(!strcmp(name, hInfo[i][hOwner])){
+                if(hInfo[i][hLockedState] == 0){
+                    hInfo[i][hLockedState] = 1;
+                    format(string, sizeof(string), "* %s takes their key from their pockets and locks the house door.", RPName(playerid));
+                    nearByAction(playerid, NICESKY, string);
+                    return 1;
+                }
+                if(hInfo[i][hLockedState] == 1){
+                    hInfo[i][hLockedState] = 0;
+                    format(string, sizeof(string), "* %s takes their key from their pockets and unlocks the house door.", RPName(playerid));
+                    nearByAction(playerid, NICESKY, string);
+                    return 1;
+                }
+            } else {
+                TextDrawShowForPlayer(playerid, CantCommand);
+                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+                return 1;
+            }
+        }
+    }
+    return 1;
+}
+
 CMD:createhouse(playerid, params[]){
     new address, type, price, Float:px, Float:py, Float:pz, query[900];
     if(pInfo[playerid][pAdminLevel] >= 5){
@@ -2320,8 +2351,12 @@ CMD:help(playerid, params[]) {
             }
         } else if(strcmp(Usage, "Business", true) == 0){
             SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Business Commands ::.");
-            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/collectsal");
-
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/collectsal, /properties, /sellproperty");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/buyproperty");
+        } else if(strcmp(Usage, "House", true) == 0){
+            SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Business Commands ::.");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/lockhouse, /properties, /sellproperty");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/buyproperty");
         }
     }
     return 1;
@@ -2508,14 +2543,14 @@ CMD:properties(playerid, params[]){
     for(new i = 0; i < loadedBus; i++){
         if(!strcmp(name, bInfo[i][bOwner])){
             new string[256];
-            format(string, sizeof(string), "[BUSINESSES]: Address: %d.street | Name: %s ", bInfo[i][bAddress], bInfo[i][bName]);
+            format(string, sizeof(string), "[BUSINESS]: Address: %d.street | Name: %s ", bInfo[i][bAddress], bInfo[i][bName]);
             SendClientMessage(playerid, SERVERCOLOR, string);
         }
     }
     for(new i = 0; i < loadedHouse; i++){
         if(!strcmp(name, hInfo[i][hOwner])){
             new string[256];
-            format(string, sizeof(string), "[BUSINESSES]: Address: %d.street ", hInfo[i][hAddress]);
+            format(string, sizeof(string), "[HOUSE]: Address: %d.street ", hInfo[i][hAddress]);
             SendClientMessage(playerid, SERVERCOLOR, string);
         }
     }
@@ -3131,7 +3166,7 @@ CMD:engine(playerid, params[]) {
                         return 1;
                     }
                 }
-                if(!strcmp(vInfo[i][vOwner], GetName(playerid), true)){
+                if(!strcmp(vInfo[i][vOwner], GetName(playerid))){
                     if(engine == 1) {
                         SetVehicleParamsEx(vid, false, lights, alarm, doors, bonnet, boot, objective);
                         format(string, sizeof(string), "* %s takes their key from the igntion and turns the engine off.", RPName(playerid));
@@ -4197,13 +4232,13 @@ public OnPlayerInteriorChange(playerid, newinteriorid, oldinteriorid) {
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
     if(newkeys & KEY_SPRINT){
         for(new i = 0; i < loadedBus; i++){
-            if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ])){
+            if(IsPlayerInRangeOfPoint(playerid, 1.5, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ])){
                 TogglePlayerControllable(playerid, false);
                 SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
                 SetPlayerPos(playerid, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ]);
                 return 1;
             }
-            if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ])){
+            if(IsPlayerInRangeOfPoint(playerid, 1.5, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ])){
                 TogglePlayerControllable(playerid, false);
                 SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
                 SetPlayerPos(playerid, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ]);
@@ -4211,19 +4246,22 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
             }
         }
         for(new i = 0; i < loadedHouse; i++){
-            if(IsPlayerInRangeOfPoint(playerid, 3, hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ])){                
-                TogglePlayerControllable(playerid, false);
-                SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
+            if(IsPlayerInRangeOfPoint(playerid, 1.5, hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ])){       
                 if(hInfo[i][hLockedState] == 0){
                     if(hInfo[i][hType] == 5 || hInfo[i][hType] == 2 || hInfo[i][hType] == 1){
                         SetPlayerPos(playerid, hInfo[i][hExitX], hInfo[i][hExitY], hInfo[i][hExitZ]);
                         SetPlayerInterior(playerid, hInfo[i][hType]);               
-                        SetPlayerVirtualWorld(playerid, hInfo[i][hId]);     
+                        SetPlayerVirtualWorld(playerid, hInfo[i][hId]);            
+                        TogglePlayerControllable(playerid, false);
+                        SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);  
                     }
                     if(hInfo[i][hType] != 5 && hInfo[i][hType] != 2 && hInfo[i][hType] != 1){
                         SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: Contact administration, reason: House type not set.");
                         //send to admins?
+                        return 1;
                     }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This house is locked, you cannot enter!");
                 }
                 return 1;
             }

@@ -21,6 +21,8 @@ streamer plugin
 * Fort Carson EMS (ID2)
 
 ## Businesses: (in this order)
+Businesses with an interior ID set the X Y Z of the exit. This way, we can use original SA mappings.
+If it is 0, then it will not assign an ID and allow the admin to create the entry in the DB as it must use other mappings.
 * Hardware store (TYPE 1) :
     Ability to buy phones, gps
 * General Store (TYPE 2)
