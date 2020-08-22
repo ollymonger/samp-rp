@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 20, 2020 at 03:58 AM
+-- Generation Time: Aug 22, 2020 at 07:25 PM
 -- Server version: 10.1.34-MariaDB
 -- PHP Version: 7.2.7
 
@@ -98,10 +98,11 @@ INSERT INTO `accounts` (`ID`, `pName`, `pPassword`, `pEmail`, `pAdminLevel`, `pL
 (19, 'testdialogc', '$2y$12$QDDrYibDbTblZ1jfPy60butWDkKhIn7fzb6/6qog6cXvLCTYvMbwC', 'example@example.com', 0, 0, 0, 'America', 100, 0, 1, 167, 27, 0, 50, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (20, 'quiztest1', '$2y$12$cSDOOkf3ThXATj.0XhDDXOd1SS1fz0i/dZ4iuAQYph2EOT1gCtRMu', '@', 0, 0, 0, 'Los Santos', 100, 0, 1, 23, 28, 0, 1000, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (21, 'testaccounts_1', '$2y$12$KjjyaDTEQBe1LTTDUUvGaOTqZsuFTWhrHHEa6fv0KiASgtEyJscGG', 'gmail@gmail.com', 0, 0, 0, 'Los Santos', 100, 0, 1, 72, 28, 0, 1000, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(22, 'testaccounts_2', '$2y$12$XFDYQjXvbjThLR/xKkjRTOarF5sW7jrTtLDUAQoj5KzHKM/NZ3rRa', 'olly@yllo.co.uk', 6, 3, 5, 'Los Santos', 90, 0, 1, 73, 28, 10533, 645400, 32, 1, 785622, 2, 1, 7, 'Chief of Police', 0, 4, 0, 7, 1, 20, 2, 1, 0, 0, 0, 1, 24, 0, 25, 12, 29, 0, 4, 1, 3111),
+(22, 'testaccounts_2', '$2y$12$XFDYQjXvbjThLR/xKkjRTOarF5sW7jrTtLDUAQoj5KzHKM/NZ3rRa', 'olly@yllo.co.uk', 6, 3, 5, 'Los Santos', 65, 0, 1, 73, 28, 10533, 543586, 1, 1, 125243, 2, 1, 7, 'Chief of Police', 0, 3, 300, 7, 1, 20, 2, 1, 0, 0, 0, 1, 24, 25, 0, 0, 0, 0, 4, 1, 3100),
 (23, 'testaccounts_3', '$2y$12$PEeuZSHTTVnjKDb2UEDWSunyPVyEv7lKRwTEZihlRmQmObQ2NP8n.', '@', 0, 1, 1, 'Los Santos', 100, 0, 1, 170, 28, 0, 1000, 60, 0, 0, 0, 0, 0, '', 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (24, 'testaccounts_6', '$2y$12$YzDJSCnlPVH/ShTMXyzwOOEfQvuVt/Ty88apHkAAldDO5rmIFSJvi', '@', 0, 1, 1, 'america', 95, 0, 1, 24, 28, 0, 800, 55, 0, 0, 0, 0, 0, '', 0, 1, 172, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(25, 'testaccount_12', '$2y$12$MUbIMBbtUDjFaTHrSS3sbeR/.2zeCYsrJAsxX95yyYweQUtXfsQRK', '@', 0, 1, 1, 'America', 100, 0, 1, 60, 28, 0, 1000, 59, 0, 0, 0, 0, 0, '', 0, 1, 50, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+(25, 'testaccount_12', '$2y$12$MUbIMBbtUDjFaTHrSS3sbeR/.2zeCYsrJAsxX95yyYweQUtXfsQRK', '@', 0, 1, 1, 'America', 100, 0, 1, 60, 28, 0, 1000, 59, 0, 0, 0, 0, 0, '', 0, 1, 50, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(26, 'Jason_McCabe', '$2y$12$ZRDAbEjmahLXQCPALUH1LerUXLKuk1kdrGFdoZEBOzIzuWANiZ3HS', 'olly@yllo.co.uk', 0, 1, 1, 'America', 90, 0, 1, 24, 27, 0, 72, 23, 0, 0, 0, 0, 0, '', 0, 0, 157, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -112,11 +113,12 @@ INSERT INTO `accounts` (`ID`, `pName`, `pPassword`, `pEmail`, `pAdminLevel`, `pL
 CREATE TABLE `businesses` (
   `bId` int(32) NOT NULL,
   `bName` varchar(32) NOT NULL,
-  `bAddress` int(11) NOT NULL,
-  `bPrice` int(11) NOT NULL,
-  `bSalary` int(11) NOT NULL,
+  `bAddress` int(255) NOT NULL,
+  `bPrice` int(255) NOT NULL,
+  `bSalary` int(255) NOT NULL,
   `bOwner` varchar(32) NOT NULL,
   `bType` int(11) NOT NULL,
+  `bIntId` int(11) NOT NULL,
   `bInfoX` float NOT NULL,
   `bInfoY` float NOT NULL,
   `bInfoZ` float NOT NULL,
@@ -135,12 +137,10 @@ CREATE TABLE `businesses` (
 -- Dumping data for table `businesses`
 --
 
-INSERT INTO `businesses` (`bId`, `bName`, `bAddress`, `bPrice`, `bSalary`, `bOwner`, `bType`, `bInfoX`, `bInfoY`, `bInfoZ`, `bEntX`, `bEntY`, `bEntZ`, `bUseX`, `bUseY`, `bUseZ`, `bExitX`, `bExitY`, `bExitZ`) VALUES
-(1, 'Hardware Store', 3001, 100000, 0, 'NULL', 1, -201.503, 1135.18, 19.7422, -204.388, 1137.52, 19.7422, -204.388, 1137.52, 19.7422, 0, 0, 0),
-(2, 'General Store', 3002, 75000, 0, 'NULL', 2, -184.569, 1167.04, 19.7422, -181.773, 1162.62, 19.75, -181.773, 1162.62, 19.75, 0, 0, 0),
-(3, 'Ammunation', 3003, 135000, 0, 'testaccounts_2', 3, -308.84, 826.746, 13.706, -315.808, 829.843, 14.2422, -315.808, 829.843, 14.2422, 296.904, -111.677, 1001.52),
-(4, 'Euro Car Rentals', 3004, 150000, 400, 'NULL', 4, -72.3235, 1156.45, 19.7422, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(5, 'Grotti\'s Autos', 3005, 750000, 0, 'NULL', 5, -151.409, 1206.33, 19.7422, 0, 0, 0, -147.37, 1216.02, 19.7422, 0, 0, 0);
+INSERT INTO `businesses` (`bId`, `bName`, `bAddress`, `bPrice`, `bSalary`, `bOwner`, `bType`, `bIntId`, `bInfoX`, `bInfoY`, `bInfoZ`, `bEntX`, `bEntY`, `bEntZ`, `bUseX`, `bUseY`, `bUseZ`, `bExitX`, `bExitY`, `bExitZ`) VALUES
+(6, 'Hardware-Store', 3001, 150000, 0, 'NULL', 1, 6, -184.885, 1165.57, 19.7422, -181.408, 1163.18, 19.75, 0, 0, 0, -2240.47, 137.06, 1035.41),
+(7, 'Ammunation', 3002, 200000, 0, 'NULL', 3, 6, -310.461, 824.495, 14.2422, -314.651, 830.114, 14.2422, 0, 0, 0, 296.92, -108.072, 1001.52),
+(8, '24/7-GENERAL', 3003, 75000, 14, 'NULL', 2, 16, -201.185, 1134.83, 19.7422, -204.132, 1137.61, 19.7422, 0, 0, 0, -25.1326, -139.067, 1003.55);
 
 -- --------------------------------------------------------
 
@@ -219,20 +219,9 @@ CREATE TABLE `houses` (
 --
 
 INSERT INTO `houses` (`hId`, `hAddress`, `hType`, `hOwner`, `hPrice`, `hLockedState`, `hInfoX`, `hInfoY`, `hInfoZ`, `hEntX`, `hEntY`, `hEntZ`, `hExitX`, `hExitY`, `hExitZ`) VALUES
-(1, 3100, 1, 'NULL', 90000, 0, -264.58, 1127.52, 19.8613, 0, 0, 0, 0, 0, 0),
-(2, 3101, 1, 'NULL', 92000, 0, -264.93, 1155.17, 19.7493, 0, 0, 0, 0, 0, 0),
-(3, 3102, 1, 'NULL', 95000, 0, -264.94, 1174.92, 19.7871, 0, 0, 0, 0, 0, 0),
-(4, 3103, 1, 'NULL', 92000, 0, -286.475, 1178.12, 19.8305, 0, 0, 0, 0, 0, 0),
-(5, 3104, 1, 'NULL', 92000, 0, -330.81, 1159.44, 19.8172, 0, 0, 0, 0, 0, 0),
-(6, 3105, 1, 'NULL', 125000, 0, -365.164, 1161.1, 19.7422, 0, 0, 0, 0, 0, 0),
-(7, 3106, 1, 'NULL', 125000, 0, -356.176, 1134.04, 19.8125, 0, 0, 0, 0, 0, 0),
-(8, 3107, 1, 'NULL', 110000, 0, -357.485, 1116.13, 19.8689, 0, 0, 0, 0, 0, 0),
-(9, 3108, 1, 'NULL', 105000, 0, -334.829, 1124.98, 19.7943, 0, 0, 0, 0, 0, 0),
-(10, 3109, 1, 'NULL', 115000, 0, -287.234, 1111.31, 19.8528, 0, 0, 0, 0, 0, 0),
-(11, 3110, 1, 'NULL', 135000, 0, -251.549, 1087.77, 19.8008, 0, 0, 0, 0, 0, 0),
-(12, 3111, 1, 'testaccounts_2', 127500, 0, -264.348, 1050.11, 19.8253, 0, 0, 0, 0, 0, 0),
-(13, 3112, 1, 'NULL', 130000, 0, -271.478, 1008.39, 19.7422, 0, 0, 0, 0, 0, 0),
-(14, 3113, 1, 'NULL', 132500, 0, -246.208, 1007.68, 19.7493, 0, 0, 0, 0, 0, 0);
+(15, 3100, 2, 'testaccounts_2', 100000, 0, -263.862, 1126.99, 19.9598, -261.214, 1120.77, 20.9399, 2454.72, -1700.87, 1013.52),
+(16, 3101, 1, 'NULL', 110000, 0, -251.492, 1087.28, 19.8786, -258.671, 1083.77, 20.9399, 2527.65, -1679.39, 1015.5),
+(17, 3102, 5, 'NULL', 105000, 0, -264.37, 1050.31, 19.8238, -259.196, 1043.74, 20.9399, 2350.34, -1181.65, 1027.98);
 
 -- --------------------------------------------------------
 
@@ -365,13 +354,13 @@ ALTER TABLE `vehicles`
 -- AUTO_INCREMENT for table `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `businesses`
 --
 ALTER TABLE `businesses`
-  MODIFY `bId` int(32) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `bId` int(32) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `drugprices`
@@ -389,7 +378,7 @@ ALTER TABLE `factions`
 -- AUTO_INCREMENT for table `houses`
 --
 ALTER TABLE `houses`
-  MODIFY `hId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `hId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `jobs`

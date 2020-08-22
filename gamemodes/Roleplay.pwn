@@ -612,6 +612,7 @@ enum ENUM_BUS_DATA {
     bSalary,
     bOwner[32],
     bType,
+    bIntId,
     Float:bInfoX,
     Float:bInfoY,
     Float:bInfoZ,
@@ -1239,6 +1240,7 @@ public BusReceived() {
             cache_get_value_int(i, "bSalary", bInfo[i][bSalary]);
             cache_get_value(i, "bOwner", bInfo[i][bOwner], 32);
             cache_get_value_int(i, "bType", bInfo[i][bType]);
+            cache_get_value_int(i, "bIntId", bInfo[i][bIntId]);
             cache_get_value_float(i, "bInfoX", bInfo[i][bInfoX]);
             cache_get_value_float(i, "bInfoY", bInfo[i][bInfoY]);
             cache_get_value_float(i, "bInfoZ", bInfo[i][bInfoZ]);
@@ -1273,7 +1275,7 @@ public BusReceived() {
 forward public LoadNewBusData(id);
 public LoadNewBusData(id) {
     new DB_Query[900];
-    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `businesses` WHERE `fID` = '%d'", id);
+    mysql_format(db_handle, DB_Query, sizeof(DB_Query), "SELECT * FROM `businesses` WHERE `bID` = '%d'", id);
     mysql_tquery(db_handle, DB_Query, "newBus");
 }
 
@@ -1289,6 +1291,7 @@ public newBus() {
             cache_get_value_int(i, "bSalary", bInfo[i][bSalary]);
             cache_get_value(i, "bOwner", bInfo[i][bOwner], 32);
             cache_get_value_int(i, "bType", bInfo[i][bType]);
+            cache_get_value_int(i, "bIntId", bInfo[i][bIntId]);
             cache_get_value_float(i, "bInfoX", bInfo[i][bInfoX]);
             cache_get_value_float(i, "bInfoY", bInfo[i][bInfoY]);
             cache_get_value_float(i, "bInfoZ", bInfo[i][bInfoZ]);
@@ -1301,7 +1304,8 @@ public newBus() {
             cache_get_value_float(i, "bExitX", bInfo[i][bExitX]);
             cache_get_value_float(i, "bExitY", bInfo[i][bExitY]);
             cache_get_value_float(i, "bExitZ", bInfo[i][bExitZ]);
-            busInfoPickup[i] = CreateDynamicPickup(1239, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1);            loadedBus++;
+            busInfoPickup[i] = CreateDynamicPickup(1239, 1, bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], -1); 
+            loadedBus++;
         }
 
         printf("** [MYSQL]:Reloaded %d businesss from the database.", cache_num_rows());
@@ -2131,6 +2135,34 @@ CMD:createrentalvehicle(playerid, params[]){
     return 1;
 }
 
+CMD:lockhouse(playerid, params[]){
+    new name[32], string[256];
+    for(new i = 0; i < loadedHouse; i++){
+        if(IsPlayerInRangeOfPoint(playerid, 3, hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ])){
+            GetPlayerName(playerid, name, sizeof(name));
+            if(!strcmp(name, hInfo[i][hOwner])){
+                if(hInfo[i][hLockedState] == 0){
+                    hInfo[i][hLockedState] = 1;
+                    format(string, sizeof(string), "* %s takes their key from their pockets and locks the house door.", RPName(playerid));
+                    nearByAction(playerid, NICESKY, string);
+                    return 1;
+                }
+                if(hInfo[i][hLockedState] == 1){
+                    hInfo[i][hLockedState] = 0;
+                    format(string, sizeof(string), "* %s takes their key from their pockets and unlocks the house door.", RPName(playerid));
+                    nearByAction(playerid, NICESKY, string);
+                    return 1;
+                }
+            } else {
+                TextDrawShowForPlayer(playerid, CantCommand);
+                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+                return 1;
+            }
+        }
+    }
+    return 1;
+}
+
 CMD:createhouse(playerid, params[]){
     new address, type, price, Float:px, Float:py, Float:pz, query[900];
     if(pInfo[playerid][pAdminLevel] >= 5){
@@ -2173,13 +2205,28 @@ public OnHouseCreated(playerid, address, type, price){
 }
 
 CMD:createbus(playerid, params[]){
-    new name[32], type, address,price, Float:infX, Float:infY, Float:infZ, query[900];
+    new name[32], type, address, intid, price, Float:infX, Float:infY, Float:infZ, query[900];
     if(pInfo[playerid][pAdminLevel] >= 5){
-        if(sscanf(params, "sddd", name, type, address, price)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createbus [bName] [bType] [bAddress] [bPrice]"); {
+        if(sscanf(params, "sdddd", name, type, address, price, intid)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createbus [bName] [bType] [bAddress] [bPrice] [bIntId (0, 16, 6)]"); {
             GetPlayerPos(playerid, infX, infY, infZ);
-
-            mysql_format(db_handle, query, sizeof(query), "INSERT INTO `businesses` (`bName`,`bType`,`bOwner`, `bAddress`, `bPrice`, `bInfoX`,`bInfoY`,`bInfoZ`) VALUES ('%s', '%d', 'NULL', '%d', '%d','%f','%f','%f')", name, type,address,price, infX, infY, infZ);
-            mysql_tquery(db_handle, query, "OnBusCreated", "dsddd", playerid, name, type, address, price);
+            if(intid == 0){ // no mapping, or mapping MUST be set.
+                mysql_format(db_handle, query, sizeof(query), "INSERT INTO `businesses` (`bName`,`bType`,`bOwner`, `bAddress`, `bPrice`, `bInfoX`,`bInfoY`,`bInfoZ`, `bIntId`) VALUES ('%s', '%d', 'NULL', '%d', '%d','%f','%f','%f', 0)", name, type,address,price, infX, infY, infZ);
+                mysql_tquery(db_handle, query, "OnBusCreated", "dsddd", playerid, name, type, address, price);
+            }
+            if(intid == 16){ // 24/7
+                mysql_format(db_handle, query, sizeof(query), "INSERT INTO `businesses` (`bName`,`bType`,`bOwner`, `bAddress`, `bPrice`, `bInfoX`,`bInfoY`,`bInfoZ`, `bIntId`, `bExitX`, `bExitY`, `bExitZ`) VALUES ('%s', '%d', 'NULL', '%d', '%d','%f','%f','%f', '%d', '-25.132598', '-139.066986', '1003.546875')", name, type,address,price, infX, infY, infZ, intid);
+                mysql_tquery(db_handle, query, "OnBusCreated", "dsddd", playerid, name, type, address, price);
+            }
+            if(intid == 6){ // ammunation OR hardware store!
+                if(type == 1){ // is a hardware store
+                    mysql_format(db_handle, query, sizeof(query), "INSERT INTO `businesses` (`bName`,`bType`,`bOwner`, `bAddress`, `bPrice`, `bInfoX`,`bInfoY`,`bInfoZ`, `bIntId`, `bExitX`, `bExitY`, `bExitZ`) VALUES ('%s', '%d', 'NULL', '%d', '%d','%f','%f','%f', '%d', '-2240.468505', '137.060440', '1035.414062')", name, type,address,price, infX, infY, infZ, intid);
+                    mysql_tquery(db_handle, query, "OnBusCreated", "dsddd", playerid, name, type, address, price);
+                }
+                if(type == 3){ // is ammunation type.
+                    mysql_format(db_handle, query, sizeof(query), "INSERT INTO `businesses` (`bName`,`bType`,`bOwner`, `bAddress`, `bPrice`, `bInfoX`,`bInfoY`,`bInfoZ`, `bIntId`, `bExitX`, `bExitY`, `bExitZ`) VALUES ('%s', '%d', 'NULL', '%d', '%d','%f','%f','%f', '%d', '296.919982', '-108.071998', '1001.515625')", name, type,address,price, infX, infY, infZ, intid);
+                    mysql_tquery(db_handle, query, "OnBusCreated", "dsddd", playerid, name, type, address, price);
+                }
+            }
 
         }
     } else {
@@ -2214,6 +2261,28 @@ CMD:sethouseentr(playerid, params[]){
     return 1;
 }
 
+CMD:setbususe(playerid, params[]){
+    new add, Float:px, Float:py, Float:pz, query[900];
+    if(pInfo[playerid][pAdminLevel] >= 5){
+        if(sscanf(params, "d", add)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /setbususe [bAddress]"); {
+            GetPlayerPos(playerid, px,py,pz);
+            
+            mysql_format(db_handle, query, sizeof(query),  "UPDATE `businesses` SET `bUseX` = '%f',`bUseY` = '%f',`bUseZ` = '%f' WHERE  `bId` = %d", px, py, pz, add);
+            mysql_query(db_handle, query);
+
+            for(new i = 0; i < loadedBus; i++){
+                if(bInfo[i][bAddress] == add){
+                    bInfo[i][bUseX] = px;
+                    bInfo[i][bUseY] = py;
+                    bInfo[i][bUseZ] = pz;
+                    busUsePickup[bInfo[i][bId] - 1] = CreateDynamicPickup(1239, 1, px, py, pz, -1);
+                }
+            }
+        }
+    }
+    return 1;
+}
+
 CMD:setbusentr(playerid, params[]){
     new id, Float:infX, Float:infY, Float:infZ, query[900];
     if(pInfo[playerid][pAdminLevel] >= 5){
@@ -2224,6 +2293,14 @@ CMD:setbusentr(playerid, params[]){
             mysql_query(db_handle, query);
 
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have set this business' entrance point");
+            for(new i = 0; i < loadedBus; i++){
+                if(bInfo[i][bId] == id){
+                    bInfo[i][bEntX] = infX;
+                    bInfo[i][bEntY] = infY;
+                    bInfo[i][bEntZ] = infZ;
+                    busUsePickup[bInfo[i][bId] - 1] = CreateDynamicPickup(1559, 1, infX, infY, infZ, -1);
+                }
+            }
             return 1;
         }
     } else {
@@ -2320,8 +2397,12 @@ CMD:help(playerid, params[]) {
             }
         } else if(strcmp(Usage, "Business", true) == 0){
             SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Business Commands ::.");
-            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/collectsal");
-
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/collectsal, /properties, /sellproperty");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/buyproperty");
+        } else if(strcmp(Usage, "House", true) == 0){
+            SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Business Commands ::.");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/lockhouse, /properties, /sellproperty");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/buyproperty");
         }
     }
     return 1;
@@ -2508,14 +2589,14 @@ CMD:properties(playerid, params[]){
     for(new i = 0; i < loadedBus; i++){
         if(!strcmp(name, bInfo[i][bOwner])){
             new string[256];
-            format(string, sizeof(string), "[BUSINESSES]: Address: %d.street | Name: %s ", bInfo[i][bAddress], bInfo[i][bName]);
+            format(string, sizeof(string), "[BUSINESS]: Address: %d.street | Name: %s ", bInfo[i][bAddress], bInfo[i][bName]);
             SendClientMessage(playerid, SERVERCOLOR, string);
         }
     }
     for(new i = 0; i < loadedHouse; i++){
         if(!strcmp(name, hInfo[i][hOwner])){
             new string[256];
-            format(string, sizeof(string), "[BUSINESSES]: Address: %d.street ", hInfo[i][hAddress]);
+            format(string, sizeof(string), "[HOUSE]: Address: %d.street ", hInfo[i][hAddress]);
             SendClientMessage(playerid, SERVERCOLOR, string);
         }
     }
@@ -3131,7 +3212,7 @@ CMD:engine(playerid, params[]) {
                         return 1;
                     }
                 }
-                if(!strcmp(vInfo[i][vOwner], GetName(playerid), true)){
+                if(!strcmp(vInfo[i][vOwner], GetName(playerid))){
                     if(engine == 1) {
                         SetVehicleParamsEx(vid, false, lights, alarm, doors, bonnet, boot, objective);
                         format(string, sizeof(string), "* %s takes their key from the igntion and turns the engine off.", RPName(playerid));
@@ -4197,33 +4278,42 @@ public OnPlayerInteriorChange(playerid, newinteriorid, oldinteriorid) {
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
     if(newkeys & KEY_SPRINT){
         for(new i = 0; i < loadedBus; i++){
-            if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ])){
+            if(IsPlayerInRangeOfPoint(playerid, 1.5, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ])){
                 TogglePlayerControllable(playerid, false);
                 SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
+                SetPlayerInterior(playerid, bInfo[i][bIntId]);               
+                SetPlayerVirtualWorld(playerid, bInfo[i][bId]);            
                 SetPlayerPos(playerid, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ]);
                 return 1;
             }
-            if(IsPlayerInRangeOfPoint(playerid, 3, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ])){
-                TogglePlayerControllable(playerid, false);
-                SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
-                SetPlayerPos(playerid, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ]);
+            if(GetPlayerVirtualWorld(playerid) == bInfo[i][bId]){
+                if(IsPlayerInRangeOfPoint(playerid, 1.5, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ])){
+                    TogglePlayerControllable(playerid, false);
+                    SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
+                    SetPlayerInterior(playerid, 0);               
+                    SetPlayerVirtualWorld(playerid, 0);            
+                    SetPlayerPos(playerid, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ]);
+                }
                 return 1;
             }
         }
         for(new i = 0; i < loadedHouse; i++){
-            if(IsPlayerInRangeOfPoint(playerid, 3, hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ])){                
-                TogglePlayerControllable(playerid, false);
-                SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
+            if(IsPlayerInRangeOfPoint(playerid, 1.5, hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ])){       
                 if(hInfo[i][hLockedState] == 0){
                     if(hInfo[i][hType] == 5 || hInfo[i][hType] == 2 || hInfo[i][hType] == 1){
                         SetPlayerPos(playerid, hInfo[i][hExitX], hInfo[i][hExitY], hInfo[i][hExitZ]);
                         SetPlayerInterior(playerid, hInfo[i][hType]);               
-                        SetPlayerVirtualWorld(playerid, hInfo[i][hId]);     
+                        SetPlayerVirtualWorld(playerid, hInfo[i][hId]);            
+                        TogglePlayerControllable(playerid, false);
+                        SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);  
                     }
                     if(hInfo[i][hType] != 5 && hInfo[i][hType] != 2 && hInfo[i][hType] != 1){
                         SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: Contact administration, reason: House type not set.");
                         //send to admins?
+                        return 1;
                     }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This house is locked, you cannot enter!");
                 }
                 return 1;
             }
