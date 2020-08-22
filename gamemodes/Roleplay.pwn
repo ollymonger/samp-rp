@@ -50,8 +50,10 @@ new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS], drugDealTimer[MAX_PLAYERS]
 new policeCall[MAX_PLAYERS];
 
 new dumpPickup, jobPickup[MAX_JOBS];
-new busInfoPickup[500], busEntPickup[500], busExitPickup[500], busUsePickup[500];
-new houseInfoPickup[500], houseEntPickup[500], houseExitPickup[500];
+new busInfoPickup[100], busEntPickup[100], busExitPickup[100], busUsePickup[100];
+new houseInfoPickup[100], houseEntPickup[100], houseExitPickup[100];
+new facInfoPickup[100], facDutyPickup[100], facClothesPickup[100];
+new facEntPickup[100], facExitPickup[100];
 
 new PlayerText:VEHSTUFF[MAX_PLAYERS][5];
 
@@ -631,7 +633,10 @@ new bInfo[500][ENUM_BUS_DATA], loadedBus;
 enum ENUM_FAC_DATA {
     fID[32],
         fName[32],
+        fAddress,
+        fLeader[32],
         fType, // 1 = gang 2 = legal
+        fPrice,
         fRank1Name[32],
         fRank2Name[32],
         fRank3Name[32],
@@ -639,6 +644,21 @@ enum ENUM_FAC_DATA {
         fRank5Name[32],
         fRank6Name[32],
         fRank7Name[32],
+        Float:fInfoX,
+        Float:fInfoY,
+        Float:fInfoZ,
+        Float:fDutyX,
+        Float:fDutyY,
+        Float:fDutyZ,
+        Float:fClothesX,
+        Float:fClothesY,
+        Float:fClothesZ,
+        Float:fEntX,
+        Float:fEntY,
+        Float:fEntZ,
+        Float:fExitX,
+        Float:fExitY,
+        Float:fExitZ
 }
 new fInfo[MAX_FACTIONS][ENUM_FAC_DATA], loadedFac;
 
@@ -1423,6 +1443,10 @@ public newFac() {
         for (new i = 0; i < cache_num_rows(); i++) {
             cache_get_value_int(i, "fID", fInfo[i][fID]);
             cache_get_value(i, "fName", fInfo[i][fName], 32);
+            cache_get_value_int(i, "fAddress", fInfo[i][fAddress]);
+            cache_get_value(i, "fLeader", fInfo[i][fLeader], 32);
+            cache_get_value_int(i, "fType", fInfo[i][fType]);
+            cache_get_value_int(i, "fPrice", fInfo[i][fPrice]);
             cache_get_value(i, "fRank1Name", fInfo[i][fRank1Name], 32);
             cache_get_value(i, "fRank2Name", fInfo[i][fRank2Name], 32);
             cache_get_value(i, "fRank3Name", fInfo[i][fRank3Name], 32);
@@ -1430,6 +1454,31 @@ public newFac() {
             cache_get_value(i, "fRank5Name", fInfo[i][fRank5Name], 32);
             cache_get_value(i, "fRank6Name", fInfo[i][fRank6Name], 32);
             cache_get_value(i, "fRank7Name", fInfo[i][fRank7Name], 32);
+            cache_get_value_float(i, "fInfoX", fInfo[i][fInfoX]);
+            cache_get_value_float(i, "fInfoY", fInfo[i][fInfoY]);
+            cache_get_value_float(i, "fInfoZ", fInfo[i][fInfoZ]);
+            cache_get_value_float(i, "fDutyX", fInfo[i][fDutyX]);
+            cache_get_value_float(i, "fDutyY", fInfo[i][fDutyY]);
+            cache_get_value_float(i, "fDutyZ", fInfo[i][fDutyZ]);
+            cache_get_value_float(i, "fClothesX", fInfo[i][fClothesX]);
+            cache_get_value_float(i, "fClothesY", fInfo[i][fClothesY]);
+            cache_get_value_float(i, "fClothesZ", fInfo[i][fClothesZ]);
+            cache_get_value_float(i, "fEntX", fInfo[i][fEntX]);
+            cache_get_value_float(i, "fEntY", fInfo[i][fEntY]);
+            cache_get_value_float(i, "fEntZ", fInfo[i][fEntZ]);
+            cache_get_value_float(i, "fExitX", fInfo[i][fExitX]);
+            cache_get_value_float(i, "fExitY", fInfo[i][fExitY]);
+            cache_get_value_float(i, "fExitZ", fInfo[i][fExitZ]);
+
+            if(!strcmp(fInfo[i][fLeader], "NULL", true)){
+                facInfoPickup[i] = CreateDynamicPickup(1273, 1, fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ], -1);
+            }
+            if(strcmp(fInfo[i][fLeader], "NULL", true)){            
+                facInfoPickup[i] = CreateDynamicPickup(1239, 1, fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ], -1);
+            }
+            facEntPickup[i] = CreateDynamicPickup(1559, 1, fInfo[i][fEntX], fInfo[i][fEntY], fInfo[i][fEntZ], -1);
+            facExitPickup[i] = CreateDynamicPickup(1559, 1, fInfo[i][fExitX], fInfo[i][fExitY], fInfo[i][fExitZ], -1);
+
             loadedFac++;
         }
     }
@@ -1443,6 +1492,10 @@ public FacsReceived() {
         for (new i = 0; i < cache_num_rows(); i++) {
             cache_get_value_int(i, "fID", fInfo[i][fID]);
             cache_get_value(i, "fName", fInfo[i][fName], 32);
+            cache_get_value_int(i, "fAddress", fInfo[i][fAddress]);
+            cache_get_value(i, "fLeader", fInfo[i][fLeader], 32);
+            cache_get_value_int(i, "fType", fInfo[i][fType]);
+            cache_get_value_int(i, "fPrice", fInfo[i][fPrice]);
             cache_get_value(i, "fRank1Name", fInfo[i][fRank1Name], 32);
             cache_get_value(i, "fRank2Name", fInfo[i][fRank2Name], 32);
             cache_get_value(i, "fRank3Name", fInfo[i][fRank3Name], 32);
@@ -1450,6 +1503,32 @@ public FacsReceived() {
             cache_get_value(i, "fRank5Name", fInfo[i][fRank5Name], 32);
             cache_get_value(i, "fRank6Name", fInfo[i][fRank6Name], 32);
             cache_get_value(i, "fRank7Name", fInfo[i][fRank7Name], 32);
+            cache_get_value_float(i, "fInfoX", fInfo[i][fInfoX]);
+            cache_get_value_float(i, "fInfoY", fInfo[i][fInfoY]);
+            cache_get_value_float(i, "fInfoZ", fInfo[i][fInfoZ]);
+            cache_get_value_float(i, "fDutyX", fInfo[i][fDutyX]);
+            cache_get_value_float(i, "fDutyY", fInfo[i][fDutyY]);
+            cache_get_value_float(i, "fDutyZ", fInfo[i][fDutyZ]);
+            cache_get_value_float(i, "fClothesX", fInfo[i][fClothesX]);
+            cache_get_value_float(i, "fClothesY", fInfo[i][fClothesY]);
+            cache_get_value_float(i, "fClothesZ", fInfo[i][fClothesZ]);
+            cache_get_value_float(i, "fEntX", fInfo[i][fEntX]);
+            cache_get_value_float(i, "fEntY", fInfo[i][fEntY]);
+            cache_get_value_float(i, "fEntZ", fInfo[i][fEntZ]);
+            cache_get_value_float(i, "fExitX", fInfo[i][fExitX]);
+            cache_get_value_float(i, "fExitY", fInfo[i][fExitY]);
+            cache_get_value_float(i, "fExitZ", fInfo[i][fExitZ]);
+
+            if(!strcmp(fInfo[i][fLeader], "NULL", true)){
+                facInfoPickup[i] = CreateDynamicPickup(1273, 1, fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ], -1);
+            }
+            if(strcmp(fInfo[i][fLeader], "NULL", true)){            
+                facInfoPickup[i] = CreateDynamicPickup(1239, 1, fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ], -1);
+            }
+            facEntPickup[i] = CreateDynamicPickup(1559, 1, fInfo[i][fEntX], fInfo[i][fEntY], fInfo[i][fEntZ], -1);
+            facExitPickup[i] = CreateDynamicPickup(1559, 1, fInfo[i][fExitX], fInfo[i][fExitY], fInfo[i][fExitZ], -1);
+            facClothesPickup[i] = CreateDynamicPickup(1275, 1, fInfo[i][fClothesX], fInfo[i][fClothesY], fInfo[i][fClothesZ], -1);
+            facDutyPickup[i] = CreateDynamicPickup(1239, 1, fInfo[i][fDutyX], fInfo[i][fDutyY], fInfo[i][fDutyZ], -1);
             loadedFac++;
         }
 
@@ -2203,6 +2282,91 @@ public OnHouseCreated(playerid, address, type, price){
     }
     return 1;
 }
+
+CMD:createfac(playerid, params[]) {
+    new name[32], type, address, price, Float:px, Float:py, Float:pz, query[900];
+    if(pInfo[playerid][pAdminLevel] >= 5){
+        if(sscanf(params, "sddd", name, type, address, price)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createfac [fName] [fType 1/2] [fAddress] [fPrice]");{
+            GetPlayerPos(playerid, px, py, pz);
+            mysql_format(db_handle, query, sizeof(query), "INSERT INTO `factions` (`fName`, `fType`, `fOwner`, `fAddress`, `fPrice`, `fInfoX`, `fInfoY`, `fInfoZ`) VALUES ('%s', '%d', 'NULL', '%d', '%d', '%f', '%f', '%f')", name, type, address, price, px, py, pz);
+            mysql_tquery(db_handle, query, "OnFacCreated", "dsddd", playerid, name, type, address, price);
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }    
+    return 1;
+}
+
+CMD:setfacentr(playerid, params[]){
+    new add, Float:px, Float:py, Float:pz, query[900];
+    if(pInfo[playerid][pAdminLevel] >= 5){
+        if(sscanf(params, "d",add)) return SendClientMessage(playerid, SERVERCOLOR,  "[SERVER]:{FFFFFF} /setfacentr [fAddress]"); {
+            GetPlayerPos(playerid, px, py, pz);
+
+            mysql_format(db_handle, query, sizeof(query),  "UPDATE `factions` SET `fEntX` = '%f',`fEntY` = '%f',`fEntZ` = '%f' WHERE  `fAddress` = %d", px, py, pz, add);
+            mysql_query(db_handle, query);
+
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have set this faction's entrance point");
+            for(new i = 0; i < loadedFac; i++){
+                if(fInfo[i][fAddress] == add){
+                    fInfo[i][fEntX] = px;
+                    fInfo[i][fEntY] = py;
+                    fInfo[i][fEntZ] = pz;
+                    facEntPickup[fInfo[i][fID] - 1] = CreateDynamicPickup(1559, 1, px, py, pz, -1);
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:setfacduty(playerid, params[]){
+    new add, Float:px, Float:py, Float:pz, query[900];
+    if(pInfo[playerid][pAdminLevel] >= 5){
+        if(sscanf(params, "d",add)) return SendClientMessage(playerid, SERVERCOLOR,  "[SERVER]:{FFFFFF} /setfacduty [fAddress]"); {
+            GetPlayerPos(playerid, px, py, pz);
+
+            mysql_format(db_handle, query, sizeof(query),  "UPDATE `factions` SET `fDutyX` = '%f',`fDutyY` = '%f',`fDutyZ` = '%f' WHERE  `fAddress` = %d", px, py, pz, add);
+            mysql_query(db_handle, query);
+
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have set this faction's duty point");
+            for(new i = 0; i < loadedFac; i++){
+                if(fInfo[i][fAddress] == add){
+                    fInfo[i][fDutyX] = px;
+                    fInfo[i][fDutyY] = py;
+                    fInfo[i][fDutyZ] = pz;
+                    facDutyPickup[fInfo[i][fID] - 1] = CreateDynamicPickup(1239, 1, px, py, pz, -1);
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:setfacclothes(playerid, params[]){
+    new add, Float:px, Float:py, Float:pz, query[900];
+    if(pInfo[playerid][pAdminLevel] >= 5){
+        if(sscanf(params, "d",add)) return SendClientMessage(playerid, SERVERCOLOR,  "[SERVER]:{FFFFFF} /setfacclothes [fAddress]"); {
+            GetPlayerPos(playerid, px, py, pz);
+
+            mysql_format(db_handle, query, sizeof(query),  "UPDATE `factions` SET `fClothesX` = '%f',`fClothesY` = '%f',`fClothesZ` = '%f' WHERE  `fAddress` = %d", px, py, pz, add);
+            mysql_query(db_handle, query);
+
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have set this faction's clothes point");
+            for(new i = 0; i < loadedFac; i++){
+                if(fInfo[i][fAddress] == add){
+                    fInfo[i][fClothesX] = px;
+                    fInfo[i][fClothesY] = py;
+                    fInfo[i][fClothesZ] = pz;
+                    facEntPickup[fInfo[i][fID] - 1] = CreateDynamicPickup(1559, 1, px, py, pz, -1);
+                }
+            }
+        }
+    }
+    return 1;
+}
+
 
 CMD:createbus(playerid, params[]){
     new name[32], type, address, intid, price, Float:infX, Float:infY, Float:infZ, query[900];
@@ -2986,6 +3150,15 @@ public OnRentalVehCreated(playerid, vid, busid, price){
     }
 }
 
+forward public OnFacCreated(playerid, facName[32], type, address, price);
+public OnFacCreated(playerid, facName[32], type, address, price){
+    new string[256];
+    format(string, sizeof(string), "[SERVER]:{FFFFFF} Fac %s(%d TYPE %d ADDRESS %d.Street PRICE $%d) has beenb created!", facName, cache_insert_id(), type, address, price);
+    SendClientMessage(playerid, -1, string); {
+        LoadNewFacData(cache_insert_id());
+    }
+}
+
 forward public OnBusCreated(playerid, busName[32], type, address, price);
 public OnBusCreated(playerid, busName[32], type, address, price){
     new string[256];
@@ -3659,6 +3832,54 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
     }
     return 1;
 }
+
+forward public CheckFaction(playerid);
+public CheckFaction(playerid){
+    for(new i = 0; i < loadedFac; i++){
+        if(IsPlayerInRangeOfPoint(playerid, 3, fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ])){
+            new facname[32], facadd[32], facleader[32], factype[32], facprice[32];
+
+            format(facname, sizeof(facname), "%s", fInfo[i][fName]);
+            PlayerTextDrawSetString(playerid, addressNameString[playerid], facname);
+
+            format(facadd, sizeof(facadd), "%d.Street", fInfo[i][fAddress]);
+            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][0], facadd);
+
+            if(!strcmp(fInfo[i][fLeader], "NULL", true)){
+                format(facleader, sizeof(facleader), "For Sale");
+                PlayerTextDrawSetString(playerid, PlayerAddress[playerid][1], facleader);
+            }
+            if(strcmp(fInfo[i][fLeader], "NULL", true)){
+                format(facleader, sizeof(facleader), "Sold");
+                PlayerTextDrawSetString(playerid, PlayerAddress[playerid][1], facleader);
+            }
+            
+            format(factype, sizeof(factype), "Faction");
+            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][2], factype);
+                
+            format(facprice, sizeof(facprice), "$%d", fInfo[i][fPrice]);
+            PlayerTextDrawSetString(playerid, PlayerAddress[playerid][3], facprice);
+            
+            PlayerTextDrawShow(playerid, businessBox[playerid]);
+            PlayerTextDrawShow(playerid, addressName[playerid]);
+            PlayerTextDrawShow(playerid, addressString[playerid]);
+            PlayerTextDrawShow(playerid, addressStatus[playerid]);
+            PlayerTextDrawShow(playerid, addressType[playerid]);
+            PlayerTextDrawShow(playerid, addressPrice[playerid]);
+
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][0]);
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][1]);
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][2]);
+            PlayerTextDrawShow(playerid, PlayerAddress[playerid][3]);
+            PlayerTextDrawShow(playerid, addressNameString[playerid]);
+                
+            SetTimerEx("RemoveTextdrawAfterTime", 4000, false, "d", playerid);
+            return 1;
+        }
+    }
+    return 1;
+}
+
 forward public CheckBusiness(playerid);
 public CheckBusiness(playerid){
     for(new i = 0; i < loadedBus; i++){
@@ -3792,6 +4013,7 @@ public OnPlayerPickUpDynamicPickup(playerid, pickupid) { // check if player pick
     } else { 
         CheckBusiness(playerid);
         CheckHouse(playerid);
+        CheckFaction(playerid);
     }
     return 1;
 }
