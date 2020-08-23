@@ -7,6 +7,7 @@ Nickk888 is the author of the NTD script
 #include <a_samp>
 
 new Text:PublicTD[3];
+new randWeather;
 
 public OnFilterScriptInit() {
 
@@ -100,72 +101,118 @@ public UpdateTimer() {
     TextDrawShowForAll(PublicTD[2]);
     if(hour == 1){
         SetWorldTime(1);
+        randWeather = random(20);
+        SetWeather(randWeather);
     }
     if(hour == 2){
-        SetWorldTime(2);        
+        SetWorldTime(2);    
+        randWeather = random(20);
+        SetWeather(randWeather);    
     }
     if(hour == 3){
         SetWorldTime(3);
+        randWeather = random(20);
+        SetWeather(randWeather);
     }
     if(hour == 4){
         SetWorldTime(4);
+        randWeather = random(20);
+        SetWeather(randWeather);
     }
     if(hour == 5){        
         SetWorldTime(5);
+        randWeather = random(20);
+        SetWeather(randWeather);
     }
     if(hour == 6){
-        SetWorldTime(6);        
+        SetWorldTime(6);   
+        randWeather = random(20);
+        SetWeather(randWeather);     
     }
     if(hour == 7){
-        SetWorldTime(7);        
+        SetWorldTime(7);   
+        randWeather = random(20);
+        SetWeather(randWeather);     
     }
     if(hour == 8){
-        SetWorldTime(8);        
+        SetWorldTime(8); 
+        randWeather = random(20);
+        SetWeather(randWeather);       
     }
     if(hour == 9){
-        SetWorldTime(9);        
+        SetWorldTime(9);   
+        randWeather = random(20);
+        SetWeather(randWeather);     
     }
     if(hour == 10){
-        SetWorldTime(10);        
+        SetWorldTime(10);   
+        randWeather = random(20);
+        SetWeather(randWeather);     
     }
     if(hour == 11){
-        SetWorldTime(11);        
+        SetWorldTime(11);    
+        randWeather = random(20);
+        SetWeather(randWeather);    
     }
     if(hour == 12){
-        SetWorldTime(12);        
+        SetWorldTime(12);  
+        randWeather = random(20);
+        SetWeather(randWeather);      
     }
     if(hour == 13){
-        SetWorldTime(13);        
+        SetWorldTime(13);   
+        randWeather = random(20);
+        SetWeather(randWeather);     
     }
     if(hour == 14){
-        SetWorldTime(14);        
+        SetWorldTime(14); 
+        randWeather = random(20);
+        SetWeather(randWeather);       
     }
     if(hour == 15){
-        SetWorldTime(15);        
+        SetWorldTime(15);   
+        randWeather = random(20);
+        SetWeather(randWeather);     
     }
     if(hour == 16){
-        SetWorldTime(16);        
+        SetWorldTime(16);   
+        randWeather = random(20);
+        SetWeather(randWeather);     
     }
     if(hour == 17){
-        SetWorldTime(17);        
+        SetWorldTime(17);    
+        randWeather = random(20);
+        SetWeather(randWeather);    
     }
     if(hour == 18){
         SetWorldTime(18); 
+        randWeather = random(20);
+        SetWeather(randWeather);
     }
     if(hour == 19){
-        SetWorldTime(19);         
+        SetWorldTime(19);   
+        randWeather = random(20);
+        SetWeather(randWeather);      
     }
     if(hour == 20){
-        SetWorldTime(20);        
+        SetWorldTime(20); 
+        randWeather = random(20);
+        SetWeather(randWeather);       
     }
     if(hour == 21){
-        SetWorldTime(21);         
+        SetWorldTime(21); 
+        randWeather = random(20);
+        SetWeather(randWeather);        
     }
     if(hour == 22){
         SetWorldTime(22);
+        randWeather = random(20);
+        SetWeather(randWeather);
     }
     if(hour == 23){
-        SetWorldTime(23);        
+        SetWorldTime(23);  
+        randWeather = random(20);
+        SetWeather(randWeather);      
     }
     return 1;
 }

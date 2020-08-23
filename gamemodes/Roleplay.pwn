@@ -456,6 +456,22 @@ new VehicleNames[][] = {
 
 new tries[MAX_PLAYERS], passwordForFinalReg[MAX_PLAYERS][BCRYPT_HASH_LENGTH], quizAttempts[MAX_PLAYERS];
 
+enum ENUM_POLICECLOTHES {
+    SKINID,
+    SKINNAME[32]
+};
+new const POLICECLOTHES[][ENUM_POLICECLOTHES] = {
+    {288, "Desert Sheriff"},
+    {302, "LV Police Officer"},
+    {310, "County Sheriff"},
+    {283, "County Sheriff"},
+    {311, "Desert Sherriff without Hat"},
+    {306, "Female LS Police Officer"},
+    {307, "Female LV Police Officer"},
+    {284, "Motorcycle Cop"},
+    {285, "Swat Gear"}
+}
+
 enum ENUM_CARDEAL_DATA {
     VEHICLE_MODELID,
     VEHICLE_NAME[32],
@@ -510,6 +526,8 @@ enum ENUM_PLAYER_DATA {
         pFactionRank,
         pFactionRankname[32],
         pFactionPay,
+        pDuty,
+        pDutyClothes,
 
         pJobId,
         pJobPay,
@@ -2066,6 +2084,9 @@ public SavePlayerData(playerid) {
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pPreferredSpawn` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pPreferredSpawn], GetName(playerid));
     mysql_query(db_handle, query);
 
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pDutyClothes` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pDutyClothes], GetName(playerid));
+    mysql_query(db_handle, query);
+
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAdminLevel` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pAdminLevel], GetName(playerid));
     mysql_query(db_handle, query);
     
@@ -2142,6 +2163,61 @@ public OnPlayerText(playerid, text[]) {
         SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
     }
     return 0;
+}
+
+/* Global fac cmds followed by specific fac cmds */
+CMD:duty(playerid, params[]){
+    if(pInfo[playerid][pFactionId] >= 1){
+        for(new i = 0; i < loadedFac; i++){
+            if(fInfo[i][fType] == 2) {// a legal faction...
+                if(IsPlayerInRangeOfPoint(playerid, 1.5, fInfo[i][fDutyX], fInfo[i][fDutyY], fInfo[i][fDutyZ])){
+                    if(fInfo[i][fID] == pInfo[playerid][pFactionId]){
+                        if(pInfo[playerid][pDuty] == 0){
+                            if(pInfo[playerid][pDutyClothes] != 0){
+                                SetPlayerSkin(playerid, pInfo[playerid][pDutyClothes]);
+                                pInfo[playerid][pDuty] = 1;
+                                return 1;
+                            } else {
+                                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have not set your duty clothes!");
+                                return 1;
+                            }
+                        } else {
+                            pInfo[playerid][pDuty] = 0;
+                            SetPlayerSkin(playerid, pInfo[playerid][pSkin]);
+                        }
+
+                    } else {
+                        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You cannot use this duty point!");
+                    }
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:dutyclothes(playerid, params[]){
+    if(pInfo[playerid][pFactionId] >= 1){
+        for(new i = 0; i < loadedFac; i++){
+            if(pInfo[playerid][pFactionId] == 1){
+                if(IsPlayerInRangeOfPoint(playerid, 1.5, fInfo[i][fClothesX], fInfo[i][fClothesY], fInfo[i][fClothesZ])){
+                    new subString[64]; 
+                    static string[sizeof(POLICECLOTHES) * sizeof(subString)];
+
+                    if(string[0] == EOS){           
+                        for (new si; si < sizeof(POLICECLOTHES); si++) {
+                            format(subString, sizeof(subString), "%i(0.0, 0.0, -50.0, 1.5)\t%s\n", POLICECLOTHES[si][SKINID], POLICECLOTHES[si][SKINNAME]);
+                            strcat(string, subString);
+                        }
+                    }
+
+                    return ShowPlayerDialog(playerid, 9998, DIALOG_STYLE_PREVIEW_MODEL, "Police Clothes", string, "Accept", "Decline");
+
+                }
+            }
+        }
+    }
+    return 1;
 }
 
 /* SHOP CMDS */
@@ -2567,9 +2643,9 @@ CMD:help(playerid, params[]) {
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/collectsal, /properties, /sellproperty");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/buyproperty");
         } else if(strcmp(Usage, "House", true) == 0){
-            SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Business Commands ::.");
+            SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} House Commands ::.");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/lockhouse, /properties, /sellproperty");
-            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/buyproperty");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/buyproperty, /spawnpoint");
         }
     }
     return 1;
@@ -5151,6 +5227,7 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pFactionId", pInfo[playerid][pFactionId]);
     cache_get_value_int(0, "pFactionRank", pInfo[playerid][pFactionRank]);
     cache_get_value(0, "pFactionRankname", pInfo[playerid][pFactionRankname], 32);
+    cache_get_value_int(0, "pDutyClothes", pInfo[playerid][pDutyClothes]);
     cache_get_value_int(0, "pJobId", pInfo[playerid][pJobId]);
     cache_get_value_int(0, "pJobPay", pInfo[playerid][pJobPay]);
     cache_get_value_int(0, "pWeedAmount", pInfo[playerid][pWeedAmount]);
@@ -5660,6 +5737,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
                     pInfo[playerid][pBank] -= BUS_DEALERSHIP[listitem][VEHICLE_PRICE];
                 }
             }
+        }
+    }
+    if(dialogid == 9998){
+        if(response){
+            pInfo[playerid][pDutyClothes] = POLICECLOTHES[listitem][SKINID];
+            GameTextForPlayer(playerid, "~g~DUTY CLOTHES SELECTED!", 3000, 3);
         }
     }
     return 1;
