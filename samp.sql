@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 22, 2020 at 07:25 PM
+-- Generation Time: Aug 23, 2020 at 02:50 AM
 -- Server version: 10.1.34-MariaDB
 -- PHP Version: 7.2.7
 
@@ -98,7 +98,7 @@ INSERT INTO `accounts` (`ID`, `pName`, `pPassword`, `pEmail`, `pAdminLevel`, `pL
 (19, 'testdialogc', '$2y$12$QDDrYibDbTblZ1jfPy60butWDkKhIn7fzb6/6qog6cXvLCTYvMbwC', 'example@example.com', 0, 0, 0, 'America', 100, 0, 1, 167, 27, 0, 50, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (20, 'quiztest1', '$2y$12$cSDOOkf3ThXATj.0XhDDXOd1SS1fz0i/dZ4iuAQYph2EOT1gCtRMu', '@', 0, 0, 0, 'Los Santos', 100, 0, 1, 23, 28, 0, 1000, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (21, 'testaccounts_1', '$2y$12$KjjyaDTEQBe1LTTDUUvGaOTqZsuFTWhrHHEa6fv0KiASgtEyJscGG', 'gmail@gmail.com', 0, 0, 0, 'Los Santos', 100, 0, 1, 72, 28, 0, 1000, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(22, 'testaccounts_2', '$2y$12$XFDYQjXvbjThLR/xKkjRTOarF5sW7jrTtLDUAQoj5KzHKM/NZ3rRa', 'olly@yllo.co.uk', 6, 3, 5, 'Los Santos', 65, 0, 1, 73, 28, 10533, 543586, 1, 1, 125243, 2, 1, 7, 'Chief of Police', 0, 3, 300, 7, 1, 20, 2, 1, 0, 0, 0, 1, 24, 25, 0, 0, 0, 0, 4, 1, 3100),
+(22, 'testaccounts_2', '$2y$12$XFDYQjXvbjThLR/xKkjRTOarF5sW7jrTtLDUAQoj5KzHKM/NZ3rRa', 'olly@yllo.co.uk', 6, 3, 6, 'Los Santos', 65, 0, 1, 73, 28, 10983, 543586, 45, 1, 125243, 2, 1, 7, 'Chief of Police', 0, 3, 0, 7, 1, 20, 2, 1, 0, 0, 0, 1, 24, 0, 0, 0, 0, 0, 4, 1, 3100),
 (23, 'testaccounts_3', '$2y$12$PEeuZSHTTVnjKDb2UEDWSunyPVyEv7lKRwTEZihlRmQmObQ2NP8n.', '@', 0, 1, 1, 'Los Santos', 100, 0, 1, 170, 28, 0, 1000, 60, 0, 0, 0, 0, 0, '', 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (24, 'testaccounts_6', '$2y$12$YzDJSCnlPVH/ShTMXyzwOOEfQvuVt/Ty88apHkAAldDO5rmIFSJvi', '@', 0, 1, 1, 'america', 95, 0, 1, 24, 28, 0, 800, 55, 0, 0, 0, 0, 0, '', 0, 1, 172, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (25, 'testaccount_12', '$2y$12$MUbIMBbtUDjFaTHrSS3sbeR/.2zeCYsrJAsxX95yyYweQUtXfsQRK', '@', 0, 1, 1, 'America', 100, 0, 1, 60, 28, 0, 1000, 59, 0, 0, 0, 0, 0, '', 0, 1, 50, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -172,23 +172,41 @@ INSERT INTO `drugprices` (`drugId`, `drugName`, `drugAmount`, `drugPrice`) VALUE
 CREATE TABLE `factions` (
   `fID` int(32) NOT NULL,
   `fName` varchar(32) NOT NULL,
+  `fAddress` int(11) NOT NULL,
+  `fLeader` varchar(32) DEFAULT 'NULL',
   `fType` int(11) NOT NULL,
+  `fPrice` int(11) NOT NULL,
   `fRank1Name` varchar(32) NOT NULL,
   `fRank2Name` varchar(32) NOT NULL,
   `fRank3Name` varchar(32) NOT NULL,
   `fRank4Name` varchar(32) NOT NULL,
   `fRank5Name` varchar(32) NOT NULL,
   `fRank6Name` varchar(32) NOT NULL,
-  `fRank7Name` varchar(32) NOT NULL
+  `fRank7Name` varchar(32) NOT NULL,
+  `fInfoX` float NOT NULL,
+  `fInfoY` float NOT NULL,
+  `fInfoZ` float NOT NULL,
+  `fDutyX` float NOT NULL,
+  `fDutyY` float NOT NULL,
+  `fDutyZ` float NOT NULL,
+  `fClothesX` float NOT NULL,
+  `fClothesY` float NOT NULL,
+  `fClothesZ` float NOT NULL,
+  `fEntX` float NOT NULL,
+  `fEntY` float NOT NULL,
+  `fEntZ` float NOT NULL,
+  `fExitX` float NOT NULL,
+  `fExitY` float NOT NULL,
+  `fExitZ` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `factions`
 --
 
-INSERT INTO `factions` (`fID`, `fName`, `fType`, `fRank1Name`, `fRank2Name`, `fRank3Name`, `fRank4Name`, `fRank5Name`, `fRank6Name`, `fRank7Name`) VALUES
-(1, 'Fort Carson Sheriff\'s Office', 2, 'Cadet', 'Sheriff I', 'Sheriff II', 'Sergeant I', 'Sergeant II', 'Commander', 'Chief of Police'),
-(2, 'Fort Carson EMS', 2, 'EMS Cadet', 'EMS Responder I', 'EMS Responder II', 'EMS Sergeant I', 'EMS Sergeant II', 'Station Commander', 'Station Chief');
+INSERT INTO `factions` (`fID`, `fName`, `fAddress`, `fLeader`, `fType`, `fPrice`, `fRank1Name`, `fRank2Name`, `fRank3Name`, `fRank4Name`, `fRank5Name`, `fRank6Name`, `fRank7Name`, `fInfoX`, `fInfoY`, `fInfoZ`, `fDutyX`, `fDutyY`, `fDutyZ`, `fClothesX`, `fClothesY`, `fClothesZ`, `fEntX`, `fEntY`, `fEntZ`, `fExitX`, `fExitY`, `fExitZ`) VALUES
+(1, 'Fort Carson Sheriff\'s Office', 2001, 'NULL', 2, 1350000, 'Cadet', 'Sheriff I', 'Sheriff II', 'Sergeant I', 'Sergeant II', 'Commander', 'Chief of Police', -208.158, 973.9, 18.8395, -2692.07, 2637.33, 4087.79, -2695.22, 2636.89, 4087.79, -217.924, 979.2, 19.7869, -2697.2, 2646.27, 4088.08),
+(2, 'Fort Carson EMS', 2002, 'NULL', 2, 1350000, 'EMS Cadet', 'EMS Responder I', 'EMS Responder II', 'EMS Sergeant I', 'EMS Sergeant II', 'Station Commander', 'Station Chief', -319.788, 1055.7, 19.3177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
