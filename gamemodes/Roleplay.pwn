@@ -11,6 +11,7 @@
 #include <betterdialogs>
 #include <sscanf2>
 #include <streamer>
+#include <cuffs>
 
 #define BCRYPT_COST 12
 #define lenull(%1) \
@@ -48,7 +49,7 @@ new dumpCheckPoint[MAX_PLAYERS], routeId[MAX_PLAYERS], busCheckpoint[MAX_PLAYERS
 new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS], drugDealTimer[MAX_PLAYERS];
 
 new policeCall[MAX_PLAYERS];
-new policeMainDoor;
+new policeMainDoor, policeMainCell, cell1, cell2, cell3, cell4;
 
 new dumpPickup, jobPickup[MAX_JOBS];
 new busInfoPickup[100], busEntPickup[100], busExitPickup[100], busUsePickup[100];
@@ -529,6 +530,15 @@ enum ENUM_PLAYER_DATA {
         pDuty,
         pDutyClothes,
 
+        pFines, // fine cmd
+        pMostRecentFine[32],
+
+        pWantedLevel, // ca cmd
+        pMostRecentWantedReason[32],
+
+        pInPrisonType, // can be admin or normal jail cell.
+        pPrisonTimer,
+
         pJobId,
         pJobPay,
         pWeedAmount,
@@ -717,6 +727,12 @@ public OnGameModeInit() {
     
     // FCPD
     policeMainDoor = CreateDynamicObject(1535, -2689.00903, 2646.06396, 4086.79517, 0.00000, 0.00000, 270.00000);
+    policeMainCell = CreateDynamicObject(19302, -2666.55249, 2641.79932, 4081.68091,   0.00000, 0.00000, 90.00000);
+    cell1 = 	CreateDynamicObject(19302, -2664.75830, 2643.68066, 4081.68091,   0.00000, 0.00000, 180.00000);
+    cell2 = 	CreateDynamicObject(19302, -2658.35400, 2643.65918, 4081.68091,   0.00000, 0.00000, 180.00000);
+    cell4 = 	CreateDynamicObject(19302, -2664.77002, 2640.15576, 4081.68091,   0.00000, 0.00000, 180.00000);
+    cell3 = 	CreateDynamicObject(19302, -2658.35254, 2640.17212, 4081.68091,   0.00000, 0.00000, 180.00000);
+
 
     // DUMP 
     dumpPickup = CreatePickup(1239, 1, 281.7589, 1411.7045, 10.5003, -1);
@@ -2084,6 +2100,15 @@ public SavePlayerData(playerid) {
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pPreferredSpawn` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pPreferredSpawn], GetName(playerid));
     mysql_query(db_handle, query);
 
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pFines` = '%d', `pMostRecentFine` = '%s' WHERE  `pName` = '%e'", pInfo[playerid][pFines], pInfo[playerid][pMostRecentFine], GetName(playerid));
+    mysql_query(db_handle, query);
+    
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pWantedLevel` = '%d', `pMostRecentWantedReason` = '%s' WHERE  `pName` = '%e'", pInfo[playerid][pWantedLevel], pInfo[playerid][pMostRecentWantedReason], GetName(playerid));
+    mysql_query(db_handle, query);
+    
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pInPrisonType` = '%d', `pPrisonTimer` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pInPrisonType], pInfo[playerid][pPrisonTimer], GetName(playerid));
+    mysql_query(db_handle, query);
+
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pDutyClothes` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pDutyClothes], GetName(playerid));
     mysql_query(db_handle, query);
 
@@ -2559,6 +2584,83 @@ CMD:stats(playerid, params[]) {
     return 1;
 }
 
+CMD:ca(playerid, params[]){
+    new target, reason[32], string[64];
+    if(pInfo[playerid][pFactionId] == 1){
+        if(sscanf(params, "ds", target, reason)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /ca [target] [reason]");{
+            if(pInfo[target][pWantedLevel] < 6){
+                pInfo[target][pWantedLevel]++;
+                format(pInfo[playerid][pMostRecentWantedReason], 32, reason);
+                SetPlayerWantedLevel(playerid, pInfo[target][pWantedLevel]);
+                for(new i = 0; i < MAX_PLAYERS; i++){
+                    if(pInfo[i][pFactionId] == 1){
+                        format(string, sizeof(string), "Radio: ALERT, %s has been commited with charge: %s", RPName(target), reason);
+                        SendClientMessage(i, SERVERCOLOR, string);
+                    }
+                }
+            } else {
+                format(pInfo[playerid][pMostRecentWantedReason], 32, reason);
+                for(new i = 0; i < MAX_PLAYERS; i++){
+                    if(pInfo[i][pFactionId] == 1){
+                        format(string, sizeof(string), "Radio: ALERT, %s has been commited with charge: %s", RPName(target), reason);
+                        SendClientMessage(i, SERVERCOLOR, string);
+                    }
+                }
+            }
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+
+    }
+    return 1;
+}
+
+CMD:cuff(playerid, params[]){
+    new target, string[256];
+    if(pInfo[playerid][pFactionId] == 1){
+        if(sscanf(params, "d", target)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /cuff [id]");{
+            if(IsPlayerCuffed(target)){
+                SetPlayerCuffed(target, false);
+                format(string, sizeof(string), "* %s takes cuffs from their holster and cuffs %s.", RPName(playerid), RPName(target));
+                nearByAction(playerid, NICESKY, string);
+            }
+             else if(!IsPlayerCuffed(target)){
+                SetPlayerCuffed(target, true);
+                format(string, sizeof(string), "* %s uncuffs %s and places the cuffs back on their holster.", RPName(playerid), RPName(target));
+                nearByAction(playerid, NICESKY, string);
+            }
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 1;
+}
+
+CMD:endcall(playerid, params[]){
+    new target;
+    if(pInfo[playerid][pFactionId] == 1){
+        for(new i = 0; i < MAX_PLAYERS; i++){
+            if(IsPlayerConnected(target)){
+                if(pInfo[target][pAlertCall] == 1){
+                    pInfo[target][pAlertCall] = 0;
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have ended this call code.");
+                    return 1;
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Invalid call code!");
+                    return 1;
+                }
+            }
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+
+    }
+    return 1;
+}
+
 CMD:takecall(playerid, params[]){
     new target;
     if(pInfo[playerid][pFactionId] == 1){
@@ -2580,6 +2682,10 @@ CMD:takecall(playerid, params[]){
                 return 1;
             }
         }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+
     }
     return 1;
 }
@@ -3723,16 +3829,17 @@ public AlertPolice(playerid, message[32], Float:cX, Float:cY, Float:cZ){
 }
 
 CMD:listallcalls(playerid, params[]){
-    new string[256];
+    new string[256], substring[256];
     
     SendClientMessage(playerid, SPECIALORANGE, "**-----AVAILABLE CALLS-----**");
     for(new i = 0; i < MAX_PLAYERS; i++){
         if(pInfo[i][pAlertCall] == 1){
-            format(string, sizeof(string), "Call code: %d,", playerid);
-            SendClientMessage(playerid, SERVERCOLOR, string);
+            format(substring, sizeof(substring), "Call code: %d, ", i);
+            strcat(string, substring);
             return 1;
         }
     }
+    SendClientMessage(playerid, SERVERCOLOR, string);
     return 1;
 }
 
@@ -4659,6 +4766,45 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
                 ApplyAnimation(playerid, "HEIST9", "Use_SwipeCard", 10.0, 0, 0, 0, 0, 0);
             }
         }
+        if(IsPlayerInRangeOfPoint(playerid, 1.5, -2666.4624, 2643.0579, 4081.8079)){
+            if(pInfo[playerid][pFactionId] == 1){
+                MoveDynamicObject(policeMainCell, -2666.5525, 2640.3953, 4081.6809, 2000);
+                SetTimerEx("MoveObjBack", 5000, false, "d", 2);
+                ApplyAnimation(playerid, "HEIST9", "Use_SwipeCard", 10.0, 0, 0, 0, 0, 0);
+            }
+        }
+        if(IsPlayerInRangeOfPoint(playerid, 1, -2664.7583, 2643.6807, 4081.6809)){
+            //cell1
+            if(pInfo[playerid][pFactionId] == 1){
+                MoveDynamicObject(cell2, -2663.4713, 2643.6807, 4081.6809, 2000);
+                SetTimerEx("MoveObjBack", 5000, false, "d", 3);
+                ApplyAnimation(playerid, "HEIST9", "Use_SwipeCard", 10.0, 0, 0, 0, 0, 0);
+            }
+        }
+        if(IsPlayerInRangeOfPoint(playerid, 1, -2658.3540, 2643.6592, 4081.6809)){
+            //cell2
+            if(pInfo[playerid][pFactionId] == 1){
+                MoveDynamicObject(cell2,-2657.1840, 2643.6592, 4081.6809, 2000);
+                SetTimerEx("MoveObjBack", 5000, false, "d", 4);
+                ApplyAnimation(playerid, "HEIST9", "Use_SwipeCard", 10.0, 0, 0, 0, 0, 0);
+            }
+        }
+        if(IsPlayerInRangeOfPoint(playerid, 1, -2658.3525, 2640.1721, 4081.6809)){
+            //cell3
+            if(pInfo[playerid][pFactionId] == 1){
+                MoveDynamicObject(cell3,-2657.1825, 2640.1721, 4081.6809, 2000);
+                SetTimerEx("MoveObjBack", 5000, false, "d", 5);
+                ApplyAnimation(playerid, "HEIST9", "Use_SwipeCard", 10.0, 0, 0, 0, 0, 0);
+            }
+        }
+        if(IsPlayerInRangeOfPoint(playerid, 1, -2664.7888, 2640.1489, 4081.6809)){
+            //cell4
+            if(pInfo[playerid][pFactionId] == 1){
+                MoveDynamicObject(cell4,-2663.4829, 2640.1558, 4081.6809, 2000);
+                SetTimerEx("MoveObjBack", 5000, false, "d", 6);
+                ApplyAnimation(playerid, "HEIST9", "Use_SwipeCard", 10.0, 0, 0, 0, 0, 0);
+            }
+        }
     }
     return 1;
 }
@@ -4668,6 +4814,22 @@ public MoveObjBack(doorid){
     if(doorid == 1){
         MoveDynamicObject(policeMainDoor, -2689.0090, 2646.0640, 4086.7952, 2000);
         return 1;
+    }
+    if(doorid == 2){
+        MoveDynamicObject(policeMainCell, -2666.5525, 2641.7993, 4081.6809, 2000);
+    }
+    if(doorid == 3){
+        MoveDynamicObject(cell1,-2664.7583, 2643.6807, 4081.6809, 2000);
+    }
+    if(doorid == 4){
+        MoveDynamicObject(cell2,-2658.3540, 2643.6592, 4081.6809, 2000);
+    }
+    if(doorid == 5){
+        MoveDynamicObject(cell3,-2658.3525, 2640.1721, 4081.6809, 2000);      
+
+    }
+    if(doorid == 6){
+        MoveDynamicObject(cell4,-2664.7700, 2640.1558, 4081.6809, 2000);   
     }
     return 1;
 }
@@ -5251,7 +5413,15 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pVehicleSlots", pInfo[playerid][pVehicleSlots]);
     cache_get_value_int(0, "pVehicleSlotsUsed", pInfo[playerid][pVehicleSlotsUsed]);
 
-    
+    cache_get_value_int(0, "pFines", pInfo[playerid][pFines]);
+    cache_get_value(0, "pMostRecentFine", pInfo[playerid][pMostRecentFine], 32);
+
+    cache_get_value_int(0, "pWantedLevel", pInfo[playerid][pWantedLevel]);
+    cache_get_value(0, "pMostRecentWantedReason", pInfo[playerid][pMostRecentWantedReason], 32);
+
+    cache_get_value_int(0, "pInPrisonType", pInfo[playerid][pInPrisonType]);
+    cache_get_value_int(0,"pPrisonTimer", pInfo[playerid][pPrisonTimer]);
+
     cache_get_value_int(0, "pPreferredSpawn", pInfo[playerid][pPreferredSpawn]);
 
     cache_get_value_int(0, "pAdminLevel", pInfo[playerid][pAdminLevel]);
@@ -5265,17 +5435,96 @@ public OnPlayerLoad(playerid) {
     new name[32];
     GetPlayerName(playerid, name, sizeof(name));
     if(pInfo[playerid][pPreferredSpawn] != 0){
-        for(new i = 0; i < loadedHouse; i++){
-            if(hInfo[i][hAddress] == pInfo[playerid][pPreferredSpawn]){
-                SetPlayerVirtualWorld(playerid, hInfo[i][hId]);
-                SetPlayerInterior(playerid, hInfo[i][hType]);
-                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], hInfo[i][hExitX], hInfo[i][hExitY], hInfo[i][hExitZ], 269.15, pInfo[playerid][pWeaponSlot1], pInfo[playerid][pWeaponSlot1Ammo], pInfo[playerid][pWeaponSlot2], pInfo[playerid][pWeaponSlot2Ammo], pInfo[playerid][pWeaponSlot3], pInfo[playerid][pWeaponSlot3Ammo]);
+        if(pInfo[playerid][pInPrisonType] == 0){
+            for(new i = 0; i < loadedHouse; i++){
+                if(hInfo[i][hAddress] == pInfo[playerid][pPreferredSpawn]){
+                    SetPlayerWantedLevel(playerid, pInfo[playerid][pWantedLevel]);
+                    SetPlayerVirtualWorld(playerid, hInfo[i][hId]);
+                    SetPlayerInterior(playerid, hInfo[i][hType]);
+                    SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], hInfo[i][hExitX], hInfo[i][hExitY], hInfo[i][hExitZ], 269.15, pInfo[playerid][pWeaponSlot1], pInfo[playerid][pWeaponSlot1Ammo], pInfo[playerid][pWeaponSlot2], pInfo[playerid][pWeaponSlot2Ammo], pInfo[playerid][pWeaponSlot3], pInfo[playerid][pWeaponSlot3Ammo]);
+                    SpawnPlayer(playerid);
+                }
+            }
+        } else if(pInfo[playerid][pInPrisonType] == 1){
+            // in normal prison
+            new randnum;
+            randnum = random(3);
+            if(randnum == 0){
+                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -2664.5139, 2645.7776, 4082.2140, 269.15, 0,0,0,0,0,0);
                 SpawnPlayer(playerid);
+                SetPlayerInterior(playerid, 1);
+                SetPlayerVirtualWorld(playerid, 1);
+                SetTimerEx("DecrementPrisonTimer", 1000, false, "dd", playerid, pInfo[playerid][pInPrisonType]);
+            }
+            if(randnum == 1){
+                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -2659.2620, 2645.6013, 4080.8100, 269.15, 0,0,0,0,0,0);
+                SpawnPlayer(playerid);
+                SetPlayerInterior(playerid, 1);
+                SetPlayerVirtualWorld(playerid, 1);
+                SetTimerEx("DecrementPrisonTimer", 1000, false, "dd", playerid, pInfo[playerid][pInPrisonType]);
+            }
+            if(randnum == 2){
+                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -2659.5981, 2637.6501, 4080.6925, 269.15, 0,0,0,0,0,0);
+                SpawnPlayer(playerid);
+                SetPlayerInterior(playerid, 1);
+                SetPlayerVirtualWorld(playerid, 1);
+                SetTimerEx("DecrementPrisonTimer", 1000, false, "dd", playerid, pInfo[playerid][pInPrisonType]);
             }
         }
     } else {
-        SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -204.5334, 1119.1626, 23.2031, 269.15, pInfo[playerid][pWeaponSlot1], pInfo[playerid][pWeaponSlot1Ammo], pInfo[playerid][pWeaponSlot2], pInfo[playerid][pWeaponSlot2Ammo], pInfo[playerid][pWeaponSlot3], pInfo[playerid][pWeaponSlot3Ammo]);
-        SpawnPlayer(playerid);
+        if(pInfo[playerid][pInPrisonType] == 0){
+            SetPlayerWantedLevel(playerid, pInfo[playerid][pWantedLevel]);
+            SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -204.5334, 1119.1626, 23.2031, 269.15, pInfo[playerid][pWeaponSlot1], pInfo[playerid][pWeaponSlot1Ammo], pInfo[playerid][pWeaponSlot2], pInfo[playerid][pWeaponSlot2Ammo], pInfo[playerid][pWeaponSlot3], pInfo[playerid][pWeaponSlot3Ammo]);
+            SpawnPlayer(playerid);
+        } else if(pInfo[playerid][pInPrisonType] == 1) {
+            // in normal prison
+            new randnum;
+            randnum = random(3);
+            if(randnum == 0){
+                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -2664.5139, 2645.7776, 4082.2140, 269.15, 0,0,0,0,0,0);
+                SpawnPlayer(playerid);
+                SetPlayerInterior(playerid, 1);
+                SetPlayerVirtualWorld(playerid, 1);
+                SetTimerEx("DecrementPrisonTimer", 1000, false, "dd", playerid, pInfo[playerid][pInPrisonType]);
+            }
+            if(randnum == 1){
+                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -2659.2620, 2645.6013, 4080.8100, 269.15, 0,0,0,0,0,0);
+                SpawnPlayer(playerid);
+                SetPlayerInterior(playerid, 1);
+                SetPlayerVirtualWorld(playerid, 1);
+                SetTimerEx("DecrementPrisonTimer", 1000, false, "dd", playerid, pInfo[playerid][pInPrisonType]);
+            }
+            if(randnum == 2){
+                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -2659.5981, 2637.6501, 4080.6925, 269.15, 0,0,0,0,0,0);
+                SpawnPlayer(playerid);
+                SetPlayerInterior(playerid, 1);
+                SetPlayerVirtualWorld(playerid, 1);
+                SetTimerEx("DecrementPrisonTimer", 1000, false, "dd", playerid, pInfo[playerid][pInPrisonType]);
+            }
+        }
+    }
+    return 1;
+}
+
+forward public DecrementPrisonTimer(playerid, prisontype);
+public DecrementPrisonTimer(playerid, prisontype){
+    if(prisontype == 1){
+        if(pInfo[playerid][pPrisonTimer] == 0) {
+            for(new i = 0; i < loadedFac; i++){
+                if(fInfo[i][fID] == 1){
+                    pInfo[playerid][pInPrisonType] = 0;
+                    pInfo[playerid][pPrisonTimer] = 0;
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have been released from prison!");
+                    SetPlayerPos(playerid, fInfo[i][fExitX], fInfo[i][fExitY], fInfo[i][fExitZ]);
+                    return 1;
+                }
+            }
+        }
+        if(pInfo[playerid][pPrisonTimer] >= 1){
+            pInfo[playerid][pPrisonTimer]--;
+            printf("%d.", pInfo[playerid][pPrisonTimer]);
+            SetTimerEx("DecrementPrisonTimer", 60000, false, "dd", playerid, pInfo[playerid][pInPrisonType]);
+        }
     }
     return 1;
 }
