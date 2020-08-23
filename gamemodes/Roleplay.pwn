@@ -676,7 +676,7 @@ public OnGameModeInit() {
     ManualVehicleEngineAndLights();
     DisableInteriorEnterExits();
     // Don't use these lines if it's a filterscript
-    SetGameModeText("Roleplay | v1.4.8");
+    SetGameModeText("Roleplay | v1.5.0");
 
     /* MySQL info */
     db_handle = mysql_connect_file("mysql.ini"); // Database info!
