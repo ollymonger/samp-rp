@@ -2752,6 +2752,13 @@ CMD:help(playerid, params[]) {
             SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} House Commands ::.");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/lockhouse, /properties, /sellproperty");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/buyproperty, /spawnpoint");
+        } else if(strcmp(Usage, "Faction", true) == 0){
+            if(pInfo[playerid][pFactionId] >= 1){
+                if(pInfo[playerid][pFactionId] == 1){
+                    SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Faction Commands ::.");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/cuff, /fine, /ca (create alert), /arrest");
+                }
+            }
         }
     }
     return 1;
