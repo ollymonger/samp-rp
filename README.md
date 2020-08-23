@@ -37,6 +37,11 @@ Int ids: 16 // 24-7, 6 // ammunation or hardware store.
 
 ## House Types
     5 - Ganghouse, exit point: 2350.339843,-1181.649902,1027.976562
+
+## Prison types
+1, normal prison
+2, admin jail
+
 ## States
 * 0 VEHICLE_NOT_RENTABLE 0 (Vehcile is either already rented or not rentable in )
 * 1 VEHICLE_RENTABLE 1 (Vehicle is rentable, either a job rentcar or normal rentcar available for all players)
