@@ -48,6 +48,7 @@ new dumpCheckPoint[MAX_PLAYERS], routeId[MAX_PLAYERS], busCheckpoint[MAX_PLAYERS
 new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS], drugDealTimer[MAX_PLAYERS];
 
 new policeCall[MAX_PLAYERS];
+new policeMainDoor;
 
 new dumpPickup, jobPickup[MAX_JOBS];
 new busInfoPickup[100], busEntPickup[100], busExitPickup[100], busUsePickup[100];
@@ -675,7 +676,7 @@ public OnGameModeInit() {
     ManualVehicleEngineAndLights();
     DisableInteriorEnterExits();
     // Don't use these lines if it's a filterscript
-    SetGameModeText("Roleplay | v1");
+    SetGameModeText("Roleplay | v1.4.8");
 
     /* MySQL info */
     db_handle = mysql_connect_file("mysql.ini"); // Database info!
@@ -696,6 +697,8 @@ public OnGameModeInit() {
     LoadVehicleData();
     LoadDrugPrices();
     
+    // FCPD
+    policeMainDoor = CreateDynamicObject(1535, -2689.00903, 2646.06396, 4086.79517, 0.00000, 0.00000, 270.00000);
 
     // DUMP 
     dumpPickup = CreatePickup(1239, 1, 281.7589, 1411.7045, 10.5003, -1);
@@ -4499,6 +4502,26 @@ public OnPlayerInteriorChange(playerid, newinteriorid, oldinteriorid) {
 
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
     if(newkeys & KEY_SPRINT){
+        for(new i = 0; i < loadedFac; i++){
+            if(IsPlayerInRangeOfPoint(playerid, 1.5, fInfo[i][fEntX], fInfo[i][fEntY], fInfo[i][fEntZ])){
+                TogglePlayerControllable(playerid, false);
+                SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
+                SetPlayerInterior(playerid, 1);               
+                SetPlayerVirtualWorld(playerid, fInfo[i][fID]);            
+                SetPlayerPos(playerid, fInfo[i][fExitX], fInfo[i][fExitY], fInfo[i][fExitZ]);
+                return 1;
+            }
+            if(GetPlayerVirtualWorld(playerid) == fInfo[i][fID]){
+                if(IsPlayerInRangeOfPoint(playerid, 1.5, fInfo[i][fExitX], fInfo[i][fExitY], fInfo[i][fExitZ])){
+                    TogglePlayerControllable(playerid, false);
+                    SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
+                    SetPlayerInterior(playerid, 0);               
+                    SetPlayerVirtualWorld(playerid, 0);            
+                    SetPlayerPos(playerid, fInfo[i][fEntX], fInfo[i][fEntY], fInfo[i][fEntZ]);
+                }
+                return 1;
+            }
+        }
         for(new i = 0; i < loadedBus; i++){
             if(IsPlayerInRangeOfPoint(playerid, 1.5, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ])){
                 TogglePlayerControllable(playerid, false);
@@ -4550,6 +4573,25 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
                 }
             }
         }
+    }
+    if(newkeys & KEY_SECONDARY_ATTACK){
+        if(IsPlayerInRangeOfPoint(playerid, 1.5, -2689.0090, 2646.0640, 4086.7952))
+        {
+            if(pInfo[playerid][pFactionId] == 1){
+                MoveDynamicObject(policeMainDoor, -2689.0090, 2647.3510, 4086.7952, 2000);
+                SetTimerEx("MoveObjBack", 5000, false, "d", 1);
+                ApplyAnimation(playerid, "HEIST9", "Use_SwipeCard", 10.0, 0, 0, 0, 0, 0);
+            }
+        }
+    }
+    return 1;
+}
+
+forward public MoveObjBack(doorid);
+public MoveObjBack(doorid){
+    if(doorid == 1){
+        MoveDynamicObject(policeMainDoor, -2689.0090, 2646.0640, 4086.7952, 2000);
+        return 1;
     }
     return 1;
 }
