@@ -70,6 +70,7 @@ new PlayerText:addressType[MAX_PLAYERS];
 new PlayerText:addressPrice[MAX_PLAYERS];
 
 
+new Text:NotOnDuty;
 new Text:accessDoor;
 new Text:PublicTD[3];
 new Text:sheriffsoffice[4];
@@ -579,10 +580,13 @@ enum ENUM_PLAYER_DATA {
         PostState,
         GarbageState,
         busStopState,
+        pDragged,
 
         RentingVehicle
 }
 new pInfo[MAX_PLAYERS][ENUM_PLAYER_DATA];
+
+new dragState[MAX_PLAYERS];
 
 enum ENUM_JOB_DATA {
     jID[11],
@@ -908,6 +912,15 @@ public OnGameModeInit() {
     TextDrawSetOutline(CantTakePost, 0);
     TextDrawSetProportional(CantTakePost, 1);
     TextDrawSetShadow(CantTakePost, 1);
+
+    NotOnDuty = TextDrawCreate(230.000000, 366.000000, "You are not on duty!");
+    TextDrawBackgroundColor(NotOnDuty, 255);
+    TextDrawFont(NotOnDuty, 1);
+    TextDrawLetterSize(NotOnDuty, 0.559999, 1.800000);
+    TextDrawColor(NotOnDuty, -1);
+    TextDrawSetOutline(NotOnDuty, 0);
+    TextDrawSetProportional(NotOnDuty, 1);
+    TextDrawSetShadow(NotOnDuty, 1);
 
     CantCommand = TextDrawCreate(230.000000, 366.000000, "You cannot use this command!");
     TextDrawBackgroundColor(CantCommand, 255);
@@ -2584,29 +2597,101 @@ CMD:stats(playerid, params[]) {
     return 1;
 }
 
+CMD:drag(playerid, params[]){
+    new target, Float:px, Float:py, Float:pz, Float:tx, Float:ty, Float:tz;
+    if(sscanf(params, "d", target)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /drag [targetid]");{
+        GetPlayerPos(target, tx, ty, tz);
+        GetPlayerPos(playerid, px, py, pz);
+        if(IsPlayerInRangeOfPoint(playerid, 1.5, tx, ty, tz)){
+            if(IsPlayerCuffed(target)){
+                if(pInfo[playerid][pDragged] == 0){
+                    SetPlayerPos(target, px, py, pz);
+                    SendClientMessage(playerid, ADMINBLUE, "> You are dragging a player!");
+                    TogglePlayerControllable(target, false);
+                    pInfo[playerid][pDragged] = 1;
+                    dragState[target] = SetTimerEx("DragPlayer", 1000, false, "dd", playerid, target);
+                } else {
+                    pInfo[playerid][pDragged] = 0;
+                    TogglePlayerControllable(target, true);
+                    KillTimer(dragState[target]);
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+forward public DragPlayer(playerid, target);
+public DragPlayer(playerid, target){
+    new Float:px, Float:py, Float:pz;
+    GetPlayerPos(playerid, px, py, pz);
+    SetPlayerPos(target, px, py, pz);
+    dragState[target] = SetTimerEx("DragPlayer", 1000, false, "dd", playerid, target);
+    return 1;
+}
+
+CMD:arrest(playerid, params[]){
+    new target, length;
+    if(pInfo[playerid][pFactionId] == 1){
+        if(sscanf(params, "dd", target, length)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /arrest [id] [length]"); {
+            if(pInfo[playerid][pDuty] == 1){
+                // check if wanted level is 1 or greater than 1 if not player has not been charged, /ca
+                //arrest player
+                if(IsPlayerInRangeOfPoint(playerid, 3, -2653.4983, 2641.7468, 4080.4587)){
+                    if(GetPlayerWantedLevel(target) >= 1){
+                        pInfo[target][pInPrisonType] = 1;
+                        pInfo[target][pPrisonTimer] = length;
+                        SetPlayerPos(playerid, -2664.4351, 2637.7744, 4080.4587);
+                        SetPlayerWantedLevel(target, 0);
+                        SetTimerEx("DecrementPrisonTimer", 1000, false, "dd", target, pInfo[target][pInPrisonType]);
+                    } else {
+                        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Player has not been charged!");
+                    }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not in range of the /arrest point!");
+                }
+            } else {
+                TextDrawShowForPlayer(playerid, NotOnDuty);
+                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+            }
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+
+    }
+    return 1;
+}
+
 CMD:ca(playerid, params[]){
-    new target, reason[32], string[64];
+    new target, reason[32], string[256];
     if(pInfo[playerid][pFactionId] == 1){
         if(sscanf(params, "ds", target, reason)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /ca [target] [reason]");{
-            if(pInfo[target][pWantedLevel] < 6){
-                pInfo[target][pWantedLevel]++;
-                format(pInfo[playerid][pMostRecentWantedReason], 32, reason);
-                SetPlayerWantedLevel(playerid, pInfo[target][pWantedLevel]);
-                for(new i = 0; i < MAX_PLAYERS; i++){
-                    if(pInfo[i][pFactionId] == 1){
-                        format(string, sizeof(string), "Radio: ALERT, %s has been commited with charge: %s", RPName(target), reason);
-                        SendClientMessage(i, SERVERCOLOR, string);
+            if(pInfo[playerid][pDuty] == 1){
+                if(pInfo[target][pWantedLevel] < 6){
+                    pInfo[target][pWantedLevel]++;
+                    format(pInfo[playerid][pMostRecentWantedReason], 32, reason);
+                    SetPlayerWantedLevel(playerid, pInfo[target][pWantedLevel]);
+                    for(new i = 0; i < MAX_PLAYERS; i++){
+                        if(pInfo[i][pFactionId] == 1){
+                            format(string, sizeof(string), "Radio: %s has been commited with charge: %s, over", RPName(target), reason);
+                            SendClientMessage(i, -1, string);
+                        }
+                    }
+                } else {
+                    format(pInfo[playerid][pMostRecentWantedReason], 32, reason);
+                    for(new i = 0; i < MAX_PLAYERS; i++){
+                        if(pInfo[i][pFactionId] == 1){
+                            format(string, sizeof(string), "Radio: %s has been commited with charge: %s, over", RPName(target), reason);
+                            SendClientMessage(i, -1, string);
+                        }
                     }
                 }
             } else {
-                format(pInfo[playerid][pMostRecentWantedReason], 32, reason);
-                for(new i = 0; i < MAX_PLAYERS; i++){
-                    if(pInfo[i][pFactionId] == 1){
-                        format(string, sizeof(string), "Radio: ALERT, %s has been commited with charge: %s", RPName(target), reason);
-                        SendClientMessage(i, SERVERCOLOR, string);
-                    }
-                }
+                TextDrawShowForPlayer(playerid, NotOnDuty);
+                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
             }
+            
         }
     } else {
         TextDrawShowForPlayer(playerid, CantCommand);
@@ -2620,15 +2705,20 @@ CMD:cuff(playerid, params[]){
     new target, string[256];
     if(pInfo[playerid][pFactionId] == 1){
         if(sscanf(params, "d", target)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /cuff [id]");{
-            if(IsPlayerCuffed(target)){
-                SetPlayerCuffed(target, false);
-                format(string, sizeof(string), "* %s takes cuffs from their holster and cuffs %s.", RPName(playerid), RPName(target));
-                nearByAction(playerid, NICESKY, string);
-            }
-             else if(!IsPlayerCuffed(target)){
-                SetPlayerCuffed(target, true);
-                format(string, sizeof(string), "* %s uncuffs %s and places the cuffs back on their holster.", RPName(playerid), RPName(target));
-                nearByAction(playerid, NICESKY, string);
+            if(pInfo[playerid][pDuty] == 1){               
+                if(IsPlayerCuffed(target)){
+                    SetPlayerCuffed(target, false);
+                    format(string, sizeof(string), "* %s takes cuffs from their holster and cuffs %s.", RPName(playerid), RPName(target));
+                    nearByAction(playerid, NICESKY, string);
+                }
+                else if(!IsPlayerCuffed(target)){
+                    SetPlayerCuffed(target, true);
+                    format(string, sizeof(string), "* %s uncuffs %s and places the cuffs back on their holster.", RPName(playerid), RPName(target));
+                    nearByAction(playerid, NICESKY, string);
+                }
+            } else {
+                TextDrawShowForPlayer(playerid, NotOnDuty);
+                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
             }
         }
     } else {
@@ -2665,21 +2755,25 @@ CMD:takecall(playerid, params[]){
     new target;
     if(pInfo[playerid][pFactionId] == 1){
         if(sscanf(params, "d", target)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /takecall [callcode]"); {
-            if(pInfo[target][pAlertCall] == 1)
-            {                        
-                new Float:tX, Float:tY, Float:tZ;
-                GetPlayerPos(target, tX, tY, tZ);
-                policeCall[0] = CreateDynamicCP(tX, tY, tZ, 2, -1, -1, -1, 10000);
-                for(new i = 0; i < MAX_PLAYERS; i++){
-                    if(pInfo[i][pFactionId] == 1){
-                        new string[256];
-                        format(string, sizeof(string), "{FFFFFF}Radio: %s has taken call code: %d!", RPName(playerid), target);
-                        SendClientMessage(i, SERVERCOLOR, string);
+            if(pInfo[playerid][pDuty] == 1){
+                if(pInfo[target][pAlertCall] == 1){                        
+                    new Float:tX, Float:tY, Float:tZ;
+                    GetPlayerPos(target, tX, tY, tZ);
+                    policeCall[0] = CreateDynamicCP(tX, tY, tZ, 2, -1, -1, -1, 10000);
+                    for(new i = 0; i < MAX_PLAYERS; i++){
+                        if(pInfo[i][pFactionId] == 1){
+                            new string[256];
+                            format(string, sizeof(string), "{FFFFFF}Radio: %s has taken call code: %d!", RPName(playerid), target);
+                            SendClientMessage(i, SERVERCOLOR, string);
+                        }
                     }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This is not a valid call code!");
+                    return 1;
                 }
             } else {
-                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This is not a valid call code!");
-                return 1;
+                TextDrawShowForPlayer(playerid, NotOnDuty);
+                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
             }
         }
     } else {
@@ -2756,7 +2850,7 @@ CMD:help(playerid, params[]) {
             if(pInfo[playerid][pFactionId] >= 1){
                 if(pInfo[playerid][pFactionId] == 1){
                     SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Faction Commands ::.");
-                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/cuff, /fine, /ca (create alert), /arrest");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /cuff, /fine, /ca (create alert), /arrest");
                 }
             }
         }
@@ -5948,6 +6042,7 @@ public RemoveTextdrawAfterTime(playerid) {
     TextDrawHideForPlayer(playerid, Text:CantTakePost);
     TextDrawHideForPlayer(playerid, Text:NoBinBags);
     TextDrawHideForPlayer(playerid, Text:accessDoor);
+    TextDrawHideForPlayer(playerid, Text:NotOnDuty);
 
     PlayerTextDrawHide(playerid, businessBox[playerid]);
     PlayerTextDrawHide(playerid, addressBox[playerid]);
