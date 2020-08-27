@@ -59,6 +59,23 @@ new facEntPickup[100], facExitPickup[100];
 
 new PlayerText:VEHSTUFF[MAX_PLAYERS][5];
 
+new PLights[MAX_PLAYERS];
+new TLI, TLI2;
+ 
+forward TimerBlinkingLights(vehicleid);
+forward TimerBlinkingLights2(vehicleid);
+forward BlinkingLights(playerid);
+forward ShutOffBlinkingLights(playerid);
+forward encode_lights(light1, light2, light3, light4);
+
+
+new PlayerText:dash1[MAX_PLAYERS];
+new PlayerText:dash2[MAX_PLAYERS];
+new PlayerText:dashPlate[MAX_PLAYERS];
+new PlayerText:dashSpeed[MAX_PLAYERS];
+new PlayerText:dashDist[MAX_PLAYERS];
+new PlayerText:dashVid[MAX_PLAYERS];
+
 new PlayerText:PlayerAddress[MAX_PLAYERS][4];
 new PlayerText:businessBox[MAX_PLAYERS];
 new PlayerText:addressName[MAX_PLAYERS];
@@ -581,12 +598,13 @@ enum ENUM_PLAYER_DATA {
         GarbageState,
         busStopState,
         pDragged,
+        DashCamStatus,
 
         RentingVehicle
 }
 new pInfo[MAX_PLAYERS][ENUM_PLAYER_DATA];
 
-new dragState[MAX_PLAYERS];
+new dragState[MAX_PLAYERS], dashtimer[MAX_PLAYERS];
 
 enum ENUM_JOB_DATA {
     jID[11],
@@ -606,6 +624,9 @@ enum ENUM_VEH_DATA {
         vJobId,
         vFacId,
         vBusId,
+        vFines,
+        vMostRecentFine[32],
+        vImpounded,
         vPlate[32],
         Float:vParkedX,
         Float:vParkedY,
@@ -852,8 +873,6 @@ public OnGameModeInit() {
     AddMenuItem(busdrivermenu, 1, "$150");
 
     // CONTINUE LOAD
-
-    
     accessDoor = TextDrawCreate(29.000000, 139.000000, "Access Door: SPACE");
     TextDrawFont(accessDoor, 1);
     TextDrawLetterSize(accessDoor, 0.491666, 1.900000);
@@ -1219,7 +1238,10 @@ public newVeh(){
             cache_get_value_int(i, "vJobId", vInfo[loadedVeh][vJobId]);
             cache_get_value_int(i, "vFacId", vInfo[loadedVeh][vFacId]);
             cache_get_value_int(i, "vBusId", vInfo[loadedVeh][vBusId]);
-            cache_get_value(i, "vPlate", vInfo[loadedVeh][vPlate], 32);
+            cache_get_value_int(i, "vFines", vInfo[i][vFines]);
+            cache_get_value(i, "vPlate", vInfo[i][vPlate], 32);
+            cache_get_value(i, "vMostRecentFine", vInfo[i][vMostRecentFine], 32);
+            cache_get_value_int(i, "vImpounded", vInfo[i][vImpounded]);
             cache_get_value_float(i, "vParkedX", vInfo[loadedVeh][vParkedX]);
             cache_get_value_float(i, "vParkedY", vInfo[loadedVeh][vParkedY]);
             cache_get_value_float(i, "vParkedZ", vInfo[loadedVeh][vParkedZ]);
@@ -1257,29 +1279,32 @@ public VehsReceived() {
     if(cache_num_rows() == 0) print("No vehicles have been created!");
     else {
         for (new i = 0; i < cache_num_rows(); i++) {
-            cache_get_value_int(i, "vID", vInfo[loadedVeh][vID]);
-            cache_get_value_int(i, "vModelId", vInfo[loadedVeh][vModelId]);
-            cache_get_value(i, "vOwner", vInfo[loadedVeh][vOwner], 32);
-            cache_get_value_int(i, "vFuel", vInfo[loadedVeh][vFuel]);
-            cache_get_value_int(i, "vJobId", vInfo[loadedVeh][vJobId]);
-            cache_get_value_int(i, "vFacId", vInfo[loadedVeh][vFacId]);
-            cache_get_value_int(i, "vBusId", vInfo[loadedVeh][vBusId]);
-            cache_get_value(i, "vPlate", vInfo[loadedVeh][vPlate], 32);
-            cache_get_value_float(i, "vParkedX", vInfo[loadedVeh][vParkedX]);
-            cache_get_value_float(i, "vParkedY", vInfo[loadedVeh][vParkedY]);
-            cache_get_value_float(i, "vParkedZ", vInfo[loadedVeh][vParkedZ]);
-            cache_get_value_float(i, "vAngle", vInfo[loadedVeh][vAngle]);
-            cache_get_value_int(i, "vColor1", vInfo[loadedVeh][vColor1]);
-            cache_get_value_int(i, "vColor2", vInfo[loadedVeh][vColor2]);
-            cache_get_value_int(i, "vRentalState", vInfo[loadedVeh][vRentalState]);
-            cache_get_value_int(i, "vRentalPrice", vInfo[loadedVeh][vRentalPrice]);
-            new vehicleid = CreateVehicle(vInfo[loadedVeh][vModelId],
-                vInfo[loadedVeh][vParkedX],
-                vInfo[loadedVeh][vParkedY],
-                vInfo[loadedVeh][vParkedZ],
-                vInfo[loadedVeh][vAngle],
-                vInfo[loadedVeh][vColor1],
-                vInfo[loadedVeh][vColor2],
+            cache_get_value_int(i, "vID", vInfo[i][vID]);
+            cache_get_value_int(i, "vModelId", vInfo[i][vModelId]);
+            cache_get_value(i, "vOwner", vInfo[i][vOwner], 32);
+            cache_get_value_int(i, "vFuel", vInfo[i][vFuel]);
+            cache_get_value_int(i, "vJobId", vInfo[i][vJobId]);
+            cache_get_value_int(i, "vFacId", vInfo[i][vFacId]);
+            cache_get_value_int(i, "vBusId", vInfo[i][vBusId]);
+            cache_get_value_int(i, "vFines", vInfo[i][vFines]);
+            cache_get_value(i, "vPlate", vInfo[i][vPlate], 32);
+            cache_get_value(i, "vMostRecentFine", vInfo[i][vMostRecentFine], 32);
+            cache_get_value_int(i, "vImpounded", vInfo[i][vImpounded]);
+            cache_get_value_float(i, "vParkedX", vInfo[i][vParkedX]);
+            cache_get_value_float(i, "vParkedY", vInfo[i][vParkedY]);
+            cache_get_value_float(i, "vParkedZ", vInfo[i][vParkedZ]);
+            cache_get_value_float(i, "vAngle", vInfo[i][vAngle]);
+            cache_get_value_int(i, "vColor1", vInfo[i][vColor1]);
+            cache_get_value_int(i, "vColor2", vInfo[i][vColor2]);
+            cache_get_value_int(i, "vRentalState", vInfo[i][vRentalState]);
+            cache_get_value_int(i, "vRentalPrice", vInfo[i][vRentalPrice]);
+            new vehicleid = CreateVehicle(vInfo[i][vModelId],
+                vInfo[i][vParkedX],
+                vInfo[i][vParkedY],
+                vInfo[i][vParkedZ],
+                vInfo[i][vAngle],
+                vInfo[i][vColor1],
+                vInfo[i][vColor2],
                 -1
             );
             vInfo[loadedVeh][vRentingPlayer] = INVALID_PLAYER_ID;
@@ -1681,6 +1706,7 @@ public OnPlayerConnect(playerid) {
     if(!IsPlayerNPC(playerid))
     {
         new query[200];
+        PLights[playerid] = 0;
         pInfo[playerid][pMuted] = 1;
         new name[MAX_PLAYER_NAME + 1];
         GetPlayerName(playerid, name, sizeof(name));
@@ -1701,6 +1727,94 @@ public OnPlayerConnect(playerid) {
 
 
         // remove buildings
+
+
+        //Player Textdraws
+        
+        dash1[playerid] = CreatePlayerTextDraw(playerid, 129.000000, 113.000000, "dashcam");
+        PlayerTextDrawFont(playerid, dash1[playerid], 2);
+        PlayerTextDrawLetterSize(playerid, dash1[playerid], 0.295832, 1.750000);
+        PlayerTextDrawTextSize(playerid, dash1[playerid], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, dash1[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, dash1[playerid], 0);
+        PlayerTextDrawAlignment(playerid, dash1[playerid], 1);
+        PlayerTextDrawColor(playerid, dash1[playerid], -1);
+        PlayerTextDrawBackgroundColor(playerid, dash1[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, dash1[playerid], 50);
+        PlayerTextDrawUseBox(playerid, dash1[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, dash1[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, dash1[playerid], 0);
+
+        dash2[playerid] = CreatePlayerTextDraw(playerid, 129.000000, 129.000000, "CAM01");
+        PlayerTextDrawFont(playerid, dash2[playerid], 2);
+        PlayerTextDrawLetterSize(playerid, dash2[playerid], 0.295832, 1.750000);
+        PlayerTextDrawTextSize(playerid, dash2[playerid], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, dash2[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, dash2[playerid], 0);
+        PlayerTextDrawAlignment(playerid, dash2[playerid], 1);
+        PlayerTextDrawColor(playerid, dash2[playerid], -1);
+        PlayerTextDrawBackgroundColor(playerid, dash2[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, dash2[playerid], 50);
+        PlayerTextDrawUseBox(playerid, dash2[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, dash2[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, dash2[playerid], 0);
+
+        dashPlate[playerid] = CreatePlayerTextDraw(playerid, 189.000000, 358.000000, "P PLATEHERE");
+        PlayerTextDrawFont(playerid, dashPlate[playerid], 2);
+        PlayerTextDrawLetterSize(playerid, dashPlate[playerid], 0.279166, 1.750000);
+        PlayerTextDrawTextSize(playerid, dashPlate[playerid], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, dashPlate[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, dashPlate[playerid], 0);
+        PlayerTextDrawAlignment(playerid, dashPlate[playerid], 1);
+        PlayerTextDrawColor(playerid, dashPlate[playerid], -1);
+        PlayerTextDrawBackgroundColor(playerid, dashPlate[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, dashPlate[playerid], 50);
+        PlayerTextDrawUseBox(playerid, dashPlate[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, dashPlate[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, dashPlate[playerid], 0);
+
+        dashSpeed[playerid] = CreatePlayerTextDraw(playerid, 291.000000, 358.000000, "S 90MPH");
+        PlayerTextDrawFont(playerid, dashSpeed[playerid], 2);
+        PlayerTextDrawLetterSize(playerid, dashSpeed[playerid], 0.279166, 1.750000);
+        PlayerTextDrawTextSize(playerid, dashSpeed[playerid], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, dashSpeed[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, dashSpeed[playerid], 0);
+        PlayerTextDrawAlignment(playerid, dashSpeed[playerid], 1);
+        PlayerTextDrawColor(playerid, dashSpeed[playerid], -1);
+        PlayerTextDrawBackgroundColor(playerid, dashSpeed[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, dashSpeed[playerid], 50);
+        PlayerTextDrawUseBox(playerid, dashSpeed[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, dashSpeed[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, dashSpeed[playerid], 0);
+
+        dashDist[playerid] = CreatePlayerTextDraw(playerid, 410.000000, 358.000000, "D 25M");
+        PlayerTextDrawFont(playerid, dashDist[playerid], 2);
+        PlayerTextDrawLetterSize(playerid, dashDist[playerid], 0.279166, 1.750000);
+        PlayerTextDrawTextSize(playerid, dashDist[playerid], 398.000000, 8.000000);
+        PlayerTextDrawSetOutline(playerid, dashDist[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, dashDist[playerid], 0);
+        PlayerTextDrawAlignment(playerid, dashDist[playerid], 3);
+        PlayerTextDrawColor(playerid, dashDist[playerid], -1);
+        PlayerTextDrawBackgroundColor(playerid, dashDist[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, dashDist[playerid], 50);
+        PlayerTextDrawUseBox(playerid, dashDist[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, dashDist[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, dashDist[playerid], 0);
+
+        dashVid[playerid] = CreatePlayerTextDraw(playerid, 411.000000, 115.000000, "VID: vehId");
+        PlayerTextDrawFont(playerid, dashVid[playerid], 2);
+        PlayerTextDrawLetterSize(playerid, dashVid[playerid], 0.295832, 1.750000);
+        PlayerTextDrawTextSize(playerid, dashVid[playerid], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, dashVid[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, dashVid[playerid], 0);
+        PlayerTextDrawAlignment(playerid, dashVid[playerid], 3);
+        PlayerTextDrawColor(playerid, dashVid[playerid], -1);
+        PlayerTextDrawBackgroundColor(playerid, dashVid[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, dashVid[playerid], 50);
+        PlayerTextDrawUseBox(playerid, dashVid[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, dashVid[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, dashVid[playerid], 0);
+
 
         businessBox[playerid] = CreatePlayerTextDraw(playerid, 63.000000, 141.000000, "`");
         PlayerTextDrawFont(playerid, businessBox[playerid], 0);
@@ -2178,6 +2292,7 @@ public OnPlayerSpawn(playerid) {
 
 public OnPlayerDeath(playerid, killerid, reason) {
     HideSpeedoTextdraws(playerid);
+    PLights[playerid] = 0;
     return 1;
 }
 
@@ -2597,6 +2712,75 @@ CMD:stats(playerid, params[]) {
     return 1;
 }
 
+CMD:dashcam(playerid, params[]){
+    if(pInfo[playerid][pFactionId] == 1){
+        if(pInfo[playerid][pDuty] == 1){
+            if(pInfo[playerid][DashCamStatus] == 0){
+                new vidstr[32], vid;
+                vid = GetPlayerVehicleID(playerid);
+                dashtimer[playerid] = SetTimerEx("BeginDashCam", 250, false, "d", playerid);
+                PlayerTextDrawShow(playerid, dash1[playerid]);
+                PlayerTextDrawShow(playerid, dash2[playerid]);
+                PlayerTextDrawShow(playerid, dashDist[playerid]);
+                
+                format(vidstr, sizeof(vidstr), "VID: %d", vid);
+                PlayerTextDrawSetString(playerid, dashVid[playerid], vidstr);
+                PlayerTextDrawShow(playerid, dashVid[playerid]);
+                pInfo[playerid][DashCamStatus] = 1;
+            }
+            else {
+                KillTimer(dashtimer[playerid]);
+                PlayerTextDrawHide(playerid, dash1[playerid]);
+                PlayerTextDrawHide(playerid, dash2[playerid]);
+                PlayerTextDrawHide(playerid, dashDist[playerid]);
+                PlayerTextDrawHide(playerid, dashVid[playerid]);
+                PlayerTextDrawHide(playerid, dashSpeed[playerid]);
+                PlayerTextDrawHide(playerid, dashPlate[playerid]);
+                return 1;
+            }
+        }
+    }
+
+    return 1;
+}
+
+forward public BeginDashCam(playerid);
+public BeginDashCam(playerid){
+    new Float:x,Float:y,Float:z,Float:a;
+    new string[256], plate[32], vidstr[32];
+    new vehSpeed[32];
+    new vid = GetPlayerVehicleID(playerid);
+    GetVehiclePos(vid, x, y, z);
+    GetVehicleZAngle(vid,a);
+    x += floatsin(-a, degrees) * 10.0;
+    y += floatcos(-a, degrees) * 20.0;
+    KillTimer(dashtimer[playerid]);
+    dashtimer[playerid] = SetTimerEx("BeginDashCam", 250, false, "d", playerid);
+    format(plate, sizeof(plate), "P NONE");
+    PlayerTextDrawSetString(playerid, dashPlate[playerid], plate);
+    format(vehSpeed, sizeof(vehSpeed), "S NONE");
+    PlayerTextDrawSetString(playerid, dashSpeed[playerid], vehSpeed);
+    PlayerTextDrawShow(playerid, dashPlate[playerid]);
+    PlayerTextDrawShow(playerid, dashSpeed[playerid]);
+    for(new i = 0; i < loadedVeh; i++){
+        if(GetVehicleDistanceFromPoint(vInfo[i][vID], x, y, z) <= 3){
+            format(plate, sizeof(plate), "P %s", vInfo[i][vPlate]);
+            PlayerTextDrawSetString(playerid, dashPlate[playerid], plate);
+
+            new Float:speed, Float:final_speed;
+            GetVehiclePos(vInfo[i][vID], x, y, z);
+            GetVehicleVelocity(vInfo[i][vID], x, y, z);
+            speed = floatsqroot(((x * x) + (y * y)) + (z * z)) * 100;
+            final_speed = floatround(speed, floatround_round);
+            
+            format(vehSpeed, sizeof(vehSpeed), "S %dMPH", final_speed);
+            PlayerTextDrawSetString(playerid, dashSpeed[playerid], vehSpeed);
+            PlayerTextDrawShow(playerid, dashPlate[playerid]);
+            PlayerTextDrawShow(playerid, dashSpeed[playerid]);
+        }
+    }
+}
+
 CMD:drag(playerid, params[]){
     new target, Float:px, Float:py, Float:pz, Float:tx, Float:ty, Float:tz;
     if(sscanf(params, "d", target)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /drag [targetid]");{
@@ -2612,6 +2796,7 @@ CMD:drag(playerid, params[]){
                     dragState[target] = SetTimerEx("DragPlayer", 1000, false, "dd", playerid, target);
                 } else {
                     pInfo[playerid][pDragged] = 0;
+                    SendClientMessage(playerid, ADMINBLUE, "> You have stopped dragging this player!");
                     TogglePlayerControllable(target, true);
                     KillTimer(dragState[target]);
                 }
@@ -2627,6 +2812,111 @@ public DragPlayer(playerid, target){
     GetPlayerPos(playerid, px, py, pz);
     SetPlayerPos(target, px, py, pz);
     dragState[target] = SetTimerEx("DragPlayer", 1000, false, "dd", playerid, target);
+    return 1;
+}
+
+CMD:flash(playerid, params[]){
+    if(pInfo[playerid][pFactionId] == 1 || pInfo[playerid][pFactionId] == 2){
+        if(PLights[playerid] == 0)
+            {
+            BlinkingLights(playerid);
+            PLights[playerid] = 1;
+		}
+		else if(PLights[playerid] == 1)
+            {
+            ShutOffBlinkingLights(playerid);
+            PLights[playerid] = 0;
+		}
+        return 1;
+    }
+    return 1;
+}
+public BlinkingLights(playerid)
+{
+	if ( IsPlayerInAnyVehicle(playerid) && GetPlayerVehicleSeat(playerid) == 0 )
+	{
+		new Panels, Doors1, Lights, Tires;
+		GetVehicleDamageStatus(GetPlayerVehicleID(playerid), Panels, Doors1, Lights, Tires);
+		UpdateVehicleDamageStatus(GetPlayerVehicleID(playerid), Panels, Doors1, encode_lights(0,0,1,1), Tires);
+        TLI = SetTimerEx("TimerBlinkingLights", 100, false, "d", GetPlayerVehicleID(playerid));
+	}
+}
+public ShutOffBlinkingLights(playerid)
+{
+	if ( IsPlayerInAnyVehicle(playerid) && GetPlayerVehicleSeat(playerid) == 0 )
+	{
+	   KillTimer(TLI);
+	   KillTimer(TLI2);
+	   new Panels, Doors1, Lights, Tires;
+	   GetVehicleDamageStatus(GetPlayerVehicleID(playerid), Panels, Doors1, Lights, Tires);
+	   UpdateVehicleDamageStatus(GetPlayerVehicleID(playerid), Panels, Doors1, encode_lights(0,0,0,0), Tires);
+	}
+}
+public encode_lights(light1, light2, light3, light4)
+{
+	return light1 | (light2 << 1) | (light3 << 2) | (light4 << 3);
+}
+public TimerBlinkingLights(vehicleid)
+{
+		new Panels, Doors1, Lights, Tires;
+		GetVehicleDamageStatus(vehicleid, Panels, Doors1, Lights, Tires);
+		UpdateVehicleDamageStatus(vehicleid, Panels, Doors1, encode_lights(1,1,0,0), Tires);
+		TLI2 = SetTimerEx("TimerBlinkingLights2", 100, false, "d", vehicleid);
+}
+public TimerBlinkingLights2(vehicleid)
+{
+		new Panels, Doors1, Lights, Tires;
+		GetVehicleDamageStatus(vehicleid, Panels, Doors1, Lights, Tires);
+		UpdateVehicleDamageStatus(vehicleid, Panels, Doors1, encode_lights(0,0,1,1), Tires);
+		TLI = SetTimerEx("TimerBlinkingLights", 100, false, "d", vehicleid);
+}
+
+CMD:ticket(playerid, params[]){
+    new target, plate[32], amount, reason[32], Float:x, Float:y, Float:z; // Ticket works on target player id, or plate id.
+    if(pInfo[playerid][pFactionId] == 1){
+        if(pInfo[playerid][pDuty] == 1){
+            if(sscanf(params, "s[32]ds[32]", plate, amount, reason)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /ticket [plate/playerid] [amount] [reason]");{
+                for(new i = 0; i < loadedVeh; i++){
+                    if(strcmp(vInfo[i][vPlate], plate, true)){
+                        GetVehiclePos(vInfo[i][vID], x, y, z);
+                        if(IsPlayerInRangeOfPoint(playerid, 3, x, y, z)){
+                            vInfo[i][vFines] += amount;
+                            format(vInfo[i][vMostRecentFine], 32, reason);
+                            new string[256], DB_Query[900];
+                            format(string, sizeof(string), "> You have written a ticket for: %s - ticket price: $%d - reason: %s", plate, amount, reason);
+                            SendClientMessage(playerid, ADMINBLUE, string);
+                            mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `vehicles` SET `vFines` = '%d', `vMostRecentFine` = '%s' WHERE `vPlate` = '%e'",vInfo[i][vFines], vInfo[i][vMostRecentFine], plate);
+                            mysql_query(db_handle, DB_Query);
+                        }
+                    }
+                }
+            } 
+            if(!sscanf(params, "dds[32]", target, amount, reason)) {
+                if(IsPlayerConnected(target)){
+                    GetPlayerPos(target, x, y, z);
+                    if(IsPlayerInRangeOfPoint(playerid, 3, x, y, z)){
+                        pInfo[target][pFines] += amount;
+                        format(pInfo[target][pMostRecentFine], 32, reason);
+                        new string[256];
+                        format(string, sizeof(string), "> You have written a ticket for: %s - ticket price: $%d - reason: %s", RPName(target), amount, reason);
+                        SendClientMessage(playerid, ADMINBLUE, string);
+                        format(string, sizeof(string), "> You been given a ticket from %s - ticket price: $%d - reason: %s", RPName(playerid), amount, reason);
+                        SendClientMessage(target, ADMINBLUE, string);
+                    }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Target is not connected.");
+                    return 1;
+                }
+            }
+        } else {
+            TextDrawShowForPlayer(playerid, NotOnDuty);
+            SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+        }
+        return 1;
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
     return 1;
 }
 
@@ -3599,6 +3889,19 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
             SendClientMessage(playerid, GREY, "must be a player veh");
         return 1;
     }
+    if(newstate == PLAYER_STATE_ONFOOT){
+        if(pInfo[playerid][DashCamStatus] == 1){
+            pInfo[playerid][DashCamStatus] = 0;
+            KillTimer(dashtimer[playerid]);
+            PlayerTextDrawHide(playerid, dash1[playerid]);
+            PlayerTextDrawHide(playerid, dash2[playerid]);
+            PlayerTextDrawHide(playerid, dashPlate[playerid]);
+            PlayerTextDrawHide(playerid, dashVid[playerid]);
+            PlayerTextDrawHide(playerid, dashSpeed[playerid]);
+            PlayerTextDrawHide(playerid, dashDist[playerid]);
+            return 1;
+        }
+    }
     return 1;
 }
 CMD:rentcar(playerid, params[]) {
@@ -3628,6 +3931,14 @@ CMD:unrentcar(playerid, params[]) {
 }
 
 /* vehicle cmds */
+
+CMD:lights(playerid, params[]){
+    new engine, lights, alarm, doors, bonnet, boot, objective, vid;
+    vid = GetPlayerVehicleID(playerid);
+    GetVehicleParamsEx(vid, engine, lights, alarm, doors, bonnet, boot, objective);
+    SetVehicleParamsEx(vid, engine, true, alarm, doors, bonnet, boot, objective);
+    return 1;
+}
 
 CMD:engine(playerid, params[]) {
     new engine, lights, alarm, doors, bonnet, boot, objective;
