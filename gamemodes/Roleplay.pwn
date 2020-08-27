@@ -49,7 +49,7 @@ new dumpCheckPoint[MAX_PLAYERS], routeId[MAX_PLAYERS], busCheckpoint[MAX_PLAYERS
 new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS], drugDealTimer[MAX_PLAYERS];
 
 new policeCall[MAX_PLAYERS];
-new policeMainDoor, policeMainCell, cell1, cell2, cell3, cell4;
+new policeMainDoor, policeMainCell, cell1, cell2, cell3, cell4, impoundGate;
 
 new dumpPickup, jobPickup[MAX_JOBS];
 new busInfoPickup[100], busEntPickup[100], busExitPickup[100], busUsePickup[100];
@@ -757,6 +757,8 @@ public OnGameModeInit() {
     cell2 = 	CreateDynamicObject(19302, -2658.35400, 2643.65918, 4081.68091,   0.00000, 0.00000, 180.00000);
     cell4 = 	CreateDynamicObject(19302, -2664.77002, 2640.15576, 4081.68091,   0.00000, 0.00000, 180.00000);
     cell3 = 	CreateDynamicObject(19302, -2658.35254, 2640.17212, 4081.68091,   0.00000, 0.00000, 180.00000);
+    impoundGate = 	CreateDynamicObject(969, -180.26389, 1010.19574, 18.92880,   0.00000, 0.00000, 90.00000); // gate
+
 
 
     // DUMP 
@@ -2752,8 +2754,8 @@ public BeginDashCam(playerid){
     new vid = GetPlayerVehicleID(playerid);
     GetVehiclePos(vid, x, y, z);
     GetVehicleZAngle(vid,a);
-    x += floatsin(-a, degrees) * 10.0;
-    y += floatcos(-a, degrees) * 20.0;
+    x += floatsin(-a, degrees) * 15.0;
+    y += floatcos(-a, degrees) * 15.0;
     KillTimer(dashtimer[playerid]);
     dashtimer[playerid] = SetTimerEx("BeginDashCam", 250, false, "d", playerid);
     format(plate, sizeof(plate), "P NONE");
@@ -2869,6 +2871,20 @@ public TimerBlinkingLights2(vehicleid)
 		GetVehicleDamageStatus(vehicleid, Panels, Doors1, Lights, Tires);
 		UpdateVehicleDamageStatus(vehicleid, Panels, Doors1, encode_lights(0,0,1,1), Tires);
 		TLI = SetTimerEx("TimerBlinkingLights", 100, false, "d", vehicleid);
+}
+
+CMD:impound(playerid, params[]){
+    return 1;
+}
+
+CMD:gate(playerid, params[]){
+    if(pInfo[playerid][pFactionId] == 1){
+        if(IsPlayerInRangeOfPoint(playerid, 15, -180.2639, 1010.1957, 18.9288)){
+            MoveDynamicObject(impoundGate, -180.2639, 1016.7477, 18.9288, 8000);
+            SetTimerEx("MoveObjBack", 5000, false, "d", 7);
+        }
+    }
+    return 1;
 }
 
 CMD:ticket(playerid, params[]){
@@ -5094,7 +5110,6 @@ public OnPlayerExitedMenu(playerid)
 public OnPlayerInteriorChange(playerid, newinteriorid, oldinteriorid) {
     return 1;
 }
-
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
     if(newkeys & KEY_SPRINT){
         for(new i = 0; i < loadedFac; i++){
@@ -5218,6 +5233,29 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
             }
         }
     }
+    if(newkeys & KEY_SUBMISSION){
+        if(GetVehicleModel(GetPlayerVehicleID(playerid)) == 525){
+			new Float:pX,Float:pY,Float:pZ;
+			GetPlayerPos(playerid,pX,pY,pZ);
+			new Float:vX,Float:vY,Float:vZ;
+			new Found=0;
+			new vid=0;
+            while((vid<MAX_VEHICLES)&&(!Found))
+   			{
+   				vid++;
+   				GetVehiclePos(vid,vX,vY,vZ);
+   				if  ((floatabs(pX-vX)<7.0)&&(floatabs(pY-vY)<7.0)&&(floatabs(pZ-vZ)<7.0)&&(vid!=GetPlayerVehicleID(playerid)))
+   			    {
+   				    Found=1;
+   				    if	(IsTrailerAttachedToVehicle(GetPlayerVehicleID(playerid)))
+   				    {
+   				        DetachTrailerFromVehicle(GetPlayerVehicleID(playerid));
+   				    }
+   				    AttachTrailerToVehicle(vid,GetPlayerVehicleID(playerid));
+   				}
+            }
+        }
+    }
     return 1;
 }
 
@@ -5242,6 +5280,10 @@ public MoveObjBack(doorid){
     }
     if(doorid == 6){
         MoveDynamicObject(cell4,-2664.7700, 2640.1558, 4081.6809, 2000);   
+    }
+    if(doorid == 7) {
+        //gate
+        MoveDynamicObject(impoundGate, -180.2639, 1010.1957, 18.9288, 8000);
     }
     return 1;
 }
