@@ -42,6 +42,7 @@ main() {
 /* 1- NEWS -*/
 new MySQL:db_handle;
 
+
 new Menu:busdrivermenu, Menu:hardwaremenu, Menu:phonemenu, Menu:gpsmenu, Menu:AmmunationMenu, Menu:Pistols, Menu:SMGS, Menu:shotguns, Menu:Rifles, Menu:Armour;
 
 new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS], GarbageCheckpoint[MAX_PLAYERS];
@@ -489,7 +490,7 @@ new const POLICECLOTHES[][ENUM_POLICECLOTHES] = {
     {307, "Female LV Police Officer"},
     {284, "Motorcycle Cop"},
     {285, "Swat Gear"}
-}
+};
 
 enum ENUM_CARDEAL_DATA {
     VEHICLE_MODELID,
@@ -2873,7 +2874,87 @@ public TimerBlinkingLights2(vehicleid)
 		TLI = SetTimerEx("TimerBlinkingLights", 100, false, "d", vehicleid);
 }
 
+CMD:getcar(playerid, params[]){
+    new plate[32], name[32];
+    GetPlayerName(playerid, name, 32);
+    if(sscanf(params, "s[32]", plate)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /getcar [PLATE]"); {
+        for(new i = 0; i < loadedVeh; i++){
+            if(!strcmp(vInfo[i][vPlate], plate, true)){
+                if(vInfo[i][vImpounded] == 1){
+                    if(!strcmp(vInfo[i][vOwner], name, true)){
+                        if(GetPlayerMoney(playerid) >= vInfo[i][vFines] && pInfo[playerid][pCash] >= vInfo[i][vFines]){
+                            SetVehiclePos(vInfo[i][vID], -185.0058, 1021.9856, 19.6558);
+                            SetVehicleZAngle(vInfo[i][vID], 0);
+                            vInfo[i][vImpounded] = 0;
+                            vInfo[i][vFines] = 0;
+                            vInfo[i][vParkedX] = -185.0058;
+                            vInfo[i][vParkedY] = 1021.9856;
+                            vInfo[i][vParkedZ] = 19.6558;
+                            new DB_Query[900];
+                            mysql_format(db_handle, DB_Query, sizeof(DB_Query), "UPDATE `vehicles` SET `vImpounded` = '0', `vFines` = '0', `vParkedX` = '%f', `vParkedY` = '%f', `vParkedZ` = '%f' WHERE `vPlate` = '%s'", -185.0058, 1021.9856, 19.6558, plate);
+                            mysql_query(db_handle, DB_Query);
+                            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have bought your car back from the impound!");
+                            return 1;
+                        }
+                    } else {
+                        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You do not own that vehicle!");
+                        return 1;
+                    }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} That vehicle is not impounded!");
+                    return 1;
+                }
+            }
+        }
+    }
+    return 1;
+}
+
 CMD:impound(playerid, params[]){
+    new plate[32];
+    if(pInfo[playerid][pFactionId] == 1){
+        if(pInfo[playerid][pDuty] == 1){
+            if(sscanf(params, "s[32]", plate)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /impound [PLATE]"); {
+                for(new i = 0; i < loadedVeh; i++){
+                    if(!strcmp(vInfo[i][vPlate], plate,  true)){
+                        new Float:vehdist = GetVehicleDistanceFromPoint(vInfo[i][vID], -166.0709, 1018.1705, 18.7314);
+                        printf("vid; %d %s, distance from point: %f", vInfo[i][vID], vInfo[i][vPlate], vehdist);
+                        if(GetVehicleDistanceFromPoint(vInfo[i][vID], -166.0709, 1018.1705, 18.7314) <= 7){ // check to see if that veh is near that point..
+                            if(vInfo[i][vFines] > 0){
+                                new Float:x, Float:y, Float:z, DB_Query[900], string[256];
+                                GetVehiclePos(vInfo[i][vID], x, y, z);
+                                vInfo[i][vImpounded] = 1;
+                                vInfo[i][vParkedX] = x;
+                                vInfo[i][vParkedY] = y;
+                                vInfo[i][vParkedZ] = z;
+                                mysql_format(db_handle, DB_Query, sizeof(DB_Query), "UPDATE `vehicles` SET `vImpounded` = '%d', `vParkedX` = '%f', `vParkedY` = '%f', `vParkedZ` = '%f' WHERE `vPlate` = '%e'", 1, x, y, z, plate);
+                                mysql_query(db_handle, DB_Query);
+                                format(string, sizeof(string), "> Vehicle: %s has been impounded!", vInfo[i][vPlate]);
+                                pInfo[playerid][pFactionPay] += 100; // give them 100 towards fac pay
+                                SendClientMessage(playerid, ADMINBLUE, string);
+                                //send client message saying it has worked
+                                // detatch towed vehicle
+                                DetachTrailerFromVehicle(GetPlayerVehicleID(playerid));
+                                return 1;
+                            } else {
+                                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle does not have any fines!");
+                                return 1;
+                            }
+                        } else {
+                            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle is not near the impound point!");
+                            return 1;
+                        }
+                    }
+                }
+            }
+        } else {
+            TextDrawShowForPlayer(playerid, NotOnDuty);
+            SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
     return 1;
 }
 
@@ -2893,7 +2974,7 @@ CMD:ticket(playerid, params[]){
         if(pInfo[playerid][pDuty] == 1){
             if(sscanf(params, "s[32]ds[32]", plate, amount, reason)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /ticket [plate/playerid] [amount] [reason]");{
                 for(new i = 0; i < loadedVeh; i++){
-                    if(strcmp(vInfo[i][vPlate], plate, true)){
+                    if(!strcmp(vInfo[i][vPlate], plate, true)){
                         GetVehiclePos(vInfo[i][vID], x, y, z);
                         if(IsPlayerInRangeOfPoint(playerid, 3, x, y, z)){
                             vInfo[i][vFines] += amount;
@@ -3560,7 +3641,7 @@ CMD:collect(playerid, params[]) {
                             format(string, sizeof(string), "[SERVER]:{FFFFFF} You have purchased %d grams of weed!", 1);
                             SendClientMessage(playerid, SERVERCOLOR, string);
                             drugInfo[0][drugAmount] -= 1;
-                            GivePlayerMoney(playerid, -drugInfo[0][drugPrice])
+                            GivePlayerMoney(playerid, -drugInfo[0][drugPrice]);
                             pInfo[playerid][pCash] -= drugInfo[0][drugPrice];
                             mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `drugprices` SET `drugAmount` = '%d' WHERE  `drugId` = 1", drugInfo[0][drugAmount]);
                             mysql_query(db_handle, DB_Query);
@@ -3590,7 +3671,7 @@ CMD:collect(playerid, params[]) {
                                 format(string, sizeof(string), "[SERVER]:{FFFFFF} You have purchased %d grams of cocaine!", 1);
                                 SendClientMessage(playerid, SERVERCOLOR, string);
                                 drugInfo[1][drugAmount] -= 1;
-                                GivePlayerMoney(playerid, -drugInfo[1][drugPrice])
+                                GivePlayerMoney(playerid, -drugInfo[1][drugPrice]);
                                 pInfo[playerid][pCash] -= drugInfo[1][drugPrice];
                                 mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `drugprices` SET `drugAmount` = '%d' WHERE  `drugId` = 2", drugInfo[0][drugAmount]);
                                 mysql_query(db_handle, DB_Query);
@@ -6422,12 +6503,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
                 return 1;
             }
 
-            new query[900], num_plate[9];
-            for(new i; i < 3; i++){
+            new query[900], num_plate[8];
+            for(new i; i < 2; i++){
                 num_plate[i] = 'A'+random('Z'-'A');
             }
-            num_plate[3] = '-';
-            for(new i = 4; i < sizeof(num_plate); i++){
+            for(new i = 3; i < sizeof(num_plate); i++){
                 num_plate[i] = '0'+random('9'-'0');
             }
 
