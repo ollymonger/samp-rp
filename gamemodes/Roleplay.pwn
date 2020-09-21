@@ -496,7 +496,7 @@ enum ENUM_CARDEAL_DATA {
     VEHICLE_MODELID,
     VEHICLE_NAME[32],
     VEHICLE_PRICE,
-    VEHICLE_ID
+    VEHICLE_ID2
 };
 
 new const BUS_DEALERSHIP[][ENUM_CARDEAL_DATA] = {
@@ -600,12 +600,16 @@ enum ENUM_PLAYER_DATA {
         busStopState,
         pDragged,
         DashCamStatus,
+        OnCall,
+        BeingCalled,
+        CalledService,
+        AwaitingReason,
 
         RentingVehicle
 }
 new pInfo[MAX_PLAYERS][ENUM_PLAYER_DATA];
 
-new dragState[MAX_PLAYERS], dashtimer[MAX_PLAYERS];
+new dragState[MAX_PLAYERS], dashtimer[MAX_PLAYERS], callTimer[MAX_PLAYERS];
 
 enum ENUM_JOB_DATA {
     jID[11],
@@ -730,7 +734,7 @@ public OnGameModeInit() {
     ManualVehicleEngineAndLights();
     DisableInteriorEnterExits();
     // Don't use these lines if it's a filterscript
-    SetGameModeText("Roleplay | v1.5.1");
+    SetGameModeText("Roleplay | v1.5.2");
 
     /* MySQL info */
     db_handle = mysql_connect_file("mysql.ini"); // Database info!
@@ -1311,7 +1315,12 @@ public VehsReceived() {
                 -1
             );
             vInfo[loadedVeh][vRentingPlayer] = INVALID_PLAYER_ID;
-            SetVehicleNumberPlate(vehicleid, vInfo[i][vPlate]);
+            SetVehicleNumberPlate(vehicleid, vInfo[i][vPlate]);            
+            new engine, lights, alarm, doors, bonnet, boot, objective;
+            GetVehicleParamsEx(vehicleid, engine, lights, alarm, doors, bonnet, boot, objective);
+            if(vInfo[i][vRentalState] != VEHICLE_RENTABLE){            
+                SetVehicleParamsEx(vehicleid, engine, lights, alarm, 1, bonnet, boot, objective);
+            }
             loadedVeh++;
         }
         printf("** [MYSQL] Loaded %d vehicles from the database!", cache_num_rows());
@@ -2310,10 +2319,55 @@ public OnVehicleDeath(vehicleid, killerid) {
 
 public OnPlayerText(playerid, text[]) {
     if(pInfo[playerid][pMuted] == 0) {
-        new string[256];
+        if(pInfo[playerid][OnCall] >= 1 && pInfo[playerid][OnCall] != 911){
+            new string[256];
+            format(string, sizeof(string), "{FFFFE0}[PHONE] %s", RPName(playerid), text);
+            for(new i = 0; i < MAX_PLAYERS; i++){
+                if(pInfo[i][pPhoneNumber] == pInfo[playerid][OnCall]){        
+                    SendClientMessage(i, -1, string);
+                    SendClientMessage(playerid, -1, string);
+                }
+            }
+        } else if(pInfo[playerid][OnCall] == 911){
+            if(pInfo[playerid][AwaitingReason] == 0){
+                if(strfind(text, "police", true) != -1){
+                    new string[256];
+                    format(string, sizeof(string), "[PHONE]: %s", text);
+                    SendClientMessage(playerid, -1, string);
+                    format(string, sizeof(string), "[PHONE]: Okay - what is the situation?");
+                    SendClientMessage(playerid, -1, string);
+                    pInfo[playerid][CalledService] = 1;
+                    pInfo[playerid][AwaitingReason] = 1;
+                }
+            } else {     
+                if(pInfo[playerid][CalledService] == 1){
+                    new string[256];     
+                    format(string, sizeof(string), "[PHONE]: %s", text);
+                    SendClientMessage(playerid, -1, string);
+                    new Float:px, Float:py, Float:pz;
+                    GetPlayerPos(playerid, px, py, pz);
+                    new msg[50];
+                    format(msg, sizeof(msg), "%s", text);
+                    AlertPolice(playerid, msg, px, py, pz);
+                    format(string, sizeof(string), "[PHONE]: Thank you. The police have been notified.");
 
-        format(string, sizeof(string), "%s[%i] says:%s", RPName(playerid), playerid, text);
-        nearByMessage(playerid, -1, string, 12.0);
+                    SendClientMessage(playerid, -1, string);
+                    pInfo[playerid][CalledService] = 0;
+                    pInfo[playerid][AwaitingReason] = 0;
+                    pInfo[playerid][OnCall] = 0;
+                    
+                    format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(playerid));
+                    nearByAction(playerid, NICESKY, string);
+                    
+                    SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
+                }
+            }
+        } else {
+            new string[256];
+
+            format(string, sizeof(string), "%s[%i] says: %s", RPName(playerid), playerid, text);
+            nearByMessage(playerid, -1, string, 12.0);
+        }
     } else {
         TextDrawShowForPlayer(playerid, PMuted);
         SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
@@ -2443,6 +2497,20 @@ CMD:createrentalvehicle(playerid, params[]){
         if(sscanf(params, "ddds[32]", vehid, busId, price, plate)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createrentalvehicle [vehid] [busid] [price] [plate]");{
             mysql_format(db_handle, query, sizeof(query), "INSERT INTO `vehicles` (`vModelId`,`vOwner`,`vFuel`, `vBusId`,`vPlate`,`vRentalPrice`, `vParkedX`,`vParkedY`,`vParkedZ`, `vAngle`, `vRentalState`) VALUES ('%d', 'NULL', '100', '%d','%s','%d','%f','%f','%f', '%f', '1')", vehid, busId,plate,price, px,py,pz,pa);
             mysql_tquery(db_handle, query, "OnRentalVehCreated", "dddd", playerid,vehid, busId, price);
+        }
+        return 1;
+    }
+    return 1;
+}
+
+CMD:createfactionvehicle(playerid, params[]){
+    new vehid, facid, price,plate[32],query[900], Float:px, Float:py, Float:pz, Float:pa;
+    if(pInfo[playerid][pAdminLevel] >= 5){
+        GetPlayerPos(playerid, px, py, pz);
+        GetPlayerFacingAngle(playerid, pa);
+        if(sscanf(params, "dds[32]", vehid, facid, plate)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createrentalvehicle [vehid] [facid] [plate]");{
+            mysql_format(db_handle, query, sizeof(query), "INSERT INTO `vehicles` (`vModelId`,`vOwner`,`vFuel`, `vFacId`,`vPlate`,`vParkedX`,`vParkedY`,`vParkedZ`, `vAngle`, `vRentalState`) VALUES ('%d', 'NULL', '100', '%d','%s','%f','%f','%f', '%f', '0')", vehid, facid,plate, px,py,pz,pa);
+            mysql_tquery(db_handle, query, "OnFactionVehCreated", "ddd", playerid,vehid, facid);
         }
         return 1;
     }
@@ -3050,6 +3118,127 @@ CMD:arrest(playerid, params[]){
     return 1;
 }
 
+CMD:call(playerid, params[]){
+    new number;
+    if(pInfo[playerid][pPhoneNumber] != 0 && pInfo[playerid][pPhoneModel] != 0){
+        // has phone...
+        if(sscanf(params, "d", number)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /call [NUMBER]"); {
+            if(number == 911){
+                new string[256];
+                format(string, sizeof(string), "* %s takes out their phone and dials a number.", RPName(playerid));
+                nearByAction(playerid, NICESKY, string);
+                SetPlayerSpecialAction(playerid, SPECIAL_ACTION_USECELLPHONE);
+                BeginCalling(playerid, 911);
+            }
+            for(new i = 0; i < MAX_PLAYERS; i++){
+                if(pInfo[i][pPhoneNumber] == number){
+                    if(IsPlayerConnected(i)){
+                        new string[256];
+                        format(string, sizeof(string), "* %s takes out their phone and dials a number.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        pInfo[i][BeingCalled] = pInfo[playerid][pPhoneNumber];
+                        SetPlayerSpecialAction(playerid, SPECIAL_ACTION_USECELLPHONE);
+                        BeginCalling(playerid, i);
+                        PlayerPlaySound(playerid, 3600,0,0,0);
+                        return 1;
+                    }
+                }
+            }
+        }
+    } else {
+        // no phone...
+    }
+    return 1;
+}
+
+forward BeginCalling(playerid, targetid);
+public BeginCalling(playerid, targetid){
+    if(targetid == 911){
+        new string[256];
+        format(string, sizeof(string), "{FFFFD5}Phone connecting sound...");
+        SendClientMessage(playerid, -1, string);
+        pInfo[playerid][OnCall] = 911;
+        format(string, sizeof(string), "{FFFFD5}[PHONE]: This is the emergency services, what do you require?");
+        SendClientMessage(playerid, -1, string);
+        format(string, sizeof(string), "{FFFFD5}[PHONE]: Police, Medics or Firefighters?");
+        SendClientMessage(playerid, -1, string);
+        return 1;
+    } else {
+        if(pInfo[playerid][OnCall] == 0){
+            new string[256];
+            format(string, sizeof(string), "PHONE: %d is calling... /accept to answer!", pInfo[playerid][pPhoneNumber]);
+            SendClientMessage(targetid, ADMINBLUE, string);
+            format(string, sizeof(string), "Phone ringing...  (( %s ))", RPName(targetid));
+            nearByAction(targetid, NICESKY, string);
+            
+            format(string, sizeof(string), "{FFFFD5}Phone connecting sound...");
+            SendClientMessage(playerid, -1, string);
+            callTimer[playerid] = SetTimerEx("BeginCalling", 3000, false, "dd", playerid, targetid);
+            new Float:x, Float:y, Float:z;
+            GetPlayerPos(targetid, x, y, z);
+            PlayerPlaySound(targetid, 23000, x, y, z);
+        }
+    }
+    return 1;
+}
+
+CMD:accept(playerid, params[]){
+    new string[256];
+    if(pInfo[playerid][BeingCalled] >= 1){
+        new pid;
+        pid = PlayerIdByPhoneNumber(pInfo[playerid][BeingCalled]);
+        if(pInfo[playerid][BeingCalled] == pInfo[pid][pPhoneNumber]){
+            SetPlayerSpecialAction(pid, SPECIAL_ACTION_USECELLPHONE);    
+            format(string, sizeof(string), "* %s takes out their phone and answers the call.", RPName(playerid));
+            nearByAction(playerid, NICESKY, string);
+            format(string, sizeof(string), "{FFFFD5} Call connected.");
+            SendClientMessage(playerid, -1, string);
+            SendClientMessage(pid, -1, string);
+            pInfo[playerid][OnCall] = pInfo[pid][pPhoneNumber];
+            pInfo[pid][OnCall] = pInfo[playerid][pPhoneNumber];
+            pInfo[playerid][BeingCalled] = 0;
+            pInfo[pid][BeingCalled] = 0;
+            KillTimer(callTimer[playerid]);
+            KillTimer(callTimer[pid]);
+        }
+        
+    }
+    return 1;
+}
+
+stock PlayerIdByPhoneNumber(number){
+    new pid;
+    for(new i = 0; i < MAX_PLAYERS; i++){
+        if(pInfo[i][pPhoneNumber] == number){
+            pid = i;
+            return pid;
+        }
+    }
+}
+
+CMD:hangup(playerid, params[]){
+    new string[256];
+    if(pInfo[playerid][OnCall] >= 1){
+        for(new i = 0; i < MAX_PLAYERS; i++){
+            if(IsPlayerConnected(i))
+            {
+                if(pInfo[i][OnCall] == pInfo[playerid][pPhoneNumber]){
+                    format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(i));
+                    nearByAction(i, NICESKY, string);
+                    format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(playerid));
+                    nearByAction(playerid, NICESKY, string);
+                    pInfo[i][OnCall] = 0;
+                    pInfo[playerid][OnCall] = 0;
+                    
+                    SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
+                    SetPlayerSpecialAction(i, SPECIAL_ACTION_NONE);
+                }
+            }
+        }
+    }
+    return 1;
+}
+
 CMD:ca(playerid, params[]){
     new target, reason[32], string[256];
     if(pInfo[playerid][pFactionId] == 1){
@@ -3202,6 +3391,7 @@ CMD:help(playerid, params[]) {
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/help, /admins, /mods, /helpers, /staff");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/shop, /stats, /pockets, /rentcar, /unrentcar");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/properties, /buyproperty, /sellproperty");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/getcar");
         } else if(strcmp(Usage, "Job", true) == 0) {
             SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
             if(pInfo[playerid][pJobId] == 4){
@@ -3238,8 +3428,12 @@ CMD:help(playerid, params[]) {
                 if(pInfo[playerid][pFactionId] == 1){
                     SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Faction Commands ::.");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /cuff, /fine, /ca (create alert), /arrest");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /impound, NumPad+ to tow a vehicle");
                 }
             }
+        } else if(strcmp(Usage, "Phone", true) == 0){
+            SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /call, /hangup, /sms");
         }
     }
     return 1;
@@ -3823,6 +4017,15 @@ public OnRentalVehCreated(playerid, vid, busid, price){
     }
 }
 
+forward public OnFactionVehCreated(playerid, vid, facid);
+public OnFactionVehCreated(playerid, vid, facid){
+    new string[256];
+    format(string, sizeof(string), "[SERVER]:{FFFFFF} Faction vehicle (facid: %d) created!", facid);
+    SendClientMessage(playerid, -1, string); {
+        LoadNewVehData(cache_insert_id());
+    }
+}
+
 forward public OnFacCreated(playerid, facName[32], type, address, price);
 public OnFacCreated(playerid, facName[32], type, address, price){
     new string[256];
@@ -3976,10 +4179,12 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
             }
         }
         if(vInfo[vehicleid][vJobId] == 0 && vInfo[vehicleid][vFacId] >= 1) { // check if not a job id and if fac id has been set.
-            if(pInfo[playerid][pFactionId] == vInfo[vehicleid][vFacId]) {
-
+            if(vInfo[vehicleid][vFacId] == pInfo[playerid][pFactionId]) {
+                return 1;
+            } else {
+                RemovePlayerFromVehicle(playerid);
+                return 1;
             }
-            RemovePlayerFromVehicle(playerid);
         }
 
         if(!strcmp(name, vInfo[vehicleid][vOwner]))
@@ -4028,12 +4233,46 @@ CMD:unrentcar(playerid, params[]) {
 }
 
 /* vehicle cmds */
+CMD:lock(playerid, params[]){    
+    new engine, lights, alarm, doors, bonnet, boot, objective, string[256], nname[256];
+    new Float:x, Float:y, Float:z;
+    format(nname, sizeof(nname), "%s", GetName(playerid));
+    for(new i = 0; i < MAX_VEHICLES; i++){
+        GetVehiclePos(i, x, y, z);
+        if(IsPlayerInRangeOfPoint(playerid, 10,x,y,z)){
+            if(vInfo[i][vFacId] == pInfo[playerid][pFactionId] || !strcmp(vInfo[i][vOwner], nname, true)){
+                GetVehicleParamsEx(i, engine, lights, alarm, doors, bonnet, boot, objective);
+                if(doors == 1){
+                    SetVehicleParamsEx(i, engine, lights, alarm, false, bonnet, boot, objective);
+                    format(string, sizeof(string), "* %s takes their keys and unlocks the vehicle.", RPName(playerid));
+                    nearByAction(playerid, NICESKY, string);
+                } else {
+                    SetVehicleParamsEx(i, engine, lights, alarm, true, bonnet, boot, objective);
+                    format(string, sizeof(string), "* %s takes their keys and locks the vehicle.", RPName(playerid));
+                    nearByAction(playerid, NICESKY, string);
+                }
+            }
+            return 1;
+        }
+    }
+    return 1;
+}
 
 CMD:lights(playerid, params[]){
-    new engine, lights, alarm, doors, bonnet, boot, objective, vid;
+    new engine, lights, alarm, doors, bonnet, boot, objective, vid, string[256];
     vid = GetPlayerVehicleID(playerid);
     GetVehicleParamsEx(vid, engine, lights, alarm, doors, bonnet, boot, objective);
-    SetVehicleParamsEx(vid, engine, true, alarm, doors, bonnet, boot, objective);
+    if(IsPlayerInVehicle(playerid, vid)){
+        if(lights == 1){
+            SetVehicleParamsEx(vid, engine, false, alarm, doors, bonnet, boot, objective);
+            format(string, sizeof(string), "* %s turns the vehicles headlights off.", RPName(playerid));
+            nearByAction(playerid, NICESKY, string);
+        } else {
+            SetVehicleParamsEx(vid, engine, true, alarm, doors, bonnet, boot, objective);
+            format(string, sizeof(string), "* %s turns the vehicles headlights on.", RPName(playerid));
+            nearByAction(playerid, NICESKY, string);        
+        }
+    }
     return 1;
 }
 
@@ -4064,7 +4303,7 @@ CMD:engine(playerid, params[]) {
                         return 1;
                     }
                 }
-                if(vInfo[i][vJobId] == pInfo[playerid][pJobId]) {
+                if(vInfo[i][vJobId] == pInfo[playerid][pJobId] && vInfo[i][vRentingPlayer] == playerid) {
                     if(engine == 1) {
                         SetVehicleParamsEx(vid, false, lights, alarm, doors, bonnet, boot, objective);
                         format(string, sizeof(string), "* %s takes their key from the igntion and turns the engine off.", RPName(playerid));
@@ -4079,7 +4318,22 @@ CMD:engine(playerid, params[]) {
                         return 1;
                     }
                 }
-                if(!strcmp(vInfo[i][vOwner], GetName(playerid))){
+                if(!strcmp(vInfo[i][vOwner], nname, true)){
+                    if(engine == 1) {
+                        SetVehicleParamsEx(vid, false, lights, alarm, doors, bonnet, boot, objective);
+                        format(string, sizeof(string), "* %s takes their key from the igntion and turns the engine off.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        KillTimer(fuelTimer[playerid]);
+                        return 1;
+                    } else {
+                        SetVehicleParamsEx(vid, true, lights, alarm, doors, bonnet, boot, objective);
+                        format(string, sizeof(string), "* %s inserts their key into the ignition and starts the engine.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 17500, false, "dd", playerid, vInfo[i][vID]);
+                        return 1;
+                    }
+                }
+                if(vInfo[i][vFacId] == pInfo[playerid][pFactionId]){
                     if(engine == 1) {
                         SetVehicleParamsEx(vid, false, lights, alarm, doors, bonnet, boot, objective);
                         format(string, sizeof(string), "* %s takes their key from the igntion and turns the engine off.", RPName(playerid));
@@ -4212,7 +4466,7 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
         GameTextForPlayer(playerid, "/takejob", 3000, 5);
         DestroyDynamicCP(JobCheckpoint[0]);
     }
-    if(checkpointid == drugDeal[0]){
+    if(checkpointid == drugDeal[playerid]){
         if(pInfo[playerid][CurrentState] == 1){
             DestroyDynamicCP(drugDeal[0]); // destroy drug CP for player.
             KillTimer(drugDealTimer[playerid]);
@@ -4304,15 +4558,16 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
         }
     }
 
-    if(checkpointid == policeCall[0]){
+    if(checkpointid == policeCall[playerid]){
         if(pInfo[playerid][pFactionId] == 1)
         {
             for(new i = 0; i < MAX_PLAYERS; i++){
                 if(pInfo[i][pFactionId] == 1){
                     new string[256];
                     format(string, sizeof(string), "Radio: %s %s has arrived on the scene, over.", pInfo[playerid][pFactionRankname], RPName(playerid));
-                    SendClientMessage(playerid, SERVERCOLOR, string);
+                    SendClientMessage(playerid, -1, string);
                     pInfo[playerid][pFactionPay] += 50;
+                    DestroyDynamicCP(policeCall[playerid]);
                 }
             }
         }
@@ -4321,17 +4576,17 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
     return 1;
 }
 
-forward public AlertPolice(playerid, message[32], Float:cX, Float:cY, Float:cZ);
-public AlertPolice(playerid, message[32], Float:cX, Float:cY, Float:cZ){
+forward public AlertPolice(playerid, message[50], Float:cX, Float:cY, Float:cZ);
+public AlertPolice(playerid, message[50], Float:cX, Float:cY, Float:cZ){
     new string[256];
     pInfo[playerid][pAlertCall] = 1;
-    format(pInfo[playerid][pAlertMsg], 64, "%s", message);
+    format(pInfo[playerid][pAlertMsg], 80, "%s", message);
 
     for(new i = 0; i < MAX_PLAYERS; i++){
         if(pInfo[i][pFactionId] == 1){ // if player is a police officer
-            format(string, sizeof(string), "{FFFFFF}Radio: %s, call code: %d", message, playerid);
+            format(string, sizeof(string), "{FFFFFF}Radio: ALERT: %s, call code: %d", message, playerid);
+            printf("Officer alerted with msg: %s", message);
             SendClientMessage(i, SERVERCOLOR, string);
-            return 1;
         }
     }
     return 1;
