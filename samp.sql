@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 23, 2020 at 02:50 AM
+-- Generation Time: Sep 21, 2020 at 02:19 PM
 -- Server version: 10.1.34-MariaDB
 -- PHP Version: 7.2.7
 
@@ -52,8 +52,15 @@ CREATE TABLE `accounts` (
   `pFactionRank` int(11) NOT NULL,
   `pFactionRankname` varchar(32) DEFAULT NULL,
   `pFactionPay` int(11) NOT NULL,
+  `pDutyClothes` int(11) NOT NULL,
   `pJobId` int(11) NOT NULL,
   `pJobPay` int(11) NOT NULL,
+  `pFines` int(11) NOT NULL,
+  `pMostRecentFine` varchar(32) NOT NULL,
+  `pWantedLevel` int(11) NOT NULL,
+  `pMostRecentWantedReason` varchar(32) NOT NULL,
+  `pInPrisonType` int(11) NOT NULL,
+  `pPrisonTimer` int(11) NOT NULL,
   `pWeedAmount` int(11) NOT NULL,
   `pCokeAmount` int(11) NOT NULL,
   `pCigAmount` int(11) NOT NULL,
@@ -78,31 +85,31 @@ CREATE TABLE `accounts` (
 -- Dumping data for table `accounts`
 --
 
-INSERT INTO `accounts` (`ID`, `pName`, `pPassword`, `pEmail`, `pAdminLevel`, `pLevel`, `pExp`, `pRegion`, `pHealth`, `pArmour`, `pGender`, `pSkin`, `pAge`, `pBank`, `pCash`, `pPayTimer`, `pPhoneModel`, `pPhoneNumber`, `pGpsModel`, `pFactionId`, `pFactionRank`, `pFactionRankname`, `pFactionPay`, `pJobId`, `pJobPay`, `pWeedAmount`, `pCokeAmount`, `pCigAmount`, `pRopeAmount`, `pHasMask`, `pDrivingLicense`, `pHeavyLicense`, `pPilotLicense`, `pGunLicense`, `pWeaponSlot1`, `pWeaponSlot1Ammo`, `pWeaponSlot2`, `pWeaponSlot2Ammo`, `pWeaponSlot3`, `pWeaponSlot3Ammo`, `pVehicleSlots`, `pVehicleSlotsUsed`, `pPreferredSpawn`) VALUES
-(3, 'Olly', '$2y$12$aCm2PzXMY', 'helloworld@world.com', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(4, 'Olly123', '$2y$12$bjHwP0vIM', 'helloworld@world.com', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(5, 'Olly1', '$2y$12$PyPsXVbAb', 'helloworld@world.com', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(6, 'Olly12', '$2y$12$OhDsThPvZ', 'helloworld@world.com', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(7, 'test1', '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui', 'helloworld@world.com', 0, 0, 0, '', 42, 0, 0, 0, 0, 0, 80000, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(8, 'testemaildialog', '$2y$12$ZELqcCPMYiTzOiDJRCjxQe7WBZbdvRaBjY8G4ahSzcFHuUEhBNs1u', 'helloworld@world.com', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(9, 'testemaildialog2', '$2y$12$Ki3tK0vzWSvpakTkQzfAP.dd559FY6izEk5MI9I8oKOQdktoZCJee', 'hi_there@test.com', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(10, 'testemaildialog3', '$2y$12$XCCxREftXyDiKzTyKi7DTu/nVvquj3B2IpAvqWa4TqtkSyeSnojnq', 'notrightemail.com', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(11, 'testemaildialog4', '$2y$12$cFTrYEfCWzmxWhCwRVTNQ.gtAMRVqWX2qZ6WwUT8OSri/JyaXOyRu', 'HI.COM', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(12, 'testemaildialog5', '$2y$12$Q1PDZRbQYivqZUnfcjmzYOFs2kxwsZ3baXo5gUAWOzsUUI95iFIZ.', 'hello@gmail.com', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(13, 'testdialog1', '$2y$12$YizuZSz1KSuxOyPBMVXVQu8hs8LFpsgsT747otZRFhso/b497ZTim', 'olly@yllo.co.uk', 0, 0, 0, 'America', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(14, 'testdialog12', '$2y$12$ayjfOTXLT03OcCLYO0LQL.eoU6gBTipidOWmuwhkM7NZY5HrJVSRO', 'hello@gmail.com', 0, 0, 0, 'NULL', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(15, 'testdialog123', '$2y$12$ZCXXPxTGQTfLZiHJTkzRbeiAxOf6qcpH6VNdo2v7xC1VsNot73hBy', 'hello@gmail.com', 0, 0, 0, 'region', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(16, 'testdialog11', '$2y$12$Kyn0bhTYRTDxbFPNa1fwZeGR2UvPX5iFiOyB4JDLRG5yrLlKnd4cy', 'olly@yllo.co.uk', 0, 0, 0, 'United Kingdom', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(17, 'testdialoga', '$2y$12$OUy1Z0P1RDjhXkr3REDKSOQVsqBHfQDHEqwInPdnjvPEISAK/3OLa', 'gmail@gmail.com', 0, 0, 0, 'America', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(18, 'testdialogb', '$2y$12$TRH0cCrHZVDlRh/uX1LhPOGOzdQD5fIUo/piDreo8/G/n9cdpDU5m', 'example@example.com', 0, 0, 0, 'America', 100, 0, 0, 0, 0, 0, 1000, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(19, 'testdialogc', '$2y$12$QDDrYibDbTblZ1jfPy60butWDkKhIn7fzb6/6qog6cXvLCTYvMbwC', 'example@example.com', 0, 0, 0, 'America', 100, 0, 1, 167, 27, 0, 50, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(20, 'quiztest1', '$2y$12$cSDOOkf3ThXATj.0XhDDXOd1SS1fz0i/dZ4iuAQYph2EOT1gCtRMu', '@', 0, 0, 0, 'Los Santos', 100, 0, 1, 23, 28, 0, 1000, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(21, 'testaccounts_1', '$2y$12$KjjyaDTEQBe1LTTDUUvGaOTqZsuFTWhrHHEa6fv0KiASgtEyJscGG', 'gmail@gmail.com', 0, 0, 0, 'Los Santos', 100, 0, 1, 72, 28, 0, 1000, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(22, 'testaccounts_2', '$2y$12$XFDYQjXvbjThLR/xKkjRTOarF5sW7jrTtLDUAQoj5KzHKM/NZ3rRa', 'olly@yllo.co.uk', 6, 3, 6, 'Los Santos', 65, 0, 1, 73, 28, 10983, 543586, 45, 1, 125243, 2, 1, 7, 'Chief of Police', 0, 3, 0, 7, 1, 20, 2, 1, 0, 0, 0, 1, 24, 0, 0, 0, 0, 0, 4, 1, 3100),
-(23, 'testaccounts_3', '$2y$12$PEeuZSHTTVnjKDb2UEDWSunyPVyEv7lKRwTEZihlRmQmObQ2NP8n.', '@', 0, 1, 1, 'Los Santos', 100, 0, 1, 170, 28, 0, 1000, 60, 0, 0, 0, 0, 0, '', 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(24, 'testaccounts_6', '$2y$12$YzDJSCnlPVH/ShTMXyzwOOEfQvuVt/Ty88apHkAAldDO5rmIFSJvi', '@', 0, 1, 1, 'america', 95, 0, 1, 24, 28, 0, 800, 55, 0, 0, 0, 0, 0, '', 0, 1, 172, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(25, 'testaccount_12', '$2y$12$MUbIMBbtUDjFaTHrSS3sbeR/.2zeCYsrJAsxX95yyYweQUtXfsQRK', '@', 0, 1, 1, 'America', 100, 0, 1, 60, 28, 0, 1000, 59, 0, 0, 0, 0, 0, '', 0, 1, 50, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(26, 'Jason_McCabe', '$2y$12$ZRDAbEjmahLXQCPALUH1LerUXLKuk1kdrGFdoZEBOzIzuWANiZ3HS', 'olly@yllo.co.uk', 0, 1, 1, 'America', 90, 0, 1, 24, 27, 0, 72, 23, 0, 0, 0, 0, 0, '', 0, 0, 157, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0);
+INSERT INTO `accounts` (`ID`, `pName`, `pPassword`, `pEmail`, `pAdminLevel`, `pLevel`, `pExp`, `pRegion`, `pHealth`, `pArmour`, `pGender`, `pSkin`, `pAge`, `pBank`, `pCash`, `pPayTimer`, `pPhoneModel`, `pPhoneNumber`, `pGpsModel`, `pFactionId`, `pFactionRank`, `pFactionRankname`, `pFactionPay`, `pDutyClothes`, `pJobId`, `pJobPay`, `pFines`, `pMostRecentFine`, `pWantedLevel`, `pMostRecentWantedReason`, `pInPrisonType`, `pPrisonTimer`, `pWeedAmount`, `pCokeAmount`, `pCigAmount`, `pRopeAmount`, `pHasMask`, `pDrivingLicense`, `pHeavyLicense`, `pPilotLicense`, `pGunLicense`, `pWeaponSlot1`, `pWeaponSlot1Ammo`, `pWeaponSlot2`, `pWeaponSlot2Ammo`, `pWeaponSlot3`, `pWeaponSlot3Ammo`, `pVehicleSlots`, `pVehicleSlotsUsed`, `pPreferredSpawn`) VALUES
+(3, 'Olly', '$2y$12$aCm2PzXMY', 'helloworld@world.com', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(4, 'Olly123', '$2y$12$bjHwP0vIM', 'helloworld@world.com', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(5, 'Olly1', '$2y$12$PyPsXVbAb', 'helloworld@world.com', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(6, 'Olly12', '$2y$12$OhDsThPvZ', 'helloworld@world.com', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(7, 'test1', '$2y$12$RDfRRSeuRlDpaVLLaRjkSOgnx3FNJ3nKzrX39w5zMOjY/.9PvQWui', 'helloworld@world.com', 0, 0, 0, '', 42, 0, 0, 0, 0, 0, 80000, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(8, 'testemaildialog', '$2y$12$ZELqcCPMYiTzOiDJRCjxQe7WBZbdvRaBjY8G4ahSzcFHuUEhBNs1u', 'helloworld@world.com', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(9, 'testemaildialog2', '$2y$12$Ki3tK0vzWSvpakTkQzfAP.dd559FY6izEk5MI9I8oKOQdktoZCJee', 'hi_there@test.com', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(10, 'testemaildialog3', '$2y$12$XCCxREftXyDiKzTyKi7DTu/nVvquj3B2IpAvqWa4TqtkSyeSnojnq', 'notrightemail.com', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(11, 'testemaildialog4', '$2y$12$cFTrYEfCWzmxWhCwRVTNQ.gtAMRVqWX2qZ6WwUT8OSri/JyaXOyRu', 'HI.COM', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(12, 'testemaildialog5', '$2y$12$Q1PDZRbQYivqZUnfcjmzYOFs2kxwsZ3baXo5gUAWOzsUUI95iFIZ.', 'hello@gmail.com', 0, 0, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(13, 'testdialog1', '$2y$12$YizuZSz1KSuxOyPBMVXVQu8hs8LFpsgsT747otZRFhso/b497ZTim', 'olly@yllo.co.uk', 0, 0, 0, 'America', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(14, 'testdialog12', '$2y$12$ayjfOTXLT03OcCLYO0LQL.eoU6gBTipidOWmuwhkM7NZY5HrJVSRO', 'hello@gmail.com', 0, 0, 0, 'NULL', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(15, 'testdialog123', '$2y$12$ZCXXPxTGQTfLZiHJTkzRbeiAxOf6qcpH6VNdo2v7xC1VsNot73hBy', 'hello@gmail.com', 0, 0, 0, 'region', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(16, 'testdialog11', '$2y$12$Kyn0bhTYRTDxbFPNa1fwZeGR2UvPX5iFiOyB4JDLRG5yrLlKnd4cy', 'olly@yllo.co.uk', 0, 0, 0, 'United Kingdom', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(17, 'testdialoga', '$2y$12$OUy1Z0P1RDjhXkr3REDKSOQVsqBHfQDHEqwInPdnjvPEISAK/3OLa', 'gmail@gmail.com', 0, 0, 0, 'America', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(18, 'testdialogb', '$2y$12$TRH0cCrHZVDlRh/uX1LhPOGOzdQD5fIUo/piDreo8/G/n9cdpDU5m', 'example@example.com', 0, 0, 0, 'America', 100, 0, 0, 0, 0, 0, 1000, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(19, 'testdialogc', '$2y$12$QDDrYibDbTblZ1jfPy60butWDkKhIn7fzb6/6qog6cXvLCTYvMbwC', 'example@example.com', 0, 0, 0, 'America', 100, 0, 1, 167, 27, 0, 50, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(20, 'quiztest1', '$2y$12$cSDOOkf3ThXATj.0XhDDXOd1SS1fz0i/dZ4iuAQYph2EOT1gCtRMu', '@', 0, 0, 0, 'Los Santos', 100, 0, 1, 23, 28, 0, 1000, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(21, 'testaccounts_1', '$2y$12$KjjyaDTEQBe1LTTDUUvGaOTqZsuFTWhrHHEa6fv0KiASgtEyJscGG', 'gmail@gmail.com', 0, 0, 0, 'Los Santos', 100, 0, 1, 72, 28, 0, 1000, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(22, 'testaccounts_2', '$2y$12$XFDYQjXvbjThLR/xKkjRTOarF5sW7jrTtLDUAQoj5KzHKM/NZ3rRa', 'olly@yllo.co.uk', 6, 4, 4, 'Los Santos', 90, 0, 1, 73, 28, 12483, 541190, 46, 1, 125243, 2, 1, 7, 'Chief of Police', 0, 311, 1, 0, 200, 'LOL', 6, 'evading police x2 ', 0, 0, 7, 1, 20, 2, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 4, 1, 3100),
+(23, 'testaccounts_3', '$2y$12$PEeuZSHTTVnjKDb2UEDWSunyPVyEv7lKRwTEZihlRmQmObQ2NP8n.', '@', 0, 1, 1, 'Los Santos', 100, 0, 1, 170, 28, 0, 1000, 60, 0, 0, 0, 0, 0, '', 0, 0, 1, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(24, 'testaccounts_6', '$2y$12$YzDJSCnlPVH/ShTMXyzwOOEfQvuVt/Ty88apHkAAldDO5rmIFSJvi', '@', 0, 1, 1, 'america', 95, 0, 1, 24, 28, 0, 800, 55, 0, 0, 0, 0, 0, '', 0, 0, 1, 172, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(25, 'testaccount_12', '$2y$12$MUbIMBbtUDjFaTHrSS3sbeR/.2zeCYsrJAsxX95yyYweQUtXfsQRK', '@', 0, 1, 1, 'America', 100, 0, 1, 60, 28, 0, 1000, 59, 0, 0, 0, 0, 0, '', 0, 0, 1, 50, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(26, 'Jason_McCabe', '$2y$12$ZRDAbEjmahLXQCPALUH1LerUXLKuk1kdrGFdoZEBOzIzuWANiZ3HS', 'olly@yllo.co.uk', 0, 1, 2, 'America', 10, 0, 1, 24, 27, 250, 72, 44, 2, 125242, 0, 0, 0, '', 0, 0, 0, 157, 0, '', 0, '', 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -140,7 +147,8 @@ CREATE TABLE `businesses` (
 INSERT INTO `businesses` (`bId`, `bName`, `bAddress`, `bPrice`, `bSalary`, `bOwner`, `bType`, `bIntId`, `bInfoX`, `bInfoY`, `bInfoZ`, `bEntX`, `bEntY`, `bEntZ`, `bUseX`, `bUseY`, `bUseZ`, `bExitX`, `bExitY`, `bExitZ`) VALUES
 (6, 'Hardware-Store', 3001, 150000, 0, 'NULL', 1, 6, -184.885, 1165.57, 19.7422, -181.408, 1163.18, 19.75, 0, 0, 0, -2240.47, 137.06, 1035.41),
 (7, 'Ammunation', 3002, 200000, 0, 'NULL', 3, 6, -310.461, 824.495, 14.2422, -314.651, 830.114, 14.2422, 0, 0, 0, 296.92, -108.072, 1001.52),
-(8, '24/7-GENERAL', 3003, 75000, 14, 'NULL', 2, 16, -201.185, 1134.83, 19.7422, -204.132, 1137.61, 19.7422, 0, 0, 0, -25.1326, -139.067, 1003.55);
+(8, '24/7-GENERAL', 3003, 75000, 14, 'NULL', 2, 16, -201.185, 1134.83, 19.7422, -204.132, 1137.61, 19.7422, 0, 0, 0, -25.1326, -139.067, 1003.55),
+(9, 'Euro-Cars', 3004, 175000, 0, 'NULL', 4, 0, -72.2459, 1155.31, 19.7422, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -281,6 +289,9 @@ CREATE TABLE `vehicles` (
   `vFacId` int(11) NOT NULL,
   `vBusId` int(11) NOT NULL,
   `vPlate` varchar(32) NOT NULL,
+  `vFines` int(11) NOT NULL,
+  `vMostRecentFine` varchar(32) NOT NULL,
+  `vImpounded` int(11) NOT NULL,
   `vParkedX` float NOT NULL,
   `vParkedY` float NOT NULL,
   `vParkedZ` float NOT NULL,
@@ -295,28 +306,37 @@ CREATE TABLE `vehicles` (
 -- Dumping data for table `vehicles`
 --
 
-INSERT INTO `vehicles` (`vID`, `vModelId`, `vOwner`, `vFuel`, `vJobId`, `vFacId`, `vBusId`, `vPlate`, `vParkedX`, `vParkedY`, `vParkedZ`, `vAngle`, `vRentalState`, `vRentalPrice`, `vColor1`, `vColor2`) VALUES
-(1, 462, 'NULL', 100, 1, 0, 0, 'RPOST1R', -80.5683, 1132.52, 19.8, 90, 1, 200, 1, 1),
-(2, 462, 'NULL', 100, 1, 0, 0, 'RPOST2R', -80.5683, 1128.49, 19.8, 90, 1, 200, 1, 1),
-(3, 462, 'NULL', 100, 1, 0, 0, 'RPOST3R', -80.5683, 1124.51, 19.8, 90, 1, 200, 1, 1),
-(4, 462, 'NULL', 100, 1, 0, 0, 'RPOST4R', -80.5683, 1120.42, 19.8, 90, 1, 200, 1, 1),
-(5, 462, 'NULL', 100, 1, 0, 0, 'RPOST5R', -80.5683, 1116.56, 19.8, 90, 1, 200, 1, 1),
-(6, 462, 'NULL', 100, 0, 0, 0, 'RGARB1R', -80.5683, 1112.7, 19.8, 90, 1, 200, 1, 1),
-(7, 408, 'NULL', 100, 2, 0, 0, 'RGARB2R', 282.319, 1390.42, 11.6413, 0, 1, 70, 1, 1),
-(8, 408, 'NULL', 100, 2, 0, 0, 'RGARB3R\r\n', 276.352, 1390.42, 11.6413, 0, 1, 70, 1, 1),
-(9, 408, 'NULL', 100, 2, 0, 0, 'RGARB4R\r\n', 270.268, 1390.42, 11.6413, 0, 1, 70, 1, 1),
-(10, 408, 'NULL', 100, 2, 0, 0, 'RGARB5R\r\n', 264.652, 1390.42, 11.6413, 0, 1, 70, 1, 1),
-(11, 431, 'NULL', 100, 3, 0, 0, 'RBUS1R\r\n', 10000, 10000, 10000, 180, 0, 0, 1, 1),
-(12, 431, 'NULL', 100, 3, 0, 0, 'RBUS2R\r\n', -235.389, 1217.78, 19.9383, 180, 0, 0, 1, 1),
-(13, 431, 'NULL', 100, 3, 0, 0, 'RBUS3R', -229.89, 1217.78, 19.9383, 180, 1, 150, 1, 1),
-(14, 561, 'NULL', 100, 0, 0, 4, '', -92.5765, 1156.04, 19.7422, 270.717, 1, 0, 0, 0),
-(15, 561, 'NULL', 100, 0, 0, 4, 'E38C92R', -93.411, 1159.84, 19.7422, 271.343, 1, 400, 77, 77),
-(16, 561, 'NULL', 100, 0, 0, 4, 'E64C19R', -93.0535, 1163.35, 19.7422, 271.238, 1, 400, 77, 77),
-(17, 561, 'NULL', 100, 0, 0, 4, 'E57C21R', -85.7865, 1163.45, 19.7422, 268.266, 1, 400, 77, 77),
-(18, 400, 'testaccounts_2', 100, 0, 0, 0, 'HFBF', -151.409, 1206.33, 19.7422, 90, 2, 0, 0, 0),
-(19, 412, 'testaccounts_2', 100, 0, 0, 0, 'CSY-.,/-/', -151.409, 1206.33, 19.7422, 90, 2, 0, 0, 0),
-(20, 412, 'testaccounts_2', 100, 0, 0, 0, 'SKC-33757', -151.409, 1206.33, 19.7422, 90, 2, 0, 0, 0),
-(21, 400, 'testaccounts_2', 100, 0, 0, 0, 'AOB-74011', -151.409, 1206.33, 19.7422, 90, 2, 0, 0, 0);
+INSERT INTO `vehicles` (`vID`, `vModelId`, `vOwner`, `vFuel`, `vJobId`, `vFacId`, `vBusId`, `vPlate`, `vFines`, `vMostRecentFine`, `vImpounded`, `vParkedX`, `vParkedY`, `vParkedZ`, `vAngle`, `vRentalState`, `vRentalPrice`, `vColor1`, `vColor2`) VALUES
+(1, 462, 'NULL', 100, 1, 0, 0, 'RPOST1R', 0, '', 0, -80.5683, 1132.52, 19.8, 90, 1, 200, 1, 1),
+(2, 462, 'NULL', 100, 1, 0, 0, 'RPOST2R', 0, '', 0, -80.5683, 1128.49, 19.8, 90, 1, 200, 1, 1),
+(3, 462, 'NULL', 100, 1, 0, 0, 'RPOST3R', 0, '', 0, -80.5683, 1124.51, 19.8, 90, 1, 200, 1, 1),
+(4, 462, 'NULL', 100, 1, 0, 0, 'RPOST4R', 0, '', 0, -80.5683, 1120.42, 19.8, 90, 1, 200, 1, 1),
+(5, 462, 'NULL', 100, 1, 0, 0, 'RPOST5R', 0, '', 0, -80.5683, 1116.56, 19.8, 90, 1, 200, 1, 1),
+(6, 462, 'NULL', 100, 0, 0, 0, 'RGARB1R', 0, '', 0, -80.5683, 1112.7, 19.8, 90, 1, 200, 1, 1),
+(7, 408, 'NULL', 100, 2, 0, 0, 'RGARB2R', 0, '', 0, 282.319, 1390.42, 11.6413, 0, 1, 70, 1, 1),
+(8, 408, 'NULL', 100, 2, 0, 0, 'RGARB3R\r\n', 0, '', 0, 276.352, 1390.42, 11.6413, 0, 1, 70, 1, 1),
+(9, 408, 'NULL', 100, 2, 0, 0, 'RGARB4R\r\n', 0, '', 0, 270.268, 1390.42, 11.6413, 0, 1, 70, 1, 1),
+(10, 408, 'NULL', 100, 2, 0, 0, 'RGARB5R\r\n', 0, '', 0, 264.652, 1390.42, 11.6413, 0, 1, 70, 1, 1),
+(11, 431, 'NULL', 100, 3, 0, 0, 'RBUS1R', 0, '', 0, 10000, 10000, 10000, 180, 0, 0, 1, 1),
+(12, 431, 'NULL', 100, 3, 0, 0, 'RBUS2R', 1, 'TEST', 0, -235.389, 1217.78, 19.9383, 180, 0, 0, 1, 1),
+(13, 525, 'NULL', 100, 3, 0, 0, 'RBUS3R', 101, 'LOL', 1, -168.93, 1022.76, 19.6167, 180, 1, 150, 1, 1),
+(14, 561, 'NULL', 100, 0, 0, 4, '12345', 0, '', 0, -92.5765, 1156.04, 19.7422, 270.717, 1, 0, 0, 0),
+(15, 561, 'NULL', 100, 0, 0, 4, 'E38C92R', 0, '', 0, -93.411, 1159.84, 19.7422, 271.343, 1, 400, 77, 77),
+(16, 561, 'NULL', 100, 0, 0, 4, 'E64C19R', 0, '', 0, -93.0535, 1163.35, 19.7422, 271.238, 1, 400, 77, 77),
+(17, 561, 'NULL', 100, 0, 0, 4, 'E57C21R', 0, '', 0, -85.7865, 1163.45, 19.7422, 268.266, 1, 400, 77, 77),
+(18, 400, 'testaccounts_2', 100, 0, 0, 0, 'HFBF', 0, '', 0, -151.409, 1206.33, 19.7422, 90, 2, 0, 0, 0),
+(19, 412, 'testaccounts_2', 100, 0, 0, 0, 'CSY-.,/-/', 0, '', 0, -151.409, 1206.33, 19.7422, 90, 2, 0, 0, 0),
+(20, 412, 'testaccounts_2', 100, 0, 0, 0, 'AOB2778', 0, '', 0, -151.409, 1206.33, 19.7422, 90, 2, 0, 0, 0),
+(21, 598, 'DONOTUSE', 100, 0, 1, 0, 'AOB2771', 0, 'test', 0, 10000, 1000, 100000, 90, 2, 0, 0, 77),
+(22, 598, 'NULL', 100, 0, 1, 0, 'PD9182', 0, '', 0, -211.435, 1000.15, 19.6715, 89.6782, 2, 0, 0, 77),
+(23, 598, 'NULL', 100, 0, 1, 0, 'PD8529', 0, '', 0, -210.845, 995.489, 19.579, 90.4357, 0, 0, 0, 77),
+(24, 598, 'NULL', 100, 0, 1, 0, 'PD8690', 0, '', 0, -210.599, 991.45, 19.4956, 89.9469, 0, 0, 0, 77),
+(25, 598, 'NULL', 100, 0, 1, 0, 'PD3921', 0, '', 0, -210.43, 987.44, 19.4165, 86.2595, 0, 0, 0, 77),
+(26, 599, 'NULL', 100, 0, 1, 0, 'PDS001', 0, '', 0, -227.349, 999.704, 19.5952, 268.212, 0, 0, 1, 108),
+(27, 599, 'NULL', 100, 0, 1, 0, 'PDS002', 0, '', 0, -227.548, 995.911, 19.5551, 269.152, 0, 0, 1, 108),
+(28, 599, 'NULL', 100, 0, 1, 0, 'PDS003', 0, '', 0, -227.893, 992.429, 19.5271, 266.958, 0, 0, 1, 108),
+(29, 525, 'NULL', 100, 0, 1, 0, 'PDT002', 0, '', 0, -227.997, 988.194, 19.6412, 268.356, 0, 0, 0, 77),
+(30, 525, 'NULL', 100, 0, 1, 0, 'PDT001', 0, '', 0, -229.222, 983.478, 19.5781, 6.1457, 0, 0, 0, 77);
 
 --
 -- Indexes for dumped tables
@@ -378,7 +398,7 @@ ALTER TABLE `accounts`
 -- AUTO_INCREMENT for table `businesses`
 --
 ALTER TABLE `businesses`
-  MODIFY `bId` int(32) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `bId` int(32) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `drugprices`
@@ -408,7 +428,7 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `vehicles`
 --
 ALTER TABLE `vehicles`
-  MODIFY `vID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `vID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
