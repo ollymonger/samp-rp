@@ -2376,6 +2376,85 @@ public OnPlayerText(playerid, text[]) {
 }
 
 /* Global fac cmds followed by specific fac cmds */
+CMD:hire(playerid, params[]){
+    new target;
+    if(pInfo[playerid][pFactionRank] == 7){
+        if(sscanf(params, "d", target)) return SendClientMessage(playerid, -1, "[SERVER]: /hire [playerid]");{
+            if(pInfo[target][pFactionId] >= 1){
+                SendClientMessage(playerid,  ADMINBLUE, "[SERVER]: This player is already in a faction!");
+                return 1;
+            } else {
+                pInfo[target][pFactionId] = pInfo[playerid][pFactionId];
+                pInfo[target][pFactionRank] = 1;
+                SetFactionRanknameByRank(target, pInfo[playerid][pFactionId], 1);
+                new string[256];
+                format(string, sizeof(string), "[SERVER]: You have hired: %s !", RPName(target));
+                SendClientMessage(playerid, ADMINBLUE, string);
+                format(string, sizeof(string), "[SERVER]: You have been hired by: %s !", RPName(playerid));
+                SendClientMessage(target, ADMINBLUE, string);
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:fire(playerid, params[]){
+    new target;
+    if(pInfo[playerid][pFactionRank] == 7){
+        if(sscanf(params, "d", target)) return SendClientMessage(playerid, -1, "[SERVER]: /fire [playerid]");{
+            if(pInfo[target][pFactionId] != pInfo[playerid][pFactionId]){
+                SendClientMessage(playerid,  ADMINBLUE, "[SERVER]: This player is not a member of your faction!");
+                return 1;
+            } else {
+                pInfo[target][pFactionId] = 0;
+                pInfo[target][pFactionRank] = 0;
+                new string[256];
+                format(string, sizeof(string), "[SERVER]: You have fired: %s !", RPName(target));
+                SendClientMessage(playerid, ADMINBLUE, string);
+                format(string, sizeof(string), "[SERVER]: You have been fired by: %s !", RPName(playerid));
+                SendClientMessage(target, ADMINBLUE, string);
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:demote(playerid, params[]){
+    new target;
+    if(pInfo[playerid][pFactionRank] == 7){
+        if(sscanf(params, "d", target)) return SendClientMessage(playerid, -1, "[SERVER]: /demote [playerid]");{
+            if(pInfo[target][pFactionRank] > 1){
+                pInfo[target][pFactionRank]--;
+                new string[256];
+                format(string, sizeof(string), "[SERVER]: You have demoted: %s!", RPName(target));
+                SendClientMessage(playerid, ADMINBLUE, string);
+                format(string, sizeof(string), "[SERVER]: You have demoted by: %s!", RPName(playerid));
+                SendClientMessage(target, ADMINBLUE, string);
+                return 1;
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:promote(playerid, params[]){
+    new target;
+    if(pInfo[playerid][pFactionRank] == 7){
+        if(sscanf(params, "d", target)) return SendClientMessage(playerid, -1, "[SERVER]: /promote [playerid]");{
+            if(pInfo[target][pFactionRank] < 7){
+                pInfo[target][pFactionRank]++;
+                new string[256];
+                format(string, sizeof(string), "[SERVER]: You have promoted: %s!", RPName(target));
+                SendClientMessage(playerid, ADMINBLUE, string);
+                format(string, sizeof(string), "[SERVER]: You have promoted by: %s!", RPName(playerid));
+                SendClientMessage(target, ADMINBLUE, string);
+                return 1;
+            }
+        }
+    }
+    return 1;
+}
+
 CMD:duty(playerid, params[]){
     if(pInfo[playerid][pFactionId] >= 1){
         for(new i = 0; i < loadedFac; i++){
@@ -3406,12 +3485,13 @@ CMD:help(playerid, params[]) {
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /takejob, /listjobs");
             }
         } else if(strcmp(Usage, "Admin", true) == 0) {
-            if(pInfo[playerid][pAdminLevel] > 1) {
+            if(pInfo[playerid][pAdminLevel] >= 1) {
                 SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Admin Commands ::.");
-                if(pInfo[playerid][pAdminLevel] == 5){
+                if(pInfo[playerid][pAdminLevel] >= 5){
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createbus, /setbusentr, /createrentalvehicle, /createhouse");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createfactionvehicle");
                 }
-                if(pInfo[playerid][pAdminLevel] == 6) {
+                if(pInfo[playerid][pAdminLevel] >= 6) {
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createjob, /makeleader");
                 }
             }
@@ -3429,10 +3509,14 @@ CMD:help(playerid, params[]) {
                     SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Faction Commands ::.");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /cuff, /fine, /ca (create alert), /arrest");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /impound, NumPad+ to tow a vehicle");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /listallcalls, /takecall, /endcall");
+                }
+                if(pInfo[playerid][pFactionRank] == 7){
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /hire, /fire, /demote, /promote");
                 }
             }
         } else if(strcmp(Usage, "Phone", true) == 0){
-            SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
+            SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Phone Commands ::.");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /call, /hangup, /sms");
         }
     }
