@@ -20,6 +20,10 @@ streamer plugin
 * Fort Caron Sheriff's Office (ID1)
 * Fort Carson EMS (ID2)
 
+## Faction Types:
+1 - gangs,
+2 - legal
+
 ## Businesses: (in this order)
 Businesses with an interior ID set the X Y Z of the exit. This way, we can use original SA mappings.
 If it is 0, then it will not assign an ID and allow the admin to create the entry in the DB as it must use other mappings.

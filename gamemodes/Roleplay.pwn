@@ -12,6 +12,7 @@
 #include <sscanf2>
 #include <streamer>
 #include <cuffs>
+#include <multilines>
 
 #define BCRYPT_COST 12
 #define lenull(%1) \
@@ -1314,6 +1315,7 @@ public VehsReceived() {
                 vInfo[i][vColor2],
                 -1
             );
+            SetVehicleZAngle(i, vInfo[i][vAngle]);
             vInfo[loadedVeh][vRentingPlayer] = INVALID_PLAYER_ID;
             SetVehicleNumberPlate(vehicleid, vInfo[i][vPlate]);            
             new engine, lights, alarm, doors, bonnet, boot, objective;
@@ -2402,17 +2404,19 @@ CMD:fire(playerid, params[]){
     new target;
     if(pInfo[playerid][pFactionRank] == 7){
         if(sscanf(params, "d", target)) return SendClientMessage(playerid, -1, "[SERVER]: /fire [playerid]");{
-            if(pInfo[target][pFactionId] != pInfo[playerid][pFactionId]){
-                SendClientMessage(playerid,  ADMINBLUE, "[SERVER]: This player is not a member of your faction!");
-                return 1;
-            } else {
-                pInfo[target][pFactionId] = 0;
-                pInfo[target][pFactionRank] = 0;
-                new string[256];
-                format(string, sizeof(string), "[SERVER]: You have fired: %s !", RPName(target));
-                SendClientMessage(playerid, ADMINBLUE, string);
-                format(string, sizeof(string), "[SERVER]: You have been fired by: %s !", RPName(playerid));
-                SendClientMessage(target, ADMINBLUE, string);
+            if(target != playerid){
+                if(pInfo[target][pFactionId] != pInfo[playerid][pFactionId]){
+                    SendClientMessage(playerid,  ADMINBLUE, "[SERVER]: This player is not a member of your faction!");
+                    return 1;
+                } else {
+                    pInfo[target][pFactionId] = 0;
+                    pInfo[target][pFactionRank] = 0;
+                    new string[256];
+                    format(string, sizeof(string), "[SERVER]: You have fired: %s !", RPName(target));
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    format(string, sizeof(string), "[SERVER]: You have been fired by: %s !", RPName(playerid));
+                    SendClientMessage(target, ADMINBLUE, string);
+                }
             }
         }
     }
@@ -2423,14 +2427,16 @@ CMD:demote(playerid, params[]){
     new target;
     if(pInfo[playerid][pFactionRank] == 7){
         if(sscanf(params, "d", target)) return SendClientMessage(playerid, -1, "[SERVER]: /demote [playerid]");{
-            if(pInfo[target][pFactionRank] > 1){
-                pInfo[target][pFactionRank]--;
-                new string[256];
-                format(string, sizeof(string), "[SERVER]: You have demoted: %s!", RPName(target));
-                SendClientMessage(playerid, ADMINBLUE, string);
-                format(string, sizeof(string), "[SERVER]: You have demoted by: %s!", RPName(playerid));
-                SendClientMessage(target, ADMINBLUE, string);
-                return 1;
+            if(target != playerid){
+                if(pInfo[target][pFactionRank] > 1){
+                    pInfo[target][pFactionRank]--;
+                    new string[256];
+                    format(string, sizeof(string), "[SERVER]: You have demoted: %s!", RPName(target));
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    format(string, sizeof(string), "[SERVER]: You have demoted by: %s!", RPName(playerid));
+                    SendClientMessage(target, ADMINBLUE, string);
+                    return 1;
+                }
             }
         }
     }
@@ -2441,14 +2447,16 @@ CMD:promote(playerid, params[]){
     new target;
     if(pInfo[playerid][pFactionRank] == 7){
         if(sscanf(params, "d", target)) return SendClientMessage(playerid, -1, "[SERVER]: /promote [playerid]");{
-            if(pInfo[target][pFactionRank] < 7){
-                pInfo[target][pFactionRank]++;
-                new string[256];
-                format(string, sizeof(string), "[SERVER]: You have promoted: %s!", RPName(target));
-                SendClientMessage(playerid, ADMINBLUE, string);
-                format(string, sizeof(string), "[SERVER]: You have promoted by: %s!", RPName(playerid));
-                SendClientMessage(target, ADMINBLUE, string);
-                return 1;
+            if(target != playerid){
+                if(pInfo[target][pFactionRank] < 7){
+                    pInfo[target][pFactionRank]++;
+                    new string[256];
+                    format(string, sizeof(string), "[SERVER]: You have promoted: %s!", RPName(target));
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    format(string, sizeof(string), "[SERVER]: You have promoted by: %s!", RPName(playerid));
+                    SendClientMessage(target, ADMINBLUE, string);
+                    return 1;
+                }
             }
         }
     }
@@ -2465,6 +2473,7 @@ CMD:duty(playerid, params[]){
                             if(pInfo[playerid][pDutyClothes] != 0){
                                 SetPlayerSkin(playerid, pInfo[playerid][pDutyClothes]);
                                 pInfo[playerid][pDuty] = 1;
+
                                 return 1;
                             } else {
                                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have not set your duty clothes!");
@@ -2482,6 +2491,10 @@ CMD:duty(playerid, params[]){
             }
         }
     }
+    return 1;
+}
+stock GiveSpecificWeapons(playerid){
+
     return 1;
 }
 
@@ -2813,7 +2826,7 @@ CMD:setbususe(playerid, params[]){
         if(sscanf(params, "d", add)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /setbususe [bAddress]"); {
             GetPlayerPos(playerid, px,py,pz);
             
-            mysql_format(db_handle, query, sizeof(query),  "UPDATE `businesses` SET `bUseX` = '%f',`bUseY` = '%f',`bUseZ` = '%f' WHERE  `bId` = %d", px, py, pz, add);
+            mysql_format(db_handle, query, sizeof(query),  "UPDATE `businesses` SET `bUseX` = '%f',`bUseY` = '%f',`bUseZ` = '%f' WHERE  `bAddress` = %d", px, py, pz, add);
             mysql_query(db_handle, query);
 
             for(new i = 0; i < loadedBus; i++){
@@ -3386,7 +3399,7 @@ CMD:cuff(playerid, params[]){
 CMD:endcall(playerid, params[]){
     new target;
     if(pInfo[playerid][pFactionId] == 1){
-        for(new i = 0; i < MAX_PLAYERS; i++){
+        if(sscanf(params, "d", target)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /endcall [callcode]"); {
             if(IsPlayerConnected(target)){
                 if(pInfo[target][pAlertCall] == 1){
                     pInfo[target][pAlertCall] = 0;
@@ -3420,6 +3433,7 @@ CMD:takecall(playerid, params[]){
                             new string[256];
                             format(string, sizeof(string), "{FFFFFF}Radio: %s has taken call code: %d!", RPName(playerid), target);
                             SendClientMessage(i, SERVERCOLOR, string);
+                            pInfo[target][pAlertCall] = 0;
                         }
                     }
                 } else {
@@ -3470,7 +3484,7 @@ CMD:help(playerid, params[]) {
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/help, /admins, /mods, /helpers, /staff");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/shop, /stats, /pockets, /rentcar, /unrentcar");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/properties, /buyproperty, /sellproperty");
-            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/getcar");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/getcar, /park");
         } else if(strcmp(Usage, "Job", true) == 0) {
             SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
             if(pInfo[playerid][pJobId] == 4){
@@ -4360,6 +4374,39 @@ CMD:lights(playerid, params[]){
     return 1;
 }
 
+CMD:park(playerid, params[]){
+    new nname[32], Float:x, Float:y, Float:z, Float:a, DB_Query[900];
+    if(IsPlayerInAnyVehicle(playerid)){
+        format(nname, sizeof(nname), "%s", GetName(playerid));
+        if(!strcmp(vInfo[GetPlayerVehicleID(playerid)][vOwner], nname, true)){
+            GetVehiclePos(GetPlayerVehicleID(playerid), x, y, z);
+            vInfo[GetPlayerVehicleID(playerid)][vParkedX] = x;
+            vInfo[GetPlayerVehicleID(playerid)][vParkedY] = y;
+            vInfo[GetPlayerVehicleID(playerid)][vParkedZ] = z;
+            GetVehicleZAngle(GetPlayerVehicleID(playerid), a);
+            vInfo[GetPlayerVehicleID(playerid)][vAngle] = a;
+            SendClientMessage(playerid, ADMINBLUE,  "[SERVER]: You have parked this vehicle.");
+            
+            mysql_format(db_handle, DB_Query, sizeof(DB_Query), "UPDATE `vehicles` SET `vParkedX` = '%f', `vParkedY` = '%f', `vParkedZ` = '%f', `vAngle` = '%f' WHERE `vID` = '%d'", x, y, z, a, GetPlayerVehicleID(playerid));
+            mysql_query(db_handle, DB_Query);
+        }
+        if(vInfo[GetPlayerVehicleID(playerid)][vFacId] == pInfo[playerid][pFactionId] && pInfo[playerid][pFactionRank] == 7){
+            GetVehiclePos(GetPlayerVehicleID(playerid), x, y, z);
+            vInfo[GetPlayerVehicleID(playerid)][vParkedX] = x;
+            vInfo[GetPlayerVehicleID(playerid)][vParkedY] = y;
+            vInfo[GetPlayerVehicleID(playerid)][vParkedZ] = z;
+            GetVehicleZAngle(GetPlayerVehicleID(playerid), a);
+            vInfo[GetPlayerVehicleID(playerid)][vAngle] = a;
+            SendClientMessage(playerid, ADMINBLUE,  "[SERVER]: You have parked this vehicle.");            
+            mysql_format(db_handle, DB_Query, sizeof(DB_Query), "UPDATE `vehicles` SET `vParkedX` = '%f', `vParkedY` = '%f', `vParkedZ` = '%f', `vAngle` = '%f' WHERE `vID` = '%d'", x, y, z, a, GetPlayerVehicleID(playerid));
+            mysql_query(db_handle, DB_Query);
+        }
+    } else {
+
+    }
+    return 1;
+}
+
 CMD:engine(playerid, params[]) {
     new engine, lights, alarm, doors, bonnet, boot, objective;
     new vid, nname[32], string[256];
@@ -4678,16 +4725,23 @@ public AlertPolice(playerid, message[50], Float:cX, Float:cY, Float:cZ){
 
 CMD:listallcalls(playerid, params[]){
     new string[256], substring[256];
+    new available;
     
+    available = 0;
+
     SendClientMessage(playerid, SPECIALORANGE, "**-----AVAILABLE CALLS-----**");
     for(new i = 0; i < MAX_PLAYERS; i++){
         if(pInfo[i][pAlertCall] == 1){
             format(substring, sizeof(substring), "Call code: %d, ", i);
             strcat(string, substring);
-            return 1;
+            available++;
         }
     }
-    SendClientMessage(playerid, SERVERCOLOR, string);
+    if(available >= 1) {
+        SendClientMessage(playerid, SERVERCOLOR, string);
+    } else {
+        SendClientMessage(playerid, SERVERCOLOR, "No calls available.");
+    }
     return 1;
 }
 
@@ -6595,9 +6649,9 @@ public nearByMessage(playerid, color, string[], Float:Distance) {
 
     for (new i = 0; i < MAX_PLAYERS; i++) {
         if(IsPlayerInRangeOfPoint(i, Distance, nbCoords[0], nbCoords[1], nbCoords[2]) && (GetPlayerVirtualWorld(i) == GetPlayerVirtualWorld(playerid))) { // Confirming if the player being looped is within range and is in the same virtual world and interior as the main player
-            SendClientMessage(i, color, string); // Sending them the message if all checks out
+            SendClientMessageA(i, color, string); // Sending them the message if all checks out
         } else if(IsPlayerInRangeOfPoint(i, 16, nbCoords[0], nbCoords[1], nbCoords[2]) && (GetPlayerVirtualWorld(i) == GetPlayerVirtualWorld(playerid))) { // Confirming if the player being looped is within range and is in the same virtual world and interior as the main player
-            SendClientMessage(i, GREY, string); // Sending them the message if all checks out
+            SendClientMessageA(i, GREY, string); // Sending them the message if all checks out
         }
     }
     return 1;
