@@ -2341,6 +2341,15 @@ public OnPlayerText(playerid, text[]) {
                     pInfo[playerid][CalledService] = 1;
                     pInfo[playerid][AwaitingReason] = 1;
                 }
+                if(strfind(text, "medics", true) != -1){
+                    new string[256];
+                    format(string, sizeof(string), "[PHONE]: %s", text);
+                    SendClientMessage(playerid, -1, string);
+                    format(string, sizeof(string), "[PHONE]: I'm patching you through. Whats the situation?");
+                    SendClientMessage(playerid, -1, string);
+                    pInfo[playerid][CalledService] = 2;
+                    pInfo[playerid][AwaitingReason] = 1;
+                }
             } else {     
                 if(pInfo[playerid][CalledService] == 1){
                     new string[256];     
@@ -2352,6 +2361,27 @@ public OnPlayerText(playerid, text[]) {
                     format(msg, sizeof(msg), "%s", text);
                     AlertPolice(playerid, msg, px, py, pz);
                     format(string, sizeof(string), "[PHONE]: Thank you. The police have been notified.");
+
+                    SendClientMessage(playerid, -1, string);
+                    pInfo[playerid][CalledService] = 0;
+                    pInfo[playerid][AwaitingReason] = 0;
+                    pInfo[playerid][OnCall] = 0;
+                    
+                    format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(playerid));
+                    nearByAction(playerid, NICESKY, string);
+                    
+                    SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
+                }
+                if(pInfo[playerid][CalledService] == 2){
+                    new string[256];     
+                    format(string, sizeof(string), "[PHONE]: %s", text);
+                    SendClientMessage(playerid, -1, string);
+                    new Float:px, Float:py, Float:pz;
+                    GetPlayerPos(playerid, px, py, pz);
+                    new msg[50];
+                    format(msg, sizeof(msg), "%s", text);
+                    AlertMedics(playerid, msg, px, py, pz);
+                    format(string, sizeof(string), "[PHONE]: Thank you. The medics have been notified.");
 
                     SendClientMessage(playerid, -1, string);
                     pInfo[playerid][CalledService] = 0;
@@ -4723,24 +4753,53 @@ public AlertPolice(playerid, message[50], Float:cX, Float:cY, Float:cZ){
     return 1;
 }
 
-CMD:listallcalls(playerid, params[]){
-    new string[256], substring[256];
-    new available;
-    
-    available = 0;
+forward public AlertMedics(playerid, message[50], Float:cX, Float:cY, Float:cZ);
+public AlertMedics(playerid, message[50], Float:cX, Float:cY, Float:cZ){
+    new string[256];
+    pInfo[playerid][pAlertCall] = 2;
+    format(pInfo[playerid][pAlertMsg], 80, "%s", message);
 
-    SendClientMessage(playerid, SPECIALORANGE, "**-----AVAILABLE CALLS-----**");
     for(new i = 0; i < MAX_PLAYERS; i++){
-        if(pInfo[i][pAlertCall] == 1){
-            format(substring, sizeof(substring), "Call code: %d, ", i);
-            strcat(string, substring);
-            available++;
+        if(pInfo[i][pFactionId] == 2){ // if player is a police officer
+            format(string, sizeof(string), "{FFFFFF}Radio: ALERT: %s, call code: %d", message, playerid);
+            printf("Medics alerted with msg: %s", message);
+            SendClientMessage(i, SERVERCOLOR, string);
         }
     }
-    if(available >= 1) {
-        SendClientMessage(playerid, SERVERCOLOR, string);
-    } else {
-        SendClientMessage(playerid, SERVERCOLOR, "No calls available.");
+    return 1;
+}
+
+CMD:listallcalls(playerid, params[]){
+    if(pInfo[playerid][pFactionId] == 1 || pInfo[playerid][pFactionId] == 2){
+        new string[256], substring[256];
+        new available;
+        
+        available = 0;
+
+        SendClientMessage(playerid, SPECIALORANGE, "**-----AVAILABLE CALLS-----**");
+        if(pInfo[playerid][pFactionId] == 1){
+            for(new i = 0; i < MAX_PLAYERS; i++){
+                if(pInfo[i][pAlertCall] == 1){
+                    format(substring, sizeof(substring), "Call code: %d, ", i);
+                    strcat(string, substring);
+                    available++;
+                }
+            }
+        }
+        if(pInfo[playerid][pFactionId] == 2){
+            for(new i = 0; i < MAX_PLAYERS; i++){
+                if(pInfo[i][pAlertCall] == 2){
+                    format(substring, sizeof(substring), "Call code: %d, ", i);
+                    strcat(string, substring);
+                    available++;
+                }
+            }
+        }
+        if(available >= 1) {
+            SendClientMessage(playerid, SERVERCOLOR, string);
+        } else {
+            SendClientMessage(playerid, SERVERCOLOR, "No calls available.");
+        }
     }
     return 1;
 }
