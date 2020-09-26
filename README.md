@@ -20,6 +20,10 @@ streamer plugin
 * Fort Caron Sheriff's Office (ID1)
 * Fort Carson EMS (ID2)
 
+## Faction Types:
+1 - gangs,
+2 - legal
+
 ## Businesses: (in this order)
 Businesses with an interior ID set the X Y Z of the exit. This way, we can use original SA mappings.
 If it is 0, then it will not assign an ID and allow the admin to create the entry in the DB as it must use other mappings.
@@ -37,6 +41,11 @@ Int ids: 16 // 24-7, 6 // ammunation or hardware store.
 
 ## House Types
     5 - Ganghouse, exit point: 2350.339843,-1181.649902,1027.976562
+
+## Prison types
+1, normal prison
+2, admin jail
+
 ## States
 * 0 VEHICLE_NOT_RENTABLE 0 (Vehcile is either already rented or not rentable in )
 * 1 VEHICLE_RENTABLE 1 (Vehicle is rentable, either a job rentcar or normal rentcar available for all players)

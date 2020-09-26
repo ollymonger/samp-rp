@@ -7,6 +7,7 @@ Nickk888 is the author of the NTD script
 #include <a_samp>
 
 new Text:PublicTD[3];
+new randWeather;
 
 public OnFilterScriptInit() {
 
@@ -58,8 +59,18 @@ public OnFilterScriptInit() {
 
     print("Clock loaded");
 
+    randWeather = random(20);
+    SetWeather(randWeather);
     SetTimer("UpdateTimer", 1000, true);
     SetTimer("UpdateDate", 1000, true);
+    SetTimer("ChangeWeather", 1800000, true);
+    return 1;
+}
+
+forward public ChangeWeather();
+public ChangeWeather(){
+    randWeather = random(20);
+    SetWeather(randWeather);
     return 1;
 }
 
@@ -102,7 +113,7 @@ public UpdateTimer() {
         SetWorldTime(1);
     }
     if(hour == 2){
-        SetWorldTime(2);        
+        SetWorldTime(2);      
     }
     if(hour == 3){
         SetWorldTime(3);
@@ -114,40 +125,40 @@ public UpdateTimer() {
         SetWorldTime(5);
     }
     if(hour == 6){
-        SetWorldTime(6);        
+        SetWorldTime(6);      
     }
     if(hour == 7){
-        SetWorldTime(7);        
+        SetWorldTime(7);       
     }
     if(hour == 8){
-        SetWorldTime(8);        
+        SetWorldTime(8);      
     }
     if(hour == 9){
-        SetWorldTime(9);        
+        SetWorldTime(9);      
     }
     if(hour == 10){
-        SetWorldTime(10);        
+        SetWorldTime(10);    
     }
     if(hour == 11){
         SetWorldTime(11);        
     }
     if(hour == 12){
-        SetWorldTime(12);        
+        SetWorldTime(12);      
     }
     if(hour == 13){
         SetWorldTime(13);        
     }
     if(hour == 14){
-        SetWorldTime(14);        
+        SetWorldTime(14);      
     }
     if(hour == 15){
-        SetWorldTime(15);        
+        SetWorldTime(15);       
     }
     if(hour == 16){
-        SetWorldTime(16);        
+        SetWorldTime(16);       
     }
     if(hour == 17){
-        SetWorldTime(17);        
+        SetWorldTime(17);       
     }
     if(hour == 18){
         SetWorldTime(18); 
@@ -156,16 +167,16 @@ public UpdateTimer() {
         SetWorldTime(19);         
     }
     if(hour == 20){
-        SetWorldTime(20);        
+        SetWorldTime(20);       
     }
     if(hour == 21){
-        SetWorldTime(21);         
+        SetWorldTime(21);       
     }
     if(hour == 22){
         SetWorldTime(22);
     }
     if(hour == 23){
-        SetWorldTime(23);        
+        SetWorldTime(23);    
     }
     return 1;
 }

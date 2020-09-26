@@ -11,6 +11,8 @@
 #include <betterdialogs>
 #include <sscanf2>
 #include <streamer>
+#include <cuffs>
+#include <multilines>
 
 #define BCRYPT_COST 12
 #define lenull(%1) \
@@ -41,6 +43,7 @@ main() {
 /* 1- NEWS -*/
 new MySQL:db_handle;
 
+
 new Menu:busdrivermenu, Menu:hardwaremenu, Menu:phonemenu, Menu:gpsmenu, Menu:AmmunationMenu, Menu:Pistols, Menu:SMGS, Menu:shotguns, Menu:Rifles, Menu:Armour;
 
 new PostCheckpoint[MAX_PLAYERS], JobCheckpoint[MAX_PLAYERS], GarbageCheckpoint[MAX_PLAYERS];
@@ -48,7 +51,7 @@ new dumpCheckPoint[MAX_PLAYERS], routeId[MAX_PLAYERS], busCheckpoint[MAX_PLAYERS
 new speedoTimer[MAX_PLAYERS], fuelTimer[MAX_PLAYERS], drugDealTimer[MAX_PLAYERS];
 
 new policeCall[MAX_PLAYERS];
-new policeMainDoor;
+new policeMainDoor, policeMainCell, cell1, cell2, cell3, cell4, impoundGate;
 
 new dumpPickup, jobPickup[MAX_JOBS];
 new busInfoPickup[100], busEntPickup[100], busExitPickup[100], busUsePickup[100];
@@ -57,6 +60,23 @@ new facInfoPickup[100], facDutyPickup[100], facClothesPickup[100];
 new facEntPickup[100], facExitPickup[100];
 
 new PlayerText:VEHSTUFF[MAX_PLAYERS][5];
+
+new PLights[MAX_PLAYERS];
+new TLI, TLI2;
+ 
+forward TimerBlinkingLights(vehicleid);
+forward TimerBlinkingLights2(vehicleid);
+forward BlinkingLights(playerid);
+forward ShutOffBlinkingLights(playerid);
+forward encode_lights(light1, light2, light3, light4);
+
+
+new PlayerText:dash1[MAX_PLAYERS];
+new PlayerText:dash2[MAX_PLAYERS];
+new PlayerText:dashPlate[MAX_PLAYERS];
+new PlayerText:dashSpeed[MAX_PLAYERS];
+new PlayerText:dashDist[MAX_PLAYERS];
+new PlayerText:dashVid[MAX_PLAYERS];
 
 new PlayerText:PlayerAddress[MAX_PLAYERS][4];
 new PlayerText:businessBox[MAX_PLAYERS];
@@ -69,6 +89,7 @@ new PlayerText:addressType[MAX_PLAYERS];
 new PlayerText:addressPrice[MAX_PLAYERS];
 
 
+new Text:NotOnDuty;
 new Text:accessDoor;
 new Text:PublicTD[3];
 new Text:sheriffsoffice[4];
@@ -456,11 +477,27 @@ new VehicleNames[][] = {
 
 new tries[MAX_PLAYERS], passwordForFinalReg[MAX_PLAYERS][BCRYPT_HASH_LENGTH], quizAttempts[MAX_PLAYERS];
 
+enum ENUM_POLICECLOTHES {
+    SKINID,
+    SKINNAME[32]
+};
+new const POLICECLOTHES[][ENUM_POLICECLOTHES] = {
+    {288, "Desert Sheriff"},
+    {302, "LV Police Officer"},
+    {310, "County Sheriff"},
+    {283, "County Sheriff"},
+    {311, "Desert Sherriff without Hat"},
+    {306, "Female LS Police Officer"},
+    {307, "Female LV Police Officer"},
+    {284, "Motorcycle Cop"},
+    {285, "Swat Gear"}
+};
+
 enum ENUM_CARDEAL_DATA {
     VEHICLE_MODELID,
     VEHICLE_NAME[32],
     VEHICLE_PRICE,
-    VEHICLE_ID
+    VEHICLE_ID2
 };
 
 new const BUS_DEALERSHIP[][ENUM_CARDEAL_DATA] = {
@@ -510,6 +547,17 @@ enum ENUM_PLAYER_DATA {
         pFactionRank,
         pFactionRankname[32],
         pFactionPay,
+        pDuty,
+        pDutyClothes,
+
+        pFines, // fine cmd
+        pMostRecentFine[32],
+
+        pWantedLevel, // ca cmd
+        pMostRecentWantedReason[32],
+
+        pInPrisonType, // can be admin or normal jail cell.
+        pPrisonTimer,
 
         pJobId,
         pJobPay,
@@ -551,10 +599,18 @@ enum ENUM_PLAYER_DATA {
         PostState,
         GarbageState,
         busStopState,
+        pDragged,
+        DashCamStatus,
+        OnCall,
+        BeingCalled,
+        CalledService,
+        AwaitingReason,
 
         RentingVehicle
 }
 new pInfo[MAX_PLAYERS][ENUM_PLAYER_DATA];
+
+new dragState[MAX_PLAYERS], dashtimer[MAX_PLAYERS], callTimer[MAX_PLAYERS];
 
 enum ENUM_JOB_DATA {
     jID[11],
@@ -574,6 +630,9 @@ enum ENUM_VEH_DATA {
         vJobId,
         vFacId,
         vBusId,
+        vFines,
+        vMostRecentFine[32],
+        vImpounded,
         vPlate[32],
         Float:vParkedX,
         Float:vParkedY,
@@ -676,7 +735,7 @@ public OnGameModeInit() {
     ManualVehicleEngineAndLights();
     DisableInteriorEnterExits();
     // Don't use these lines if it's a filterscript
-    SetGameModeText("Roleplay | v1.5.0");
+    SetGameModeText("Roleplay | v1.5.2");
 
     /* MySQL info */
     db_handle = mysql_connect_file("mysql.ini"); // Database info!
@@ -699,6 +758,14 @@ public OnGameModeInit() {
     
     // FCPD
     policeMainDoor = CreateDynamicObject(1535, -2689.00903, 2646.06396, 4086.79517, 0.00000, 0.00000, 270.00000);
+    policeMainCell = CreateDynamicObject(19302, -2666.55249, 2641.79932, 4081.68091,   0.00000, 0.00000, 90.00000);
+    cell1 = 	CreateDynamicObject(19302, -2664.75830, 2643.68066, 4081.68091,   0.00000, 0.00000, 180.00000);
+    cell2 = 	CreateDynamicObject(19302, -2658.35400, 2643.65918, 4081.68091,   0.00000, 0.00000, 180.00000);
+    cell4 = 	CreateDynamicObject(19302, -2664.77002, 2640.15576, 4081.68091,   0.00000, 0.00000, 180.00000);
+    cell3 = 	CreateDynamicObject(19302, -2658.35254, 2640.17212, 4081.68091,   0.00000, 0.00000, 180.00000);
+    impoundGate = 	CreateDynamicObject(969, -180.26389, 1010.19574, 18.92880,   0.00000, 0.00000, 90.00000); // gate
+
+
 
     // DUMP 
     dumpPickup = CreatePickup(1239, 1, 281.7589, 1411.7045, 10.5003, -1);
@@ -814,8 +881,6 @@ public OnGameModeInit() {
     AddMenuItem(busdrivermenu, 1, "$150");
 
     // CONTINUE LOAD
-
-    
     accessDoor = TextDrawCreate(29.000000, 139.000000, "Access Door: SPACE");
     TextDrawFont(accessDoor, 1);
     TextDrawLetterSize(accessDoor, 0.491666, 1.900000);
@@ -874,6 +939,15 @@ public OnGameModeInit() {
     TextDrawSetOutline(CantTakePost, 0);
     TextDrawSetProportional(CantTakePost, 1);
     TextDrawSetShadow(CantTakePost, 1);
+
+    NotOnDuty = TextDrawCreate(230.000000, 366.000000, "You are not on duty!");
+    TextDrawBackgroundColor(NotOnDuty, 255);
+    TextDrawFont(NotOnDuty, 1);
+    TextDrawLetterSize(NotOnDuty, 0.559999, 1.800000);
+    TextDrawColor(NotOnDuty, -1);
+    TextDrawSetOutline(NotOnDuty, 0);
+    TextDrawSetProportional(NotOnDuty, 1);
+    TextDrawSetShadow(NotOnDuty, 1);
 
     CantCommand = TextDrawCreate(230.000000, 366.000000, "You cannot use this command!");
     TextDrawBackgroundColor(CantCommand, 255);
@@ -1172,7 +1246,10 @@ public newVeh(){
             cache_get_value_int(i, "vJobId", vInfo[loadedVeh][vJobId]);
             cache_get_value_int(i, "vFacId", vInfo[loadedVeh][vFacId]);
             cache_get_value_int(i, "vBusId", vInfo[loadedVeh][vBusId]);
-            cache_get_value(i, "vPlate", vInfo[loadedVeh][vPlate], 32);
+            cache_get_value_int(i, "vFines", vInfo[i][vFines]);
+            cache_get_value(i, "vPlate", vInfo[i][vPlate], 32);
+            cache_get_value(i, "vMostRecentFine", vInfo[i][vMostRecentFine], 32);
+            cache_get_value_int(i, "vImpounded", vInfo[i][vImpounded]);
             cache_get_value_float(i, "vParkedX", vInfo[loadedVeh][vParkedX]);
             cache_get_value_float(i, "vParkedY", vInfo[loadedVeh][vParkedY]);
             cache_get_value_float(i, "vParkedZ", vInfo[loadedVeh][vParkedZ]);
@@ -1210,33 +1287,42 @@ public VehsReceived() {
     if(cache_num_rows() == 0) print("No vehicles have been created!");
     else {
         for (new i = 0; i < cache_num_rows(); i++) {
-            cache_get_value_int(i, "vID", vInfo[loadedVeh][vID]);
-            cache_get_value_int(i, "vModelId", vInfo[loadedVeh][vModelId]);
-            cache_get_value(i, "vOwner", vInfo[loadedVeh][vOwner], 32);
-            cache_get_value_int(i, "vFuel", vInfo[loadedVeh][vFuel]);
-            cache_get_value_int(i, "vJobId", vInfo[loadedVeh][vJobId]);
-            cache_get_value_int(i, "vFacId", vInfo[loadedVeh][vFacId]);
-            cache_get_value_int(i, "vBusId", vInfo[loadedVeh][vBusId]);
-            cache_get_value(i, "vPlate", vInfo[loadedVeh][vPlate], 32);
-            cache_get_value_float(i, "vParkedX", vInfo[loadedVeh][vParkedX]);
-            cache_get_value_float(i, "vParkedY", vInfo[loadedVeh][vParkedY]);
-            cache_get_value_float(i, "vParkedZ", vInfo[loadedVeh][vParkedZ]);
-            cache_get_value_float(i, "vAngle", vInfo[loadedVeh][vAngle]);
-            cache_get_value_int(i, "vColor1", vInfo[loadedVeh][vColor1]);
-            cache_get_value_int(i, "vColor2", vInfo[loadedVeh][vColor2]);
-            cache_get_value_int(i, "vRentalState", vInfo[loadedVeh][vRentalState]);
-            cache_get_value_int(i, "vRentalPrice", vInfo[loadedVeh][vRentalPrice]);
-            new vehicleid = CreateVehicle(vInfo[loadedVeh][vModelId],
-                vInfo[loadedVeh][vParkedX],
-                vInfo[loadedVeh][vParkedY],
-                vInfo[loadedVeh][vParkedZ],
-                vInfo[loadedVeh][vAngle],
-                vInfo[loadedVeh][vColor1],
-                vInfo[loadedVeh][vColor2],
+            cache_get_value_int(i, "vID", vInfo[i][vID]);
+            cache_get_value_int(i, "vModelId", vInfo[i][vModelId]);
+            cache_get_value(i, "vOwner", vInfo[i][vOwner], 32);
+            cache_get_value_int(i, "vFuel", vInfo[i][vFuel]);
+            cache_get_value_int(i, "vJobId", vInfo[i][vJobId]);
+            cache_get_value_int(i, "vFacId", vInfo[i][vFacId]);
+            cache_get_value_int(i, "vBusId", vInfo[i][vBusId]);
+            cache_get_value_int(i, "vFines", vInfo[i][vFines]);
+            cache_get_value(i, "vPlate", vInfo[i][vPlate], 32);
+            cache_get_value(i, "vMostRecentFine", vInfo[i][vMostRecentFine], 32);
+            cache_get_value_int(i, "vImpounded", vInfo[i][vImpounded]);
+            cache_get_value_float(i, "vParkedX", vInfo[i][vParkedX]);
+            cache_get_value_float(i, "vParkedY", vInfo[i][vParkedY]);
+            cache_get_value_float(i, "vParkedZ", vInfo[i][vParkedZ]);
+            cache_get_value_float(i, "vAngle", vInfo[i][vAngle]);
+            cache_get_value_int(i, "vColor1", vInfo[i][vColor1]);
+            cache_get_value_int(i, "vColor2", vInfo[i][vColor2]);
+            cache_get_value_int(i, "vRentalState", vInfo[i][vRentalState]);
+            cache_get_value_int(i, "vRentalPrice", vInfo[i][vRentalPrice]);
+            new vehicleid = CreateVehicle(vInfo[i][vModelId],
+                vInfo[i][vParkedX],
+                vInfo[i][vParkedY],
+                vInfo[i][vParkedZ],
+                vInfo[i][vAngle],
+                vInfo[i][vColor1],
+                vInfo[i][vColor2],
                 -1
             );
+            SetVehicleZAngle(i, vInfo[i][vAngle]);
             vInfo[loadedVeh][vRentingPlayer] = INVALID_PLAYER_ID;
-            SetVehicleNumberPlate(vehicleid, vInfo[i][vPlate]);
+            SetVehicleNumberPlate(vehicleid, vInfo[i][vPlate]);            
+            new engine, lights, alarm, doors, bonnet, boot, objective;
+            GetVehicleParamsEx(vehicleid, engine, lights, alarm, doors, bonnet, boot, objective);
+            if(vInfo[i][vRentalState] != VEHICLE_RENTABLE){            
+                SetVehicleParamsEx(vehicleid, engine, lights, alarm, 1, bonnet, boot, objective);
+            }
             loadedVeh++;
         }
         printf("** [MYSQL] Loaded %d vehicles from the database!", cache_num_rows());
@@ -1634,6 +1720,7 @@ public OnPlayerConnect(playerid) {
     if(!IsPlayerNPC(playerid))
     {
         new query[200];
+        PLights[playerid] = 0;
         pInfo[playerid][pMuted] = 1;
         new name[MAX_PLAYER_NAME + 1];
         GetPlayerName(playerid, name, sizeof(name));
@@ -1654,6 +1741,94 @@ public OnPlayerConnect(playerid) {
 
 
         // remove buildings
+
+
+        //Player Textdraws
+        
+        dash1[playerid] = CreatePlayerTextDraw(playerid, 129.000000, 113.000000, "dashcam");
+        PlayerTextDrawFont(playerid, dash1[playerid], 2);
+        PlayerTextDrawLetterSize(playerid, dash1[playerid], 0.295832, 1.750000);
+        PlayerTextDrawTextSize(playerid, dash1[playerid], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, dash1[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, dash1[playerid], 0);
+        PlayerTextDrawAlignment(playerid, dash1[playerid], 1);
+        PlayerTextDrawColor(playerid, dash1[playerid], -1);
+        PlayerTextDrawBackgroundColor(playerid, dash1[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, dash1[playerid], 50);
+        PlayerTextDrawUseBox(playerid, dash1[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, dash1[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, dash1[playerid], 0);
+
+        dash2[playerid] = CreatePlayerTextDraw(playerid, 129.000000, 129.000000, "CAM01");
+        PlayerTextDrawFont(playerid, dash2[playerid], 2);
+        PlayerTextDrawLetterSize(playerid, dash2[playerid], 0.295832, 1.750000);
+        PlayerTextDrawTextSize(playerid, dash2[playerid], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, dash2[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, dash2[playerid], 0);
+        PlayerTextDrawAlignment(playerid, dash2[playerid], 1);
+        PlayerTextDrawColor(playerid, dash2[playerid], -1);
+        PlayerTextDrawBackgroundColor(playerid, dash2[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, dash2[playerid], 50);
+        PlayerTextDrawUseBox(playerid, dash2[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, dash2[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, dash2[playerid], 0);
+
+        dashPlate[playerid] = CreatePlayerTextDraw(playerid, 189.000000, 358.000000, "P PLATEHERE");
+        PlayerTextDrawFont(playerid, dashPlate[playerid], 2);
+        PlayerTextDrawLetterSize(playerid, dashPlate[playerid], 0.279166, 1.750000);
+        PlayerTextDrawTextSize(playerid, dashPlate[playerid], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, dashPlate[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, dashPlate[playerid], 0);
+        PlayerTextDrawAlignment(playerid, dashPlate[playerid], 1);
+        PlayerTextDrawColor(playerid, dashPlate[playerid], -1);
+        PlayerTextDrawBackgroundColor(playerid, dashPlate[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, dashPlate[playerid], 50);
+        PlayerTextDrawUseBox(playerid, dashPlate[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, dashPlate[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, dashPlate[playerid], 0);
+
+        dashSpeed[playerid] = CreatePlayerTextDraw(playerid, 291.000000, 358.000000, "S 90MPH");
+        PlayerTextDrawFont(playerid, dashSpeed[playerid], 2);
+        PlayerTextDrawLetterSize(playerid, dashSpeed[playerid], 0.279166, 1.750000);
+        PlayerTextDrawTextSize(playerid, dashSpeed[playerid], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, dashSpeed[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, dashSpeed[playerid], 0);
+        PlayerTextDrawAlignment(playerid, dashSpeed[playerid], 1);
+        PlayerTextDrawColor(playerid, dashSpeed[playerid], -1);
+        PlayerTextDrawBackgroundColor(playerid, dashSpeed[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, dashSpeed[playerid], 50);
+        PlayerTextDrawUseBox(playerid, dashSpeed[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, dashSpeed[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, dashSpeed[playerid], 0);
+
+        dashDist[playerid] = CreatePlayerTextDraw(playerid, 410.000000, 358.000000, "D 25M");
+        PlayerTextDrawFont(playerid, dashDist[playerid], 2);
+        PlayerTextDrawLetterSize(playerid, dashDist[playerid], 0.279166, 1.750000);
+        PlayerTextDrawTextSize(playerid, dashDist[playerid], 398.000000, 8.000000);
+        PlayerTextDrawSetOutline(playerid, dashDist[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, dashDist[playerid], 0);
+        PlayerTextDrawAlignment(playerid, dashDist[playerid], 3);
+        PlayerTextDrawColor(playerid, dashDist[playerid], -1);
+        PlayerTextDrawBackgroundColor(playerid, dashDist[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, dashDist[playerid], 50);
+        PlayerTextDrawUseBox(playerid, dashDist[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, dashDist[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, dashDist[playerid], 0);
+
+        dashVid[playerid] = CreatePlayerTextDraw(playerid, 411.000000, 115.000000, "VID: vehId");
+        PlayerTextDrawFont(playerid, dashVid[playerid], 2);
+        PlayerTextDrawLetterSize(playerid, dashVid[playerid], 0.295832, 1.750000);
+        PlayerTextDrawTextSize(playerid, dashVid[playerid], 400.000000, 17.000000);
+        PlayerTextDrawSetOutline(playerid, dashVid[playerid], 1);
+        PlayerTextDrawSetShadow(playerid, dashVid[playerid], 0);
+        PlayerTextDrawAlignment(playerid, dashVid[playerid], 3);
+        PlayerTextDrawColor(playerid, dashVid[playerid], -1);
+        PlayerTextDrawBackgroundColor(playerid, dashVid[playerid], 255);
+        PlayerTextDrawBoxColor(playerid, dashVid[playerid], 50);
+        PlayerTextDrawUseBox(playerid, dashVid[playerid], 0);
+        PlayerTextDrawSetProportional(playerid, dashVid[playerid], 1);
+        PlayerTextDrawSetSelectable(playerid, dashVid[playerid], 0);
+
 
         businessBox[playerid] = CreatePlayerTextDraw(playerid, 63.000000, 141.000000, "`");
         PlayerTextDrawFont(playerid, businessBox[playerid], 0);
@@ -2066,6 +2241,18 @@ public SavePlayerData(playerid) {
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pPreferredSpawn` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pPreferredSpawn], GetName(playerid));
     mysql_query(db_handle, query);
 
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pFines` = '%d', `pMostRecentFine` = '%s' WHERE  `pName` = '%e'", pInfo[playerid][pFines], pInfo[playerid][pMostRecentFine], GetName(playerid));
+    mysql_query(db_handle, query);
+    
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pWantedLevel` = '%d', `pMostRecentWantedReason` = '%s' WHERE  `pName` = '%e'", pInfo[playerid][pWantedLevel], pInfo[playerid][pMostRecentWantedReason], GetName(playerid));
+    mysql_query(db_handle, query);
+    
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pInPrisonType` = '%d', `pPrisonTimer` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pInPrisonType], pInfo[playerid][pPrisonTimer], GetName(playerid));
+    mysql_query(db_handle, query);
+
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pDutyClothes` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pDutyClothes], GetName(playerid));
+    mysql_query(db_handle, query);
+
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAdminLevel` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pAdminLevel], GetName(playerid));
     mysql_query(db_handle, query);
     
@@ -2119,6 +2306,7 @@ public OnPlayerSpawn(playerid) {
 
 public OnPlayerDeath(playerid, killerid, reason) {
     HideSpeedoTextdraws(playerid);
+    PLights[playerid] = 0;
     return 1;
 }
 
@@ -2133,15 +2321,205 @@ public OnVehicleDeath(vehicleid, killerid) {
 
 public OnPlayerText(playerid, text[]) {
     if(pInfo[playerid][pMuted] == 0) {
-        new string[256];
+        if(pInfo[playerid][OnCall] >= 1 && pInfo[playerid][OnCall] != 911){
+            new string[256];
+            format(string, sizeof(string), "{FFFFE0}[PHONE] %s", RPName(playerid), text);
+            for(new i = 0; i < MAX_PLAYERS; i++){
+                if(pInfo[i][pPhoneNumber] == pInfo[playerid][OnCall]){        
+                    SendClientMessage(i, -1, string);
+                    SendClientMessage(playerid, -1, string);
+                }
+            }
+        } else if(pInfo[playerid][OnCall] == 911){
+            if(pInfo[playerid][AwaitingReason] == 0){
+                if(strfind(text, "police", true) != -1){
+                    new string[256];
+                    format(string, sizeof(string), "[PHONE]: %s", text);
+                    SendClientMessage(playerid, -1, string);
+                    format(string, sizeof(string), "[PHONE]: Okay - what is the situation?");
+                    SendClientMessage(playerid, -1, string);
+                    pInfo[playerid][CalledService] = 1;
+                    pInfo[playerid][AwaitingReason] = 1;
+                }
+            } else {     
+                if(pInfo[playerid][CalledService] == 1){
+                    new string[256];     
+                    format(string, sizeof(string), "[PHONE]: %s", text);
+                    SendClientMessage(playerid, -1, string);
+                    new Float:px, Float:py, Float:pz;
+                    GetPlayerPos(playerid, px, py, pz);
+                    new msg[50];
+                    format(msg, sizeof(msg), "%s", text);
+                    AlertPolice(playerid, msg, px, py, pz);
+                    format(string, sizeof(string), "[PHONE]: Thank you. The police have been notified.");
 
-        format(string, sizeof(string), "%s[%i] says:%s", RPName(playerid), playerid, text);
-        nearByMessage(playerid, -1, string, 12.0);
+                    SendClientMessage(playerid, -1, string);
+                    pInfo[playerid][CalledService] = 0;
+                    pInfo[playerid][AwaitingReason] = 0;
+                    pInfo[playerid][OnCall] = 0;
+                    
+                    format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(playerid));
+                    nearByAction(playerid, NICESKY, string);
+                    
+                    SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
+                }
+            }
+        } else {
+            new string[256];
+
+            format(string, sizeof(string), "%s[%i] says: %s", RPName(playerid), playerid, text);
+            nearByMessage(playerid, -1, string, 12.0);
+        }
     } else {
         TextDrawShowForPlayer(playerid, PMuted);
         SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
     }
     return 0;
+}
+
+/* Global fac cmds followed by specific fac cmds */
+CMD:hire(playerid, params[]){
+    new target;
+    if(pInfo[playerid][pFactionRank] == 7){
+        if(sscanf(params, "d", target)) return SendClientMessage(playerid, -1, "[SERVER]: /hire [playerid]");{
+            if(pInfo[target][pFactionId] >= 1){
+                SendClientMessage(playerid,  ADMINBLUE, "[SERVER]: This player is already in a faction!");
+                return 1;
+            } else {
+                pInfo[target][pFactionId] = pInfo[playerid][pFactionId];
+                pInfo[target][pFactionRank] = 1;
+                SetFactionRanknameByRank(target, pInfo[playerid][pFactionId], 1);
+                new string[256];
+                format(string, sizeof(string), "[SERVER]: You have hired: %s !", RPName(target));
+                SendClientMessage(playerid, ADMINBLUE, string);
+                format(string, sizeof(string), "[SERVER]: You have been hired by: %s !", RPName(playerid));
+                SendClientMessage(target, ADMINBLUE, string);
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:fire(playerid, params[]){
+    new target;
+    if(pInfo[playerid][pFactionRank] == 7){
+        if(sscanf(params, "d", target)) return SendClientMessage(playerid, -1, "[SERVER]: /fire [playerid]");{
+            if(target != playerid){
+                if(pInfo[target][pFactionId] != pInfo[playerid][pFactionId]){
+                    SendClientMessage(playerid,  ADMINBLUE, "[SERVER]: This player is not a member of your faction!");
+                    return 1;
+                } else {
+                    pInfo[target][pFactionId] = 0;
+                    pInfo[target][pFactionRank] = 0;
+                    new string[256];
+                    format(string, sizeof(string), "[SERVER]: You have fired: %s !", RPName(target));
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    format(string, sizeof(string), "[SERVER]: You have been fired by: %s !", RPName(playerid));
+                    SendClientMessage(target, ADMINBLUE, string);
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:demote(playerid, params[]){
+    new target;
+    if(pInfo[playerid][pFactionRank] == 7){
+        if(sscanf(params, "d", target)) return SendClientMessage(playerid, -1, "[SERVER]: /demote [playerid]");{
+            if(target != playerid){
+                if(pInfo[target][pFactionRank] > 1){
+                    pInfo[target][pFactionRank]--;
+                    new string[256];
+                    format(string, sizeof(string), "[SERVER]: You have demoted: %s!", RPName(target));
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    format(string, sizeof(string), "[SERVER]: You have demoted by: %s!", RPName(playerid));
+                    SendClientMessage(target, ADMINBLUE, string);
+                    return 1;
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:promote(playerid, params[]){
+    new target;
+    if(pInfo[playerid][pFactionRank] == 7){
+        if(sscanf(params, "d", target)) return SendClientMessage(playerid, -1, "[SERVER]: /promote [playerid]");{
+            if(target != playerid){
+                if(pInfo[target][pFactionRank] < 7){
+                    pInfo[target][pFactionRank]++;
+                    new string[256];
+                    format(string, sizeof(string), "[SERVER]: You have promoted: %s!", RPName(target));
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    format(string, sizeof(string), "[SERVER]: You have promoted by: %s!", RPName(playerid));
+                    SendClientMessage(target, ADMINBLUE, string);
+                    return 1;
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:duty(playerid, params[]){
+    if(pInfo[playerid][pFactionId] >= 1){
+        for(new i = 0; i < loadedFac; i++){
+            if(fInfo[i][fType] == 2) {// a legal faction...
+                if(IsPlayerInRangeOfPoint(playerid, 1.5, fInfo[i][fDutyX], fInfo[i][fDutyY], fInfo[i][fDutyZ])){
+                    if(fInfo[i][fID] == pInfo[playerid][pFactionId]){
+                        if(pInfo[playerid][pDuty] == 0){
+                            if(pInfo[playerid][pDutyClothes] != 0){
+                                SetPlayerSkin(playerid, pInfo[playerid][pDutyClothes]);
+                                pInfo[playerid][pDuty] = 1;
+
+                                return 1;
+                            } else {
+                                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have not set your duty clothes!");
+                                return 1;
+                            }
+                        } else {
+                            pInfo[playerid][pDuty] = 0;
+                            SetPlayerSkin(playerid, pInfo[playerid][pSkin]);
+                        }
+
+                    } else {
+                        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You cannot use this duty point!");
+                    }
+                }
+            }
+        }
+    }
+    return 1;
+}
+stock GiveSpecificWeapons(playerid){
+
+    return 1;
+}
+
+CMD:dutyclothes(playerid, params[]){
+    if(pInfo[playerid][pFactionId] >= 1){
+        for(new i = 0; i < loadedFac; i++){
+            if(pInfo[playerid][pFactionId] == 1){
+                if(IsPlayerInRangeOfPoint(playerid, 1.5, fInfo[i][fClothesX], fInfo[i][fClothesY], fInfo[i][fClothesZ])){
+                    new subString[64]; 
+                    static string[sizeof(POLICECLOTHES) * sizeof(subString)];
+
+                    if(string[0] == EOS){           
+                        for (new si; si < sizeof(POLICECLOTHES); si++) {
+                            format(subString, sizeof(subString), "%i(0.0, 0.0, -50.0, 1.5)\t%s\n", POLICECLOTHES[si][SKINID], POLICECLOTHES[si][SKINNAME]);
+                            strcat(string, subString);
+                        }
+                    }
+
+                    return ShowPlayerDialog(playerid, 9998, DIALOG_STYLE_PREVIEW_MODEL, "Police Clothes", string, "Accept", "Decline");
+
+                }
+            }
+        }
+    }
+    return 1;
 }
 
 /* SHOP CMDS */
@@ -2211,6 +2589,20 @@ CMD:createrentalvehicle(playerid, params[]){
         if(sscanf(params, "ddds[32]", vehid, busId, price, plate)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createrentalvehicle [vehid] [busid] [price] [plate]");{
             mysql_format(db_handle, query, sizeof(query), "INSERT INTO `vehicles` (`vModelId`,`vOwner`,`vFuel`, `vBusId`,`vPlate`,`vRentalPrice`, `vParkedX`,`vParkedY`,`vParkedZ`, `vAngle`, `vRentalState`) VALUES ('%d', 'NULL', '100', '%d','%s','%d','%f','%f','%f', '%f', '1')", vehid, busId,plate,price, px,py,pz,pa);
             mysql_tquery(db_handle, query, "OnRentalVehCreated", "dddd", playerid,vehid, busId, price);
+        }
+        return 1;
+    }
+    return 1;
+}
+
+CMD:createfactionvehicle(playerid, params[]){
+    new vehid, facid, price,plate[32],query[900], Float:px, Float:py, Float:pz, Float:pa;
+    if(pInfo[playerid][pAdminLevel] >= 5){
+        GetPlayerPos(playerid, px, py, pz);
+        GetPlayerFacingAngle(playerid, pa);
+        if(sscanf(params, "dds[32]", vehid, facid, plate)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /createrentalvehicle [vehid] [facid] [plate]");{
+            mysql_format(db_handle, query, sizeof(query), "INSERT INTO `vehicles` (`vModelId`,`vOwner`,`vFuel`, `vFacId`,`vPlate`,`vParkedX`,`vParkedY`,`vParkedZ`, `vAngle`, `vRentalState`) VALUES ('%d', 'NULL', '100', '%d','%s','%f','%f','%f', '%f', '0')", vehid, facid,plate, px,py,pz,pa);
+            mysql_tquery(db_handle, query, "OnFactionVehCreated", "ddd", playerid,vehid, facid);
         }
         return 1;
     }
@@ -2434,7 +2826,7 @@ CMD:setbususe(playerid, params[]){
         if(sscanf(params, "d", add)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /setbususe [bAddress]"); {
             GetPlayerPos(playerid, px,py,pz);
             
-            mysql_format(db_handle, query, sizeof(query),  "UPDATE `businesses` SET `bUseX` = '%f',`bUseY` = '%f',`bUseZ` = '%f' WHERE  `bId` = %d", px, py, pz, add);
+            mysql_format(db_handle, query, sizeof(query),  "UPDATE `businesses` SET `bUseX` = '%f',`bUseY` = '%f',`bUseZ` = '%f' WHERE  `bAddress` = %d", px, py, pz, add);
             mysql_query(db_handle, query);
 
             for(new i = 0; i < loadedBus; i++){
@@ -2483,27 +2875,580 @@ CMD:stats(playerid, params[]) {
     return 1;
 }
 
+CMD:dashcam(playerid, params[]){
+    if(pInfo[playerid][pFactionId] == 1){
+        if(pInfo[playerid][pDuty] == 1){
+            if(pInfo[playerid][DashCamStatus] == 0){
+                new vidstr[32], vid;
+                vid = GetPlayerVehicleID(playerid);
+                dashtimer[playerid] = SetTimerEx("BeginDashCam", 250, false, "d", playerid);
+                PlayerTextDrawShow(playerid, dash1[playerid]);
+                PlayerTextDrawShow(playerid, dash2[playerid]);
+                PlayerTextDrawShow(playerid, dashDist[playerid]);
+                
+                format(vidstr, sizeof(vidstr), "VID: %d", vid);
+                PlayerTextDrawSetString(playerid, dashVid[playerid], vidstr);
+                PlayerTextDrawShow(playerid, dashVid[playerid]);
+                pInfo[playerid][DashCamStatus] = 1;
+            }
+            else {
+                KillTimer(dashtimer[playerid]);
+                PlayerTextDrawHide(playerid, dash1[playerid]);
+                PlayerTextDrawHide(playerid, dash2[playerid]);
+                PlayerTextDrawHide(playerid, dashDist[playerid]);
+                PlayerTextDrawHide(playerid, dashVid[playerid]);
+                PlayerTextDrawHide(playerid, dashSpeed[playerid]);
+                PlayerTextDrawHide(playerid, dashPlate[playerid]);
+                return 1;
+            }
+        }
+    }
+
+    return 1;
+}
+
+forward public BeginDashCam(playerid);
+public BeginDashCam(playerid){
+    new Float:x,Float:y,Float:z,Float:a;
+    new string[256], plate[32], vidstr[32];
+    new vehSpeed[32];
+    new vid = GetPlayerVehicleID(playerid);
+    GetVehiclePos(vid, x, y, z);
+    GetVehicleZAngle(vid,a);
+    x += floatsin(-a, degrees) * 15.0;
+    y += floatcos(-a, degrees) * 15.0;
+    KillTimer(dashtimer[playerid]);
+    dashtimer[playerid] = SetTimerEx("BeginDashCam", 250, false, "d", playerid);
+    format(plate, sizeof(plate), "P NONE");
+    PlayerTextDrawSetString(playerid, dashPlate[playerid], plate);
+    format(vehSpeed, sizeof(vehSpeed), "S NONE");
+    PlayerTextDrawSetString(playerid, dashSpeed[playerid], vehSpeed);
+    PlayerTextDrawShow(playerid, dashPlate[playerid]);
+    PlayerTextDrawShow(playerid, dashSpeed[playerid]);
+    for(new i = 0; i < loadedVeh; i++){
+        if(GetVehicleDistanceFromPoint(vInfo[i][vID], x, y, z) <= 3){
+            format(plate, sizeof(plate), "P %s", vInfo[i][vPlate]);
+            PlayerTextDrawSetString(playerid, dashPlate[playerid], plate);
+
+            new Float:speed, Float:final_speed;
+            GetVehiclePos(vInfo[i][vID], x, y, z);
+            GetVehicleVelocity(vInfo[i][vID], x, y, z);
+            speed = floatsqroot(((x * x) + (y * y)) + (z * z)) * 100;
+            final_speed = floatround(speed, floatround_round);
+            
+            format(vehSpeed, sizeof(vehSpeed), "S %dMPH", final_speed);
+            PlayerTextDrawSetString(playerid, dashSpeed[playerid], vehSpeed);
+            PlayerTextDrawShow(playerid, dashPlate[playerid]);
+            PlayerTextDrawShow(playerid, dashSpeed[playerid]);
+        }
+    }
+}
+
+CMD:drag(playerid, params[]){
+    new target, Float:px, Float:py, Float:pz, Float:tx, Float:ty, Float:tz;
+    if(sscanf(params, "d", target)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /drag [targetid]");{
+        GetPlayerPos(target, tx, ty, tz);
+        GetPlayerPos(playerid, px, py, pz);
+        if(IsPlayerInRangeOfPoint(playerid, 1.5, tx, ty, tz)){
+            if(IsPlayerCuffed(target)){
+                if(pInfo[playerid][pDragged] == 0){
+                    SetPlayerPos(target, px, py, pz);
+                    SendClientMessage(playerid, ADMINBLUE, "> You are dragging a player!");
+                    TogglePlayerControllable(target, false);
+                    pInfo[playerid][pDragged] = 1;
+                    dragState[target] = SetTimerEx("DragPlayer", 1000, false, "dd", playerid, target);
+                } else {
+                    pInfo[playerid][pDragged] = 0;
+                    SendClientMessage(playerid, ADMINBLUE, "> You have stopped dragging this player!");
+                    TogglePlayerControllable(target, true);
+                    KillTimer(dragState[target]);
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+forward public DragPlayer(playerid, target);
+public DragPlayer(playerid, target){
+    new Float:px, Float:py, Float:pz;
+    GetPlayerPos(playerid, px, py, pz);
+    SetPlayerPos(target, px, py, pz);
+    dragState[target] = SetTimerEx("DragPlayer", 1000, false, "dd", playerid, target);
+    return 1;
+}
+
+CMD:flash(playerid, params[]){
+    if(pInfo[playerid][pFactionId] == 1 || pInfo[playerid][pFactionId] == 2){
+        if(PLights[playerid] == 0)
+            {
+            BlinkingLights(playerid);
+            PLights[playerid] = 1;
+		}
+		else if(PLights[playerid] == 1)
+            {
+            ShutOffBlinkingLights(playerid);
+            PLights[playerid] = 0;
+		}
+        return 1;
+    }
+    return 1;
+}
+public BlinkingLights(playerid)
+{
+	if ( IsPlayerInAnyVehicle(playerid) && GetPlayerVehicleSeat(playerid) == 0 )
+	{
+		new Panels, Doors1, Lights, Tires;
+		GetVehicleDamageStatus(GetPlayerVehicleID(playerid), Panels, Doors1, Lights, Tires);
+		UpdateVehicleDamageStatus(GetPlayerVehicleID(playerid), Panels, Doors1, encode_lights(0,0,1,1), Tires);
+        TLI = SetTimerEx("TimerBlinkingLights", 100, false, "d", GetPlayerVehicleID(playerid));
+	}
+}
+public ShutOffBlinkingLights(playerid)
+{
+	if ( IsPlayerInAnyVehicle(playerid) && GetPlayerVehicleSeat(playerid) == 0 )
+	{
+	   KillTimer(TLI);
+	   KillTimer(TLI2);
+	   new Panels, Doors1, Lights, Tires;
+	   GetVehicleDamageStatus(GetPlayerVehicleID(playerid), Panels, Doors1, Lights, Tires);
+	   UpdateVehicleDamageStatus(GetPlayerVehicleID(playerid), Panels, Doors1, encode_lights(0,0,0,0), Tires);
+	}
+}
+public encode_lights(light1, light2, light3, light4)
+{
+	return light1 | (light2 << 1) | (light3 << 2) | (light4 << 3);
+}
+public TimerBlinkingLights(vehicleid)
+{
+		new Panels, Doors1, Lights, Tires;
+		GetVehicleDamageStatus(vehicleid, Panels, Doors1, Lights, Tires);
+		UpdateVehicleDamageStatus(vehicleid, Panels, Doors1, encode_lights(1,1,0,0), Tires);
+		TLI2 = SetTimerEx("TimerBlinkingLights2", 100, false, "d", vehicleid);
+}
+public TimerBlinkingLights2(vehicleid)
+{
+		new Panels, Doors1, Lights, Tires;
+		GetVehicleDamageStatus(vehicleid, Panels, Doors1, Lights, Tires);
+		UpdateVehicleDamageStatus(vehicleid, Panels, Doors1, encode_lights(0,0,1,1), Tires);
+		TLI = SetTimerEx("TimerBlinkingLights", 100, false, "d", vehicleid);
+}
+
+CMD:getcar(playerid, params[]){
+    new plate[32], name[32];
+    GetPlayerName(playerid, name, 32);
+    if(sscanf(params, "s[32]", plate)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /getcar [PLATE]"); {
+        for(new i = 0; i < loadedVeh; i++){
+            if(!strcmp(vInfo[i][vPlate], plate, true)){
+                if(vInfo[i][vImpounded] == 1){
+                    if(!strcmp(vInfo[i][vOwner], name, true)){
+                        if(GetPlayerMoney(playerid) >= vInfo[i][vFines] && pInfo[playerid][pCash] >= vInfo[i][vFines]){
+                            SetVehiclePos(vInfo[i][vID], -185.0058, 1021.9856, 19.6558);
+                            SetVehicleZAngle(vInfo[i][vID], 0);
+                            vInfo[i][vImpounded] = 0;
+                            vInfo[i][vFines] = 0;
+                            vInfo[i][vParkedX] = -185.0058;
+                            vInfo[i][vParkedY] = 1021.9856;
+                            vInfo[i][vParkedZ] = 19.6558;
+                            new DB_Query[900];
+                            mysql_format(db_handle, DB_Query, sizeof(DB_Query), "UPDATE `vehicles` SET `vImpounded` = '0', `vFines` = '0', `vParkedX` = '%f', `vParkedY` = '%f', `vParkedZ` = '%f' WHERE `vPlate` = '%s'", -185.0058, 1021.9856, 19.6558, plate);
+                            mysql_query(db_handle, DB_Query);
+                            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have bought your car back from the impound!");
+                            return 1;
+                        }
+                    } else {
+                        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You do not own that vehicle!");
+                        return 1;
+                    }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} That vehicle is not impounded!");
+                    return 1;
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:impound(playerid, params[]){
+    new plate[32];
+    if(pInfo[playerid][pFactionId] == 1){
+        if(pInfo[playerid][pDuty] == 1){
+            if(sscanf(params, "s[32]", plate)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /impound [PLATE]"); {
+                for(new i = 0; i < loadedVeh; i++){
+                    if(!strcmp(vInfo[i][vPlate], plate,  true)){
+                        new Float:vehdist = GetVehicleDistanceFromPoint(vInfo[i][vID], -166.0709, 1018.1705, 18.7314);
+                        printf("vid; %d %s, distance from point: %f", vInfo[i][vID], vInfo[i][vPlate], vehdist);
+                        if(GetVehicleDistanceFromPoint(vInfo[i][vID], -166.0709, 1018.1705, 18.7314) <= 7){ // check to see if that veh is near that point..
+                            if(vInfo[i][vFines] > 0){
+                                new Float:x, Float:y, Float:z, DB_Query[900], string[256];
+                                GetVehiclePos(vInfo[i][vID], x, y, z);
+                                vInfo[i][vImpounded] = 1;
+                                vInfo[i][vParkedX] = x;
+                                vInfo[i][vParkedY] = y;
+                                vInfo[i][vParkedZ] = z;
+                                mysql_format(db_handle, DB_Query, sizeof(DB_Query), "UPDATE `vehicles` SET `vImpounded` = '%d', `vParkedX` = '%f', `vParkedY` = '%f', `vParkedZ` = '%f' WHERE `vPlate` = '%e'", 1, x, y, z, plate);
+                                mysql_query(db_handle, DB_Query);
+                                format(string, sizeof(string), "> Vehicle: %s has been impounded!", vInfo[i][vPlate]);
+                                pInfo[playerid][pFactionPay] += 100; // give them 100 towards fac pay
+                                SendClientMessage(playerid, ADMINBLUE, string);
+                                //send client message saying it has worked
+                                // detatch towed vehicle
+                                DetachTrailerFromVehicle(GetPlayerVehicleID(playerid));
+                                return 1;
+                            } else {
+                                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle does not have any fines!");
+                                return 1;
+                            }
+                        } else {
+                            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle is not near the impound point!");
+                            return 1;
+                        }
+                    }
+                }
+            }
+        } else {
+            TextDrawShowForPlayer(playerid, NotOnDuty);
+            SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 1;
+}
+
+CMD:gate(playerid, params[]){
+    if(pInfo[playerid][pFactionId] == 1){
+        if(IsPlayerInRangeOfPoint(playerid, 15, -180.2639, 1010.1957, 18.9288)){
+            MoveDynamicObject(impoundGate, -180.2639, 1016.7477, 18.9288, 8000);
+            SetTimerEx("MoveObjBack", 5000, false, "d", 7);
+        }
+    }
+    return 1;
+}
+
+CMD:ticket(playerid, params[]){
+    new target, plate[32], amount, reason[32], Float:x, Float:y, Float:z; // Ticket works on target player id, or plate id.
+    if(pInfo[playerid][pFactionId] == 1){
+        if(pInfo[playerid][pDuty] == 1){
+            if(sscanf(params, "s[32]ds[32]", plate, amount, reason)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /ticket [plate/playerid] [amount] [reason]");{
+                for(new i = 0; i < loadedVeh; i++){
+                    if(!strcmp(vInfo[i][vPlate], plate, true)){
+                        GetVehiclePos(vInfo[i][vID], x, y, z);
+                        if(IsPlayerInRangeOfPoint(playerid, 3, x, y, z)){
+                            vInfo[i][vFines] += amount;
+                            format(vInfo[i][vMostRecentFine], 32, reason);
+                            new string[256], DB_Query[900];
+                            format(string, sizeof(string), "> You have written a ticket for: %s - ticket price: $%d - reason: %s", plate, amount, reason);
+                            SendClientMessage(playerid, ADMINBLUE, string);
+                            mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `vehicles` SET `vFines` = '%d', `vMostRecentFine` = '%s' WHERE `vPlate` = '%e'",vInfo[i][vFines], vInfo[i][vMostRecentFine], plate);
+                            mysql_query(db_handle, DB_Query);
+                        }
+                    }
+                }
+            } 
+            if(!sscanf(params, "dds[32]", target, amount, reason)) {
+                if(IsPlayerConnected(target)){
+                    GetPlayerPos(target, x, y, z);
+                    if(IsPlayerInRangeOfPoint(playerid, 3, x, y, z)){
+                        pInfo[target][pFines] += amount;
+                        format(pInfo[target][pMostRecentFine], 32, reason);
+                        new string[256];
+                        format(string, sizeof(string), "> You have written a ticket for: %s - ticket price: $%d - reason: %s", RPName(target), amount, reason);
+                        SendClientMessage(playerid, ADMINBLUE, string);
+                        format(string, sizeof(string), "> You been given a ticket from %s - ticket price: $%d - reason: %s", RPName(playerid), amount, reason);
+                        SendClientMessage(target, ADMINBLUE, string);
+                    }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Target is not connected.");
+                    return 1;
+                }
+            }
+        } else {
+            TextDrawShowForPlayer(playerid, NotOnDuty);
+            SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+        }
+        return 1;
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 1;
+}
+
+CMD:arrest(playerid, params[]){
+    new target, length;
+    if(pInfo[playerid][pFactionId] == 1){
+        if(sscanf(params, "dd", target, length)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /arrest [id] [length]"); {
+            if(pInfo[playerid][pDuty] == 1){
+                // check if wanted level is 1 or greater than 1 if not player has not been charged, /ca
+                //arrest player
+                if(IsPlayerInRangeOfPoint(playerid, 3, -2653.4983, 2641.7468, 4080.4587)){
+                    if(GetPlayerWantedLevel(target) >= 1){
+                        pInfo[target][pInPrisonType] = 1;
+                        pInfo[target][pPrisonTimer] = length;
+                        SetPlayerPos(playerid, -2664.4351, 2637.7744, 4080.4587);
+                        SetPlayerWantedLevel(target, 0);
+                        SetTimerEx("DecrementPrisonTimer", 1000, false, "dd", target, pInfo[target][pInPrisonType]);
+                    } else {
+                        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Player has not been charged!");
+                    }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You are not in range of the /arrest point!");
+                }
+            } else {
+                TextDrawShowForPlayer(playerid, NotOnDuty);
+                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+            }
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+
+    }
+    return 1;
+}
+
+CMD:call(playerid, params[]){
+    new number;
+    if(pInfo[playerid][pPhoneNumber] != 0 && pInfo[playerid][pPhoneModel] != 0){
+        // has phone...
+        if(sscanf(params, "d", number)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /call [NUMBER]"); {
+            if(number == 911){
+                new string[256];
+                format(string, sizeof(string), "* %s takes out their phone and dials a number.", RPName(playerid));
+                nearByAction(playerid, NICESKY, string);
+                SetPlayerSpecialAction(playerid, SPECIAL_ACTION_USECELLPHONE);
+                BeginCalling(playerid, 911);
+            }
+            for(new i = 0; i < MAX_PLAYERS; i++){
+                if(pInfo[i][pPhoneNumber] == number){
+                    if(IsPlayerConnected(i)){
+                        new string[256];
+                        format(string, sizeof(string), "* %s takes out their phone and dials a number.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        pInfo[i][BeingCalled] = pInfo[playerid][pPhoneNumber];
+                        SetPlayerSpecialAction(playerid, SPECIAL_ACTION_USECELLPHONE);
+                        BeginCalling(playerid, i);
+                        PlayerPlaySound(playerid, 3600,0,0,0);
+                        return 1;
+                    }
+                }
+            }
+        }
+    } else {
+        // no phone...
+    }
+    return 1;
+}
+
+forward BeginCalling(playerid, targetid);
+public BeginCalling(playerid, targetid){
+    if(targetid == 911){
+        new string[256];
+        format(string, sizeof(string), "{FFFFD5}Phone connecting sound...");
+        SendClientMessage(playerid, -1, string);
+        pInfo[playerid][OnCall] = 911;
+        format(string, sizeof(string), "{FFFFD5}[PHONE]: This is the emergency services, what do you require?");
+        SendClientMessage(playerid, -1, string);
+        format(string, sizeof(string), "{FFFFD5}[PHONE]: Police, Medics or Firefighters?");
+        SendClientMessage(playerid, -1, string);
+        return 1;
+    } else {
+        if(pInfo[playerid][OnCall] == 0){
+            new string[256];
+            format(string, sizeof(string), "PHONE: %d is calling... /accept to answer!", pInfo[playerid][pPhoneNumber]);
+            SendClientMessage(targetid, ADMINBLUE, string);
+            format(string, sizeof(string), "Phone ringing...  (( %s ))", RPName(targetid));
+            nearByAction(targetid, NICESKY, string);
+            
+            format(string, sizeof(string), "{FFFFD5}Phone connecting sound...");
+            SendClientMessage(playerid, -1, string);
+            callTimer[playerid] = SetTimerEx("BeginCalling", 3000, false, "dd", playerid, targetid);
+            new Float:x, Float:y, Float:z;
+            GetPlayerPos(targetid, x, y, z);
+            PlayerPlaySound(targetid, 23000, x, y, z);
+        }
+    }
+    return 1;
+}
+
+CMD:accept(playerid, params[]){
+    new string[256];
+    if(pInfo[playerid][BeingCalled] >= 1){
+        new pid;
+        pid = PlayerIdByPhoneNumber(pInfo[playerid][BeingCalled]);
+        if(pInfo[playerid][BeingCalled] == pInfo[pid][pPhoneNumber]){
+            SetPlayerSpecialAction(pid, SPECIAL_ACTION_USECELLPHONE);    
+            format(string, sizeof(string), "* %s takes out their phone and answers the call.", RPName(playerid));
+            nearByAction(playerid, NICESKY, string);
+            format(string, sizeof(string), "{FFFFD5} Call connected.");
+            SendClientMessage(playerid, -1, string);
+            SendClientMessage(pid, -1, string);
+            pInfo[playerid][OnCall] = pInfo[pid][pPhoneNumber];
+            pInfo[pid][OnCall] = pInfo[playerid][pPhoneNumber];
+            pInfo[playerid][BeingCalled] = 0;
+            pInfo[pid][BeingCalled] = 0;
+            KillTimer(callTimer[playerid]);
+            KillTimer(callTimer[pid]);
+        }
+        
+    }
+    return 1;
+}
+
+stock PlayerIdByPhoneNumber(number){
+    new pid;
+    for(new i = 0; i < MAX_PLAYERS; i++){
+        if(pInfo[i][pPhoneNumber] == number){
+            pid = i;
+            return pid;
+        }
+    }
+}
+
+CMD:hangup(playerid, params[]){
+    new string[256];
+    if(pInfo[playerid][OnCall] >= 1){
+        for(new i = 0; i < MAX_PLAYERS; i++){
+            if(IsPlayerConnected(i))
+            {
+                if(pInfo[i][OnCall] == pInfo[playerid][pPhoneNumber]){
+                    format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(i));
+                    nearByAction(i, NICESKY, string);
+                    format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(playerid));
+                    nearByAction(playerid, NICESKY, string);
+                    pInfo[i][OnCall] = 0;
+                    pInfo[playerid][OnCall] = 0;
+                    
+                    SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
+                    SetPlayerSpecialAction(i, SPECIAL_ACTION_NONE);
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:ca(playerid, params[]){
+    new target, reason[32], string[256];
+    if(pInfo[playerid][pFactionId] == 1){
+        if(sscanf(params, "ds", target, reason)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /ca [target] [reason]");{
+            if(pInfo[playerid][pDuty] == 1){
+                if(pInfo[target][pWantedLevel] < 6){
+                    pInfo[target][pWantedLevel]++;
+                    format(pInfo[playerid][pMostRecentWantedReason], 32, reason);
+                    SetPlayerWantedLevel(playerid, pInfo[target][pWantedLevel]);
+                    for(new i = 0; i < MAX_PLAYERS; i++){
+                        if(pInfo[i][pFactionId] == 1){
+                            format(string, sizeof(string), "Radio: %s has been commited with charge: %s, over", RPName(target), reason);
+                            SendClientMessage(i, -1, string);
+                        }
+                    }
+                } else {
+                    format(pInfo[playerid][pMostRecentWantedReason], 32, reason);
+                    for(new i = 0; i < MAX_PLAYERS; i++){
+                        if(pInfo[i][pFactionId] == 1){
+                            format(string, sizeof(string), "Radio: %s has been commited with charge: %s, over", RPName(target), reason);
+                            SendClientMessage(i, -1, string);
+                        }
+                    }
+                }
+            } else {
+                TextDrawShowForPlayer(playerid, NotOnDuty);
+                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+            }
+            
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+
+    }
+    return 1;
+}
+
+CMD:cuff(playerid, params[]){
+    new target, string[256];
+    if(pInfo[playerid][pFactionId] == 1){
+        if(sscanf(params, "d", target)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /cuff [id]");{
+            if(pInfo[playerid][pDuty] == 1){               
+                if(IsPlayerCuffed(target)){
+                    SetPlayerCuffed(target, false);
+                    format(string, sizeof(string), "* %s takes cuffs from their holster and cuffs %s.", RPName(playerid), RPName(target));
+                    nearByAction(playerid, NICESKY, string);
+                }
+                else if(!IsPlayerCuffed(target)){
+                    SetPlayerCuffed(target, true);
+                    format(string, sizeof(string), "* %s uncuffs %s and places the cuffs back on their holster.", RPName(playerid), RPName(target));
+                    nearByAction(playerid, NICESKY, string);
+                }
+            } else {
+                TextDrawShowForPlayer(playerid, NotOnDuty);
+                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+            }
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 1;
+}
+
+CMD:endcall(playerid, params[]){
+    new target;
+    if(pInfo[playerid][pFactionId] == 1){
+        if(sscanf(params, "d", target)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /endcall [callcode]"); {
+            if(IsPlayerConnected(target)){
+                if(pInfo[target][pAlertCall] == 1){
+                    pInfo[target][pAlertCall] = 0;
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have ended this call code.");
+                    return 1;
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Invalid call code!");
+                    return 1;
+                }
+            }
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+
+    }
+    return 1;
+}
+
 CMD:takecall(playerid, params[]){
     new target;
     if(pInfo[playerid][pFactionId] == 1){
         if(sscanf(params, "d", target)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /takecall [callcode]"); {
-            if(pInfo[target][pAlertCall] == 1)
-            {                        
-                new Float:tX, Float:tY, Float:tZ;
-                GetPlayerPos(target, tX, tY, tZ);
-                policeCall[0] = CreateDynamicCP(tX, tY, tZ, 2, -1, -1, -1, 10000);
-                for(new i = 0; i < MAX_PLAYERS; i++){
-                    if(pInfo[i][pFactionId] == 1){
-                        new string[256];
-                        format(string, sizeof(string), "{FFFFFF}Radio: %s has taken call code: %d!", RPName(playerid), target);
-                        SendClientMessage(i, SERVERCOLOR, string);
+            if(pInfo[playerid][pDuty] == 1){
+                if(pInfo[target][pAlertCall] == 1){                        
+                    new Float:tX, Float:tY, Float:tZ;
+                    GetPlayerPos(target, tX, tY, tZ);
+                    policeCall[0] = CreateDynamicCP(tX, tY, tZ, 2, -1, -1, -1, 10000);
+                    for(new i = 0; i < MAX_PLAYERS; i++){
+                        if(pInfo[i][pFactionId] == 1){
+                            new string[256];
+                            format(string, sizeof(string), "{FFFFFF}Radio: %s has taken call code: %d!", RPName(playerid), target);
+                            SendClientMessage(i, SERVERCOLOR, string);
+                            pInfo[target][pAlertCall] = 0;
+                        }
                     }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This is not a valid call code!");
+                    return 1;
                 }
             } else {
-                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This is not a valid call code!");
-                return 1;
+                TextDrawShowForPlayer(playerid, NotOnDuty);
+                SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
             }
         }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+
     }
     return 1;
 }
@@ -2539,6 +3484,7 @@ CMD:help(playerid, params[]) {
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/help, /admins, /mods, /helpers, /staff");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/shop, /stats, /pockets, /rentcar, /unrentcar");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/properties, /buyproperty, /sellproperty");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/getcar, /park");
         } else if(strcmp(Usage, "Job", true) == 0) {
             SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
             if(pInfo[playerid][pJobId] == 4){
@@ -2553,12 +3499,13 @@ CMD:help(playerid, params[]) {
                 SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{A9C4E4} /takejob, /listjobs");
             }
         } else if(strcmp(Usage, "Admin", true) == 0) {
-            if(pInfo[playerid][pAdminLevel] > 1) {
+            if(pInfo[playerid][pAdminLevel] >= 1) {
                 SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Admin Commands ::.");
-                if(pInfo[playerid][pAdminLevel] == 5){
+                if(pInfo[playerid][pAdminLevel] >= 5){
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createbus, /setbusentr, /createrentalvehicle, /createhouse");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createfactionvehicle");
                 }
-                if(pInfo[playerid][pAdminLevel] == 6) {
+                if(pInfo[playerid][pAdminLevel] >= 6) {
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /createjob, /makeleader");
                 }
             }
@@ -2567,9 +3514,24 @@ CMD:help(playerid, params[]) {
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/collectsal, /properties, /sellproperty");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/buyproperty");
         } else if(strcmp(Usage, "House", true) == 0){
-            SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Business Commands ::.");
+            SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} House Commands ::.");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/lockhouse, /properties, /sellproperty");
-            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/buyproperty");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/buyproperty, /spawnpoint");
+        } else if(strcmp(Usage, "Faction", true) == 0){
+            if(pInfo[playerid][pFactionId] >= 1){
+                if(pInfo[playerid][pFactionId] == 1){
+                    SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Faction Commands ::.");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /cuff, /fine, /ca (create alert), /arrest");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /impound, NumPad+ to tow a vehicle");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /listallcalls, /takecall, /endcall");
+                }
+                if(pInfo[playerid][pFactionRank] == 7){
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /hire, /fire, /demote, /promote");
+                }
+            }
+        } else if(strcmp(Usage, "Phone", true) == 0){
+            SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Phone Commands ::.");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /call, /hangup, /sms");
         }
     }
     return 1;
@@ -2971,7 +3933,7 @@ CMD:collect(playerid, params[]) {
                             format(string, sizeof(string), "[SERVER]:{FFFFFF} You have purchased %d grams of weed!", 1);
                             SendClientMessage(playerid, SERVERCOLOR, string);
                             drugInfo[0][drugAmount] -= 1;
-                            GivePlayerMoney(playerid, -drugInfo[0][drugPrice])
+                            GivePlayerMoney(playerid, -drugInfo[0][drugPrice]);
                             pInfo[playerid][pCash] -= drugInfo[0][drugPrice];
                             mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `drugprices` SET `drugAmount` = '%d' WHERE  `drugId` = 1", drugInfo[0][drugAmount]);
                             mysql_query(db_handle, DB_Query);
@@ -3001,7 +3963,7 @@ CMD:collect(playerid, params[]) {
                                 format(string, sizeof(string), "[SERVER]:{FFFFFF} You have purchased %d grams of cocaine!", 1);
                                 SendClientMessage(playerid, SERVERCOLOR, string);
                                 drugInfo[1][drugAmount] -= 1;
-                                GivePlayerMoney(playerid, -drugInfo[1][drugPrice])
+                                GivePlayerMoney(playerid, -drugInfo[1][drugPrice]);
                                 pInfo[playerid][pCash] -= drugInfo[1][drugPrice];
                                 mysql_format(db_handle, DB_Query, sizeof(DB_Query),  "UPDATE `drugprices` SET `drugAmount` = '%d' WHERE  `drugId` = 2", drugInfo[0][drugAmount]);
                                 mysql_query(db_handle, DB_Query);
@@ -3148,6 +4110,15 @@ forward public OnRentalVehCreated(playerid, vid, busid, price);
 public OnRentalVehCreated(playerid, vid, busid, price){
     new string[256];
     format(string, sizeof(string), "[SERVER]:{FFFFFF} Rental vehicle (bid: %d price: %d) created!", busid, price);
+    SendClientMessage(playerid, -1, string); {
+        LoadNewVehData(cache_insert_id());
+    }
+}
+
+forward public OnFactionVehCreated(playerid, vid, facid);
+public OnFactionVehCreated(playerid, vid, facid){
+    new string[256];
+    format(string, sizeof(string), "[SERVER]:{FFFFFF} Faction vehicle (facid: %d) created!", facid);
     SendClientMessage(playerid, -1, string); {
         LoadNewVehData(cache_insert_id());
     }
@@ -3306,15 +4277,30 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
             }
         }
         if(vInfo[vehicleid][vJobId] == 0 && vInfo[vehicleid][vFacId] >= 1) { // check if not a job id and if fac id has been set.
-            if(pInfo[playerid][pFactionId] == vInfo[vehicleid][vFacId]) {
-
+            if(vInfo[vehicleid][vFacId] == pInfo[playerid][pFactionId]) {
+                return 1;
+            } else {
+                RemovePlayerFromVehicle(playerid);
+                return 1;
             }
-            RemovePlayerFromVehicle(playerid);
         }
 
         if(!strcmp(name, vInfo[vehicleid][vOwner]))
             SendClientMessage(playerid, GREY, "must be a player veh");
         return 1;
+    }
+    if(newstate == PLAYER_STATE_ONFOOT){
+        if(pInfo[playerid][DashCamStatus] == 1){
+            pInfo[playerid][DashCamStatus] = 0;
+            KillTimer(dashtimer[playerid]);
+            PlayerTextDrawHide(playerid, dash1[playerid]);
+            PlayerTextDrawHide(playerid, dash2[playerid]);
+            PlayerTextDrawHide(playerid, dashPlate[playerid]);
+            PlayerTextDrawHide(playerid, dashVid[playerid]);
+            PlayerTextDrawHide(playerid, dashSpeed[playerid]);
+            PlayerTextDrawHide(playerid, dashDist[playerid]);
+            return 1;
+        }
     }
     return 1;
 }
@@ -3345,6 +4331,81 @@ CMD:unrentcar(playerid, params[]) {
 }
 
 /* vehicle cmds */
+CMD:lock(playerid, params[]){    
+    new engine, lights, alarm, doors, bonnet, boot, objective, string[256], nname[256];
+    new Float:x, Float:y, Float:z;
+    format(nname, sizeof(nname), "%s", GetName(playerid));
+    for(new i = 0; i < MAX_VEHICLES; i++){
+        GetVehiclePos(i, x, y, z);
+        if(IsPlayerInRangeOfPoint(playerid, 10,x,y,z)){
+            if(vInfo[i][vFacId] == pInfo[playerid][pFactionId] || !strcmp(vInfo[i][vOwner], nname, true)){
+                GetVehicleParamsEx(i, engine, lights, alarm, doors, bonnet, boot, objective);
+                if(doors == 1){
+                    SetVehicleParamsEx(i, engine, lights, alarm, false, bonnet, boot, objective);
+                    format(string, sizeof(string), "* %s takes their keys and unlocks the vehicle.", RPName(playerid));
+                    nearByAction(playerid, NICESKY, string);
+                } else {
+                    SetVehicleParamsEx(i, engine, lights, alarm, true, bonnet, boot, objective);
+                    format(string, sizeof(string), "* %s takes their keys and locks the vehicle.", RPName(playerid));
+                    nearByAction(playerid, NICESKY, string);
+                }
+            }
+            return 1;
+        }
+    }
+    return 1;
+}
+
+CMD:lights(playerid, params[]){
+    new engine, lights, alarm, doors, bonnet, boot, objective, vid, string[256];
+    vid = GetPlayerVehicleID(playerid);
+    GetVehicleParamsEx(vid, engine, lights, alarm, doors, bonnet, boot, objective);
+    if(IsPlayerInVehicle(playerid, vid)){
+        if(lights == 1){
+            SetVehicleParamsEx(vid, engine, false, alarm, doors, bonnet, boot, objective);
+            format(string, sizeof(string), "* %s turns the vehicles headlights off.", RPName(playerid));
+            nearByAction(playerid, NICESKY, string);
+        } else {
+            SetVehicleParamsEx(vid, engine, true, alarm, doors, bonnet, boot, objective);
+            format(string, sizeof(string), "* %s turns the vehicles headlights on.", RPName(playerid));
+            nearByAction(playerid, NICESKY, string);        
+        }
+    }
+    return 1;
+}
+
+CMD:park(playerid, params[]){
+    new nname[32], Float:x, Float:y, Float:z, Float:a, DB_Query[900];
+    if(IsPlayerInAnyVehicle(playerid)){
+        format(nname, sizeof(nname), "%s", GetName(playerid));
+        if(!strcmp(vInfo[GetPlayerVehicleID(playerid)][vOwner], nname, true)){
+            GetVehiclePos(GetPlayerVehicleID(playerid), x, y, z);
+            vInfo[GetPlayerVehicleID(playerid)][vParkedX] = x;
+            vInfo[GetPlayerVehicleID(playerid)][vParkedY] = y;
+            vInfo[GetPlayerVehicleID(playerid)][vParkedZ] = z;
+            GetVehicleZAngle(GetPlayerVehicleID(playerid), a);
+            vInfo[GetPlayerVehicleID(playerid)][vAngle] = a;
+            SendClientMessage(playerid, ADMINBLUE,  "[SERVER]: You have parked this vehicle.");
+            
+            mysql_format(db_handle, DB_Query, sizeof(DB_Query), "UPDATE `vehicles` SET `vParkedX` = '%f', `vParkedY` = '%f', `vParkedZ` = '%f', `vAngle` = '%f' WHERE `vID` = '%d'", x, y, z, a, GetPlayerVehicleID(playerid));
+            mysql_query(db_handle, DB_Query);
+        }
+        if(vInfo[GetPlayerVehicleID(playerid)][vFacId] == pInfo[playerid][pFactionId] && pInfo[playerid][pFactionRank] == 7){
+            GetVehiclePos(GetPlayerVehicleID(playerid), x, y, z);
+            vInfo[GetPlayerVehicleID(playerid)][vParkedX] = x;
+            vInfo[GetPlayerVehicleID(playerid)][vParkedY] = y;
+            vInfo[GetPlayerVehicleID(playerid)][vParkedZ] = z;
+            GetVehicleZAngle(GetPlayerVehicleID(playerid), a);
+            vInfo[GetPlayerVehicleID(playerid)][vAngle] = a;
+            SendClientMessage(playerid, ADMINBLUE,  "[SERVER]: You have parked this vehicle.");            
+            mysql_format(db_handle, DB_Query, sizeof(DB_Query), "UPDATE `vehicles` SET `vParkedX` = '%f', `vParkedY` = '%f', `vParkedZ` = '%f', `vAngle` = '%f' WHERE `vID` = '%d'", x, y, z, a, GetPlayerVehicleID(playerid));
+            mysql_query(db_handle, DB_Query);
+        }
+    } else {
+
+    }
+    return 1;
+}
 
 CMD:engine(playerid, params[]) {
     new engine, lights, alarm, doors, bonnet, boot, objective;
@@ -3373,7 +4434,7 @@ CMD:engine(playerid, params[]) {
                         return 1;
                     }
                 }
-                if(vInfo[i][vJobId] == pInfo[playerid][pJobId]) {
+                if(vInfo[i][vJobId] == pInfo[playerid][pJobId] && vInfo[i][vRentingPlayer] == playerid) {
                     if(engine == 1) {
                         SetVehicleParamsEx(vid, false, lights, alarm, doors, bonnet, boot, objective);
                         format(string, sizeof(string), "* %s takes their key from the igntion and turns the engine off.", RPName(playerid));
@@ -3388,7 +4449,22 @@ CMD:engine(playerid, params[]) {
                         return 1;
                     }
                 }
-                if(!strcmp(vInfo[i][vOwner], GetName(playerid))){
+                if(!strcmp(vInfo[i][vOwner], nname, true)){
+                    if(engine == 1) {
+                        SetVehicleParamsEx(vid, false, lights, alarm, doors, bonnet, boot, objective);
+                        format(string, sizeof(string), "* %s takes their key from the igntion and turns the engine off.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        KillTimer(fuelTimer[playerid]);
+                        return 1;
+                    } else {
+                        SetVehicleParamsEx(vid, true, lights, alarm, doors, bonnet, boot, objective);
+                        format(string, sizeof(string), "* %s inserts their key into the ignition and starts the engine.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        fuelTimer[playerid] = SetTimerEx("SetVehicleFuel", 17500, false, "dd", playerid, vInfo[i][vID]);
+                        return 1;
+                    }
+                }
+                if(vInfo[i][vFacId] == pInfo[playerid][pFactionId]){
                     if(engine == 1) {
                         SetVehicleParamsEx(vid, false, lights, alarm, doors, bonnet, boot, objective);
                         format(string, sizeof(string), "* %s takes their key from the igntion and turns the engine off.", RPName(playerid));
@@ -3521,7 +4597,7 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
         GameTextForPlayer(playerid, "/takejob", 3000, 5);
         DestroyDynamicCP(JobCheckpoint[0]);
     }
-    if(checkpointid == drugDeal[0]){
+    if(checkpointid == drugDeal[playerid]){
         if(pInfo[playerid][CurrentState] == 1){
             DestroyDynamicCP(drugDeal[0]); // destroy drug CP for player.
             KillTimer(drugDealTimer[playerid]);
@@ -3613,15 +4689,16 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
         }
     }
 
-    if(checkpointid == policeCall[0]){
+    if(checkpointid == policeCall[playerid]){
         if(pInfo[playerid][pFactionId] == 1)
         {
             for(new i = 0; i < MAX_PLAYERS; i++){
                 if(pInfo[i][pFactionId] == 1){
                     new string[256];
                     format(string, sizeof(string), "Radio: %s %s has arrived on the scene, over.", pInfo[playerid][pFactionRankname], RPName(playerid));
-                    SendClientMessage(playerid, SERVERCOLOR, string);
+                    SendClientMessage(playerid, -1, string);
                     pInfo[playerid][pFactionPay] += 50;
+                    DestroyDynamicCP(policeCall[playerid]);
                 }
             }
         }
@@ -3630,32 +4707,40 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
     return 1;
 }
 
-forward public AlertPolice(playerid, message[32], Float:cX, Float:cY, Float:cZ);
-public AlertPolice(playerid, message[32], Float:cX, Float:cY, Float:cZ){
+forward public AlertPolice(playerid, message[50], Float:cX, Float:cY, Float:cZ);
+public AlertPolice(playerid, message[50], Float:cX, Float:cY, Float:cZ){
     new string[256];
     pInfo[playerid][pAlertCall] = 1;
-    format(pInfo[playerid][pAlertMsg], 64, "%s", message);
+    format(pInfo[playerid][pAlertMsg], 80, "%s", message);
 
     for(new i = 0; i < MAX_PLAYERS; i++){
         if(pInfo[i][pFactionId] == 1){ // if player is a police officer
-            format(string, sizeof(string), "{FFFFFF}Radio: %s, call code: %d", message, playerid);
+            format(string, sizeof(string), "{FFFFFF}Radio: ALERT: %s, call code: %d", message, playerid);
+            printf("Officer alerted with msg: %s", message);
             SendClientMessage(i, SERVERCOLOR, string);
-            return 1;
         }
     }
     return 1;
 }
 
 CMD:listallcalls(playerid, params[]){
-    new string[256];
+    new string[256], substring[256];
+    new available;
     
+    available = 0;
+
     SendClientMessage(playerid, SPECIALORANGE, "**-----AVAILABLE CALLS-----**");
     for(new i = 0; i < MAX_PLAYERS; i++){
         if(pInfo[i][pAlertCall] == 1){
-            format(string, sizeof(string), "Call code: %d,", playerid);
-            SendClientMessage(playerid, SERVERCOLOR, string);
-            return 1;
+            format(substring, sizeof(substring), "Call code: %d, ", i);
+            strcat(string, substring);
+            available++;
         }
+    }
+    if(available >= 1) {
+        SendClientMessage(playerid, SERVERCOLOR, string);
+    } else {
+        SendClientMessage(playerid, SERVERCOLOR, "No calls available.");
     }
     return 1;
 }
@@ -4499,7 +5584,6 @@ public OnPlayerExitedMenu(playerid)
 public OnPlayerInteriorChange(playerid, newinteriorid, oldinteriorid) {
     return 1;
 }
-
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
     if(newkeys & KEY_SPRINT){
         for(new i = 0; i < loadedFac; i++){
@@ -4583,6 +5667,68 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
                 ApplyAnimation(playerid, "HEIST9", "Use_SwipeCard", 10.0, 0, 0, 0, 0, 0);
             }
         }
+        if(IsPlayerInRangeOfPoint(playerid, 1.5, -2666.4624, 2643.0579, 4081.8079)){
+            if(pInfo[playerid][pFactionId] == 1){
+                MoveDynamicObject(policeMainCell, -2666.5525, 2640.3953, 4081.6809, 2000);
+                SetTimerEx("MoveObjBack", 5000, false, "d", 2);
+                ApplyAnimation(playerid, "HEIST9", "Use_SwipeCard", 10.0, 0, 0, 0, 0, 0);
+            }
+        }
+        if(IsPlayerInRangeOfPoint(playerid, 1, -2664.7583, 2643.6807, 4081.6809)){
+            //cell1
+            if(pInfo[playerid][pFactionId] == 1){
+                MoveDynamicObject(cell2, -2663.4713, 2643.6807, 4081.6809, 2000);
+                SetTimerEx("MoveObjBack", 5000, false, "d", 3);
+                ApplyAnimation(playerid, "HEIST9", "Use_SwipeCard", 10.0, 0, 0, 0, 0, 0);
+            }
+        }
+        if(IsPlayerInRangeOfPoint(playerid, 1, -2658.3540, 2643.6592, 4081.6809)){
+            //cell2
+            if(pInfo[playerid][pFactionId] == 1){
+                MoveDynamicObject(cell2,-2657.1840, 2643.6592, 4081.6809, 2000);
+                SetTimerEx("MoveObjBack", 5000, false, "d", 4);
+                ApplyAnimation(playerid, "HEIST9", "Use_SwipeCard", 10.0, 0, 0, 0, 0, 0);
+            }
+        }
+        if(IsPlayerInRangeOfPoint(playerid, 1, -2658.3525, 2640.1721, 4081.6809)){
+            //cell3
+            if(pInfo[playerid][pFactionId] == 1){
+                MoveDynamicObject(cell3,-2657.1825, 2640.1721, 4081.6809, 2000);
+                SetTimerEx("MoveObjBack", 5000, false, "d", 5);
+                ApplyAnimation(playerid, "HEIST9", "Use_SwipeCard", 10.0, 0, 0, 0, 0, 0);
+            }
+        }
+        if(IsPlayerInRangeOfPoint(playerid, 1, -2664.7888, 2640.1489, 4081.6809)){
+            //cell4
+            if(pInfo[playerid][pFactionId] == 1){
+                MoveDynamicObject(cell4,-2663.4829, 2640.1558, 4081.6809, 2000);
+                SetTimerEx("MoveObjBack", 5000, false, "d", 6);
+                ApplyAnimation(playerid, "HEIST9", "Use_SwipeCard", 10.0, 0, 0, 0, 0, 0);
+            }
+        }
+    }
+    if(newkeys & KEY_SUBMISSION){
+        if(GetVehicleModel(GetPlayerVehicleID(playerid)) == 525){
+			new Float:pX,Float:pY,Float:pZ;
+			GetPlayerPos(playerid,pX,pY,pZ);
+			new Float:vX,Float:vY,Float:vZ;
+			new Found=0;
+			new vid=0;
+            while((vid<MAX_VEHICLES)&&(!Found))
+   			{
+   				vid++;
+   				GetVehiclePos(vid,vX,vY,vZ);
+   				if  ((floatabs(pX-vX)<7.0)&&(floatabs(pY-vY)<7.0)&&(floatabs(pZ-vZ)<7.0)&&(vid!=GetPlayerVehicleID(playerid)))
+   			    {
+   				    Found=1;
+   				    if	(IsTrailerAttachedToVehicle(GetPlayerVehicleID(playerid)))
+   				    {
+   				        DetachTrailerFromVehicle(GetPlayerVehicleID(playerid));
+   				    }
+   				    AttachTrailerToVehicle(vid,GetPlayerVehicleID(playerid));
+   				}
+            }
+        }
     }
     return 1;
 }
@@ -4592,6 +5738,26 @@ public MoveObjBack(doorid){
     if(doorid == 1){
         MoveDynamicObject(policeMainDoor, -2689.0090, 2646.0640, 4086.7952, 2000);
         return 1;
+    }
+    if(doorid == 2){
+        MoveDynamicObject(policeMainCell, -2666.5525, 2641.7993, 4081.6809, 2000);
+    }
+    if(doorid == 3){
+        MoveDynamicObject(cell1,-2664.7583, 2643.6807, 4081.6809, 2000);
+    }
+    if(doorid == 4){
+        MoveDynamicObject(cell2,-2658.3540, 2643.6592, 4081.6809, 2000);
+    }
+    if(doorid == 5){
+        MoveDynamicObject(cell3,-2658.3525, 2640.1721, 4081.6809, 2000);      
+
+    }
+    if(doorid == 6){
+        MoveDynamicObject(cell4,-2664.7700, 2640.1558, 4081.6809, 2000);   
+    }
+    if(doorid == 7) {
+        //gate
+        MoveDynamicObject(impoundGate, -180.2639, 1010.1957, 18.9288, 8000);
     }
     return 1;
 }
@@ -5151,6 +6317,7 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pFactionId", pInfo[playerid][pFactionId]);
     cache_get_value_int(0, "pFactionRank", pInfo[playerid][pFactionRank]);
     cache_get_value(0, "pFactionRankname", pInfo[playerid][pFactionRankname], 32);
+    cache_get_value_int(0, "pDutyClothes", pInfo[playerid][pDutyClothes]);
     cache_get_value_int(0, "pJobId", pInfo[playerid][pJobId]);
     cache_get_value_int(0, "pJobPay", pInfo[playerid][pJobPay]);
     cache_get_value_int(0, "pWeedAmount", pInfo[playerid][pWeedAmount]);
@@ -5174,7 +6341,15 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pVehicleSlots", pInfo[playerid][pVehicleSlots]);
     cache_get_value_int(0, "pVehicleSlotsUsed", pInfo[playerid][pVehicleSlotsUsed]);
 
-    
+    cache_get_value_int(0, "pFines", pInfo[playerid][pFines]);
+    cache_get_value(0, "pMostRecentFine", pInfo[playerid][pMostRecentFine], 32);
+
+    cache_get_value_int(0, "pWantedLevel", pInfo[playerid][pWantedLevel]);
+    cache_get_value(0, "pMostRecentWantedReason", pInfo[playerid][pMostRecentWantedReason], 32);
+
+    cache_get_value_int(0, "pInPrisonType", pInfo[playerid][pInPrisonType]);
+    cache_get_value_int(0,"pPrisonTimer", pInfo[playerid][pPrisonTimer]);
+
     cache_get_value_int(0, "pPreferredSpawn", pInfo[playerid][pPreferredSpawn]);
 
     cache_get_value_int(0, "pAdminLevel", pInfo[playerid][pAdminLevel]);
@@ -5188,17 +6363,96 @@ public OnPlayerLoad(playerid) {
     new name[32];
     GetPlayerName(playerid, name, sizeof(name));
     if(pInfo[playerid][pPreferredSpawn] != 0){
-        for(new i = 0; i < loadedHouse; i++){
-            if(hInfo[i][hAddress] == pInfo[playerid][pPreferredSpawn]){
-                SetPlayerVirtualWorld(playerid, hInfo[i][hId]);
-                SetPlayerInterior(playerid, hInfo[i][hType]);
-                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], hInfo[i][hExitX], hInfo[i][hExitY], hInfo[i][hExitZ], 269.15, pInfo[playerid][pWeaponSlot1], pInfo[playerid][pWeaponSlot1Ammo], pInfo[playerid][pWeaponSlot2], pInfo[playerid][pWeaponSlot2Ammo], pInfo[playerid][pWeaponSlot3], pInfo[playerid][pWeaponSlot3Ammo]);
+        if(pInfo[playerid][pInPrisonType] == 0){
+            for(new i = 0; i < loadedHouse; i++){
+                if(hInfo[i][hAddress] == pInfo[playerid][pPreferredSpawn]){
+                    SetPlayerWantedLevel(playerid, pInfo[playerid][pWantedLevel]);
+                    SetPlayerVirtualWorld(playerid, hInfo[i][hId]);
+                    SetPlayerInterior(playerid, hInfo[i][hType]);
+                    SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], hInfo[i][hExitX], hInfo[i][hExitY], hInfo[i][hExitZ], 269.15, pInfo[playerid][pWeaponSlot1], pInfo[playerid][pWeaponSlot1Ammo], pInfo[playerid][pWeaponSlot2], pInfo[playerid][pWeaponSlot2Ammo], pInfo[playerid][pWeaponSlot3], pInfo[playerid][pWeaponSlot3Ammo]);
+                    SpawnPlayer(playerid);
+                }
+            }
+        } else if(pInfo[playerid][pInPrisonType] == 1){
+            // in normal prison
+            new randnum;
+            randnum = random(3);
+            if(randnum == 0){
+                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -2664.5139, 2645.7776, 4082.2140, 269.15, 0,0,0,0,0,0);
                 SpawnPlayer(playerid);
+                SetPlayerInterior(playerid, 1);
+                SetPlayerVirtualWorld(playerid, 1);
+                SetTimerEx("DecrementPrisonTimer", 1000, false, "dd", playerid, pInfo[playerid][pInPrisonType]);
+            }
+            if(randnum == 1){
+                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -2659.2620, 2645.6013, 4080.8100, 269.15, 0,0,0,0,0,0);
+                SpawnPlayer(playerid);
+                SetPlayerInterior(playerid, 1);
+                SetPlayerVirtualWorld(playerid, 1);
+                SetTimerEx("DecrementPrisonTimer", 1000, false, "dd", playerid, pInfo[playerid][pInPrisonType]);
+            }
+            if(randnum == 2){
+                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -2659.5981, 2637.6501, 4080.6925, 269.15, 0,0,0,0,0,0);
+                SpawnPlayer(playerid);
+                SetPlayerInterior(playerid, 1);
+                SetPlayerVirtualWorld(playerid, 1);
+                SetTimerEx("DecrementPrisonTimer", 1000, false, "dd", playerid, pInfo[playerid][pInPrisonType]);
             }
         }
     } else {
-        SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -204.5334, 1119.1626, 23.2031, 269.15, pInfo[playerid][pWeaponSlot1], pInfo[playerid][pWeaponSlot1Ammo], pInfo[playerid][pWeaponSlot2], pInfo[playerid][pWeaponSlot2Ammo], pInfo[playerid][pWeaponSlot3], pInfo[playerid][pWeaponSlot3Ammo]);
-        SpawnPlayer(playerid);
+        if(pInfo[playerid][pInPrisonType] == 0){
+            SetPlayerWantedLevel(playerid, pInfo[playerid][pWantedLevel]);
+            SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -204.5334, 1119.1626, 23.2031, 269.15, pInfo[playerid][pWeaponSlot1], pInfo[playerid][pWeaponSlot1Ammo], pInfo[playerid][pWeaponSlot2], pInfo[playerid][pWeaponSlot2Ammo], pInfo[playerid][pWeaponSlot3], pInfo[playerid][pWeaponSlot3Ammo]);
+            SpawnPlayer(playerid);
+        } else if(pInfo[playerid][pInPrisonType] == 1) {
+            // in normal prison
+            new randnum;
+            randnum = random(3);
+            if(randnum == 0){
+                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -2664.5139, 2645.7776, 4082.2140, 269.15, 0,0,0,0,0,0);
+                SpawnPlayer(playerid);
+                SetPlayerInterior(playerid, 1);
+                SetPlayerVirtualWorld(playerid, 1);
+                SetTimerEx("DecrementPrisonTimer", 1000, false, "dd", playerid, pInfo[playerid][pInPrisonType]);
+            }
+            if(randnum == 1){
+                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -2659.2620, 2645.6013, 4080.8100, 269.15, 0,0,0,0,0,0);
+                SpawnPlayer(playerid);
+                SetPlayerInterior(playerid, 1);
+                SetPlayerVirtualWorld(playerid, 1);
+                SetTimerEx("DecrementPrisonTimer", 1000, false, "dd", playerid, pInfo[playerid][pInPrisonType]);
+            }
+            if(randnum == 2){
+                SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], -2659.5981, 2637.6501, 4080.6925, 269.15, 0,0,0,0,0,0);
+                SpawnPlayer(playerid);
+                SetPlayerInterior(playerid, 1);
+                SetPlayerVirtualWorld(playerid, 1);
+                SetTimerEx("DecrementPrisonTimer", 1000, false, "dd", playerid, pInfo[playerid][pInPrisonType]);
+            }
+        }
+    }
+    return 1;
+}
+
+forward public DecrementPrisonTimer(playerid, prisontype);
+public DecrementPrisonTimer(playerid, prisontype){
+    if(prisontype == 1){
+        if(pInfo[playerid][pPrisonTimer] == 0) {
+            for(new i = 0; i < loadedFac; i++){
+                if(fInfo[i][fID] == 1){
+                    pInfo[playerid][pInPrisonType] = 0;
+                    pInfo[playerid][pPrisonTimer] = 0;
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have been released from prison!");
+                    SetPlayerPos(playerid, fInfo[i][fExitX], fInfo[i][fExitY], fInfo[i][fExitZ]);
+                    return 1;
+                }
+            }
+        }
+        if(pInfo[playerid][pPrisonTimer] >= 1){
+            pInfo[playerid][pPrisonTimer]--;
+            printf("%d.", pInfo[playerid][pPrisonTimer]);
+            SetTimerEx("DecrementPrisonTimer", 60000, false, "dd", playerid, pInfo[playerid][pInPrisonType]);
+        }
     }
     return 1;
 }
@@ -5395,9 +6649,9 @@ public nearByMessage(playerid, color, string[], Float:Distance) {
 
     for (new i = 0; i < MAX_PLAYERS; i++) {
         if(IsPlayerInRangeOfPoint(i, Distance, nbCoords[0], nbCoords[1], nbCoords[2]) && (GetPlayerVirtualWorld(i) == GetPlayerVirtualWorld(playerid))) { // Confirming if the player being looped is within range and is in the same virtual world and interior as the main player
-            SendClientMessage(i, color, string); // Sending them the message if all checks out
+            SendClientMessageA(i, color, string); // Sending them the message if all checks out
         } else if(IsPlayerInRangeOfPoint(i, 16, nbCoords[0], nbCoords[1], nbCoords[2]) && (GetPlayerVirtualWorld(i) == GetPlayerVirtualWorld(playerid))) { // Confirming if the player being looped is within range and is in the same virtual world and interior as the main player
-            SendClientMessage(i, GREY, string); // Sending them the message if all checks out
+            SendClientMessageA(i, GREY, string); // Sending them the message if all checks out
         }
     }
     return 1;
@@ -5615,6 +6869,7 @@ public RemoveTextdrawAfterTime(playerid) {
     TextDrawHideForPlayer(playerid, Text:CantTakePost);
     TextDrawHideForPlayer(playerid, Text:NoBinBags);
     TextDrawHideForPlayer(playerid, Text:accessDoor);
+    TextDrawHideForPlayer(playerid, Text:NotOnDuty);
 
     PlayerTextDrawHide(playerid, businessBox[playerid]);
     PlayerTextDrawHide(playerid, addressBox[playerid]);
@@ -5641,12 +6896,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
                 return 1;
             }
 
-            new query[900], num_plate[9];
-            for(new i; i < 3; i++){
+            new query[900], num_plate[8];
+            for(new i; i < 2; i++){
                 num_plate[i] = 'A'+random('Z'-'A');
             }
-            num_plate[3] = '-';
-            for(new i = 4; i < sizeof(num_plate); i++){
+            for(new i = 3; i < sizeof(num_plate); i++){
                 num_plate[i] = '0'+random('9'-'0');
             }
 
@@ -5660,6 +6914,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
                     pInfo[playerid][pBank] -= BUS_DEALERSHIP[listitem][VEHICLE_PRICE];
                 }
             }
+        }
+    }
+    if(dialogid == 9998){
+        if(response){
+            pInfo[playerid][pDutyClothes] = POLICECLOTHES[listitem][SKINID];
+            GameTextForPlayer(playerid, "~g~DUTY CLOTHES SELECTED!", 3000, 3);
         }
     }
     return 1;
