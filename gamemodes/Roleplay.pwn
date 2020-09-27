@@ -3566,6 +3566,14 @@ CMD:takecall(playerid, params[]){
     return 1;
 }
 
+CMD:repair(playerid, params[]){
+    // /repair: sends  target ID if in range a request to repair, like /heal.
+    // player can /accept or decline, but this time it will tell them a price
+    // if player has that amount of cash, and accepts, give player $50 faction pay + whatever the amount was
+    // send admins an alert of this, so we can prevent people abusing this CMD to charge players a lot, unless they have a reason
+    return 1;
+}
+
 CMD:pockets(playerid, params[]){
     ReturnPlayerInventory(playerid, playerid);
     return 1;
