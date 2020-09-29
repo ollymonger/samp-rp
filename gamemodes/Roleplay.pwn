@@ -3725,14 +3725,23 @@ CMD:refill(playerid, params[]){
     // this can be done without charging a player, but must be RP'd to refill.
     new string[256];
     if(pInfo[playerid][pFactionId] == 3){
-        if(vInfo[GetClosestVeh(playerid)][vFuel] < 100){
-            new difference = 100;
-            difference -= vInfo[GetClosestVeh(playerid)][vFuel];
-            format(string, sizeof(string), "> You are refuelling this vehicle with: %d L of fuel.", difference);
-            SendClientMessage(playerid, ADMINBLUE, string);
-            vInfo[GetClosestVeh(playerid)][vFuel] += difference;
-            pInfo[playerid][pFactionPay] += 50;
-            return 1;
+        new vid;
+        vid = GetClosestVeh(playerid);
+        if(vInfo[vid][vFuel] < 100){
+            new engine, lights, alarm, doors, bonnet, boot, objective;
+            GetVehicleParamsEx(vid, engine, lights, alarm, doors, bonnet, boot, objective); //will check that what is the state of the engine.
+            if(engine == 0){
+                new difference = 100;
+                difference -= vInfo[vid][vFuel];
+                format(string, sizeof(string), "> You are refuelling this vehicle with: %d L of fuel.", difference);
+                SendClientMessage(playerid, ADMINBLUE, string);
+                vInfo[vid][vFuel] += difference;
+                pInfo[playerid][pFactionPay] += 50;
+                return 1;
+            } else {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle's engine is still on!");
+                return 1;
+            }
         } else {
             format(string,sizeof(string), "[SERVER]:{FFFFFF} This vehicle cannot hold any more fuel!");
             SendClientMessage(playerid, SERVERCOLOR, string);
@@ -3743,16 +3752,15 @@ CMD:refill(playerid, params[]){
 }
 
 stock GetClosestVeh(playerid){
-    new vid = -1;
+    new vid = -2;
     new Float:x, Float:y, Float:z;
     for(new i = 0; i < MAX_VEHICLES; i++){
         GetVehiclePos(i, x, y, z);
         if(IsPlayerInRangeOfPoint(playerid, 3,x,y,z)){ // 3M from veh
-            vid = i;
+            vid = i - 1;
             return vid;
         }
     }
-    return vid;
 }
 
 CMD:pockets(playerid, params[]){
