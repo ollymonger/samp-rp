@@ -62,7 +62,7 @@ new facEntPickup[100], facExitPickup[100];
 
 new PlayerText:VEHSTUFF[MAX_PLAYERS][5];
 
-new PLights[MAX_PLAYERS];
+new PLights[MAX_VEHICLES];
 new TLI, TLI2;
  
 forward TimerBlinkingLights(vehicleid);
@@ -507,6 +507,19 @@ new const MEDICCLOTHES[][ENUM_MEDICCLOTHES] = {
     {307, "Female LV Police Officer"}
 };
 
+
+enum ENUM_TOWCLOTHES {
+    SKINID,
+    SKINNAME[32]
+};
+new const TOWCLOTHES[][ENUM_TOWCLOTHES] = {
+    {50, "Mechanic"},
+    {153, "Chief"},
+    {247, "Bike Mechanic"},
+    {175, "Mechanic"}
+};
+
+
 enum ENUM_CARDEAL_DATA {
     VEHICLE_MODELID,
     VEHICLE_NAME[32],
@@ -622,6 +635,9 @@ enum ENUM_PLAYER_DATA {
 
         SentHAccept,
         AwaitingHAccept,
+        SentRAccept,
+        AwaitingRAccept,
+        SentRPrice,
 
         RentingVehicle
 }
@@ -660,7 +676,9 @@ enum ENUM_VEH_DATA {
         vRentingPlayer,
         vRented,
         vRentalState,
-        vRentalPrice
+        vRentalPrice,
+
+        SirenStatus
 }
 new vInfo[500][ENUM_VEH_DATA], loadedVeh;
 
@@ -746,6 +764,8 @@ enum ENUM_DRUG_PRICES{
     drugPrice
 };
 new drugInfo[15][ENUM_DRUG_PRICES], loadedDrug;
+new myobject[MAX_VEHICLES], copCarSiren[MAX_VEHICLES], rancherSiren[MAX_VEHICLES];
+
 
 public OnGameModeInit() {
     mysql_log(ALL);
@@ -772,6 +792,9 @@ public OnGameModeInit() {
     CreateBusStopObjects();
     LoadVehicleData();
     LoadDrugPrices();
+
+    
+
     
     // FCPD
     policeMainDoor = CreateDynamicObject(1535, -2689.00903, 2646.06396, 4086.79517, 0.00000, 0.00000, 270.00000);
@@ -1737,7 +1760,6 @@ public OnPlayerConnect(playerid) {
     if(!IsPlayerNPC(playerid))
     {
         new query[200];
-        PLights[playerid] = 0;
         pInfo[playerid][pMuted] = 1;
         new name[MAX_PLAYER_NAME + 1];
         GetPlayerName(playerid, name, sizeof(name));
@@ -2323,7 +2345,6 @@ public OnPlayerSpawn(playerid) {
 
 public OnPlayerDeath(playerid, killerid, reason) {
     HideSpeedoTextdraws(playerid);
-    PLights[playerid] = 0;
     return 1;
 }
 
@@ -2577,6 +2598,22 @@ CMD:dutyclothes(playerid, params[]){
                     }
 
                     return ShowPlayerDialog(playerid, 9997, DIALOG_STYLE_PREVIEW_MODEL, "Medic Clothes", string, "Accept", "Decline");
+
+                }
+            }
+            if(pInfo[playerid][pFactionId] == 3){
+                if(IsPlayerInRangeOfPoint(playerid, 1.5, fInfo[i][fClothesX], fInfo[i][fClothesY], fInfo[i][fClothesZ])){
+                    new subString[64]; 
+                    static string[sizeof(TOWCLOTHES) * sizeof(subString)];
+
+                    if(string[0] == EOS){           
+                        for (new si; si < sizeof(TOWCLOTHES); si++) {
+                            format(subString, sizeof(subString), "%i(0.0, 0.0, -50.0, 1.5)\t%s\n", TOWCLOTHES[si][SKINID], TOWCLOTHES[si][SKINNAME]);
+                            strcat(string, subString);
+                        }
+                    }
+
+                    return ShowPlayerDialog(playerid, 9996, DIALOG_STYLE_PREVIEW_MODEL, "Towing Company Clothes", string, "Accept", "Decline");
 
                 }
             }
@@ -3044,17 +3081,69 @@ public DragPlayer(playerid, target){
 
 CMD:flash(playerid, params[]){
     if(pInfo[playerid][pFactionId] == 1 || pInfo[playerid][pFactionId] == 2){
-        if(PLights[playerid] == 0)
-            {
+      
+        
+        if(GetVehicleModel(GetPlayerVehicleID(playerid)) == 525){
+            if(vInfo[GetPlayerVehicleID(playerid)][SirenStatus] == 0){
+                vInfo[GetPlayerVehicleID(playerid)][SirenStatus] = 1;
+                myobject[GetPlayerVehicleID(playerid)] = CreateObject(19419,0,0,1000,0,0,0,100);
+                AttachObjectToVehicle(myobject[GetPlayerVehicleID(playerid)], GetPlayerVehicleID(playerid), 0.000000,-0.449999,1.465000,0.000000,0.000000,0.000000);
+                return 1;
+            } else {
+                DestroyObject(myobject[GetPlayerVehicleID(playerid)]);
+                vInfo[GetPlayerVehicleID(playerid)][SirenStatus] = 0;
+                return 1;
+            }
+        }
+        
+        if(GetVehicleModel(GetPlayerVehicleID(playerid)) == 599){
+            // rancher
+            if(vInfo[GetPlayerVehicleID(playerid)][SirenStatus] == 0){
+                vInfo[GetPlayerVehicleID(playerid)][SirenStatus] = 1;
+                rancherSiren[GetPlayerVehicleID(playerid)] = CreateObject(18646,0,0,-1000,0,0,0,100);
+                AttachObjectToVehicle(rancherSiren[GetPlayerVehicleID(playerid)], GetPlayerVehicleID(playerid), 0.000000,0.000000,1.125000,0.000000,0.000000,0.000000);
+            } else {
+                DestroyObject(rancherSiren[GetPlayerVehicleID(playerid)]);
+                vInfo[GetPlayerVehicleID(playerid)][SirenStatus] = 0;
+            }
+
+        }
+
+        if(GetVehicleModel(GetPlayerVehicleID(playerid)) == 598){
+            //cop car
+            if(vInfo[GetPlayerVehicleID(playerid)][SirenStatus] == 0){
+                vInfo[GetPlayerVehicleID(playerid)][SirenStatus] = 1;
+                copCarSiren[GetPlayerVehicleID(playerid)] = CreateObject(18646,0,0,-1000,0,0,0,100);
+                AttachObjectToVehicle(copCarSiren[GetPlayerVehicleID(playerid)], GetPlayerVehicleID(playerid), 0.000000,-0.300000,0.899999,0.000000,0.000000,0.000000);
+            } else {
+                DestroyObject(copCarSiren[GetPlayerVehicleID(playerid)]);
+                vInfo[GetPlayerVehicleID(playerid)][SirenStatus] = 0;
+            }
+        }
+
+        if(PLights[GetPlayerVehicleID(playerid)] == 0)
+        {
             BlinkingLights(playerid);
-            PLights[playerid] = 1;
+            PLights[GetPlayerVehicleID(playerid)] = 1;
 		}
-		else if(PLights[playerid] == 1)
+		else if(PLights[GetPlayerVehicleID(playerid)] == 1)
             {
             ShutOffBlinkingLights(playerid);
-            PLights[playerid] = 0;
+            PLights[GetPlayerVehicleID(playerid)] = 0;
 		}
         return 1;
+    }
+    if(pInfo[playerid][pFactionId] == 3){
+        if(GetVehicleModel(GetPlayerVehicleID(playerid)) == 525){
+            if(vInfo[GetPlayerVehicleID(playerid)][SirenStatus] == 0){
+                vInfo[GetPlayerVehicleID(playerid)][SirenStatus] = 1;
+                myobject[GetPlayerVehicleID(playerid)] = CreateObject(19803,0,0,-1000,0,0,0,100);
+                AttachObjectToVehicle(myobject[GetPlayerVehicleID(playerid)], GetPlayerVehicleID(playerid), 0.000000,0.000000,0.000000,0.000000,0.000000,0.000000);
+            } else {
+                DestroyObject(myobject[GetPlayerVehicleID(playerid)]);
+                vInfo[GetPlayerVehicleID(playerid)][SirenStatus] = 0;
+            }
+        }
     }
     return 1;
 }
@@ -3088,14 +3177,22 @@ public TimerBlinkingLights(vehicleid)
 		new Panels, Doors1, Lights, Tires;
 		GetVehicleDamageStatus(vehicleid, Panels, Doors1, Lights, Tires);
 		UpdateVehicleDamageStatus(vehicleid, Panels, Doors1, encode_lights(1,1,0,0), Tires);
-		TLI2 = SetTimerEx("TimerBlinkingLights2", 100, false, "d", vehicleid);
+		TLI2 = SetTimerEx("TimerBlinkingLights3", 150, false, "d", vehicleid);
 }
 public TimerBlinkingLights2(vehicleid)
 {
 		new Panels, Doors1, Lights, Tires;
 		GetVehicleDamageStatus(vehicleid, Panels, Doors1, Lights, Tires);
 		UpdateVehicleDamageStatus(vehicleid, Panels, Doors1, encode_lights(0,0,1,1), Tires);
-		TLI = SetTimerEx("TimerBlinkingLights", 100, false, "d", vehicleid);
+		TLI = SetTimerEx("TimerBlinkingLights", 150, false, "d", vehicleid);
+}
+forward TimerBlinkingLights3(vehicleid);
+public TimerBlinkingLights3(vehicleid)
+{
+		new Panels, Doors1, Lights, Tires;
+		GetVehicleDamageStatus(vehicleid, Panels, Doors1, Lights, Tires);
+		UpdateVehicleDamageStatus(vehicleid, Panels, Doors1, encode_lights(1,1,1,1), Tires);
+		TLI = SetTimerEx("TimerBlinkingLights2", 100, false, "d", vehicleid);
 }
 
 CMD:getcar(playerid, params[]){
@@ -3369,6 +3466,20 @@ CMD:accept(playerid, params[]){
             SendClientMessage(pInfo[playerid][SentHAccept], ADMINBLUE, string);
             return 1;
         }
+        if(pInfo[playerid][AwaitingRAccept] == 1){
+            if(IsPlayerInAnyVehicle(playerid)){
+                SetVehicleHealth(GetPlayerVehicleID(playerid), 1000);
+                format(string, sizeof(string),  "> You have accepted: %s' repair request!", RPName(pInfo[playerid][SentRAccept]));
+                SendClientMessage(playerid, ADMINBLUE, string);
+                pInfo[playerid][AwaitingRAccept] = 0;
+                format(string, sizeof(string), "> %s has accepted your repair request! (+$%d)", RPName(playerid), pInfo[playerid][SentRPrice]);
+                pInfo[pInfo[playerid][SentRAccept]][pFactionPay] += pInfo[playerid][SentRPrice];
+                GivePlayerMoney(playerid, -pInfo[playerid][SentRPrice]);
+                pInfo[playerid][pCash] -= pInfo[playerid][SentRPrice];
+                SendClientMessage(pInfo[playerid][SentRAccept], ADMINBLUE, string);
+                return 1;
+            }
+        }
     }
     return 1;
 }
@@ -3381,6 +3492,13 @@ CMD:decline(playerid, params[]){
         pInfo[playerid][AwaitingHAccept] = 0;
         format(string, sizeof(string), "> %s has declined your heal request!", RPName(playerid));
         SendClientMessage(pInfo[playerid][SentHAccept], ADMINBLUE, string);
+    }
+    if(pInfo[playerid][AwaitingRAccept] == 1){
+        format(string, sizeof(string), "> You have declined: %s' repair request!", RPName(pInfo[playerid][SentHAccept]));
+        SendClientMessage(playerid, ADMINBLUE, string);
+        pInfo[playerid][AwaitingRAccept] = 0;
+        format(string, sizeof(string), "> %s has declined your repair request!", RPName(playerid));
+        SendClientMessage(pInfo[playerid][SentRAccept], ADMINBLUE, string);
     }
     return 1;
 }
@@ -3571,7 +3689,70 @@ CMD:repair(playerid, params[]){
     // player can /accept or decline, but this time it will tell them a price
     // if player has that amount of cash, and accepts, give player $50 faction pay + whatever the amount was
     // send admins an alert of this, so we can prevent people abusing this CMD to charge players a lot, unless they have a reason
+    new target, price;
+    if(pInfo[playerid][pFactionId] == 3){
+        if(sscanf(params, "dd", target, price)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /repair [id] [price]"); {
+            new Float:x, Float:y, Float:z;
+            GetPlayerPos(target, x, y, z);
+            if(target != playerid){
+                if(IsPlayerInAnyVehicle(target)) {
+                    if(IsPlayerInRangeOfPoint(playerid, 1.5, x, y, z)) {
+                        new string[256];
+                        format(string, sizeof(string), "> You have sent %s a vehicle repair request!", RPName(target));
+                        SendClientMessage(playerid, ADMINBLUE, string);
+                        
+                        format(string, sizeof(string), "> You can now /accept (or /decline) this repair request from: %s (Cost: $%d) !", RPName(playerid), price);
+                        SendClientMessage(target, ADMINBLUE, string);
+                        
+                        pInfo[target][AwaitingRAccept] = 1;
+                        pInfo[target][SentRAccept] = playerid;
+                        pInfo[target][SentRPrice] = price;
+
+                    }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} That player is not in a vehicle!");
+                    return 1;
+                }
+            }
+        }
+    }
     return 1;
+}
+
+CMD:refill(playerid, params[]){
+    // player must be closest to the target vehicle.
+    // freeze player and wait 5 s to refill
+    // this can be done without charging a player, but must be RP'd to refill.
+    new string[256];
+    if(pInfo[playerid][pFactionId] == 3){
+        if(vInfo[GetClosestVeh(playerid)][vFuel] < 100){
+            new difference = 100;
+            difference -= vInfo[GetClosestVeh(playerid)][vFuel];
+            format(string, sizeof(string), "> You are refuelling this vehicle with: %d L of fuel.", difference);
+            SendClientMessage(playerid, ADMINBLUE, string);
+            vInfo[GetClosestVeh(playerid)][vFuel] += difference;
+            pInfo[playerid][pFactionPay] += 50;
+            return 1;
+        } else {
+            format(string,sizeof(string), "[SERVER]:{FFFFFF} This vehicle cannot hold any more fuel!");
+            SendClientMessage(playerid, SERVERCOLOR, string);
+            return 1;
+        }
+    }
+    return 1;
+}
+
+stock GetClosestVeh(playerid){
+    new vid = -1;
+    new Float:x, Float:y, Float:z;
+    for(new i = 0; i < MAX_VEHICLES; i++){
+        GetVehiclePos(i, x, y, z);
+        if(IsPlayerInRangeOfPoint(playerid, 3,x,y,z)){ // 3M from veh
+            vid = i;
+            return vid;
+        }
+    }
+    return vid;
 }
 
 CMD:pockets(playerid, params[]){
@@ -3646,11 +3827,18 @@ CMD:help(playerid, params[]) {
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /cuff, /ticket, /ca (create alert), /arrest");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /impound, NumPad+ to tow a vehicle, /gate");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /listallcalls, /takecall, /endcall, /flash");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /duty, /dutyclothes");
                 }
                 if(pInfo[playerid][pFactionId] == 2){
                     SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Faction Commands ::.");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /heal");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /listallcalls, /takecall, /endcall, /flash");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /duty, /dutyclothes");
+                }
+                if(pInfo[playerid][pFactionId] == 3){
+                    SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Faction Commands ::.");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /repair, /flash, /refill");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /duty, /dutyclothes");
                 }
                 if(pInfo[playerid][pFactionRank] == 7){
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /hire, /fire, /demote, /promote");
@@ -6482,6 +6670,7 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pFactionId", pInfo[playerid][pFactionId]);
     cache_get_value_int(0, "pFactionRank", pInfo[playerid][pFactionRank]);
     cache_get_value(0, "pFactionRankname", pInfo[playerid][pFactionRankname], 32);
+    cache_get_value_int(0, "pFactionPay", pInfo[playerid][pFactionPay]);
     cache_get_value_int(0, "pDutyClothes", pInfo[playerid][pDutyClothes]);
     cache_get_value_int(0, "pJobId", pInfo[playerid][pJobId]);
     cache_get_value_int(0, "pJobPay", pInfo[playerid][pJobPay]);
@@ -6858,7 +7047,7 @@ public payPlayer(playerid) {
     if(pInfo[playerid][pFactionId] >= 1){
         salary += pInfo[playerid][pFactionPay];
         tax = (salary / 500) * 100;
-        format(string, sizeof(string), "[SERVER]:{ABCDEF} Faction Pay: +$%d | Job Tax: -$%d", pInfo[playerid][pFactionPay], tax);
+        format(string, sizeof(string), "[SERVER]:{ABCDEF} Faction Pay: +$%d | Tax: -$%d", pInfo[playerid][pFactionPay], tax);
         SendClientMessage(playerid, SPECIALORANGE, string);
         pInfo[playerid][pFactionPay] = 0;
     }
@@ -7090,6 +7279,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
     if(dialogid == 9997){
         if(response){
             pInfo[playerid][pDutyClothes] = MEDICCLOTHES[listitem][SKINID];
+            GameTextForPlayer(playerid, "~g~DUTY CLOTHES SELECTED!", 3000, 3);
+        }
+    }
+    if(dialogid == 9996){
+        if(response){
+            pInfo[playerid][pDutyClothes] = TOWCLOTHES[listitem][SKINID];
             GameTextForPlayer(playerid, "~g~DUTY CLOTHES SELECTED!", 3000, 3);
         }
     }
