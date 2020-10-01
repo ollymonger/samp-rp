@@ -3800,25 +3800,30 @@ CMD:refill(playerid, params[]){
     if(pInfo[playerid][pFactionId] == 3){
         new vid;
         vid = GetClosestVeh(playerid);
-        if(vInfo[vid][vFuel] < 100){
-            new engine, lights, alarm, doors, bonnet, boot, objective;
-            GetVehicleParamsEx(vid, engine, lights, alarm, doors, bonnet, boot, objective); //will check that what is the state of the engine.
-            if(engine == 0){
-                new difference = 100;
-                difference -= vInfo[vid][vFuel];
-                format(string, sizeof(string), "> You are refuelling this vehicle with: %d L of fuel.", difference);
-                SendClientMessage(playerid, ADMINBLUE, string);
-                vInfo[vid][vFuel] += difference;
-                pInfo[playerid][pFactionPay] += 50;
-                return 1;
+        if(!IsPlayerInAnyVehicle(playerid)){
+            if(vInfo[vid][vFuel] < 100){
+                new engine, lights, alarm, doors, bonnet, boot, objective;
+                GetVehicleParamsEx(vid, engine, lights, alarm, doors, bonnet, boot, objective); //will check that what is the state of the engine.
+                if(engine == 0){
+                    new difference = 100;
+                    difference -= vInfo[vid][vFuel];
+                    format(string, sizeof(string), "> You are refuelling this vehicle with: %d L of fuel.", difference);
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    vInfo[vid][vFuel] += difference;
+                    pInfo[playerid][pFactionPay] += 50;
+                    return 1;
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle's engine is still on!");
+                    return 1;
+                }
             } else {
-                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This vehicle's engine is still on!");
+                format(string,sizeof(string), "[SERVER]:{FFFFFF} This vehicle cannot hold any more fuel!");
+                SendClientMessage(playerid, SERVERCOLOR, string);
                 return 1;
             }
         } else {
-            format(string,sizeof(string), "[SERVER]:{FFFFFF} This vehicle cannot hold any more fuel!");
+            format(string,sizeof(string), "[SERVER]:{FFFFFF}  You cannot use this command in a vehicle!");
             SendClientMessage(playerid, SERVERCOLOR, string);
-            return 1;
         }
     }
     return 1;
