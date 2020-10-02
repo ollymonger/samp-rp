@@ -26,6 +26,8 @@
 #define SERVERCOLOR 	0xA9C4E4FF //0x99CEFFFF 94ABC8
 #define NICESKY 		0xC2A2DAFF // rp color
 #define ADMINBLUE 		0x1D7CF2FF //0059E8
+#define COLOR_AQUA 0xF0F8FFAA
+
 
 #define     VEHICLE_NOT_RENTABLE    0
 #define     VEHICLE_RENTABLE        1
@@ -678,7 +680,8 @@ enum ENUM_VEH_DATA {
         vRentalState,
         vRentalPrice,
 
-        SirenStatus
+        SirenStatus,
+        IsLive
 }
 new vInfo[500][ENUM_VEH_DATA], loadedVeh;
 
@@ -2456,7 +2459,18 @@ public OnPlayerText(playerid, text[]) {
             nearByAction(playerid, NICESKY, string);
                     
             SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
-        }else{
+        } else if(IsPlayerInAnyVehicle(playerid) && GetVehicleModel(GetPlayerVehicleID(playerid)) == 582){
+            new vid = GetPlayerVehicleID(playerid) - 1;
+            if(vInfo[vid][IsLive] == 1){
+                new string[256];
+                format(string, sizeof(string), "{48d1cc}SANN Radio: %s says: %s", RPName(playerid), text);
+                SendClientMessageToAll(-1, string);
+            } else {
+                new string[256];
+                format(string, sizeof(string), "%s[%i] says: %s", RPName(playerid), playerid, text);
+                nearByMessage(playerid, -1, string, 12.0);
+            }
+        } else {
             new string[256];
 
             format(string, sizeof(string), "%s[%i] says: %s", RPName(playerid), playerid, text);
@@ -3757,6 +3771,30 @@ CMD:takecall(playerid, params[]){
     return 1;
 }
 
+CMD:live(playerid, params[]){
+    // /live: if in hq or news van, and live toggled, broadcast all MSGs to ALL players
+    // players can call in, and if there is a van that is live, send them a /accept [number] request.
+    // check to see if that player is calling 3170, if they are, accept/decline.
+    if(pInfo[playerid][pFactionId] == 4){
+        //if in range of point
+        new vid;
+        if(IsPlayerInAnyVehicle(playerid)){
+            vid = GetPlayerVehicleID(playerid);
+            if(GetVehicleModel(vid) == 582){
+                vid -= 1;
+                if(vInfo[vid][IsLive] == 0){
+                    vInfo[vid][IsLive] = 1;
+                    SendClientMessage(playerid, ADMINBLUE, "> You have enabled live broadcasting in this van.");
+                } else {
+                    vInfo[vid][IsLive] = 0;
+                    SendClientMessage(playerid, ADMINBLUE, "> You have disabled live broadcasting in this van.");
+                }
+            }
+        }
+    }
+    return 1;
+}
+
 CMD:repair(playerid, params[]){
     // /repair: sends  target ID if in range a request to repair, like /heal.
     // player can /accept or decline, but this time it will tell them a price
@@ -3788,6 +3826,10 @@ CMD:repair(playerid, params[]){
                 }
             }
         }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+
     }
     return 1;
 }
@@ -3825,6 +3867,10 @@ CMD:refill(playerid, params[]){
             format(string,sizeof(string), "[SERVER]:{FFFFFF}  You cannot use this command in a vehicle!");
             SendClientMessage(playerid, SERVERCOLOR, string);
         }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+
     }
     return 1;
 }
