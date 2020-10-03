@@ -480,6 +480,14 @@ new VehicleNames[][] = {
 
 new tries[MAX_PLAYERS], passwordForFinalReg[MAX_PLAYERS][BCRYPT_HASH_LENGTH], quizAttempts[MAX_PLAYERS];
 
+enum ENUM_ADVERT{
+    ADVID,
+    ADVNUMBER,
+    ADVMSG[32],
+    ADVSTATE,
+};
+new ADVERTS[10][ENUM_ADVERT], ads;
+
 enum ENUM_POLICECLOTHES {
     SKINID,
     SKINNAME[32]
@@ -756,7 +764,9 @@ enum ENUM_FAC_DATA {
         Float:fEntZ,
         Float:fExitX,
         Float:fExitY,
-        Float:fExitZ
+        Float:fExitZ,
+
+        IsLive
 }
 new fInfo[MAX_FACTIONS][ENUM_FAC_DATA], loadedFac;
 
@@ -2362,119 +2372,132 @@ public OnVehicleDeath(vehicleid, killerid) {
 
 public OnPlayerText(playerid, text[]) {
     if(pInfo[playerid][pMuted] == 0) {
-        if(pInfo[playerid][OnCall] >= 1 && pInfo[playerid][OnCall] != 911){
-            new string[256];
-            format(string, sizeof(string), "{FFFFE0}[PHONE] %s", RPName(playerid), text);
-            for(new i = 0; i < MAX_PLAYERS; i++){
-                if(pInfo[i][pPhoneNumber] == pInfo[playerid][OnCall]){        
-                    SendClientMessage(i, -1, string);
-                    SendClientMessage(playerid, -1, string);
-                }
-            }
-        } else if(pInfo[playerid][OnCall] == 911){
-            if(pInfo[playerid][AwaitingReason] == 0){
-                if(strfind(text, "police", true) != -1){
-                    new string[256];
-                    format(string, sizeof(string), "[PHONE]: %s", text);
-                    SendClientMessage(playerid, -1, string);
-                    format(string, sizeof(string), "[PHONE]: Okay - what is the situation?");
-                    SendClientMessage(playerid, -1, string);
-                    pInfo[playerid][CalledService] = 1;
-                    pInfo[playerid][AwaitingReason] = 1;
-                }
-                if(strfind(text, "medics", true) != -1){
-                    new string[256];
-                    format(string, sizeof(string), "[PHONE]: %s", text);
-                    SendClientMessage(playerid, -1, string);
-                    format(string, sizeof(string), "[PHONE]: I'm patching you through. Whats the situation?");
-                    SendClientMessage(playerid, -1, string);
-                    pInfo[playerid][CalledService] = 2;
-                    pInfo[playerid][AwaitingReason] = 1;
-                }
-            } else {     
-                if(pInfo[playerid][CalledService] == 1){
-                    new string[256];     
-                    format(string, sizeof(string), "[PHONE]: %s", text);
-                    SendClientMessage(playerid, -1, string);
-                    new Float:px, Float:py, Float:pz;
-                    GetPlayerPos(playerid, px, py, pz);
-                    new msg[50];
-                    format(msg, sizeof(msg), "%s", text);
-                    AlertPolice(playerid, msg, px, py, pz);
-                    format(string, sizeof(string), "[PHONE]: Thank you. The police have been notified.");
-
-                    SendClientMessage(playerid, -1, string);
-                    pInfo[playerid][CalledService] = 0;
-                    pInfo[playerid][AwaitingReason] = 0;
-                    pInfo[playerid][OnCall] = 0;
-                    
-                    format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(playerid));
-                    nearByAction(playerid, NICESKY, string);
-                    
-                    SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
-                }
-                if(pInfo[playerid][CalledService] == 2){
-                    new string[256];     
-                    format(string, sizeof(string), "[PHONE]: %s", text);
-                    SendClientMessage(playerid, -1, string);
-                    new Float:px, Float:py, Float:pz;
-                    GetPlayerPos(playerid, px, py, pz);
-                    new msg[50];
-                    format(msg, sizeof(msg), "%s", text);
-                    AlertMedics(playerid, msg, px, py, pz);
-                    format(string, sizeof(string), "[PHONE]: Thank you. The medics have been notified.");
-
-                    SendClientMessage(playerid, -1, string);
-                    pInfo[playerid][CalledService] = 0;
-                    pInfo[playerid][AwaitingReason] = 0;
-                    pInfo[playerid][OnCall] = 0;
-                    
-                    format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(playerid));
-                    nearByAction(playerid, NICESKY, string);
-                    
-                    SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
-                }
-            }
-        } else if(pInfo[playerid][OnCall] == 227){
-            new string[256];
-            format(string, sizeof(string), "[PHONE]: %s", text);
-            SendClientMessage(playerid, -1, string);
-            format(string, sizeof(string), "[PHONE]: Thank you, our engineers have been alerted!");
-            SendClientMessage(playerid, -1, string);
-
-            for(new i = 0; i < MAX_PLAYERS; i++){
-                if(pInfo[i][pFactionId] == 3){         
-                    format(string, sizeof(string), "{FFFFFF}Radio: ALERT: %s, call code: %d", text, playerid);
-                    printf("Mechanic alerted with msg: %s", text);
-                    SendClientMessage(i, SERVERCOLOR, string);
-                }
-            }
-            
-            pInfo[playerid][pAlertCall] = 3;
-            format(pInfo[playerid][pAlertMsg], 80, "%s", text);
-            
-            pInfo[playerid][OnCall] = 0;
-                    
-            format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(playerid));
-            nearByAction(playerid, NICESKY, string);
-                    
-            SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
-        } else if(IsPlayerInAnyVehicle(playerid) && GetVehicleModel(GetPlayerVehicleID(playerid)) == 582){
-            new vid = GetPlayerVehicleID(playerid) - 1;
-            if(vInfo[vid][IsLive] == 1){
+        if(IsPlayerInRangeOfPoint(playerid, 5, 9998.7725,10012.2715,10001.0869)){
+            if(fInfo[3][IsLive] == 1){
                 new string[256];
-                format(string, sizeof(string), "{48d1cc}SANN Radio: %s says: %s", RPName(playerid), text);
+                format(string, sizeof(string), "{00bfff}SANN Radio: %s says: %s", RPName(playerid), text);
                 SendClientMessageToAll(-1, string);
-            } else {
+            }
+        } else {
+            if(pInfo[playerid][OnCall] >= 1 && pInfo[playerid][OnCall] != 911 && pInfo[playerid][OnCall] != 3170){ 
+                new string[256];
+                format(string, sizeof(string), "{FFFFE0}[PHONE] %s", RPName(playerid), text);
+                for(new i = 0; i < MAX_PLAYERS; i++){
+                    if(pInfo[i][pPhoneNumber] == pInfo[playerid][OnCall]){        
+                        SendClientMessage(i, -1, string);
+                        SendClientMessage(playerid, -1, string);
+                    }
+                }
+            } else if(pInfo[playerid][OnCall] == 911){
+                if(pInfo[playerid][AwaitingReason] == 0){
+                    if(strfind(text, "police", true) != -1){
+                        new string[256];
+                        format(string, sizeof(string), "[PHONE]: %s", text);
+                        SendClientMessage(playerid, -1, string);
+                        format(string, sizeof(string), "[PHONE]: Okay - what is the situation?");
+                        SendClientMessage(playerid, -1, string);
+                        pInfo[playerid][CalledService] = 1;
+                        pInfo[playerid][AwaitingReason] = 1;
+                    }
+                    if(strfind(text, "medics", true) != -1){
+                        new string[256];
+                        format(string, sizeof(string), "[PHONE]: %s", text);
+                        SendClientMessage(playerid, -1, string);
+                        format(string, sizeof(string), "[PHONE]: I'm patching you through. Whats the situation?");
+                        SendClientMessage(playerid, -1, string);
+                        pInfo[playerid][CalledService] = 2;
+                        pInfo[playerid][AwaitingReason] = 1;
+                    }
+                } else {     
+                    if(pInfo[playerid][CalledService] == 1){
+                        new string[256];     
+                        format(string, sizeof(string), "[PHONE]: %s", text);
+                        SendClientMessage(playerid, -1, string);
+                        new Float:px, Float:py, Float:pz;
+                        GetPlayerPos(playerid, px, py, pz);
+                        new msg[50];
+                        format(msg, sizeof(msg), "%s", text);
+                        AlertPolice(playerid, msg, px, py, pz);
+                        format(string, sizeof(string), "[PHONE]: Thank you. The police have been notified.");
+
+                        SendClientMessage(playerid, -1, string);
+                        pInfo[playerid][CalledService] = 0;
+                        pInfo[playerid][AwaitingReason] = 0;
+                        pInfo[playerid][OnCall] = 0;
+                        
+                        format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        
+                        SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
+                    }
+                    if(pInfo[playerid][CalledService] == 2){
+                        new string[256];     
+                        format(string, sizeof(string), "[PHONE]: %s", text);
+                        SendClientMessage(playerid, -1, string);
+                        new Float:px, Float:py, Float:pz;
+                        GetPlayerPos(playerid, px, py, pz);
+                        new msg[50];
+                        format(msg, sizeof(msg), "%s", text);
+                        AlertMedics(playerid, msg, px, py, pz);
+                        format(string, sizeof(string), "[PHONE]: Thank you. The medics have been notified.");
+
+                        SendClientMessage(playerid, -1, string);
+                        pInfo[playerid][CalledService] = 0;
+                        pInfo[playerid][AwaitingReason] = 0;
+                        pInfo[playerid][OnCall] = 0;
+                        
+                        format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        
+                        SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
+                    }
+                }
+            } else if(pInfo[playerid][OnCall] == 227){
+                new string[256];
+                format(string, sizeof(string), "[PHONE]: %s", text);
+                SendClientMessage(playerid, -1, string);
+                format(string, sizeof(string), "[PHONE]: Thank you, our engineers have been alerted!");
+                SendClientMessage(playerid, -1, string);
+
+                for(new i = 0; i < MAX_PLAYERS; i++){
+                    if(pInfo[i][pFactionId] == 3){         
+                        format(string, sizeof(string), "{FFFFFF}Radio: ALERT: %s, call code: %d", text, playerid);
+                        printf("Mechanic alerted with msg: %s", text);
+                        SendClientMessage(i, SERVERCOLOR, string);
+                    }
+                }
+                
+                pInfo[playerid][pAlertCall] = 3;
+                format(pInfo[playerid][pAlertMsg], 80, "%s", text);
+                
+                pInfo[playerid][OnCall] = 0;
+                        
+                format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(playerid));
+                nearByAction(playerid, NICESKY, string);
+                        
+                SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
+            } else if(pInfo[playerid][OnCall] == 3170){
+                new string[256];
+                format(string, sizeof(string), "[PHONE]: %s", text);
+                SendClientMessage(playerid, -1, string);
+                format(string, sizeof(string), "{00bfff}SANN Radio: %s says: %s", RPName(playerid), text);
+                SendClientMessageToAll(-1, string);
+            } else if(IsPlayerInAnyVehicle(playerid) && GetVehicleModel(GetPlayerVehicleID(playerid)) == 582){
+                new vid = GetPlayerVehicleID(playerid) - 1;
+                if(vInfo[vid][IsLive] == 1){
+                    new string[256];
+                    format(string, sizeof(string), "{00bfff}SANN Radio: %s says: %s", RPName(playerid), text);
+                    SendClientMessageToAll(-1, string);
+                } else {
+                    new string[256];
+                    format(string, sizeof(string), "%s[%i] says: %s", RPName(playerid), playerid, text);
+                    nearByMessage(playerid, -1, string, 12.0);
+                }
+            } else  {
                 new string[256];
                 format(string, sizeof(string), "%s[%i] says: %s", RPName(playerid), playerid, text);
                 nearByMessage(playerid, -1, string, 12.0);
             }
-        } else {
-            new string[256];
-
-            format(string, sizeof(string), "%s[%i] says: %s", RPName(playerid), playerid, text);
-            nearByMessage(playerid, -1, string, 12.0);
         }
     } else {
         TextDrawShowForPlayer(playerid, PMuted);
@@ -3448,6 +3471,13 @@ CMD:call(playerid, params[]){
                 SetPlayerSpecialAction(playerid, SPECIAL_ACTION_USECELLPHONE);
                 BeginCalling(playerid, 227);
             }
+            if(number == 3170) {
+                new string[256];
+                format(string, sizeof(string), "* %s takes out their phone and dials a number.", RPName(playerid));
+                nearByAction(playerid, NICESKY, string);
+                SetPlayerSpecialAction(playerid, SPECIAL_ACTION_USECELLPHONE);
+                BeginCalling(playerid, 3170);
+            }
             for(new i = 0; i < MAX_PLAYERS; i++){
                 if(pInfo[i][pPhoneNumber] == number){
                     if(IsPlayerConnected(i)){
@@ -3489,6 +3519,42 @@ public BeginCalling(playerid, targetid){
         pInfo[playerid][OnCall] = 227;
         format(string, sizeof(string), "{FFFFD5}[PHONE]: This is the Towing Company, how can we help?");
         SendClientMessage(playerid, -1, string);
+        return 1;
+    }
+    if(targetid == 3170){
+        new string[256], onlive;
+        for(new i = 0; i < loadedFac; i++){
+            if(fInfo[i][IsLive] == 1){
+                onlive++;
+            }
+        }
+        for(new io = 0; io < loadedVeh; io++){
+            if(vInfo[io][IsLive] == 1){
+                onlive++;
+            }
+        }
+        if(onlive >= 1){            
+            format(string, sizeof(string), "{FFFFD5}Phone connecting sound...");
+            SendClientMessage(playerid, -1, string);
+            format(string, sizeof(string), "PHONE: Line %d is calling... /takecall to answer!", playerid);
+            for(new i = 0; i < MAX_PLAYERS; i++){
+                if(pInfo[i][pFactionId] == 4){     
+                    SendClientMessage(i, ADMINBLUE, string);
+                }
+            }
+            pInfo[playerid][pAlertCall] = 4;
+            callTimer[playerid] = SetTimerEx("BeginCalling", 3000, false, "dd", playerid, targetid);
+        } else {
+            format(string, sizeof(string), "{FFFFD5}Phone connecting sound...");
+            SendClientMessage(playerid, -1, string);
+            format(string, sizeof(string), "{FFFFD5}[PHONE]: This is the San Andreas News Network, you cannot call in right now. Try again later.");
+            SendClientMessage(playerid, -1, string);
+            
+            format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(playerid));
+            nearByAction(playerid, NICESKY, string);
+                    
+            SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
+        }
         return 1;
     }
     else {
@@ -3591,6 +3657,18 @@ stock PlayerIdByPhoneNumber(number){
 CMD:hangup(playerid, params[]){
     new string[256];
     if(pInfo[playerid][OnCall] >= 1){
+        if(pInfo[playerid][OnCall] == 3170){
+            format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(playerid));
+            nearByAction(playerid, NICESKY, string);
+            pInfo[playerid][OnCall] = 0;        
+            SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
+            for(new i = 0; i < MAX_PLAYERS; i++){
+                if(pInfo[i][pFactionId] == 4){
+                    format(string, sizeof(string), "> Line %d has disconnected their call.", playerid);
+                    SendClientMessage(i, ADMINBLUE, string);
+                }
+            }
+        }
         for(new i = 0; i < MAX_PLAYERS; i++){
             if(IsPlayerConnected(i))
             {
@@ -3717,7 +3795,23 @@ CMD:endcall(playerid, params[]){
                 }
             }
         }
-    } else {
+    } else if(pInfo[playerid][pFactionId] == 4){
+        new string[256];
+        if(sscanf(params, "d", target)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /endcall [line]"); {
+            if(pInfo[target][OnCall] == 3170) {                
+                format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(target));
+                nearByAction(target, NICESKY, string);
+                format(string, sizeof(string), "> You have ended the call on line: %d", target);
+                SendClientMessage(playerid, ADMINBLUE, string);
+                pInfo[target][OnCall] = 0;                    
+                SetPlayerSpecialAction(target, SPECIAL_ACTION_NONE);
+            } else {
+                format(string, sizeof(string), "[SERVER]: {FFFFFF} Invalid line number!", target);
+                SendClientMessage(playerid, SERVERCOLOR, string);
+            }
+        }
+    } 
+    else {
         TextDrawShowForPlayer(playerid, CantCommand);
         SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
 
@@ -3727,7 +3821,7 @@ CMD:endcall(playerid, params[]){
 
 CMD:takecall(playerid, params[]){
     new target;
-    if(pInfo[playerid][pFactionId] == 1 || pInfo[playerid][pFactionId] == 2 || pInfo[playerid][pFactionId] == 3){
+    if(pInfo[playerid][pFactionId] == 1 || pInfo[playerid][pFactionId] == 2 || pInfo[playerid][pFactionId] == 3 || pInfo[playerid][pFactionId] == 4){
         if(sscanf(params, "d", target)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /takecall [callcode]"); {
             if(pInfo[playerid][pDuty] == 1){
                 if(pInfo[target][pAlertCall] == 1 || pInfo[target][pAlertCall] == 2){                        
@@ -3754,7 +3848,17 @@ CMD:takecall(playerid, params[]){
                             pInfo[target][pAlertCall] = 0;
                         }
                     }
-                } else {
+                } else if(pInfo[target][pAlertCall] == 4) {
+                    new string[256];
+                    pInfo[target][OnCall] = 3170;
+                    pInfo[target][pAlertCall] = 0;
+                    SendClientMessage(target, -1, "Call connected.");
+                    format(string, sizeof(string), "> You have accepted line: %d.", target);
+                    SendClientMessage(playerid, ADMINBLUE, string);                    
+                    KillTimer(callTimer[target]);
+                    return 1;
+                } 
+                else{
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This is not a valid call code!");
                     return 1;
                 }
@@ -3788,6 +3892,19 @@ CMD:live(playerid, params[]){
                 } else {
                     vInfo[vid][IsLive] = 0;
                     SendClientMessage(playerid, ADMINBLUE, "> You have disabled live broadcasting in this van.");
+                }
+            }
+        }
+        if(IsPlayerInRangeOfPoint(playerid, 6, 9998.7725,10012.2715,10001.0869)){
+            for(new i = 0; i < loadedFac; i++){
+                if(fInfo[i][fID] == 4){
+                    if(fInfo[i][IsLive] == 0){
+                        fInfo[i][IsLive] = 1;
+                        SendClientMessage(playerid, ADMINBLUE, "> You have enabled live broadcasting in the studio.");
+                    } else {                        
+                        fInfo[i][IsLive] = 0;
+                        SendClientMessage(playerid, ADMINBLUE, "> You have disabled live broadcasting in the studio.");
+                    }
                 }
             }
         }
