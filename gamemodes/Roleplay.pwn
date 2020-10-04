@@ -4205,6 +4205,12 @@ CMD:help(playerid, params[]) {
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /takecall, /listallcalls, /endcall");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /duty, /dutyclothes");
                 }
+                if(pInfo[playerid][pFactionId] == 3){
+                    SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Faction Commands ::.");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /live, /listallads, /acceptad, /declinead");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /takecall, /endcall");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /duty, /dutyclothes");
+                }
                 if(pInfo[playerid][pFactionRank] == 7){
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /hire, /fire, /demote, /promote");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /rankname");
