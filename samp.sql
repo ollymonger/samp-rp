@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 01, 2020 at 12:25 PM
+-- Generation Time: Oct 04, 2020 at 10:47 PM
 -- Server version: 10.1.34-MariaDB
 -- PHP Version: 7.2.7
 
@@ -105,11 +105,11 @@ INSERT INTO `accounts` (`ID`, `pName`, `pPassword`, `pEmail`, `pAdminLevel`, `pL
 (19, 'testdialogc', '$2y$12$QDDrYibDbTblZ1jfPy60butWDkKhIn7fzb6/6qog6cXvLCTYvMbwC', 'example@example.com', 0, 0, 0, 'America', 100, 0, 1, 167, 27, 0, 50, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (20, 'quiztest1', '$2y$12$cSDOOkf3ThXATj.0XhDDXOd1SS1fz0i/dZ4iuAQYph2EOT1gCtRMu', '@', 0, 0, 0, 'Los Santos', 100, 0, 1, 23, 28, 0, 1000, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (21, 'testaccounts_1', '$2y$12$KjjyaDTEQBe1LTTDUUvGaOTqZsuFTWhrHHEa6fv0KiASgtEyJscGG', 'gmail@gmail.com', 0, 0, 0, 'Los Santos', 100, 0, 1, 72, 28, 0, 1000, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(22, 'testaccounts_2', '$2y$12$XFDYQjXvbjThLR/xKkjRTOarF5sW7jrTtLDUAQoj5KzHKM/NZ3rRa', 'olly@yllo.co.uk', 6, 4, 6, 'Los Santos', 95, 0, 1, 73, 28, 484740, 532340, 29, 1, 125243, 2, 3, 7, 'Chief', 100, 70, 1, 0, 200, 'LOL', 6, 'evading police x2 ', 0, 0, 7, 1, 20, 2, 1, 0, 0, 0, 1, 22, 0, 25, 0, 29, 34, 4, 4, 3100),
+(22, 'testaccounts_2', '$2y$12$XFDYQjXvbjThLR/xKkjRTOarF5sW7jrTtLDUAQoj5KzHKM/NZ3rRa', 'olly@yllo.co.uk', 6, 4, 6, 'Los Santos', 95, 0, 1, 73, 28, 484640, 532340, 4, 1, 125243, 2, 4, 7, 'nazi', 200, 70, 1, 0, 200, 'LOL', 6, 'evading police x2 ', 0, 0, 7, 1, 20, 2, 1, 0, 0, 0, 1, 22, 0, 25, 0, 29, 26, 4, 4, 3100),
 (23, 'testaccounts_3', '$2y$12$PEeuZSHTTVnjKDb2UEDWSunyPVyEv7lKRwTEZihlRmQmObQ2NP8n.', '@', 0, 1, 1, 'Los Santos', 100, 0, 1, 170, 28, 0, 1000, 60, 0, 0, 0, 0, 0, '', 0, 0, 1, 0, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (24, 'testaccounts_6', '$2y$12$YzDJSCnlPVH/ShTMXyzwOOEfQvuVt/Ty88apHkAAldDO5rmIFSJvi', '@', 0, 1, 1, 'america', 95, 0, 1, 24, 28, 0, 800, 55, 0, 0, 0, 0, 0, '', 0, 0, 1, 172, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (25, 'testaccount_12', '$2y$12$MUbIMBbtUDjFaTHrSS3sbeR/.2zeCYsrJAsxX95yyYweQUtXfsQRK', '@', 0, 1, 1, 'America', 100, 0, 1, 60, 28, 0, 1000, 59, 0, 0, 0, 0, 0, '', 0, 0, 1, 50, 0, '', 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(26, 'Jason_McCabe', '$2y$12$ZRDAbEjmahLXQCPALUH1LerUXLKuk1kdrGFdoZEBOzIzuWANiZ3HS', 'olly@yllo.co.uk', 0, 1, 2, 'America', 10, 0, 1, 24, 27, 250, 72, 44, 2, 125242, 0, 0, 0, '', 0, 0, 0, 157, 0, '', 0, '', 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0);
+(26, 'Jason_McCabe', '$2y$12$ZRDAbEjmahLXQCPALUH1LerUXLKuk1kdrGFdoZEBOzIzuWANiZ3HS', 'olly@yllo.co.uk', 0, 1, 2, 'America', 75, 0, 1, 24, 27, 250, 0, 36, 2, 125242, 0, 0, 0, '', 0, 0, 0, 157, 0, '', 0, '', 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -216,7 +216,9 @@ CREATE TABLE `factions` (
 INSERT INTO `factions` (`fID`, `fName`, `fAddress`, `fLeader`, `fType`, `fPrice`, `fRank1Name`, `fRank2Name`, `fRank3Name`, `fRank4Name`, `fRank5Name`, `fRank6Name`, `fRank7Name`, `fInfoX`, `fInfoY`, `fInfoZ`, `fDutyX`, `fDutyY`, `fDutyZ`, `fClothesX`, `fClothesY`, `fClothesZ`, `fEntX`, `fEntY`, `fEntZ`, `fExitX`, `fExitY`, `fExitZ`) VALUES
 (1, 'Fort Carson Sheriff\'s Office', 2001, 'NULL', 2, 1350000, 'Cadet', 'Sheriff I', 'Sheriff II', 'Sergeant I', 'Sergeant II', 'Commander', 'Chief of Police', -208.158, 973.9, 18.8395, -2692.07, 2637.33, 4087.79, -2695.22, 2636.89, 4087.79, -217.924, 979.2, 19.7869, -2697.2, 2646.27, 4088.08),
 (2, 'Fort Carson EMS', 2002, 'NULL', 2, 1350000, 'EMS Cadet', 'EMS Responder I', 'EMS Responder II', 'EMS Sergeant I', 'EMS Sergeant II', 'Station Commander', 'Station Chief', -319.788, 1055.7, 19.3177, -2074.06, 2907.36, 5068.31, -2077.35, 2908.76, 5068.31, -319.941, 1049.8, 20.3403, -2083.87, 2920.21, 5067.76),
-(3, 'Towing Company', 2003, 'NULL', 2, 250000, 'Trainee Engineer', 'Engineer I', 'Engineer II', 'Senior Engineer', 'Head of Staff', 'Deputy Leader', 'Leader', -115.079, 1105.79, 19.1345, -112.326, 1136.24, 19.7422, -112.024, 1132.77, 19.7422, 0, 0, 0, 0, 0, 0);
+(3, 'Towing Company', 2003, 'NULL', 2, 250000, 'Trainee Engineer', 'Engineer I', 'Engineer II', 'Senior Engineer', 'Head of Staff', 'Deputy Leader', 'Leader', -115.079, 1105.79, 19.1345, -112.326, 1136.24, 19.7422, -112.024, 1132.77, 19.7422, 0, 0, 0, 0, 0, 0),
+(4, 'San Andreas News Network', 2004, 'NULL', 2, 175000, 'Photographer', 'Junior Reporter', 'Reporter', 'Senior Reporter', 'Head of Reporters', 'Head of Staff', 'News Leader', -93.0166, 1091.03, 19.7422, 9998.79, 10006.9, 10001.1, 0, 0, 0, -99.3396, 1083.54, 19.7422, 9998.2, 9998.07, 10001.3),
+(5, 'DONOTUSE', 999999, 'NULL', 2, 99999999, 'null', 'Junior Reporter', 'Reporter', 'Senior Reporter', 'Head of Reporters', 'Head of Staff', 'News Leader', 200000, 20000, 200000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -353,7 +355,9 @@ INSERT INTO `vehicles` (`vID`, `vModelId`, `vOwner`, `vFuel`, `vJobId`, `vFacId`
 (42, 525, 'NULL', 100, 0, 3, 0, 'UTA-001', 0, '', 0, -129.332, 1111.28, 19.75, 267.846, 0, 0, 0, 0),
 (43, 525, 'NULL', 100, 0, 3, 0, 'UTA-002', 0, '', 0, -119.577, 1111.26, 19.6275, 269.143, 0, 0, 0, 0),
 (44, 525, 'NULL', 100, 0, 3, 0, 'UTA-003', 0, '', 0, -112.995, 1119.99, 19.614, 179.455, 0, 0, 0, 0),
-(45, 525, 'NULL', 100, 0, 3, 0, 'UTA-004', 0, '', 0, -113.131, 1112.45, 19.6169, 179.004, 0, 0, 0, 0);
+(45, 525, 'NULL', 100, 0, 3, 0, 'UTA-004', 0, '', 0, -113.131, 1112.45, 19.6169, 179.004, 0, 0, 0, 0),
+(46, 582, 'NULL', 100, 0, 4, 0, 'SANN02', 0, '', 0, -87.2522, 1077.57, 19.7876, 179.443, 0, 0, 0, 0),
+(47, 582, 'NULL', 100, 0, 4, 0, 'SANN01', 0, '', 0, -80.5497, 1077.68, 19.7986, 1.3237, 0, 0, 0, 0);
 
 --
 -- Indexes for dumped tables
@@ -427,7 +431,7 @@ ALTER TABLE `drugprices`
 -- AUTO_INCREMENT for table `factions`
 --
 ALTER TABLE `factions`
-  MODIFY `fID` int(32) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `fID` int(32) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `houses`
@@ -445,7 +449,7 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `vehicles`
 --
 ALTER TABLE `vehicles`
-  MODIFY `vID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `vID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
