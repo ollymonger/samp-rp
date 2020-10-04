@@ -643,6 +643,7 @@ enum ENUM_PLAYER_DATA {
 
         SentAdv,
         AdvMsg[100],
+        SelectedAd,
 
         RentingVehicle
 }
@@ -3448,28 +3449,47 @@ CMD:arrest(playerid, params[]){
 }
 
 Dialog:DIALOG_ADVERTS(playerid, response, listitem, inputtext[]){
-    
     for (new i = 0; i < MAX_PLAYERS; i++) {
         if(listitem == i - 1) {
             new list[256], string[256];
             format(list, sizeof(list), "Advert ID: %d\nAd Message: %s", i, pInfo[i][SentAdv]);
-            Dialog_Show(playerid, DIALOG_AD
-            , DIALOG_STYLE_MSG, "Advert", list, "Accept", "Decline");     
+            pInfo[playerid][SelectedAd] = i;
+            Dialog_Show(playerid, DIALOG_ADVERTCHOICE, DIALOG_STYLE_MSGBOX, "Advert", list, "Accept", "Decline");     
             return 1;
         }
     }
     return 1;
 }
+
+Dialog:DIALOG_ADVERTCHOICE(playerid, response, listitem, inputtext[]){
+    new string[256];
+    if(response){
+        pInfo[pInfo[playerid][SelectedAd]][SentAdv] = 0;
+        pInfo[pInfo[playerid][SelectedAd]][pBank] -= 100;
+        pInfo[playerid][pFactionPay] += 100;
+        SendClientMessage(pInfo[playerid][SelectedAd], ADMINBLUE, "> Your advert has been accepted!");
+        format(string, sizeof(string), "> You have accepted advert: %d! (+$100)", pInfo[playerid][SelectedAd]);
+        SendClientMessage(playerid, ADMINBLUE, string);
+        format(string, sizeof(string), "[SANN Radio Advert]: %s, Contact Phone: %d.", pInfo[pInfo[playerid][SelectedAd]][AdvMsg], pInfo[pInfo[playerid][SelectedAd]][pPhoneNumber]);
+        SendClientMessageToAll(-1, string);
+    } else {
+        pInfo[pInfo[playerid][SelectedAd]][SentAdv] = 0;
+        SendClientMessage(pInfo[playerid][SelectedAd], ADMINBLUE, "> Your advert has been declined!");
+        format(string, sizeof(string), "> You have declined advert: %d!", pInfo[playerid][SelectedAd]);
+        SendClientMessage(playerid, ADMINBLUE, string);
+    }
+    return 1;
+}
+
 CMD:listallads(playerid, params[]){
     new list[1000], string[200];
     if(pInfo[playerid][pFactionId] == 4){
         for(new i = 0; i < MAX_PLAYERS; i++){
             if(pInfo[i][SentAdv] == 1){
-                format(string, sizeOf(string), "Advert ID: %d\n", i);
+                format(string, sizeof(string), "Advert ID: %d\n", i);
                 strcat(list, string);
             }
             Dialog_Show(playerid, DIALOG_ADVERTS, DIALOG_STYLE_LIST, "Available Adverts", list, "Accept", "");
-
         }
         
     }

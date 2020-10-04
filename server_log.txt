@@ -2137,3 +2137,134 @@ v0.3.7-R2, (C)2005-2015 SA-MP Team
 [13:36:02] [debug] #5 68f00f8f in ?? () in plugins\mysql.dll
 [13:36:02] [debug] #6 00469dfb in ?? () in samp-server.exe
 [13:36:02] [debug] #7 0048d56f in ?? () in samp-server.exe
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[22:18:28] 
+[22:18:28] Server Plugins
+[22:18:28] --------------
+[22:18:28]  Loading plugin: mysql.dll
+[22:18:28]  >> plugin.mysql: R41-4 successfully loaded.
+[22:18:28]   Loaded.
+[22:18:28]  Loading plugin: crashdetect
+[22:18:29]   CrashDetect plugin 4.20
+[22:18:29]   Loaded.
+[22:18:29]  Loading plugin: streamer
+[22:18:29] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[22:18:29]   Loaded.
+[22:18:29]  Loading plugin: bcrypt-samp.dll
+[22:18:29]   plugin.bcrypt v2.2.3 was loaded.
+[22:18:29]   plugin.bcrypt: 8 cores detected, 7 threads will be used.
+[22:18:29]   Loaded.
+[22:18:29]  Loading plugin: sscanf
+[22:18:29] 
+
+[22:18:29]  ===============================
+
+[22:18:29]       sscanf plugin loaded.     
+
+[22:18:29]          Version:  2.8.3        
+
+[22:18:29]   (c) 2018 Alex "Y_Less" Cole  
+
+[22:18:29]  ===============================
+
+[22:18:29]   Loaded.
+[22:18:29]  Loaded 5 plugins.
+
+[22:18:29] 
+[22:18:29] Filterscripts
+[22:18:29] ---------------
+[22:18:29]   Loading filterscript 'CLOCK.amx'...
+[22:18:29] Clock loaded
+[22:18:29]   Loading filterscript 'menu.amx'...
+[22:18:29] 
+--------------------------------------
+[22:18:29]  In-Game Menu Filterscript
+[22:18:29] --------------------------------------
+
+[22:18:29]   Loading filterscript 'fcpdmap.amx'...
+[22:18:29] 
+--------------------------------------
+[22:18:29]  Loading FCPD mapping!
+[22:18:29] --------------------------------------
+
+[22:18:29]   Loading filterscript 'hospmap.amx'...
+[22:18:29] 
+--------------------------------------
+[22:18:29]  Loading hOSP mapping!
+[22:18:29] --------------------------------------
+
+[22:18:29]   Loading filterscript 'towco.amx'...
+[22:18:29] 
+--------------------------------------
+[22:18:29]  Loading Towing Co mapping!
+[22:18:29] --------------------------------------
+
+[22:18:29]   Loading filterscript 'sann.amx'...
+[22:18:29] 
+--------------------------------------
+[22:18:29]  Loading SANN mapping!
+[22:18:29] --------------------------------------
+
+[22:18:29]   Loaded 6 filterscripts.
+
+[22:18:30] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[22:18:30] [debug] Long callback execution detected (hang or performance issue)
+[22:18:30] [debug] AMX backtrace:
+[22:18:30] [debug] #0 0001ac08 in public CreateBusStopObjects () in Roleplay.amx
+[22:18:30] [debug] #1 00015178 in public SSCANF_OnGameModeInit () in Roleplay.amx
+[22:18:30] [debug] #2 0000e858 in public PDialog_OnGameModeInit () in Roleplay.amx
+[22:18:30] [debug] #3 0000a678 in public zcmd_OnGameModeInit () in Roleplay.amx
+[22:18:30] [debug] #4 native CallLocalFunction () in samp-server.exe
+[22:18:30] [debug] #5 00000fcc in public BCRYPT_OnGameModeInit () in Roleplay.amx
+[22:18:30] [debug] #6 native CallLocalFunction () in samp-server.exe
+[22:18:30] [debug] #7 000009f4 in public OnGameModeInit () in Roleplay.amx
+[22:18:30] 
+----------------------------------
+[22:18:30]  Gamemode started... please wait...
+[22:18:30] ----------------------------------
+
+[22:18:30] Number of vehicle models: 0
+[22:18:30] plugin.bcrypt: Version check failed.
+[22:18:31] ** [MYSQL]:Loaded 4 jobs from the database.
+[22:18:32] ** [MYSQL]:Loaded 5 facs from the database.
+[22:18:32] ** [MYSQL]:Loaded 3 houses from the database.
+[22:18:33] ** [MYSQL]:Loaded 5 businesses from the database.
+[22:18:33] [debug] Long callback execution detected (hang or performance issue)
+[22:18:33] [debug] AMX backtrace:
+[22:18:33] [debug] #0 0001c0b8 in public VehsReceived () in Roleplay.amx
+[22:18:36] ** [MYSQL] Loaded 47 vehicles from the database!
+[22:18:36] ** [MYSQL] Loaded 2 drugs
+[22:38:05] [debug] Server received interrupt signal
+[22:38:05] [debug] Native backtrace:
+[22:38:05] [debug] #0 773f196c in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[22:38:05] [debug] #1 765f2ecf in ?? () in C:\WINDOWS\System32\KERNELBASE.dll
+[22:38:05] [debug] #2 0048d53c in ?? () in samp-server.exe
+[22:38:05] [debug] #3 0049b4a1 in ?? () in samp-server.exe
+[22:38:05] [debug] #4 0049b4b1 in ?? () in samp-server.exe
+[22:38:05] --- Server Shutting Down.
+[22:38:06] plugin.mysql: Unloading plugin...
+[22:38:06] plugin.mysql: Plugin unloaded.
+[22:38:06] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[22:38:06] plugin.bcrypt: Plugin unloaded.
+[22:38:06] 
+
+[22:38:06]  ===============================
+
+[22:38:06]      sscanf plugin unloaded.    
+
+[22:38:06]  ===============================
+
