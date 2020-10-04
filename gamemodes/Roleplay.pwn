@@ -480,14 +480,6 @@ new VehicleNames[][] = {
 
 new tries[MAX_PLAYERS], passwordForFinalReg[MAX_PLAYERS][BCRYPT_HASH_LENGTH], quizAttempts[MAX_PLAYERS];
 
-enum ENUM_ADVERT{
-    ADVID,
-    ADVNUMBER,
-    ADVMSG[32],
-    ADVSTATE,
-};
-new ADVERTS[10][ENUM_ADVERT], ads;
-
 enum ENUM_POLICECLOTHES {
     SKINID,
     SKINNAME[32]
@@ -648,6 +640,9 @@ enum ENUM_PLAYER_DATA {
         SentRAccept,
         AwaitingRAccept,
         SentRPrice,
+
+        SentAdv,
+        AdvMsg[100],
 
         RentingVehicle
 }
@@ -3448,6 +3443,106 @@ CMD:arrest(playerid, params[]){
         TextDrawShowForPlayer(playerid, CantCommand);
         SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
 
+    }
+    return 1;
+}
+
+Dialog:DIALOG_ADVERTS(playerid, response, listitem, inputtext[]){
+    
+    for (new i = 0; i < MAX_PLAYERS; i++) {
+        if(listitem == i - 1) {
+            new list[256], string[256];
+            format(list, sizeof(list), "Advert ID: %d\nAd Message: %s", i, pInfo[i][SentAdv]);
+            Dialog_Show(playerid, DIALOG_AD
+            , DIALOG_STYLE_MSG, "Advert", list, "Accept", "Decline");     
+            return 1;
+        }
+    }
+    return 1;
+}
+CMD:listallads(playerid, params[]){
+    new list[1000], string[200];
+    if(pInfo[playerid][pFactionId] == 4){
+        for(new i = 0; i < MAX_PLAYERS; i++){
+            if(pInfo[i][SentAdv] == 1){
+                format(string, sizeOf(string), "Advert ID: %d\n", i);
+                strcat(list, string);
+            }
+            Dialog_Show(playerid, DIALOG_ADVERTS, DIALOG_STYLE_LIST, "Available Adverts", list, "Accept", "");
+
+        }
+        
+    }
+    return 1;
+}
+
+CMD:acceptad(playerid, params[]){
+    if(pInfo[playerid][pFactionId] == 4){
+        new targetid, string[256];
+        if(sscanf(params, "d", targetid)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /acceptad [ID]");{
+            if(IsPlayerConnected(targetid)){
+                if(pInfo[targetid][SentAdv] == 1){
+                    pInfo[targetid][SentAdv] = 0;
+                    pInfo[targetid][pBank] -= 100;
+                    pInfo[playerid][pFactionPay] += 100;
+                    SendClientMessage(targetid, ADMINBLUE, "> Your advert has been accepted!");
+                    format(string, sizeof(string), "> You have accepted advert: %d! (+$100)", targetid);
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    format(string, sizeof(string), "[SANN Radio Advert]: %s, Contact Phone: %d.", pInfo[targetid][AdvMsg], pInfo[targetid][pPhoneNumber]);
+                    SendClientMessageToAll(-1, string);
+                    return 1;
+                }
+            }
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 1;
+}
+
+CMD:declinead(playerid, params[]){
+    if(pInfo[playerid][pFactionId] == 4){
+        new targetid, string[256];
+        if(sscanf(params, "d", targetid)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /declinead [ID]");{
+            if(IsPlayerConnected(targetid)){
+                if(pInfo[targetid][SentAdv] == 1){
+                    pInfo[targetid][SentAdv] = 0;
+                    SendClientMessage(targetid, ADMINBLUE, "> Your advert has been declined!");
+                    format(string, sizeof(string), "> You have declined advert: %d!", targetid);
+                    SendClientMessage(playerid, ADMINBLUE, string);
+                    return 1;
+                }
+            }
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 1;
+}
+
+CMD:sms(playerid, params[]){
+    new number, msg[100], string[256];
+    if(pInfo[playerid][pPhoneNumber] != 0 && pInfo[playerid][pPhoneModel] != 0){
+        if(sscanf(params, "ds[100]", number, msg)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /sms [NUMBER] [MESSAGE]");{
+            if(number == 3170){
+                if(strlen(msg) >= 5 || strlen(msg) <= 75){             
+                    pInfo[playerid][SentAdv] = 1;
+                    format(pInfo[playerid][AdvMsg], 100, "%s", msg);
+                    SendClientMessage(playerid, ADMINBLUE, "> You have sent an advert to be reviewed!");
+                    for(new i = 0; i < MAX_PLAYERS; i++){
+                        if(pInfo[i][pFactionId] == 4){
+                            format(string, sizeof(string), "> Ad received: %s, /acceptad to accept this advert!", playerid);
+                            SendClientMessageA(playerid, ADMINBLUE, string);
+                        }
+                    }
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Your advert must be between 5 and 75 characters long!");
+                    return 1;
+                }
+            }
+        }
     }
     return 1;
 }
