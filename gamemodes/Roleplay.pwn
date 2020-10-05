@@ -2372,7 +2372,7 @@ public OnPlayerText(playerid, text[]) {
             if(fInfo[3][IsLive] == 1){
                 new string[256];
                 format(string, sizeof(string), "{00bfff}SANN Radio: %s says: %s", RPName(playerid), text);
-                SendClientMessageToAll(-1, string);
+                SendClientMessageToAll(COLOR_AQUA, string);
             }
         } else {
             if(pInfo[playerid][OnCall] >= 1 && pInfo[playerid][OnCall] != 911 && pInfo[playerid][OnCall] != 3170){ 
@@ -2477,13 +2477,13 @@ public OnPlayerText(playerid, text[]) {
                 format(string, sizeof(string), "[PHONE]: %s", text);
                 SendClientMessage(playerid, -1, string);
                 format(string, sizeof(string), "{00bfff}SANN Radio: %s says: %s", RPName(playerid), text);
-                SendClientMessageToAll(-1, string);
+                SendClientMessageToAll(COLOR_AQUA, string);
             } else if(IsPlayerInAnyVehicle(playerid) && GetVehicleModel(GetPlayerVehicleID(playerid)) == 582){
                 new vid = GetPlayerVehicleID(playerid) - 1;
                 if(vInfo[vid][IsLive] == 1){
                     new string[256];
                     format(string, sizeof(string), "{00bfff}SANN Radio: %s says: %s", RPName(playerid), text);
-                    SendClientMessageToAll(-1, string);
+                    SendClientMessageToAll(COLOR_AQUA, string);
                 } else {
                     new string[256];
                     format(string, sizeof(string), "%s[%i] says: %s", RPName(playerid), playerid, text);
@@ -3449,14 +3449,16 @@ CMD:arrest(playerid, params[]){
 }
 
 Dialog:DIALOG_ADVERTS(playerid, response, listitem, inputtext[]){
-    for (new i = 0; i < MAX_PLAYERS; i++) {
-        if(listitem == i - 1) {
-            new list[256], string[256];
-            format(list, sizeof(list), "Advert ID: %d\nAd Message: %s", i, pInfo[i][SentAdv]);
-            pInfo[playerid][SelectedAd] = i;
-            Dialog_Show(playerid, DIALOG_ADVERTCHOICE, DIALOG_STYLE_MSGBOX, "Advert", list, "Accept", "Decline");     
-            return 1;
+    if(response){
+        new list[256], string[256];
+        for (new i = 0; i < MAX_PLAYERS; i++) {
+            if(listitem == i) {
+                format(list, sizeof(list), "{FFCC00}*-----LOADED ADVERTISEMENT-----*{A9C4E4}\n\nContact Phone: %d\nAd Message: %s\n\nPlease either accept, or decline this advert!", pInfo[i][pPhoneNumber], pInfo[i][SentAdv]);
+                pInfo[playerid][SelectedAd] = i;
+            }
         }
+        
+        Dialog_Show(playerid, DIALOG_ADVERTCHOICE, DIALOG_STYLE_MSGBOX, "Advert", list, "Accept", "Decline");
     }
     return 1;
 }
@@ -3470,7 +3472,7 @@ Dialog:DIALOG_ADVERTCHOICE(playerid, response, listitem, inputtext[]){
         SendClientMessage(pInfo[playerid][SelectedAd], ADMINBLUE, "> Your advert has been accepted!");
         format(string, sizeof(string), "> You have accepted advert: %d! (+$100)", pInfo[playerid][SelectedAd]);
         SendClientMessage(playerid, ADMINBLUE, string);
-        format(string, sizeof(string), "[SANN Radio Advert]: %s, Contact Phone: %d.", pInfo[pInfo[playerid][SelectedAd]][AdvMsg], pInfo[pInfo[playerid][SelectedAd]][pPhoneNumber]);
+        format(string, sizeof(string), "{00bfff}[SANN Radio Advert]: %s, Contact Phone: %d.", pInfo[pInfo[playerid][SelectedAd]][AdvMsg], pInfo[pInfo[playerid][SelectedAd]][pPhoneNumber]);
         SendClientMessageToAll(-1, string);
     } else {
         pInfo[pInfo[playerid][SelectedAd]][SentAdv] = 0;
@@ -3489,9 +3491,8 @@ CMD:listallads(playerid, params[]){
                 format(string, sizeof(string), "Advert ID: %d\n", i);
                 strcat(list, string);
             }
-            Dialog_Show(playerid, DIALOG_ADVERTS, DIALOG_STYLE_LIST, "Available Adverts", list, "Accept", "");
         }
-        
+        Dialog_Show(playerid, DIALOG_ADVERTS, DIALOG_STYLE_LIST, "Available Adverts", list, "Accept", "");
     }
     return 1;
 }
@@ -3508,7 +3509,7 @@ CMD:acceptad(playerid, params[]){
                     SendClientMessage(targetid, ADMINBLUE, "> Your advert has been accepted!");
                     format(string, sizeof(string), "> You have accepted advert: %d! (+$100)", targetid);
                     SendClientMessage(playerid, ADMINBLUE, string);
-                    format(string, sizeof(string), "[SANN Radio Advert]: %s, Contact Phone: %d.", pInfo[targetid][AdvMsg], pInfo[targetid][pPhoneNumber]);
+                    format(string, sizeof(string), "{00bfff}[SANN Radio Advert]: %s, Contact Phone: %d.", pInfo[targetid][AdvMsg], pInfo[targetid][pPhoneNumber]);
                     SendClientMessageToAll(-1, string);
                     return 1;
                 }
@@ -3553,7 +3554,7 @@ CMD:sms(playerid, params[]){
                     SendClientMessage(playerid, ADMINBLUE, "> You have sent an advert to be reviewed!");
                     for(new i = 0; i < MAX_PLAYERS; i++){
                         if(pInfo[i][pFactionId] == 4){
-                            format(string, sizeof(string), "> Ad received: %s, /acceptad to accept this advert!", playerid);
+                            format(string, sizeof(string), "> Ad received: %s, /acceptad %d to accept this advert!", pInfo[playerid][AdvMsg], playerid);
                             SendClientMessageA(playerid, ADMINBLUE, string);
                         }
                     }
