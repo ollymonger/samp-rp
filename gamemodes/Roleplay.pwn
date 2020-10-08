@@ -3484,31 +3484,20 @@ Dialog:DIALOG_ADVERTCHOICE(playerid, response, listitem, inputtext[]){
 }
 
 CMD:listallads(playerid, params[]){
-<<<<<<< HEAD
     new list[1000], string[200], available;
     if(pInfo[playerid][pFactionId] == 4){
         for(new i = 0; i < MAX_PLAYERS; i++){
             if(pInfo[i][SentAdv] == 1){
                 available++;
-=======
-    new list[1000], string[200];
-    if(pInfo[playerid][pFactionId] == 4){
-        for(new i = 0; i < MAX_PLAYERS; i++){
-            if(pInfo[i][SentAdv] == 1){
->>>>>>> 42f7c7fae610fbc6bbf4eb55ee87233cb9288d15
                 format(string, sizeof(string), "Advert ID: %d\n", i);
                 strcat(list, string);
             }
         }
-<<<<<<< HEAD
         if(available >= 1){
             Dialog_Show(playerid, DIALOG_ADVERTS, DIALOG_STYLE_LIST, "Available Adverts", list, "Accept", "");
         } else {
             Dialog_Show(playerid, DIALOG_NOADV, DIALOG_STYLE_MSGBOX, "Available Adverts", "{FFCC00}*-----LOADED ADVERTISEMENT-----*{A9C4E4}\n\nThere are currently no available adverts.", "Accept", "");
         }
-=======
-        Dialog_Show(playerid, DIALOG_ADVERTS, DIALOG_STYLE_LIST, "Available Adverts", list, "Accept", "");
->>>>>>> 42f7c7fae610fbc6bbf4eb55ee87233cb9288d15
     }
     return 1;
 }
@@ -4222,17 +4211,10 @@ CMD:help(playerid, params[]) {
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /takecall, /listallcalls, /endcall");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /duty, /dutyclothes");
                 }
-<<<<<<< HEAD
                 if(pInfo[playerid][pFactionId] == 4){
                     SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Faction Commands ::.");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /live, /listallads, /acceptad, /declinead");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /takecall, /endcall, /listallcalls");
-=======
-                if(pInfo[playerid][pFactionId] == 3){
-                    SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Faction Commands ::.");
-                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /live, /listallads, /acceptad, /declinead");
-                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /takecall, /endcall");
->>>>>>> 42f7c7fae610fbc6bbf4eb55ee87233cb9288d15
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /duty, /dutyclothes");
                 }
                 if(pInfo[playerid][pFactionRank] == 7){
