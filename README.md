@@ -19,8 +19,6 @@ streamer plugin
 ## Factions: (in this order)
 * Fort Caron Sheriff's Office (ID1)
 * Fort Carson EMS (ID2)
-* Towing Co (ID3)
-* San Andreas News Network (ID4)
 
 ## Faction Types:
 1 - gangs,

@@ -1,0 +1,141 @@
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[10:36:55] 
+[10:36:55] Server Plugins
+[10:36:55] --------------
+[10:36:55]  Loading plugin: mysql.dll
+[10:36:55]  >> plugin.mysql: R41-4 successfully loaded.
+[10:36:55]   Loaded.
+[10:36:55]  Loading plugin: crashdetect
+[10:36:55]   CrashDetect plugin 4.20
+[10:36:55]   Loaded.
+[10:36:55]  Loading plugin: streamer
+[10:36:55] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[10:36:55]   Loaded.
+[10:36:55]  Loading plugin: bcrypt-samp.dll
+[10:36:55]   plugin.bcrypt v2.2.3 was loaded.
+[10:36:55]   plugin.bcrypt: 4 cores detected, 3 threads will be used.
+[10:36:55]   Loaded.
+[10:36:55]  Loading plugin: sscanf
+[10:36:55] 
+
+[10:36:55]  ===============================
+
+[10:36:55]       sscanf plugin loaded.     
+
+[10:36:55]          Version:  2.8.3        
+
+[10:36:55]   (c) 2018 Alex "Y_Less" Cole  
+
+[10:36:55]  ===============================
+
+[10:36:55]   Loaded.
+[10:36:55]  Loaded 5 plugins.
+
+[10:36:55] 
+[10:36:55] Filterscripts
+[10:36:55] ---------------
+[10:36:55]   Loading filterscript 'CLOCK.amx'...
+[10:36:56] Clock loaded
+[10:36:56]   Loading filterscript 'menu.amx'...
+[10:36:56] 
+--------------------------------------
+[10:36:56]  In-Game Menu Filterscript
+[10:36:56] --------------------------------------
+
+[10:36:56]   Loading filterscript 'fcpdmap.amx'...
+[10:36:56] 
+--------------------------------------
+[10:36:56]  Loading FCPD mapping!
+[10:36:56] --------------------------------------
+
+[10:36:56]   Loading filterscript 'hospmap.amx'...
+[10:36:56] 
+--------------------------------------
+[10:36:56]  Loading hOSP mapping!
+[10:36:56] --------------------------------------
+
+[10:36:56]   Loading filterscript 'towco.amx'...
+[10:36:56] 
+--------------------------------------
+[10:36:56]  Loading Towing Co mapping!
+[10:36:56] --------------------------------------
+
+[10:36:56]   Loaded 5 filterscripts.
+
+[10:36:58] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[10:36:58] [debug] Long callback execution detected (hang or performance issue)
+[10:36:58] [debug] AMX backtrace:
+[10:36:58] [debug] #0 000208fc in public CreateBusStopObjects () at Roleplay.pwn:1264
+[10:36:58] [debug] #1 0001a248 in public SSCANF_OnGameModeInit () at Roleplay.pwn:793
+[10:36:58] [debug] #2 00012548 in public PDialog_OnGameModeInit () at C:\Users\o\Desktop\samp-rp\pawno\include\sscanf2.inc:211
+[10:36:58] [debug] #3 0000cef0 in public zcmd_OnGameModeInit () at C:\Users\o\Desktop\samp-rp\pawno\include\betterdialogs.inc:812
+[10:36:58] [debug] #4 native CallLocalFunction () in samp-server.exe
+[10:36:58] [debug] #5 0000130c in public BCRYPT_OnGameModeInit () at C:\Users\o\Desktop\samp-rp\pawno\include\zcmd.inc:68
+[10:36:58] [debug] #6 native CallLocalFunction () in samp-server.exe
+[10:36:58] [debug] #7 00000c6c in public OnGameModeInit () at C:\Users\o\Desktop\samp-rp\pawno\include\bcrypt.inc:75
+[10:36:58] 
+----------------------------------
+[10:36:58]  Gamemode started... please wait...
+[10:36:58] ----------------------------------
+
+[10:36:58] Number of vehicle models: 0
+[10:36:58] plugin.bcrypt: Version check failed.
+[10:36:59] ** [MYSQL]:Loaded 4 jobs from the database.
+[10:36:59] [debug] Long callback execution detected (hang or performance issue)
+[10:36:59] [debug] AMX backtrace:
+[10:36:59] [debug] #0 00029db0 in public FacsReceived () at Roleplay.pwn:1659
+[10:36:59] ** [MYSQL]:Loaded 3 facs from the database.
+[10:37:00] ** [MYSQL]:Loaded 3 houses from the database.
+[10:37:01] ** [MYSQL]:Loaded 5 businesses from the database.
+[10:37:01] [debug] Long callback execution detected (hang or performance issue)
+[10:37:01] [debug] AMX backtrace:
+[10:37:01] [debug] #0 00022418 in public VehsReceived () at Roleplay.pwn:1347
+[10:37:05] ** [MYSQL] Loaded 45 vehicles from the database!
+[10:37:05] ** [MYSQL] Loaded 2 drugs
+[10:37:42] [connection] 127.0.0.1:49841 requests connection cookie.
+[10:37:43] [connection] incoming connection: 127.0.0.1:49841 id: 0
+[10:37:43] [join] testaccounts_2 has joined the server (0:127.0.0.1)
+[10:37:43] [debug] Long callback execution detected (hang or performance issue)
+[10:37:43] [debug] AMX backtrace:
+[10:37:43] [debug] #0 0002e56c in public SSCANF_OnPlayerConnect (playerid=0) at Roleplay.pwn:1907
+[10:37:43] [debug] #1 0001263c in public PDialog_OnPlayerConnect (playerid=0) at C:\Users\o\Desktop\samp-rp\pawno\include\sscanf2.inc:242
+[10:37:43] [debug] #2 0000d034 in public OnPlayerConnect (playerid=0) at C:\Users\o\Desktop\samp-rp\pawno\include\betterdialogs.inc:889
+[10:38:09] sscanf warning: Strings without a length are deprecated, please add a destination size.
+[10:40:42] [debug] Server received interrupt signal while executing Roleplay.amx
+[10:40:42] [debug] AMX backtrace:
+[10:40:42] [debug] #0 native mysql_query () in mysql.dll
+[10:40:42] [debug] #1 00037604 in public SavePlayerData (playerid=0) at Roleplay.pwn:2284
+[10:40:42] [debug] #2 00034e40 in public SSCANF_OnPlayerDisconnect (playerid=0, reason=1) at Roleplay.pwn:2173
+[10:40:42] [debug] #3 00012688 in public PDialog_OnPlayerDisconnect (playerid=0, reason=1) at C:\Users\o\Desktop\samp-rp\pawno\include\sscanf2.inc:266
+[10:40:42] [debug] #4 0000d0d4 in public OnPlayerDisconnect (playerid=0, reason=1) at C:\Users\o\Desktop\samp-rp\pawno\include\betterdialogs.inc:910
+[10:40:42] [debug] Native backtrace:
+[10:40:42] [debug] #0 77de3acc in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[10:40:43] ** [MYSQL] Player:testaccounts_2 data has been saved! Disconnecting user...
+[10:40:43] [part] testaccounts_2 has left the server (0:1)
+[10:40:43] --- Server Shutting Down.
+[10:40:43] plugin.mysql: Unloading plugin...
+[10:50:44] plugin.mysql: Plugin unloaded.
+[10:50:44] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[10:50:44] plugin.bcrypt: Plugin unloaded.
+[10:50:44] 
+
+[10:50:44]  ===============================
+
+[10:50:44]      sscanf plugin unloaded.    
+
+[10:50:44]  ===============================
+
