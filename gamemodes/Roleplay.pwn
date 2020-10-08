@@ -14,6 +14,24 @@
 #include <cuffs>
 #include <multilines>
 
+#define Labels // 3D Labels above the Fires 
+#define Holding(%0) \
+	((newkeys & (%0)) == (%0))
+#define MAX_FIRES 100
+forward OnFireKill(ID, killerid);
+forward VehicleToPoint(Float:radi, vehicleid, Float:x, Float:y, Float:z);
+forward HealthDown();
+new
+    FireObj[MAX_FIRES],
+    Float:FirePos[MAX_FIRES][3],
+	TotalFires = 0,
+	FireHealth[MAX_FIRES],
+	FireHealthMax[MAX_FIRES];
+
+#if defined Labels
+new Text3D:FireText[MAX_FIRES];
+#endif
+
 #define BCRYPT_COST 12
 #define lenull(%1) \
 ((!( % 1[0])) || ((( % 1[0]) == '\1') && (!( % 1[1]))))
@@ -61,6 +79,8 @@ new busInfoPickup[100], busEntPickup[100], busExitPickup[100], busUsePickup[100]
 new houseInfoPickup[100], houseEntPickup[100], houseExitPickup[100];
 new facInfoPickup[100], facDutyPickup[100], facClothesPickup[100];
 new facEntPickup[100], facExitPickup[100];
+
+new fireCallTimer;
 
 new PlayerText:VEHSTUFF[MAX_PLAYERS][5];
 
@@ -2638,8 +2658,149 @@ CMD:duty(playerid, params[]){
     }
     return 1;
 }
+
 stock GiveSpecificWeapons(playerid){
 
+    return 1;
+}
+
+forward public startARandomFire();
+public startARandomFire(){
+    return 1;
+}
+
+
+stock AddFire(Float:x, Float:y, Float:z, Health)
+{
+    TotalFires++;
+	new fireID = TotalFires;
+	FireObj[fireID] = CreateObject(3461, x, y, z-2.61, 0, 0, 0.0);
+	FirePos[fireID][0] = x, FirePos[fireID][1] = y, FirePos[fireID][2] = z;
+	FireHealth[fireID] = Health;
+	FireHealthMax[fireID] = Health;
+	#if defined Labels
+	    new string[128];
+	    format(string, sizeof(string), "%d/%d", FireHealth[fireID], FireHealthMax[fireID]);
+	    FireText[fireID] = Create3DTextLabel(string, 0xFFFFFFFFF, x, y, z, 20, 0);
+	#endif
+}
+
+
+stock DeleteFire(fiID)
+{
+	DestroyObject(FireObj[fiID]);
+	TotalFires--;
+	FirePos[fiID][0] = 0, FirePos[fiID][1] = 0, FirePos[fiID][2] = 0;
+	#if defined Labels
+	    Delete3DTextLabel(FireText[fiID]);
+	#endif
+}
+stock DeleteAllFire()
+{
+	new fiID;
+	for(fiID = 0; ID<MAX_FIRES; fiID++)
+	{
+		DestroyObject(FireObj[fiID]);
+		TotalFires= 0;
+		FirePos[fiID][0] = 0, FirePos[fiID][1] = 0, FirePos[fiID][2] = 0;
+		#if defined Labels
+	    	Delete3DTextLabel(FireText[i]);
+		#endif
+	}
+}
+stock IsValidFire(firID)
+{
+	if( (FirePos[firID][0] != 0) && (FirePos[firID][1] != 0) && (FirePos[firID][2] != 0) ) return true;
+	else return false;
+}
+
+stock GetClosestFire(playerid)
+{
+	new i;
+	for(i = 0; i<MAX_FIRES; i++)
+	{
+	    if(IsValidFire(i) && IsPlayerInRangeOfPoint(playerid, 1, FirePos[i][0],  FirePos[i][1],  FirePos[i][2]))
+	    {
+	        return i;
+		}
+	}
+	return 0;
+}
+
+
+
+
+
+Float:DistanceCameraTargetToLocation(Float:CamX, Float:CamY, Float:CamZ,   Float:ObjX, Float:ObjY, Float:ObjZ,   Float:FrX, Float:FrY, Float:FrZ) {
+
+	new Float:TGTDistance;
+	TGTDistance = floatsqroot((CamX - ObjX) * (CamX - ObjX) + (CamY - ObjY) * (CamY - ObjY) + (CamZ - ObjZ) * (CamZ - ObjZ));
+	new Float:tmpX, Float:tmpY, Float:tmpZ;
+	tmpX = FrX * TGTDistance + CamX;
+	tmpY = FrY * TGTDistance + CamY;
+	tmpZ = FrZ * TGTDistance + CamZ;
+	return floatsqroot((tmpX - ObjX) * (tmpX - ObjX) + (tmpY - ObjY) * (tmpY - ObjY) + (tmpZ - ObjZ) * (tmpZ - ObjZ));
+}
+
+stock PlayerFaces(playerid, Float:x, Float:y, Float:z, Float:radius)
+{
+        new Float:cx,Float:cy,Float:cz,Float:fx,Float:fy,Float:fz;
+        GetPlayerCameraPos(playerid, cx, cy, cz);
+        GetPlayerCameraFrontVector(playerid, fx, fy, fz);
+        return (radius >= DistanceCameraTargetToLocation(cx, cy, cz, x, y, z, fx, fy, fz));
+}
+
+public VehicleToPoint(Float:radi, vehicleid, Float:x, Float:y, Float:z)
+{
+		new Float:oldposx, Float:oldposy, Float:oldposz;
+		new Float:tempposx, Float:tempposy, Float:tempposz;
+		GetVehiclePos(vehicleid, oldposx, oldposy, oldposz);
+		tempposx = (oldposx -x);
+		tempposy = (oldposy -y);
+		tempposz = (oldposz -z);
+		//printf("DEBUG: X:%f Y:%f Z:%f",posx,posy,posz);
+		if (((tempposx < radi) && (tempposx > -radi)) && ((tempposy < radi) && (tempposy > -radi)) && ((tempposz < radi) && (tempposz > -radi)))
+		{
+			return 1;
+		}
+		return 0;
+}
+
+public HealthDown()
+{
+	new i,v,p;
+	for(i = 0; i<MAX_FIRES; i++)
+	{
+		if(IsValidFire(i))
+		{
+			for(p = 0; p<MAX_PLAYERS; p++)
+			{
+				if(IsPlayerInRangeOfPoint(p, 1, FirePos[i][0], FirePos[i][1], FirePos[i][2]) && !IsPlayerInAnyVehicle(p))
+				{
+	  				new Float:HP;
+		    		GetPlayerHealth(p, HP);
+	  				SetPlayerHealth(p, HP-4);
+				}	
+			}
+			for(v = 0; v<MAX_VEHICLES; v++)
+			{
+				if(VehicleToPoint(2, v, FirePos[i][0], FirePos[i][1], FirePos[i][2]))
+				{
+					new Float:HP;
+		    		GetVehicleHealth(v, HP);
+	  				SetVehicleHealth(v, HP-30);
+				}
+			}
+		}
+	}
+}
+
+CMD:createfire(playerid, params[]){
+    new Float:x, Float:y, Float:z;
+    GetPlayerPos(playerid, x, y, z);
+    AddFire(x, y, z, 100);
+    SendClientMessage(playerid, -1, "Testing fire created. Extinguisher given.");
+    GivePlayerWeapon(playerid, 42, 500);
     return 1;
 }
 
@@ -6532,6 +6693,37 @@ public OnRconLoginAttempt(ip[], password[], success) {
 }
 
 public OnPlayerUpdate(playerid) {
+    new newkeys,l,u;
+	GetPlayerKeys(playerid, newkeys, l, u);
+	new i;
+	if(Holding(KEY_FIRE))
+	{
+        if(GetPlayerWeapon(playerid) == 42)
+        {
+            for(i = 0; i<MAX_FIRES; i++)
+ 	    	{
+ 	        	if(IsValidFire(i))
+ 	        	{
+ 	        	    if(PlayerFaces(playerid, FirePos[i][0],  FirePos[i][1],  FirePos[i][2], 1) && IsPlayerInRangeOfPoint(playerid, 4, FirePos[i][0],  FirePos[i][1],  FirePos[i][2]))
+ 	        		{
+			    		FireHealth[i]-=2;
+					    #if defined Labels
+				    		new string[128];
+					    	format(string, sizeof(string), "%d/%d", FireHealth[i], FireHealthMax[i]);
+							Update3DTextLabelText(FireText[i], 0xFFFFFFFF, string);
+					    	//Delete3DTextLabel(FireText[i]);
+						//FireText[i] = Create3DTextLabel(string, 0xFFFFFFFF, FirePos[i][0],  FirePos[i][1],  FirePos[i][2], 20, 0);
+					    #endif
+					    if(FireHealth[i] <= 0)
+					    {
+							DeleteFire(i);
+							CallRemoteFunction("OnFireDeath", "dd", i, playerid);
+						}
+					}
+				}
+			}
+		}
+	}
     return 1;
 }
 
