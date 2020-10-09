@@ -2439,6 +2439,16 @@ public OnPlayerText(playerid, text[]) {
                         pInfo[playerid][CalledService] = 2;
                         pInfo[playerid][AwaitingReason] = 1;
                     }
+                    
+                    if(strfind(text, "firefighter", true) != -1){
+                        new string[256];
+                        format(string, sizeof(string), "[PHONE]: %s", text);
+                        SendClientMessage(playerid, -1, string);
+                        format(string, sizeof(string), "[PHONE]: We're putting you through now! Any information for the firefighters?");
+                        SendClientMessageA(playerid, -1, string);
+                        pInfo[playerid][CalledService] = 3;
+                        pInfo[playerid][AwaitingReason] = 1;
+                    }
                 } else {     
                     if(pInfo[playerid][CalledService] == 1){
                         new string[256];     
@@ -2471,6 +2481,27 @@ public OnPlayerText(playerid, text[]) {
                         format(msg, sizeof(msg), "%s", text);
                         AlertMedics(playerid, msg,0, px, py, pz);
                         format(string, sizeof(string), "[PHONE]: Thank you. The medics have been notified.");
+
+                        SendClientMessage(playerid, -1, string);
+                        pInfo[playerid][CalledService] = 0;
+                        pInfo[playerid][AwaitingReason] = 0;
+                        pInfo[playerid][OnCall] = 0;
+                        
+                        format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        
+                        SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
+                    }
+                    if(pInfo[playerid][CalledService] == 3){
+                        new string[256];     
+                        format(string, sizeof(string), "[PHONE]: %s", text);
+                        SendClientMessage(playerid, -1, string);
+                        new Float:px, Float:py, Float:pz;
+                        GetPlayerPos(playerid, px, py, pz);
+                        new msg[50];
+                        format(msg, sizeof(msg), "%s", text);
+                        AlertMedics(playerid, msg,0, px, py, pz);
+                        format(string, sizeof(string), "[PHONE]: Thank you. The firefighters have been notified.");
 
                         SendClientMessage(playerid, -1, string);
                         pInfo[playerid][CalledService] = 0;
@@ -7020,9 +7051,10 @@ public OnPlayerUpdate(playerid) {
 					    if(FireHealth[i] <= 0)
 					    {
                             if(pInfo[playerid][pFactionId] == 2){
-                                pay = (FireHealthMax[i] / 255) * 100;
+                                new firehp;
+                                firehp = FireHealthMax[i];
+                                pay = (firehp / 255) * 100;
                                 pInfo[playerid][pFactionPay] += pay;
-                                new string[256];
                                 format(string, sizeof(string), "> You have extinguished a fire! (+$%d)", pay);
                                 sInfo[0][firePutOut] = 1;
                                 SendClientMessage(playerid, ADMINBLUE, string);
