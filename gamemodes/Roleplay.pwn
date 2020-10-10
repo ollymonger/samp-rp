@@ -5497,11 +5497,11 @@ CMD:lock(playerid, params[]){
                 GetVehicleParamsEx(i, engine, lights, alarm, doors, bonnet, boot, objective);
                 if(doors == 1){
                     SetVehicleParamsEx(i, engine, lights, alarm, false, bonnet, boot, objective);
-                    format(string, sizeof(string), "* %s takes their keys and unlocks the vehicle.", RPName(playerid));
+                    format(string, sizeof(string), "* %s takes their keys and unlocks the %s.", RPName(playerid), VehicleNames[GetVehicleModel(i) - 400]);
                     nearByAction(playerid, NICESKY, string);
                 } else {
                     SetVehicleParamsEx(i, engine, lights, alarm, true, bonnet, boot, objective);
-                    format(string, sizeof(string), "* %s takes their keys and locks the vehicle.", RPName(playerid));
+                    format(string, sizeof(string), "* %s takes their keys and locks the %s.", RPName(playerid), VehicleNames[GetVehicleModel(i) - 400]);
                     nearByAction(playerid, NICESKY, string);
                 }
             }
@@ -7105,6 +7105,30 @@ stock GetAllFiresAtAddress(playerid, Address){
                 SendClientMessage(playerid, -1, string);
                 
                 sInfo[0][firePutOut] = 1;
+                if(sInfo[0][lastFireType] == 1){
+                    for(new fi = 0; fi < loadedFac; fi++){
+                        if(fInfo[fi][OnFire] == 1){
+                            fInfo[fi][OnFire] = 0;
+                            return 1;
+                        }
+                    }
+                }
+                if(sInfo[0][lastFireType] == 2){
+                    for(new bi = 0; bi < loadedBus; bi++){
+                        if(bInfo[bi][OnFire] == 1){
+                            bInfo[bi][OnFire] = 0;
+                            return 1;
+                        }
+                    }
+                }
+                if(sInfo[0][lastFireType] == 3){
+                    for(new hi = 0; hi < loadedHouse; hi++){
+                        if(hInfo[hi][OnFire] == 1){
+                            hInfo[hi][OnFire] = 0;
+                            return 1;
+                        }
+                    }
+                }
             }
         }
         return 1;

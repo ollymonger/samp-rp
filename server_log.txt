@@ -1,0 +1,211 @@
+[00:23:04] plugin.mysql: Plugin unloaded.
+[00:23:04] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[00:23:04] plugin.bcrypt: Plugin unloaded.
+[00:23:04] 
+
+[00:23:04]  ===============================
+
+[00:23:04]      sscanf plugin unloaded.    
+
+[00:23:04]  ===============================
+
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[00:25:12] 
+[00:25:12] Server Plugins
+[00:25:12] --------------
+[00:25:12]  Loading plugin: mysql.dll
+[00:25:12]  >> plugin.mysql: R41-4 successfully loaded.
+[00:25:12]   Loaded.
+[00:25:12]  Loading plugin: crashdetect
+[00:25:12]   CrashDetect plugin 4.20
+[00:25:12]   Loaded.
+[00:25:12]  Loading plugin: streamer
+[00:25:12] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[00:25:12]   Loaded.
+[00:25:12]  Loading plugin: bcrypt-samp.dll
+[00:25:12]   plugin.bcrypt v2.2.3 was loaded.
+[00:25:12]   plugin.bcrypt: 4 cores detected, 3 threads will be used.
+[00:25:12]   Loaded.
+[00:25:12]  Loading plugin: sscanf
+[00:25:12] 
+
+[00:25:12]  ===============================
+
+[00:25:12]       sscanf plugin loaded.     
+
+[00:25:12]          Version:  2.8.3        
+
+[00:25:12]   (c) 2018 Alex "Y_Less" Cole  
+
+[00:25:12]  ===============================
+
+[00:25:12]   Loaded.
+[00:25:12]  Loaded 5 plugins.
+
+[00:25:12] 
+[00:25:12] Filterscripts
+[00:25:12] ---------------
+[00:25:12]   Loading filterscript 'CLOCK.amx'...
+[00:25:12] Clock loaded
+[00:25:12]   Loading filterscript 'menu.amx'...
+[00:25:12] 
+--------------------------------------
+[00:25:12]  In-Game Menu Filterscript
+[00:25:12] --------------------------------------
+
+[00:25:12]   Loading filterscript 'fcpdmap.amx'...
+[00:25:12] 
+--------------------------------------
+[00:25:12]  Loading FCPD mapping!
+[00:25:12] --------------------------------------
+
+[00:25:12]   Loading filterscript 'hospmap.amx'...
+[00:25:12] 
+--------------------------------------
+[00:25:12]  Loading hOSP mapping!
+[00:25:12] --------------------------------------
+
+[00:25:12]   Loading filterscript 'towco.amx'...
+[00:25:12] 
+--------------------------------------
+[00:25:12]  Loading Towing Co mapping!
+[00:25:12] --------------------------------------
+
+[00:25:12]   Loading filterscript 'sann.amx'...
+[00:25:12] 
+--------------------------------------
+[00:25:12]  Loading SANN mapping!
+[00:25:12] --------------------------------------
+
+[00:25:12]   Loaded 6 filterscripts.
+
+[00:25:13] ** [MYSQL] Connected successfully! Proceeding to load the gamemode!
+[00:25:13] [debug] Long callback execution detected (hang or performance issue)
+[00:25:13] [debug] AMX backtrace:
+[00:25:13] [debug] #0 0001a574 in public SSCANF_OnGameModeInit () at Roleplay.pwn:845
+[00:25:13] [debug] #1 000126c0 in public PDialog_OnGameModeInit () at C:\Users\o\Desktop\samp-rp\pawno\include\sscanf2.inc:211
+[00:25:13] [debug] #2 0000d068 in public zcmd_OnGameModeInit () at C:\Users\o\Desktop\samp-rp\pawno\include\betterdialogs.inc:812
+[00:25:13] [debug] #3 native CallLocalFunction () in samp-server.exe
+[00:25:13] [debug] #4 00001484 in public BCRYPT_OnGameModeInit () at C:\Users\o\Desktop\samp-rp\pawno\include\zcmd.inc:68
+[00:25:13] [debug] #5 native CallLocalFunction () in samp-server.exe
+[00:25:13] [debug] #6 00000de4 in public OnGameModeInit () at C:\Users\o\Desktop\samp-rp\pawno\include\bcrypt.inc:75
+[00:25:13] 
+----------------------------------
+[00:25:13]  Gamemode started... please wait...
+[00:25:13] ----------------------------------
+
+[00:25:13] Number of vehicle models: 0
+[00:25:13] plugin.bcrypt: Version check failed.
+[00:25:13] ** [MYSQL]:Loaded 4 jobs from the database.
+[00:25:14] [debug] Long callback execution detected (hang or performance issue)
+[00:25:14] [debug] AMX backtrace:
+[00:25:14] [debug] #0 00028e7c in public FacsReceived () at Roleplay.pwn:1677
+[00:25:14] ** [MYSQL]:Loaded 5 facs from the database.
+[00:25:14] ** [MYSQL]:Loaded 1 houses from the database.
+[00:25:15] [debug] Long callback execution detected (hang or performance issue)
+[00:25:15] [debug] AMX backtrace:
+[00:25:15] [debug] #0 000240a4 in public BusReceived () at Roleplay.pwn:1460
+[00:25:15] ** [MYSQL]:Loaded 5 businesses from the database.
+[00:25:16] [debug] Long callback execution detected (hang or performance issue)
+[00:25:16] [debug] AMX backtrace:
+[00:25:16] [debug] #0 0002276c in public VehsReceived () at Roleplay.pwn:1394
+[00:25:19] ** [MYSQL] Loaded 47 vehicles from the database!
+[00:25:19] ** [MYSQL] Loaded 2 drugs
+[00:25:34] [connection] 127.0.0.1:53959 requests connection cookie.
+[00:25:35] [connection] incoming connection: 127.0.0.1:53959 id: 0
+[00:25:35] [join] testaccounts_2 has joined the server (0:127.0.0.1)
+[00:25:35] [debug] Long callback execution detected (hang or performance issue)
+[00:25:35] [debug] AMX backtrace:
+[00:25:35] [debug] #0 0002bc94 in public SSCANF_OnPlayerConnect (playerid=0) at Roleplay.pwn:1839
+[00:25:35] [debug] #1 000127b4 in public PDialog_OnPlayerConnect (playerid=0) at C:\Users\o\Desktop\samp-rp\pawno\include\sscanf2.inc:242
+[00:25:35] [debug] #2 0000d1ac in public OnPlayerConnect (playerid=0) at C:\Users\o\Desktop\samp-rp\pawno\include\betterdialogs.inc:889
+[00:25:40] starting random fire, 0sinfo
+[00:25:40] 1
+[00:25:40] Selected faction fire ID: 3
+[00:25:40] Three random fires generated.
+[00:25:40] [debug] Long callback execution detected (hang or performance issue)
+[00:25:40] [debug] AMX backtrace:
+[00:25:40] [debug] #0 00042278 in threeRandomFires (Float:x=-112.32600, Float:y=1136.23999, Float:z=19.74220, Health=681, Address=2003) at Roleplay.pwn:2922
+[00:25:40] [debug] #1 00040634 in public startARandomFire () at Roleplay.pwn:2847
+[00:25:40] Three random fires generated.
+[00:25:40] Faction fire started at: 2003.street!
+[00:25:43] 1
+[00:27:56] [debug] Long callback execution detected (hang or performance issue)
+[00:27:56] [debug] AMX backtrace:
+[00:27:56] [debug] #0 000001e4 in bool:operator!=(Float:,_:) (Float:oper1=0.00000, oper2=0) at C:\Users\o\Desktop\samp-rp\pawno\include\float.inc:243
+[00:27:56] [debug] #1 00043104 in IsValidFire (firID=58) at Roleplay.pwn:2977
+[00:27:56] [debug] #2 0007ee60 in public OnPlayerUpdate (playerid=0) at Roleplay.pwn:7056
+[00:27:56] [debug] Long callback execution detected (hang or performance issue)
+[00:27:56] [debug] AMX backtrace:
+[00:27:56] [debug] #0 000001b8 in bool:operator!=(Float:,_:) (Float:oper1=0.00000, oper2=0) at C:\Users\o\Desktop\samp-rp\pawno\include\float.inc:243
+[00:27:56] [debug] #1 00043104 in IsValidFire (firID=54) at Roleplay.pwn:2977
+[00:27:56] [debug] #2 0007ee60 in public OnPlayerUpdate (playerid=0) at Roleplay.pwn:7056
+[00:28:16] [debug] Long callback execution detected (hang or performance issue)
+[00:28:16] [debug] AMX backtrace:
+[00:28:16] [debug] #0 0004309c in public OnPlayerUpdate (playerid=0) at Roleplay.pwn:2971
+[00:28:58] [debug] Server received interrupt signal while executing Roleplay.amx
+[00:28:58] [debug] AMX backtrace:
+[00:28:58] [debug] #0 native mysql_query () in mysql.dll
+[00:28:58] [debug] #1 0003813c in public SavePlayerData (playerid=0) at Roleplay.pwn:2350
+[00:28:58] [debug] #2 00035090 in public SSCANF_OnPlayerDisconnect (playerid=0, reason=1) at Roleplay.pwn:2218
+[00:28:58] [debug] #3 00012800 in public PDialog_OnPlayerDisconnect (playerid=0, reason=1) at C:\Users\o\Desktop\samp-rp\pawno\include\sscanf2.inc:266
+[00:28:58] [debug] #4 0000d24c in public OnPlayerDisconnect (playerid=0, reason=1) at C:\Users\o\Desktop\samp-rp\pawno\include\betterdialogs.inc:910
+[00:28:58] [debug] Native backtrace:
+[00:28:58] [debug] #0 77de3acc in ?? () in C:\WINDOWS\SYSTEM32\ntdll.dll
+[00:28:58] [debug] #1 68980081 in ?? () in C:\WINDOWS\SYSTEM32\MSVCP140.dll
+[00:28:58] [debug] #2 689677a9 in ?? () in C:\WINDOWS\SYSTEM32\MSVCP140.dll
+[00:28:58] [debug] #3 68967afd in ?? () in C:\WINDOWS\SYSTEM32\MSVCP140.dll
+[00:28:58] [debug] #4 7321ba99 in ?? () in log-core.dll
+[00:28:58] [debug] #5 7321d623 in ?? () in log-core.dll
+[00:28:58] [debug] #6 6e7ecdbf in ?? () in plugins\mysql.dll
+[00:28:58] [debug] #7 6e7dc947 in ?? () in plugins\mysql.dll
+[00:28:58] [debug] #8 6e7e3c76 in ?? () in plugins\mysql.dll
+[00:28:58] [debug] #9 6e7fcb72 in ?? () in plugins\mysql.dll
+[00:28:58] [debug] #10 004010b6 in ?? () in samp-server.exe
+[00:28:58] [debug] #11 6d9cf96e in ?? () in plugins\crashdetect.DLL
+[00:28:58] [debug] #12 6d9d5a81 in ?? () in plugins\crashdetect.DLL
+[00:28:58] [debug] #13 6d9c91a5 in ?? () in plugins\crashdetect.DLL
+[00:28:58] [debug] #14 6d9cf9dc in ?? () in plugins\crashdetect.DLL
+[00:28:58] [debug] #15 6d773484 in ?? () in plugins\streamer.DLL
+[00:28:58] [debug] #16 0046d9bb in ?? () in samp-server.exe
+[00:28:58] [debug] #17 004665ee in ?? () in samp-server.exe
+[00:28:58] [debug] #18 6492de4a in ?? () in plugins\bcrypt-samp.dll
+[00:28:58] [debug] #19 686eeeae in ?? () in C:\WINDOWS\SYSTEM32\MSVCP120.dll
+[00:28:58] [debug] #20 6492e1d4 in ?? () in plugins\bcrypt-samp.dll
+[00:28:58] [debug] #21 00491093 in ?? () in samp-server.exe
+[00:28:58] [debug] #22 0049125c in ?? () in samp-server.exe
+[00:28:58] [debug] #23 0048d4db in ?? () in samp-server.exe
+[00:28:58] [debug] #24 0049b4a1 in ?? () in samp-server.exe
+[00:28:58] [debug] #25 0049b4b1 in ?? () in samp-server.exe
+[00:28:58] ** [MYSQL] Player:testaccounts_2 data has been saved! Disconnecting user...
+[00:28:58] [part] testaccounts_2 has left the server (0:1)
+[00:28:58] --- Server Shutting Down.
+[00:28:58] plugin.mysql: Unloading plugin...
+[00:36:58] plugin.mysql: Plugin unloaded.
+[00:36:58] 
+
+*** Streamer Plugin v2.9.4 by Incognito unloaded ***
+
+[00:36:58] plugin.bcrypt: Plugin unloaded.
+[00:36:58] 
+
+[00:36:58]  ===============================
+
+[00:36:58]      sscanf plugin unloaded.    
+
+[00:36:58]  ===============================
+
