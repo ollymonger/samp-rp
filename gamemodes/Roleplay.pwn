@@ -26,6 +26,7 @@ new
     Float:FirePos[MAX_FIRES][3],
 	TotalFires = 0,
 	FireHealth[MAX_FIRES],
+    FireAddress[MAX_FIRES],
 	FireHealthMax[MAX_FIRES];
 
 #if defined Labels
@@ -2747,14 +2748,14 @@ public startARandomFire(){
             printf("Selected faction fire ID: %d", randomID);
             for(new i = 0; i < loadedFac; i++){
                 if(fInfo[i][fID] == randomID && fInfo[i][fAddress] != 999999){
-                    if(fInfo[i][fEntX] != 0){
-                        AddFire(fInfo[i][fEntX], fInfo[i][fEntY], fInfo[i][fEntZ], randomEx(250,700));
-                        AddFire(fInfo[i][fExitX], fInfo[i][fExitY], fInfo[i][fExitZ], randomEx(250, 600));
-                        AddFire(fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ], randomEx(250, 600));
+                    if(fInfo[i][fEntX] != 0) {
+                        threeRandomFires(fInfo[i][fEntX], fInfo[i][fEntY], fInfo[i][fEntZ], randomEx(125, 600), fInfo[i][fAddress]);
+                        AddFire(fInfo[i][fExitX], fInfo[i][fExitY], fInfo[i][fExitZ], randomEx(125, 600), fInfo[i][fAddress]);
+                        threeRandomFires(fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ], randomEx(125, 600), fInfo[i][fAddress]);
                     }
                     if(fInfo[i][fEntX] == 0){
-                        AddFire(fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ], randomEx(250, 600));
-                        AddFire(fInfo[i][fDutyX], fInfo[i][fDutyX], fInfo[i][fDutyZ], randomEx(250, 600));
+                        threeRandomFires(fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ], randomEx(125, 600), fInfo[i][fAddress]);
+                        threeRandomFires(fInfo[i][fDutyX], fInfo[i][fDutyY], fInfo[i][fDutyZ], randomEx(125, 600), fInfo[i][fAddress]);
                     }
                     new string[50];
                     format(string, sizeof(string), "%d.street is on fire! Responders needed ASAP!", fInfo[i][fAddress]);
@@ -2777,14 +2778,13 @@ public startARandomFire(){
             printf("Selected business fire ID: %d", randomID);
             for(new i = 0; i < loadedBus; i++){
                 if(bInfo[i][bId] == randomID){
-                    if(bInfo[i][bEntX] != 0){
-                        AddFire(bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ], randomEx(250,700));
-                        AddFire(bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ], randomEx(250, 600));
-                        AddFire(bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], randomEx(250, 600));
+                    if(bInfo[i][bEntX] != 0) {
+                        threeRandomFires(bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ], randomEx(125, 600), bInfo[i][bAddress]);
+                        AddFire(bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ], randomEx(125, 600), bInfo[i][bAddress]);
+                        threeRandomFires(bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], randomEx(125, 600), bInfo[i][bAddress]);
                     }
                     if(bInfo[i][bEntX] == 0){
-                        AddFire(bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], randomEx(250, 600));
-                        AddFire(bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ], randomEx(250, 600));
+                        threeRandomFires(bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], randomEx(125, 600), bInfo[i][bAddress]);
                     }
                     new string[50];
                     format(string, sizeof(string), "%d.street is on fire! Responders needed ASAP!", bInfo[i][bAddress]);
@@ -2806,10 +2806,9 @@ public startARandomFire(){
             randomID = randomEx(1, house);
             printf("Selected house fire ID: %d", randomID);
             for(new i = 0; i < loadedHouse; i++){
-                if(hInfo[i][hId] == randomID){
-                    AddFire(hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ], randomEx(50,500));
-                    AddFire(hInfo[i][hExitX], hInfo[i][hExitY], hInfo[i][hExitZ], randomEx(50,500));
-                    
+                if(hInfo[i][hId] == randomID){        
+                    threeRandomFires(hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], randomEx(125, 600), hInfo[i][hAddress]);
+                    AddFire(hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ], randomEx(125, 600), hInfo[i][hAddress]);
                     new string[50];
                     format(string, sizeof(string), "%d.street is on fire! Responders needed ASAP!", hInfo[i][hAddress]);
                     AlertMedics(9999, string,hInfo[i][hAddress], hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ]);
@@ -2836,14 +2835,14 @@ public startARandomFire(){
             printf("Selected faction fire ID: %d", randomID);
             for(new i = 0; i < loadedFac; i++){
                 if(fInfo[i][fID] == randomID && fInfo[i][fAddress] != 999999){
-                    if(fInfo[i][fEntX] != 0){
-                        AddFire(fInfo[i][fEntX], fInfo[i][fEntY], fInfo[i][fEntZ], randomEx(250,700));
-                        AddFire(fInfo[i][fExitX], fInfo[i][fExitY], fInfo[i][fExitZ], randomEx(250, 600));
-                        AddFire(fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ], randomEx(250, 600));
+                    if(fInfo[i][fEntX] != 0) {
+                        threeRandomFires(fInfo[i][fEntX], fInfo[i][fEntY], fInfo[i][fEntZ], randomEx(125, 600), fInfo[i][fAddress]);
+                        AddFire(fInfo[i][fExitX], fInfo[i][fExitY], fInfo[i][fExitZ], randomEx(125, 600), fInfo[i][fAddress]);
+                        threeRandomFires(fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ], randomEx(125, 600), fInfo[i][fAddress]);
                     }
                     if(fInfo[i][fEntX] == 0){
-                        AddFire(fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ], randomEx(250, 600));
-                        AddFire(fInfo[i][fDutyX], fInfo[i][fDutyX], fInfo[i][fDutyZ], randomEx(250, 600));
+                        threeRandomFires(fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ], randomEx(125, 600), fInfo[i][fAddress]);
+                        threeRandomFires(fInfo[i][fDutyX], fInfo[i][fDutyY], fInfo[i][fDutyZ], randomEx(125, 600), fInfo[i][fAddress]);
                     }
                     new string[50];
                     format(string, sizeof(string), "%d.street is on fire! Responders needed ASAP!", fInfo[i][fAddress]);
@@ -2857,8 +2856,7 @@ public startARandomFire(){
                 }
             }
         }
-        
-        if(selectedType == 2){
+        if(selectedType == 2) {
             // selected business fire..
             new randomID, business;
             business = loadedBus;
@@ -2866,18 +2864,17 @@ public startARandomFire(){
             printf("Selected business fire ID: %d", randomID);
             for(new i = 0; i < loadedBus; i++){
                 if(bInfo[i][bId] == randomID){
-                    if(bInfo[i][bEntX] != 0){
-                        AddFire(bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ], randomEx(250,700));
-                        AddFire(bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ], randomEx(250, 600));
-                        AddFire(bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], randomEx(250, 600));
+                    if(bInfo[i][bEntX] != 0) {
+                        threeRandomFires(bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ], randomEx(125, 600), bInfo[i][bAddress]);
+                        AddFire(bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ], randomEx(125, 600), bInfo[i][bAddress]);
+                        threeRandomFires(bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], randomEx(125, 600), bInfo[i][bAddress]);
                     }
                     if(bInfo[i][bEntX] == 0){
-                        AddFire(bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], randomEx(250, 600));
-                        AddFire(bInfo[i][bUseX], bInfo[i][bUseY], bInfo[i][bUseZ], randomEx(250, 600));
+                        threeRandomFires(bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], randomEx(125, 600), bInfo[i][bAddress]);
                     }
                     new string[50];
                     format(string, sizeof(string), "%d.street is on fire! Responders needed ASAP!", bInfo[i][bAddress]);
-                    AlertMedics(9999, string,bInfo[i][bAddress], bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ]);
+                    AlertMedics(9999, string, bInfo[i][bAddress], bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ]);
                     bInfo[i][OnFire] = 1;
                     sInfo[0][lastFireAddress] = bInfo[i][bAddress];
                     sInfo[0][lastFireType] = 2;
@@ -2895,10 +2892,9 @@ public startARandomFire(){
             randomID = randomEx(1, house);
             printf("Selected house fire ID: %d", randomID);
             for(new i = 0; i < loadedHouse; i++){
-                if(hInfo[i][hId] == randomID){
-                    AddFire(hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ], randomEx(50,500));
-                    AddFire(hInfo[i][hExitX], hInfo[i][hExitY], hInfo[i][hExitZ], randomEx(50,500));
-                    
+                if(hInfo[i][hId] == randomID){        
+                    threeRandomFires(hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], randomEx(125, 600), hInfo[i][hAddress]);
+                    AddFire(hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ], randomEx(125, 600), hInfo[i][hAddress]);
                     new string[50];
                     format(string, sizeof(string), "%d.street is on fire! Responders needed ASAP!", hInfo[i][hAddress]);
                     AlertMedics(9999, string,hInfo[i][hAddress], hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ]);
@@ -2915,8 +2911,27 @@ public startARandomFire(){
     return 1;
 }
 
+stock threeRandomFires(Float:x, Float:y, Float:z, Health, Address){
+    new Float:a, Float:newX, Float:newY;
+    newX = x; newY = y;
+    a = random(360);
+    newX += (random(3) * floatsin(-a, degrees));
+    newY += (random(3) * floatsin(-a, degrees));
+    AddFire(newX, newY, z, Health, Address);
+    newX = x; newY = y;
+    a = random(360);
+    newX += (random(3) * floatsin(-a, degrees));
+    newY += (random(3) * floatsin(-a, degrees));
+    AddFire(newX, newY, z, Health, Address);
+    newX = x; newY = y;
+    a = random(360);
+    newX += (random(3) * floatsin(-a, degrees));
+    newY += (random(3) * floatsin(-a, degrees));
+    AddFire(newX, newY, z, Health, Address);
+    printf("Three random fires generated.");
+}
 
-stock AddFire(Float:x, Float:y, Float:z, Health)
+stock AddFire(Float:x, Float:y, Float:z, Health, Address)
 {
     TotalFires++;
 	new fireID = TotalFires;
@@ -2929,6 +2944,9 @@ stock AddFire(Float:x, Float:y, Float:z, Health)
 	    format(string, sizeof(string), "%d/%d", FireHealth[fireID], FireHealthMax[fireID]);
 	    FireText[fireID] = Create3DTextLabel(string, 0xFFFFFFFFF, x, y, z, 20, 0);
 	#endif
+    if(Address != 0){
+        FireAddress[fireID] = Address;
+    }
 }
 
 
@@ -3171,7 +3189,7 @@ CMD:createrentalvehicle(playerid, params[]){
 }
 
 CMD:createfactionvehicle(playerid, params[]){
-    new vehid, facid, price,plate[32],query[900], Float:px, Float:py, Float:pz, Float:pa;
+    new vehid, facid,plate[32],query[900], Float:px, Float:py, Float:pz, Float:pa;
     if(pInfo[playerid][pAdminLevel] >= 5){
         GetPlayerPos(playerid, px, py, pz);
         GetPlayerFacingAngle(playerid, pa);
@@ -3486,7 +3504,7 @@ CMD:dashcam(playerid, params[]){
 forward public BeginDashCam(playerid);
 public BeginDashCam(playerid){
     new Float:x,Float:y,Float:z,Float:a;
-    new string[256], plate[32], vidstr[32];
+    new plate[32];
     new vehSpeed[32];
     new vid = GetPlayerVehicleID(playerid);
     GetVehiclePos(vid, x, y, z);
@@ -3848,7 +3866,7 @@ CMD:arrest(playerid, params[]){
 
 Dialog:DIALOG_ADVERTS(playerid, response, listitem, inputtext[]){
     if(response){
-        new list[256], string[256];
+        new list[256];
         for (new i = 0; i < MAX_PLAYERS; i++) {
             if(listitem == i) {
                 format(list, sizeof(list), "{FFCC00}*-----LOADED ADVERTISEMENT-----*{A9C4E4}\n\nContact Phone: %d\nAd Message: %s\n\nPlease either accept, or decline this advert!", pInfo[i][pPhoneNumber], pInfo[i][SentAdv]);
@@ -7043,7 +7061,7 @@ public OnPlayerUpdate(playerid) {
 			    		FireHealth[i]-=2;
 					    #if defined Labels
 				    		new string[128];
-					    	format(string, sizeof(string), "FIRE(%d)\n\n%d/%d", i, FireHealth[i], FireHealthMax[i]);
+					    	format(string, sizeof(string), "FIRE(%d)\n\n%d/%d", FireAddress[i], FireHealth[i], FireHealthMax[i]);
 							Update3DTextLabelText(FireText[i], 0xFFFFFFFF, string);
 					    	//Delete3DTextLabel(FireText[i]);
 						//FireText[i] = Create3DTextLabel(string, 0xFFFFFFFF, FirePos[i][0],  FirePos[i][1],  FirePos[i][2], 20, 0);
@@ -7052,11 +7070,13 @@ public OnPlayerUpdate(playerid) {
 					    {
                             if(pInfo[playerid][pFactionId] == 2){
                                 new firehp;
+                                if(FireAddress[i] != 0){
+                                    GetAllFiresAtAddress(playerid, FireAddress[i]);
+                                }
                                 firehp = FireHealthMax[i];
                                 pay = (firehp / 255) * 100;
                                 pInfo[playerid][pFactionPay] += pay;
                                 format(string, sizeof(string), "> You have extinguished a fire! (+$%d)", pay);
-                                sInfo[0][firePutOut] = 1;
                                 SendClientMessage(playerid, ADMINBLUE, string);
 							    DeleteFire(i);
                             }
@@ -7068,6 +7088,31 @@ public OnPlayerUpdate(playerid) {
 		}
 	}
     return 1;
+}
+
+stock GetAllFiresAtAddress(playerid, Address){
+    new remainingFires = 0;
+    for(new i = 0; i < TotalFires; i++){
+        if(FireAddress[i] == Address){
+            remainingFires++;
+        }
+    }
+    if(remainingFires == 0){
+        for(new i = 0; i < MAX_PLAYERS; i++){
+            if(pInfo[i][pFactionId] == 2){
+                new string[256];
+                format(string, sizeof(string), "Radio: %s %s has extinguished the fire, over.", pInfo[playerid][pFactionRankname], RPName(playerid));
+                SendClientMessage(playerid, -1, string);
+                
+                sInfo[0][firePutOut] = 1;
+            }
+        }
+        return 1;
+    }
+    if(remainingFires != 0){
+
+    }
+
 }
 
 public OnPlayerStreamIn(playerid, forplayerid) {
