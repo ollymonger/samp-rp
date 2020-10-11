@@ -5492,7 +5492,7 @@ CMD:lock(playerid, params[]){
     format(nname, sizeof(nname), "%s", GetName(playerid));
     for(new i = 0; i < MAX_VEHICLES; i++){
         GetVehiclePos(i, x, y, z);
-        if(IsPlayerInRangeOfPoint(playerid, 10,x,y,z)){
+        if(IsPlayerInRangeOfPoint(playerid, 6,x,y,z)){
             if(vInfo[i][vFacId] == pInfo[playerid][pFactionId] || !strcmp(vInfo[i][vOwner], nname, true)){
                 GetVehicleParamsEx(i, engine, lights, alarm, doors, bonnet, boot, objective);
                 if(doors == 1){
