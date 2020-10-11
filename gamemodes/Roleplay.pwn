@@ -23,6 +23,7 @@ forward VehicleToPoint(Float:radi, vehicleid, Float:x, Float:y, Float:z);
 forward HealthDown();
 new
     FireObj[MAX_FIRES],
+    FireSmokeObj[MAX_FIRES],
     Float:FirePos[MAX_FIRES][3],
 	TotalFires = 0,
 	FireHealth[MAX_FIRES],
@@ -46,6 +47,8 @@ new Text3D:FireText[MAX_FIRES];
 #define NICESKY 		0xC2A2DAFF // rp color
 #define ADMINBLUE 		0x1D7CF2FF //0059E8
 #define COLOR_AQUA 0xF0F8FFAA
+#define COLOR_GREENYELLOW 0xADFF2FAA
+
 
 
 #define     VEHICLE_NOT_RENTABLE    0
@@ -507,7 +510,8 @@ enum OBJECT_DATA {
     Float:oY,
     Float:oZ,
     Float:oA,
-    placedBy[MAX_PLAYER_NAME]
+    placedBy[MAX_PLAYER_NAME],
+    pickupable
 };
 new objectInfo[1000][OBJECT_DATA], totalObjects;
 
@@ -2686,18 +2690,305 @@ CMD:rankname(playerid, params[]){
 }
 
 CMD:place(playerid, params[]){
-    new object[50], Float:x, Float:y, Float:z, Float:a;
-    if(pInfo[playerid][pFactionId] == 1 || pInfo[playerid][pFactionId]){
-        if(sscanf(params, "s", object)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /place [objectname]");{
-            if(!strcmp(object, "barrier5")){
-                if(!IsPlayerInAnyVehicle(playerid)){
-                    GetPlayerPos(playerid, x, y, z);
-                    GetPlayerFacingAngle(playerid, a);
-                    x += (1 * floatsin(-a, degrees));
-                    y += (1 * floatcos(-a, degrees));
-                    objectInfo[totalObjects][objectId] = CreateDynamicObject(1422, x, y, z, a, 0, 0);
-                    totalObjects++;
+    new object[50], Float:x, Float:y, Float:z, Float:a, nname[MAX_PLAYER_NAME];
+    if(pInfo[playerid][pFactionId] == 1 || pInfo[playerid][pFactionId] == 2 || pInfo[playerid][pFactionId] == 3){
+        if(sscanf(params, "s[50]", object)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /place [objectname]");{
+            if(pInfo[playerid][pFactionId] == 1|| pInfo[playerid][pFactionId] == 2){
+                if(!strcmp(object, "barrier5", true)){
+                    if(!IsPlayerInAnyVehicle(playerid)){
+                        GetPlayerPos(playerid, x, y, z);
+                        GetPlayerFacingAngle(playerid, a);
+                        x += (1 * floatsin(-a, degrees));
+                        y += (1 * floatcos(-a, degrees));
+                        z -= 0.7;
+                        objectInfo[totalObjects][objectId] = CreateDynamicObject(1422, x, y, z, 0, 0, a);
+                        objectInfo[totalObjects][oX] = x;
+                        objectInfo[totalObjects][oY] = y;
+                        objectInfo[totalObjects][oZ] = z;
+                        GetPlayerName(playerid, nname, sizeof(nname));
+                        objectInfo[totalObjects][placedBy] = nname;
+                        totalObjects++;
+                        AlertStaff(playerid, "has just placed a barrier");
+                    }
                 }
+                if(!strcmp(object, "detour", true)){
+                    if(!IsPlayerInAnyVehicle(playerid)){
+                        GetPlayerPos(playerid, x, y, z);
+                        GetPlayerFacingAngle(playerid, a);
+                        x += (1 * floatsin(-a, degrees));
+                        y += (1 * floatcos(-a, degrees));
+                        z -= 0.7;
+                        objectInfo[totalObjects][objectId] = CreateDynamicObject(1425, x, y, z, 0, 0, a);
+                        objectInfo[totalObjects][oX] = x;
+                        objectInfo[totalObjects][oY] = y;
+                        objectInfo[totalObjects][oZ] = z;
+                        GetPlayerName(playerid, nname, sizeof(nname));
+                        objectInfo[totalObjects][placedBy] = nname;
+                        totalObjects++;
+                        AlertStaff(playerid, "has just placed a detour sign");
+                    }
+                }
+                if(!strcmp(object, "barrier1", true)){
+                    if(!IsPlayerInAnyVehicle(playerid)){
+                        GetPlayerPos(playerid, x, y, z);
+                        GetPlayerFacingAngle(playerid, a);
+                        x += (1 * floatsin(-a, degrees));
+                        y += (1 * floatcos(-a, degrees));
+                        z -= 0.55;
+                        objectInfo[totalObjects][objectId] = CreateDynamicObject(1427, x, y, z, 0, 0, a);
+                        objectInfo[totalObjects][oX] = x;
+                        objectInfo[totalObjects][oY] = y;
+                        objectInfo[totalObjects][oZ] = z;
+                        GetPlayerName(playerid, nname, sizeof(nname));
+                        objectInfo[totalObjects][placedBy] = nname;
+                        totalObjects++;
+                        AlertStaff(playerid, "has just placed a barrier1");
+                    }
+                }
+                if(!strcmp(object, "barrier2", true)){
+                    if(!IsPlayerInAnyVehicle(playerid)){
+                        GetPlayerPos(playerid, x, y, z);
+                        GetPlayerFacingAngle(playerid, a);
+                        x += (1 * floatsin(-a, degrees));
+                        y += (1 * floatcos(-a, degrees));
+                        z -= 0.55;
+                        objectInfo[totalObjects][objectId] = CreateDynamicObject(1228, x, y, z, 0, 0, a);
+                        objectInfo[totalObjects][oX] = x;
+                        objectInfo[totalObjects][oY] = y;
+                        objectInfo[totalObjects][oZ] = z;
+                        GetPlayerName(playerid, nname, sizeof(nname));
+                        objectInfo[totalObjects][placedBy] = nname;
+                        totalObjects++;
+                        AlertStaff(playerid, "has just placed a barrier2");
+                    }
+                }
+                if(!strcmp(object, "barrier2a", true)){
+                    if(!IsPlayerInAnyVehicle(playerid)){
+                        GetPlayerPos(playerid, x, y, z);
+                        GetPlayerFacingAngle(playerid, a);
+                        x += (1 * floatsin(-a, degrees));
+                        y += (1 * floatcos(-a, degrees));
+                        z -= 0.55;
+                        objectInfo[totalObjects][objectId] = CreateDynamicObject(1424, x, y, z, 0, 0, a);
+                        objectInfo[totalObjects][oX] = x;
+                        objectInfo[totalObjects][oY] = y;
+                        objectInfo[totalObjects][oZ] = z;
+                        GetPlayerName(playerid, nname, sizeof(nname));
+                        objectInfo[totalObjects][placedBy] = nname;
+                        totalObjects++;
+                        AlertStaff(playerid, "has just placed a barrier2a");
+                    }
+                }
+                if(!strcmp(object, "barrier4", true)){
+                    if(!IsPlayerInAnyVehicle(playerid)){
+                        GetPlayerPos(playerid, x, y, z);
+                        GetPlayerFacingAngle(playerid, a);
+                        x += (1 * floatsin(-a, degrees));
+                        y += (1 * floatcos(-a, degrees));
+                        z -= 0.5;
+                        objectInfo[totalObjects][objectId] = CreateDynamicObject(1423, x, y, z, 0, 0, a);
+                        objectInfo[totalObjects][oX] = x;
+                        objectInfo[totalObjects][oY] = y;
+                        objectInfo[totalObjects][oZ] = z;
+                        GetPlayerName(playerid, nname, sizeof(nname));
+                        objectInfo[totalObjects][placedBy] = nname;
+                        totalObjects++;
+                        AlertStaff(playerid, "has just placed a barrier4");
+                    }
+                }
+                if(!strcmp(object, "barrier5a", true)){
+                    if(!IsPlayerInAnyVehicle(playerid)){
+                        GetPlayerPos(playerid, x, y, z);
+                        GetPlayerFacingAngle(playerid, a);
+                        x += (1 * floatsin(-a, degrees));
+                        y += (1 * floatcos(-a, degrees));
+                        z -= 0.7;
+                        objectInfo[totalObjects][objectId] = CreateDynamicObject(1434, x, y, z, 0, 0, a);
+                        objectInfo[totalObjects][oX] = x;
+                        objectInfo[totalObjects][oY] = y;
+                        objectInfo[totalObjects][oZ] = z;
+                        GetPlayerName(playerid, nname, sizeof(nname));
+                        objectInfo[totalObjects][placedBy] = nname;
+                        totalObjects++;
+                        AlertStaff(playerid, "has just placed a barrier5a");
+                    }
+                }
+                if(!strcmp(object, "barrier5b", true)){
+                    if(!IsPlayerInAnyVehicle(playerid)){
+                        GetPlayerPos(playerid, x, y, z);
+                        GetPlayerFacingAngle(playerid, a);
+                        x += (1 * floatsin(-a, degrees));
+                        y += (1 * floatcos(-a, degrees));
+                        z -= 0.7;
+                        objectInfo[totalObjects][objectId] = CreateDynamicObject(1435, x, y, z, 0, 0, a);
+                        objectInfo[totalObjects][oX] = x;
+                        objectInfo[totalObjects][oY] = y;
+                        objectInfo[totalObjects][oZ] = z;
+                        GetPlayerName(playerid, nname, sizeof(nname));
+                        objectInfo[totalObjects][placedBy] = nname;
+                        totalObjects++;
+                        AlertStaff(playerid, "has just placed a barrier5b");
+                    }
+                }
+                if(!strcmp(object, "repairs", true)){
+                    if(!IsPlayerInAnyVehicle(playerid)){
+                        GetPlayerPos(playerid, x, y, z);
+                        GetPlayerFacingAngle(playerid, a);
+                        x += (1 * floatsin(-a, degrees));
+                        y += (1 * floatcos(-a, degrees));
+                        z -= 1.05;
+                        objectInfo[totalObjects][objectId] = CreateDynamicObject(19975, x, y, z, 0, 0, a);
+                        objectInfo[totalObjects][oX] = x;
+                        objectInfo[totalObjects][oY] = y;
+                        objectInfo[totalObjects][oZ] = z;
+                        GetPlayerName(playerid, nname, sizeof(nname));
+                        objectInfo[totalObjects][placedBy] = nname;
+                        totalObjects++;
+                        AlertStaff(playerid, "has just placed a repsair sign");
+                    }
+                }
+                if(!strcmp(object, "stopsign1", true)){
+                    if(!IsPlayerInAnyVehicle(playerid)){
+                        GetPlayerPos(playerid, x, y, z);
+                        GetPlayerFacingAngle(playerid, a);
+                        x += (1 * floatsin(-a, degrees));
+                        y += (1 * floatcos(-a, degrees));
+                        z -= 1.05;
+                        objectInfo[totalObjects][objectId] = CreateDynamicObject(19966, x, y, z, 0, 0, a);
+                        objectInfo[totalObjects][oX] = x;
+                        objectInfo[totalObjects][oY] = y;
+                        objectInfo[totalObjects][oZ] = z;
+                        GetPlayerName(playerid, nname, sizeof(nname));
+                        objectInfo[totalObjects][placedBy] = nname;
+                        totalObjects++;
+                        AlertStaff(playerid, "has just placed a stopsign1");
+                    }
+                }
+                if(!strcmp(object, "donotenter", true)){
+                    if(!IsPlayerInAnyVehicle(playerid)){
+                        GetPlayerPos(playerid, x, y, z);
+                        GetPlayerFacingAngle(playerid, a);
+                        x += (1 * floatsin(-a, degrees));
+                        y += (1 * floatcos(-a, degrees));
+                        z -= 1.05;
+                        objectInfo[totalObjects][objectId] = CreateDynamicObject(19967, x, y, z, 0, 0, a);
+                        objectInfo[totalObjects][oX] = x;
+                        objectInfo[totalObjects][oY] = y;
+                        objectInfo[totalObjects][oZ] = z;
+                        GetPlayerName(playerid, nname, sizeof(nname));
+                        objectInfo[totalObjects][placedBy] = nname;
+                        totalObjects++;
+                        AlertStaff(playerid, "has just placed a donotenter sign");
+                    }
+                }
+                if(!strcmp(object, "donotenter2", true)){
+                    if(!IsPlayerInAnyVehicle(playerid)){
+                        GetPlayerPos(playerid, x, y, z);
+                        GetPlayerFacingAngle(playerid, a);
+                        x += (1 * floatsin(-a, degrees));
+                        y += (1 * floatcos(-a, degrees));
+                        z -= 1.05;
+                        objectInfo[totalObjects][objectId] = CreateDynamicObject(19950, x, y, z, 0, 0, a);
+                        objectInfo[totalObjects][oX] = x;
+                        objectInfo[totalObjects][oY] = y;
+                        objectInfo[totalObjects][oZ] = z;
+                        GetPlayerName(playerid, nname, sizeof(nname));
+                        objectInfo[totalObjects][placedBy] = nname;
+                        totalObjects++;
+                        AlertStaff(playerid, "has just placed a donotenter2 sign");
+
+                    }
+                }
+            }
+            if(pInfo[playerid][pFactionId] == 1 || pInfo[playerid][pFactionId] == 2 || pInfo[playerid][pFactionId] == 3){
+                if(!strcmp(object, "cone1", true)){
+                    if(!IsPlayerInAnyVehicle(playerid)){
+                        GetPlayerPos(playerid, x, y, z);
+                        GetPlayerFacingAngle(playerid, a);
+                        x += (1 * floatsin(-a, degrees));
+                        y += (1 * floatcos(-a, degrees));
+                        z -= 0.7;
+                        objectInfo[totalObjects][objectId] = CreateDynamicObject(1238, x, y, z, 0, 0, a);
+                        objectInfo[totalObjects][oX] = x;
+                        objectInfo[totalObjects][oY] = y;
+                        objectInfo[totalObjects][oZ] = z;
+                        GetPlayerName(playerid, nname, sizeof(nname));
+                        objectInfo[totalObjects][placedBy] = nname;
+                        totalObjects++;
+                        AlertStaff(playerid, "has just placed a cone1");
+                    }
+                }
+                if(!strcmp(object, "cone2", true)){
+                    if(!IsPlayerInAnyVehicle(playerid)){
+                        GetPlayerPos(playerid, x, y, z);
+                        GetPlayerFacingAngle(playerid, a);
+                        x += (1 * floatsin(-a, degrees));
+                        y += (1 * floatcos(-a, degrees));
+                        z -= 0.95;
+                        objectInfo[totalObjects][objectId] = CreateDynamicObject(1237, x, y, z, 0, 0, a);
+                        objectInfo[totalObjects][oX] = x;
+                        objectInfo[totalObjects][oY] = y;
+                        objectInfo[totalObjects][oZ] = z;
+                        GetPlayerName(playerid, nname, sizeof(nname));
+                        objectInfo[totalObjects][placedBy] = nname;
+                        totalObjects++;
+                        AlertStaff(playerid, "has just placed a cone2");
+                    }
+                }
+                if(!strcmp(object, "flare", true)){
+                    if(!IsPlayerInAnyVehicle(playerid)){
+                        GetPlayerPos(playerid, x, y, z);
+                        GetPlayerFacingAngle(playerid, a);
+                        x += (1 * floatsin(-a, degrees));
+                        y += (1 * floatcos(-a, degrees));
+                        z -= 1.89;
+                        objectInfo[totalObjects][objectId] = CreateDynamicObject(18728, x, y, z, 0, 0, a);
+                        objectInfo[totalObjects][oX] = x;
+                        objectInfo[totalObjects][oY] = y;
+                        objectInfo[totalObjects][oZ] = z;
+                        GetPlayerName(playerid, nname, sizeof(nname));
+                        objectInfo[totalObjects][placedBy] = nname;
+                        totalObjects++;
+                        AlertStaff(playerid, "has just placed a flare");
+                    }
+                }
+            }
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 1;
+}
+
+CMD:objects(playerid, params[]){
+    if(pInfo[playerid][pFactionId] == 1 || pInfo[playerid][pFactionId] == 2 || pInfo[playerid][pFactionId] == 3){
+        SendClientMessage(playerid, SPECIALORANGE, "[SERVER]: ** AVAILABLE OBJECTS **");
+        if(pInfo[playerid][pFactionId] == 1 || pInfo[playerid][pFactionId] == 2){
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: barrier5, detour, barrier1, barrier2");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: barrier2a, barrier4, barrier5a, barrier5b");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: repairs, stopsign1, donotenter1, donotenter2");
+        }
+        
+        if(pInfo[playerid][pFactionId] == 1 || pInfo[playerid][pFactionId] == 2 || pInfo[playerid][pFactionId] == 3){
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: cone1, cone2, flare");            
+        }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
+    }
+    return 1;
+}
+
+CMD:pickup(playerid, params[]){
+    new name[MAX_PLAYER_NAME];
+    GetPlayerName(playerid, name, sizeof(name));
+    for(new i = 0; i < totalObjects; i++){
+        if(IsPlayerInRangeOfPoint(playerid,2.5,objectInfo[i][oX], objectInfo[i][oY], objectInfo[i][oZ])){
+            if(!strcmp(name, objectInfo[i][placedBy], true) || pInfo[playerid][pAdminLevel] >= 1 || pInfo[playerid][pHelper] == 1 || pInfo[playerid][pModerator] == 1){
+                DestroyDynamicObject(objectInfo[i][objectId]);
+                totalObjects--;
+                AlertStaff(playerid, "has just removed an object");
             }
         }
     }
@@ -2732,6 +3023,9 @@ CMD:duty(playerid, params[]){
                 }
             }
         }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
     }
     return 1;
 }
@@ -2944,18 +3238,18 @@ stock threeRandomFires(Float:x, Float:y, Float:z, Health, Address){
     new Float:a, Float:newX, Float:newY;
     newX = x; newY = y;
     a = random(360);
-    newX += (random(3) * floatsin(-a, degrees));
-    newY += (random(3) * floatsin(-a, degrees));
+    newX += (random(4) * floatsin(-a, degrees));
+    newY += (random(4) * floatsin(-a, degrees));
     AddFire(newX, newY, z, Health, Address);
     newX = x; newY = y;
     a = random(360);
-    newX += (random(3) * floatsin(-a, degrees));
-    newY += (random(3) * floatsin(-a, degrees));
+    newX += (random(2) * floatsin(-a, degrees));
+    newY += (random(2) * floatsin(-a, degrees));
     AddFire(newX, newY, z, Health, Address);
     newX = x; newY = y;
     a = random(360);
-    newX += (random(3) * floatsin(-a, degrees));
-    newY += (random(3) * floatsin(-a, degrees));
+    newX += (random(5) * floatsin(-a, degrees));
+    newY += (random(5) * floatsin(-a, degrees));
     AddFire(newX, newY, z, Health, Address);
     printf("Three random fires generated.");
 }
@@ -2964,7 +3258,20 @@ stock AddFire(Float:x, Float:y, Float:z, Health, Address)
 {
     TotalFires++;
 	new fireID = TotalFires;
-	FireObj[fireID] = CreateObject(3461, x, y, z-2.61, 0, 0, 0.0);
+    new random;
+    if(Health > 500){
+        random = randomEx(1, 2);
+        if(random == 1){
+	        FireObj[fireID] = CreateObject(18690, x, y, z-2.61, 0, 0, 0.0);
+        }
+        if(random == 2){            
+	        FireObj[fireID] = CreateObject(18692, x, y, z-2.61, 0, 0, 0.0);
+        }
+    }
+
+    if(Health < 499){
+    	FireObj[fireID] = CreateObject(18692, x, y, z-2.61, 0, 0, 0.0);
+    }
 	FirePos[fireID][0] = x, FirePos[fireID][1] = y, FirePos[fireID][2] = z;
 	FireHealth[fireID] = Health;
 	FireHealthMax[fireID] = Health;
@@ -3140,6 +3447,9 @@ CMD:dutyclothes(playerid, params[]){
                 }
             }
         }
+    } else {
+        TextDrawShowForPlayer(playerid, CantCommand);
+        SetTimerEx("RemoveTextdrawAfterTime", 3500, false, "d", playerid);
     }
     return 1;
 }
@@ -4689,19 +4999,19 @@ CMD:help(playerid, params[]) {
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /cuff, /ticket, /ca (create alert), /arrest");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /impound, NumPad+ to tow a vehicle, /gate");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /listallcalls, /takecall, /endcall, /flash");
-                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /duty, /dutyclothes");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /duty, /dutyclothes, /place, /pickup, /objects");
                 }
                 if(pInfo[playerid][pFactionId] == 2){
                     SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Faction Commands ::.");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /heal");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /listallcalls, /takecall, /endcall, /flash");
-                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /duty, /dutyclothes");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /duty, /dutyclothes,/place, /pickup, /objects");
                 }
                 if(pInfo[playerid][pFactionId] == 3){
                     SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Faction Commands ::.");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /repair, /flash, /refill");
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /takecall, /listallcalls, /endcall");
-                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /duty, /dutyclothes");
+                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /duty, /dutyclothes, /place, /pickup, /objects");
                 }
                 if(pInfo[playerid][pFactionId] == 4){
                     SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Faction Commands ::.");
@@ -5902,6 +6212,18 @@ public OnPlayerEnterDynamicCP(playerid, checkpointid) {
             }
         }
         return 1;
+    }
+    return 1;
+}
+
+forward public AlertStaff(playerid, message[50]);
+public AlertStaff(playerid, message[50]){
+    new string[256];
+    for(new i = 0; i < MAX_PLAYERS; i++){
+        if(pInfo[i][pAdminLevel] >= 1 || pInfo[i][pHelper] == 1 || pInfo[i][pModerator] == 1){
+            format(string, sizeof(string), "** Player %s %s.", RPName(playerid), message);
+            SendClientMessage(i, COLOR_GREENYELLOW, string);
+        } 
     }
     return 1;
 }
