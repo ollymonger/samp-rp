@@ -501,6 +501,16 @@ new VehicleNames[][] = {
 
 new tries[MAX_PLAYERS], passwordForFinalReg[MAX_PLAYERS][BCRYPT_HASH_LENGTH], quizAttempts[MAX_PLAYERS];
 
+enum OBJECT_DATA {
+    objectId,
+    Float:oX,
+    Float:oY,
+    Float:oZ,
+    Float:oA,
+    placedBy[MAX_PLAYER_NAME]
+};
+new objectInfo[1000][OBJECT_DATA], totalObjects;
+
 enum ENUM_POLICECLOTHES {
     SKINID,
     SKINNAME[32]
@@ -2669,6 +2679,25 @@ CMD:rankname(playerid, params[]){
                 format(string, sizeof(string), "> %s %s has set your rankname to: %s!", pInfo[playerid][pFactionRankname], RPName(playerid), rankname);
                 SendClientMessage(target, ADMINBLUE, string);
                 return 1;
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:place(playerid, params[]){
+    new object[50], Float:x, Float:y, Float:z, Float:a;
+    if(pInfo[playerid][pFactionId] == 1 || pInfo[playerid][pFactionId]){
+        if(sscanf(params, "s", object)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /place [objectname]");{
+            if(!strcmp(object, "barrier5")){
+                if(!IsPlayerInAnyVehicle(playerid)){
+                    GetPlayerPos(playerid, x, y, z);
+                    GetPlayerFacingAngle(playerid, a);
+                    x += (1 * floatsin(-a, degrees));
+                    y += (1 * floatcos(-a, degrees));
+                    objectInfo[totalObjects][objectId] = CreateDynamicObject(1422, x, y, z, a, 0, 0);
+                    totalObjects++;
+                }
             }
         }
     }
