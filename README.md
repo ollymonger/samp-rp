@@ -43,6 +43,8 @@ Int ids: 16 // 24-7, 6 // ammunation or hardware store.
 
 ## House Types
     5 - Ganghouse, exit point: 2350.339843,-1181.649902,1027.976562
+    2,
+    1
 
 ## Prison types
 1, normal prison

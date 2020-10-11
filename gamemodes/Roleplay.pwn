@@ -14,6 +14,25 @@
 #include <cuffs>
 #include <multilines>
 
+#define Labels // 3D Labels above the Fires 
+#define Holding(%0) \
+	((newkeys & (%0)) == (%0))
+#define MAX_FIRES 100
+forward OnFireKill(ID, killerid);
+forward VehicleToPoint(Float:radi, vehicleid, Float:x, Float:y, Float:z);
+forward HealthDown();
+new
+    FireObj[MAX_FIRES],
+    Float:FirePos[MAX_FIRES][3],
+	TotalFires = 0,
+	FireHealth[MAX_FIRES],
+    FireAddress[MAX_FIRES],
+	FireHealthMax[MAX_FIRES];
+
+#if defined Labels
+new Text3D:FireText[MAX_FIRES];
+#endif
+
 #define BCRYPT_COST 12
 #define lenull(%1) \
 ((!( % 1[0])) || ((( % 1[0]) == '\1') && (!( % 1[1]))))
@@ -61,6 +80,8 @@ new busInfoPickup[100], busEntPickup[100], busExitPickup[100], busUsePickup[100]
 new houseInfoPickup[100], houseEntPickup[100], houseExitPickup[100];
 new facInfoPickup[100], facDutyPickup[100], facClothesPickup[100];
 new facEntPickup[100], facExitPickup[100];
+
+new fireCallTimer[MAX_FIRES];
 
 new PlayerText:VEHSTUFF[MAX_PLAYERS][5];
 
@@ -649,6 +670,13 @@ enum ENUM_PLAYER_DATA {
 }
 new pInfo[MAX_PLAYERS][ENUM_PLAYER_DATA];
 
+enum SERVER_STATS{
+    lastFireType,
+    lastFireAddress,
+    firePutOut
+}
+new sInfo[2][SERVER_STATS]; //sInfo[0][lastFireType] -- only need to affect the first entry!!!, on gamemodeinit, start a fire!
+
 new dragState[MAX_PLAYERS], dashtimer[MAX_PLAYERS], callTimer[MAX_PLAYERS];
 
 enum ENUM_JOB_DATA {
@@ -704,7 +732,8 @@ enum ENUM_HOUSE_DATA{
     Float:hEntZ,
     Float:hExitX,
     Float:hExitY,
-    Float:hExitZ
+    Float:hExitZ,
+    OnFire
 };
 new hInfo[500][ENUM_HOUSE_DATA], loadedHouse;
 
@@ -728,7 +757,8 @@ enum ENUM_BUS_DATA {
     Float:bUseZ,
     Float:bExitX,
     Float:bExitY,
-    Float:bExitZ
+    Float:bExitZ,
+    OnFire
 };
 new bInfo[500][ENUM_BUS_DATA], loadedBus;
 
@@ -762,7 +792,8 @@ enum ENUM_FAC_DATA {
         Float:fExitY,
         Float:fExitZ,
 
-        IsLive
+        IsLive,
+        OnFire
 }
 new fInfo[MAX_FACTIONS][ENUM_FAC_DATA], loadedFac;
 
@@ -782,6 +813,10 @@ public OnGameModeInit() {
     DisableInteriorEnterExits();
     // Don't use these lines if it's a filterscript
     SetGameModeText("Roleplay | v1.5.2");
+    
+    sInfo[0][firePutOut] = 0;
+    sInfo[0][lastFireAddress] = 0;
+    sInfo[0][lastFireType] = 0;
 
     /* MySQL info */
     db_handle = mysql_connect_file("mysql.ini"); // Database info!
@@ -801,6 +836,7 @@ public OnGameModeInit() {
     CreateBusStopObjects();
     LoadVehicleData();
     LoadDrugPrices();
+    SetTimer("startARandomFire", 25000, false);
 
     
 
@@ -2404,6 +2440,16 @@ public OnPlayerText(playerid, text[]) {
                         pInfo[playerid][CalledService] = 2;
                         pInfo[playerid][AwaitingReason] = 1;
                     }
+                    
+                    if(strfind(text, "firefighter", true) != -1){
+                        new string[256];
+                        format(string, sizeof(string), "[PHONE]: %s", text);
+                        SendClientMessage(playerid, -1, string);
+                        format(string, sizeof(string), "[PHONE]: We're putting you through now! Any information for the firefighters?");
+                        SendClientMessageA(playerid, -1, string);
+                        pInfo[playerid][CalledService] = 3;
+                        pInfo[playerid][AwaitingReason] = 1;
+                    }
                 } else {     
                     if(pInfo[playerid][CalledService] == 1){
                         new string[256];     
@@ -2434,8 +2480,29 @@ public OnPlayerText(playerid, text[]) {
                         GetPlayerPos(playerid, px, py, pz);
                         new msg[50];
                         format(msg, sizeof(msg), "%s", text);
-                        AlertMedics(playerid, msg, px, py, pz);
+                        AlertMedics(playerid, msg,0, px, py, pz);
                         format(string, sizeof(string), "[PHONE]: Thank you. The medics have been notified.");
+
+                        SendClientMessage(playerid, -1, string);
+                        pInfo[playerid][CalledService] = 0;
+                        pInfo[playerid][AwaitingReason] = 0;
+                        pInfo[playerid][OnCall] = 0;
+                        
+                        format(string, sizeof(string), "* %s ends the call and puts their phone away.", RPName(playerid));
+                        nearByAction(playerid, NICESKY, string);
+                        
+                        SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
+                    }
+                    if(pInfo[playerid][CalledService] == 3){
+                        new string[256];     
+                        format(string, sizeof(string), "[PHONE]: %s", text);
+                        SendClientMessage(playerid, -1, string);
+                        new Float:px, Float:py, Float:pz;
+                        GetPlayerPos(playerid, px, py, pz);
+                        new msg[50];
+                        format(msg, sizeof(msg), "%s", text);
+                        AlertMedics(playerid, msg,0, px, py, pz);
+                        format(string, sizeof(string), "[PHONE]: Thank you. The firefighters have been notified.");
 
                         SendClientMessage(playerid, -1, string);
                         pInfo[playerid][CalledService] = 0;
@@ -2618,6 +2685,7 @@ CMD:duty(playerid, params[]){
                             if(pInfo[playerid][pDutyClothes] != 0){
                                 SetPlayerSkin(playerid, pInfo[playerid][pDutyClothes]);
                                 pInfo[playerid][pDuty] = 1;
+                                GiveSpecificWeapons(playerid);
 
                                 return 1;
                             } else {
@@ -2638,9 +2706,357 @@ CMD:duty(playerid, params[]){
     }
     return 1;
 }
-stock GiveSpecificWeapons(playerid){
 
+stock GiveSpecificWeapons(playerid){
+    if(pInfo[playerid][pFactionId] == 1){
+        GivePlayerWeapon(playerid, 24, 182);
+        GivePlayerWeapon(playerid, 41, 3000);
+        GivePlayerWeapon(playerid, 31, 400);
+    }
+    if(pInfo[playerid][pFactionId] == 2){
+        GivePlayerWeapon(playerid, 42, 5000);
+        GivePlayerWeapon(playerid, 9, 1);
+    }
+    if(pInfo[playerid][pFactionId] == 4){
+        GivePlayerWeapon(playerid, 43, 1000);
+    }
     return 1;
+}
+
+stock randomEx(min,max) {
+	return (min+random(max));
+}
+
+forward public startARandomFire();
+
+public startARandomFire(){
+    new selectedType;
+    KillTimer(fireCallTimer[0]);
+    printf("starting random fire, %dsinfo", sInfo[0][firePutOut]);
+    DeleteAllFire();
+    if(sInfo[0][firePutOut] == 1){
+        sInfo[0][firePutOut] = 0;
+        sInfo[0][lastFireAddress] = 0;
+        sInfo[0][lastFireType] = 0;
+        selectedType = randomEx(1,3);
+        printf("%d", selectedType);
+        if(selectedType == 1){
+            // selected faction fire..
+            new randomID, faction;
+            faction = loadedFac;
+            randomID = randomEx(1, faction);
+            printf("Selected faction fire ID: %d", randomID);
+            for(new i = 0; i < loadedFac; i++){
+                if(fInfo[i][fID] == randomID && fInfo[i][fAddress] != 999999){
+                    if(fInfo[i][fEntX] != 0) {
+                        threeRandomFires(fInfo[i][fEntX], fInfo[i][fEntY], fInfo[i][fEntZ], randomEx(125, 600), fInfo[i][fAddress]);
+                        AddFire(fInfo[i][fExitX], fInfo[i][fExitY], fInfo[i][fExitZ], randomEx(125, 600), fInfo[i][fAddress]);
+                        threeRandomFires(fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ], randomEx(125, 600), fInfo[i][fAddress]);
+                    }
+                    if(fInfo[i][fEntX] == 0){
+                        threeRandomFires(fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ], randomEx(125, 600), fInfo[i][fAddress]);
+                        threeRandomFires(fInfo[i][fDutyX], fInfo[i][fDutyY], fInfo[i][fDutyZ], randomEx(125, 600), fInfo[i][fAddress]);
+                    }
+                    new string[50];
+                    format(string, sizeof(string), "%d.street is on fire! Responders needed ASAP!", fInfo[i][fAddress]);
+                    AlertMedics(9999, string,fInfo[i][fAddress], fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ]);
+                    fInfo[i][OnFire] = 1;
+                    sInfo[0][lastFireAddress] = fInfo[i][fAddress];
+                    sInfo[0][lastFireType] = 1;
+                    fireCallTimer[0] = SetTimer("startARandomFire", 900000, false);
+                    printf("Faction fire started at: %d.street!", fInfo[i][fAddress]);
+                    return 1;
+                }
+            }
+        }
+        
+        if(selectedType == 2){
+            // selected business fire..
+            new randomID, business;
+            business = loadedBus;
+            randomID = randomEx(1, business);
+            printf("Selected business fire ID: %d", randomID);
+            for(new i = 0; i < loadedBus; i++){
+                if(bInfo[i][bId] == randomID){
+                    if(bInfo[i][bEntX] != 0) {
+                        threeRandomFires(bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ], randomEx(125, 600), bInfo[i][bAddress]);
+                        AddFire(bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ], randomEx(125, 600), bInfo[i][bAddress]);
+                        threeRandomFires(bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], randomEx(125, 600), bInfo[i][bAddress]);
+                    }
+                    if(bInfo[i][bEntX] == 0){
+                        threeRandomFires(bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], randomEx(125, 600), bInfo[i][bAddress]);
+                    }
+                    new string[50];
+                    format(string, sizeof(string), "%d.street is on fire! Responders needed ASAP!", bInfo[i][bAddress]);
+                    AlertMedics(9999, string, bInfo[i][bAddress], bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ]);
+                    bInfo[i][OnFire] = 1;
+                    sInfo[0][lastFireAddress] = bInfo[i][bAddress];
+                    sInfo[0][lastFireType] = 2;
+                    fireCallTimer[0] = SetTimer("startARandomFire", 900000, false);
+                    printf("business fire started at: %d.street!", bInfo[i][bAddress]);
+                    return 1;
+                }
+            }
+        }
+        
+        if(selectedType == 3){
+            // selected house fire..
+            new randomID, house;
+            house = loadedHouse;
+            randomID = randomEx(1, house);
+            printf("Selected house fire ID: %d", randomID);
+            for(new i = 0; i < loadedHouse; i++){
+                if(hInfo[i][hId] == randomID){        
+                    threeRandomFires(hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], randomEx(125, 600), hInfo[i][hAddress]);
+                    AddFire(hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ], randomEx(125, 600), hInfo[i][hAddress]);
+                    new string[50];
+                    format(string, sizeof(string), "%d.street is on fire! Responders needed ASAP!", hInfo[i][hAddress]);
+                    AlertMedics(9999, string,hInfo[i][hAddress], hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ]);
+                    hInfo[i][OnFire] = 1;
+                    sInfo[0][lastFireAddress] = hInfo[i][hAddress];
+                    sInfo[0][lastFireType] = 3;
+                    fireCallTimer[0] = SetTimer("startARandomFire", 900000, false);
+                    printf("house fire started at: %d.street!", hInfo[i][hAddress]);
+                    return 1;
+                }
+            }
+        }
+    } else if(sInfo[0][firePutOut] == 0){
+        sInfo[0][firePutOut] = 0;
+        sInfo[0][lastFireAddress] = 0;
+        sInfo[0][lastFireType] = 0;
+        selectedType = randomEx(1,3);
+        printf("%d", selectedType);
+        if(selectedType == 1){
+            // selected faction fire..
+            new randomID, faction;
+            faction = loadedFac;
+            randomID = randomEx(1, faction);
+            printf("Selected faction fire ID: %d", randomID);
+            for(new i = 0; i < loadedFac; i++){
+                if(fInfo[i][fID] == randomID && fInfo[i][fAddress] != 999999){
+                    if(fInfo[i][fEntX] != 0) {
+                        threeRandomFires(fInfo[i][fEntX], fInfo[i][fEntY], fInfo[i][fEntZ], randomEx(125, 600), fInfo[i][fAddress]);
+                        AddFire(fInfo[i][fExitX], fInfo[i][fExitY], fInfo[i][fExitZ], randomEx(125, 600), fInfo[i][fAddress]);
+                        threeRandomFires(fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ], randomEx(125, 600), fInfo[i][fAddress]);
+                    }
+                    if(fInfo[i][fEntX] == 0){
+                        threeRandomFires(fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ], randomEx(125, 600), fInfo[i][fAddress]);
+                        threeRandomFires(fInfo[i][fDutyX], fInfo[i][fDutyY], fInfo[i][fDutyZ], randomEx(125, 600), fInfo[i][fAddress]);
+                    }
+                    new string[50];
+                    format(string, sizeof(string), "%d.street is on fire! Responders needed ASAP!", fInfo[i][fAddress]);
+                    AlertMedics(9999, string,fInfo[i][fAddress], fInfo[i][fInfoX], fInfo[i][fInfoY], fInfo[i][fInfoZ]);
+                    fInfo[i][OnFire] = 1;
+                    sInfo[0][lastFireAddress] = fInfo[i][fAddress];
+                    sInfo[0][lastFireType] = 1;
+                    fireCallTimer[0] = SetTimer("startARandomFire", 900000, false);
+                    printf("Faction fire started at: %d.street!", fInfo[i][fAddress]);
+                    return 1;
+                }
+            }
+        }
+        if(selectedType == 2) {
+            // selected business fire..
+            new randomID, business;
+            business = loadedBus;
+            randomID = randomEx(1, business);
+            printf("Selected business fire ID: %d", randomID);
+            for(new i = 0; i < loadedBus; i++){
+                if(bInfo[i][bId] == randomID){
+                    if(bInfo[i][bEntX] != 0) {
+                        threeRandomFires(bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ], randomEx(125, 600), bInfo[i][bAddress]);
+                        AddFire(bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ], randomEx(125, 600), bInfo[i][bAddress]);
+                        threeRandomFires(bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], randomEx(125, 600), bInfo[i][bAddress]);
+                    }
+                    if(bInfo[i][bEntX] == 0){
+                        threeRandomFires(bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ], randomEx(125, 600), bInfo[i][bAddress]);
+                    }
+                    new string[50];
+                    format(string, sizeof(string), "%d.street is on fire! Responders needed ASAP!", bInfo[i][bAddress]);
+                    AlertMedics(9999, string, bInfo[i][bAddress], bInfo[i][bInfoX], bInfo[i][bInfoY], bInfo[i][bInfoZ]);
+                    bInfo[i][OnFire] = 1;
+                    sInfo[0][lastFireAddress] = bInfo[i][bAddress];
+                    sInfo[0][lastFireType] = 2;
+                    fireCallTimer[0] = SetTimer("startARandomFire", 900000, false);
+                    printf("business fire started at: %d.street!", bInfo[i][bAddress]);
+                    return 1;
+                }
+            }
+        }
+        
+        if(selectedType == 3){
+            // selected house fire..
+            new randomID, house;
+            house = loadedHouse;
+            randomID = randomEx(1, house);
+            printf("Selected house fire ID: %d", randomID);
+            for(new i = 0; i < loadedHouse; i++){
+                if(hInfo[i][hId] == randomID){        
+                    threeRandomFires(hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], randomEx(125, 600), hInfo[i][hAddress]);
+                    AddFire(hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ], randomEx(125, 600), hInfo[i][hAddress]);
+                    new string[50];
+                    format(string, sizeof(string), "%d.street is on fire! Responders needed ASAP!", hInfo[i][hAddress]);
+                    AlertMedics(9999, string,hInfo[i][hAddress], hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ]);
+                    hInfo[i][OnFire] = 1;
+                    sInfo[0][lastFireAddress] = hInfo[i][hAddress];
+                    sInfo[0][lastFireType] = 3;
+                    fireCallTimer[0] = SetTimer("startARandomFire", 900000, false);
+                    printf("house fire started at: %d.street!", hInfo[i][hAddress]);
+                    return 1;
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+stock threeRandomFires(Float:x, Float:y, Float:z, Health, Address){
+    new Float:a, Float:newX, Float:newY;
+    newX = x; newY = y;
+    a = random(360);
+    newX += (random(3) * floatsin(-a, degrees));
+    newY += (random(3) * floatsin(-a, degrees));
+    AddFire(newX, newY, z, Health, Address);
+    newX = x; newY = y;
+    a = random(360);
+    newX += (random(3) * floatsin(-a, degrees));
+    newY += (random(3) * floatsin(-a, degrees));
+    AddFire(newX, newY, z, Health, Address);
+    newX = x; newY = y;
+    a = random(360);
+    newX += (random(3) * floatsin(-a, degrees));
+    newY += (random(3) * floatsin(-a, degrees));
+    AddFire(newX, newY, z, Health, Address);
+    printf("Three random fires generated.");
+}
+
+stock AddFire(Float:x, Float:y, Float:z, Health, Address)
+{
+    TotalFires++;
+	new fireID = TotalFires;
+	FireObj[fireID] = CreateObject(3461, x, y, z-2.61, 0, 0, 0.0);
+	FirePos[fireID][0] = x, FirePos[fireID][1] = y, FirePos[fireID][2] = z;
+	FireHealth[fireID] = Health;
+	FireHealthMax[fireID] = Health;
+	#if defined Labels
+	    new string[128];
+	    format(string, sizeof(string), "%d/%d", FireHealth[fireID], FireHealthMax[fireID]);
+	    FireText[fireID] = Create3DTextLabel(string, 0xFFFFFFFFF, x, y, z, 20, 0);
+	#endif
+    if(Address != 0){
+        FireAddress[fireID] = Address;
+    }
+}
+
+
+stock DeleteFire(fiID)
+{
+	DestroyObject(FireObj[fiID]);
+	TotalFires--;
+	FirePos[fiID][0] = 0, FirePos[fiID][1] = 0, FirePos[fiID][2] = 0;
+	#if defined Labels
+	    Delete3DTextLabel(FireText[fiID]);
+	#endif
+}
+stock DeleteAllFire()
+{
+	new fiID;
+	for(fiID = 0; fiID<MAX_FIRES; fiID++)
+	{
+		DestroyObject(FireObj[fiID]);
+		TotalFires= 0;
+		FirePos[fiID][0] = 0, FirePos[fiID][1] = 0, FirePos[fiID][2] = 0;
+		#if defined Labels
+	    	Delete3DTextLabel(FireText[fiID]);
+		#endif
+	}
+}
+stock IsValidFire(firID)
+{
+	if( (FirePos[firID][0] != 0) && (FirePos[firID][1] != 0) && (FirePos[firID][2] != 0) ) return true;
+	else return false;
+}
+
+stock GetClosestFire(playerid)
+{
+	new i;
+	for(i = 0; i<MAX_FIRES; i++)
+	{
+	    if(IsValidFire(i) && IsPlayerInRangeOfPoint(playerid, 1, FirePos[i][0],  FirePos[i][1],  FirePos[i][2]))
+	    {
+	        return i;
+		}
+	}
+	return 0;
+}
+
+
+
+
+
+Float:DistanceCameraTargetToLocation(Float:CamX, Float:CamY, Float:CamZ,   Float:ObjX, Float:ObjY, Float:ObjZ,   Float:FrX, Float:FrY, Float:FrZ) {
+
+	new Float:TGTDistance;
+	TGTDistance = floatsqroot((CamX - ObjX) * (CamX - ObjX) + (CamY - ObjY) * (CamY - ObjY) + (CamZ - ObjZ) * (CamZ - ObjZ));
+	new Float:tmpX, Float:tmpY, Float:tmpZ;
+	tmpX = FrX * TGTDistance + CamX;
+	tmpY = FrY * TGTDistance + CamY;
+	tmpZ = FrZ * TGTDistance + CamZ;
+	return floatsqroot((tmpX - ObjX) * (tmpX - ObjX) + (tmpY - ObjY) * (tmpY - ObjY) + (tmpZ - ObjZ) * (tmpZ - ObjZ));
+}
+
+stock PlayerFaces(playerid, Float:x, Float:y, Float:z, Float:radius)
+{
+        new Float:cx,Float:cy,Float:cz,Float:fx,Float:fy,Float:fz;
+        GetPlayerCameraPos(playerid, cx, cy, cz);
+        GetPlayerCameraFrontVector(playerid, fx, fy, fz);
+        return (radius >= DistanceCameraTargetToLocation(cx, cy, cz, x, y, z, fx, fy, fz));
+}
+
+public VehicleToPoint(Float:radi, vehicleid, Float:x, Float:y, Float:z)
+{
+		new Float:oldposx, Float:oldposy, Float:oldposz;
+		new Float:tempposx, Float:tempposy, Float:tempposz;
+		GetVehiclePos(vehicleid, oldposx, oldposy, oldposz);
+		tempposx = (oldposx -x);
+		tempposy = (oldposy -y);
+		tempposz = (oldposz -z);
+		//printf("DEBUG: X:%f Y:%f Z:%f",posx,posy,posz);
+		if (((tempposx < radi) && (tempposx > -radi)) && ((tempposy < radi) && (tempposy > -radi)) && ((tempposz < radi) && (tempposz > -radi)))
+		{
+			return 1;
+		}
+		return 0;
+}
+
+public HealthDown()
+{
+	new i,v,p;
+	for(i = 0; i<MAX_FIRES; i++)
+	{
+		if(IsValidFire(i))
+		{
+			for(p = 0; p<MAX_PLAYERS; p++)
+			{
+				if(IsPlayerInRangeOfPoint(p, 1, FirePos[i][0], FirePos[i][1], FirePos[i][2]) && !IsPlayerInAnyVehicle(p))
+				{
+	  				new Float:HP;
+		    		GetPlayerHealth(p, HP);
+	  				SetPlayerHealth(p, HP-4);
+				}	
+			}
+			for(v = 0; v<MAX_VEHICLES; v++)
+			{
+				if(VehicleToPoint(2, v, FirePos[i][0], FirePos[i][1], FirePos[i][2]))
+				{
+					new Float:HP;
+		    		GetVehicleHealth(v, HP);
+	  				SetVehicleHealth(v, HP-30);
+				}
+			}
+		}
+	}
 }
 
 CMD:dutyclothes(playerid, params[]){
@@ -2773,7 +3189,7 @@ CMD:createrentalvehicle(playerid, params[]){
 }
 
 CMD:createfactionvehicle(playerid, params[]){
-    new vehid, facid, price,plate[32],query[900], Float:px, Float:py, Float:pz, Float:pa;
+    new vehid, facid,plate[32],query[900], Float:px, Float:py, Float:pz, Float:pa;
     if(pInfo[playerid][pAdminLevel] >= 5){
         GetPlayerPos(playerid, px, py, pz);
         GetPlayerFacingAngle(playerid, pa);
@@ -3088,7 +3504,7 @@ CMD:dashcam(playerid, params[]){
 forward public BeginDashCam(playerid);
 public BeginDashCam(playerid){
     new Float:x,Float:y,Float:z,Float:a;
-    new string[256], plate[32], vidstr[32];
+    new plate[32];
     new vehSpeed[32];
     new vid = GetPlayerVehicleID(playerid);
     GetVehiclePos(vid, x, y, z);
@@ -3450,7 +3866,7 @@ CMD:arrest(playerid, params[]){
 
 Dialog:DIALOG_ADVERTS(playerid, response, listitem, inputtext[]){
     if(response){
-        new list[256], string[256];
+        new list[256];
         for (new i = 0; i < MAX_PLAYERS; i++) {
             if(listitem == i) {
                 format(list, sizeof(list), "{FFCC00}*-----LOADED ADVERTISEMENT-----*{A9C4E4}\n\nContact Phone: %d\nAd Message: %s\n\nPlease either accept, or decline this advert!", pInfo[i][pPhoneNumber], pInfo[i][SentAdv]);
@@ -3945,43 +4361,90 @@ CMD:takecall(playerid, params[]){
     if(pInfo[playerid][pFactionId] == 1 || pInfo[playerid][pFactionId] == 2 || pInfo[playerid][pFactionId] == 3 || pInfo[playerid][pFactionId] == 4){
         if(sscanf(params, "d", target)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /takecall [callcode]"); {
             if(pInfo[playerid][pDuty] == 1){
-                if(pInfo[target][pAlertCall] == 1 || pInfo[target][pAlertCall] == 2){                        
-                    new Float:tX, Float:tY, Float:tZ;
-                    GetPlayerPos(target, tX, tY, tZ);
-                    policeCall[playerid] = CreateDynamicCP(tX, tY, tZ, 2, -1, -1, -1, 10000);
-                    for(new i = 0; i < MAX_PLAYERS; i++){
-                        if(pInfo[i][pFactionId] == 1 || pInfo[i][pFactionId] == 2){
-                            new string[256];
-                            format(string, sizeof(string), "{FFFFFF}Radio: %s %s has taken call code: %d!",pInfo[playerid][pFactionRankname],  RPName(playerid), target);
-                            SendClientMessage(i, SERVERCOLOR, string);
-                            pInfo[target][pAlertCall] = 0;
+                if(target >= MAX_PLAYERS){
+                    if(pInfo[playerid][pFactionId] == 2){
+                        new addressOnFire, string[256], Float:fx, Float:fy, Float:fz;
+                        addressOnFire = 0;
+                        for(new i = 0; i < loadedFac; i++){
+                            if(fInfo[i][fAddress] == target){
+                                if(fInfo[i][OnFire] == 1){
+                                    addressOnFire = target;
+                                    fx = fInfo[i][fInfoX];
+                                    fy = fInfo[i][fInfoY];
+                                    fz = fInfo[i][fInfoZ];
+                                }
+                            }
+                        }
+                        for(new i = 0; i < loadedBus; i++){
+                            if(bInfo[i][bAddress] == target){
+                                if(bInfo[i][OnFire] == 1){
+                                    addressOnFire = target;
+                                    fx = bInfo[i][bInfoX];
+                                    fy = bInfo[i][bInfoY];
+                                    fz = bInfo[i][bInfoZ];
+                                }
+                            }
+                        }
+                        for(new i = 0; i < loadedHouse; i++){
+                            if(hInfo[i][hAddress] == target){
+                                if(hInfo[i][OnFire] == 1){
+                                    addressOnFire = target;
+                                    fx = hInfo[i][hInfoX];
+                                    fy = hInfo[i][hInfoY];
+                                    fz = hInfo[i][hInfoZ];
+                                }
+                            }
+                        }
+                        if(addressOnFire != 0){
+                            policeCall[playerid] = CreateDynamicCP(fx, fy, fz, 2, -1, -1, -1, 10000);
+
+                            for(new i = 0; i < MAX_PLAYERS; i++){
+                                if(pInfo[i][pFactionId] == 2){
+                                    format(string, sizeof(string), "{FFFFFF}Radio: %s %s has taken call code: %d!",pInfo[playerid][pFactionRankname],  RPName(playerid), target);
+                                    SendClientMessage(i, SERVERCOLOR, string);
+                                }
+                            }
                         }
                     }
-                } else if(pInfo[target][pAlertCall] == 3){
-                    new Float:tX, Float:tY, Float:tZ;
-                    GetPlayerPos(target, tX, tY, tZ);
-                    towingCall[playerid] = CreateDynamicCP(tX, tY, tZ, 2, -1, -1, -1, 10000);
-                    for(new i = 0; i < MAX_PLAYERS; i++){
-                        if(pInfo[i][pFactionId] == 3){
-                            new string[256];
-                            format(string, sizeof(string), "{FFFFFF}Radio: %s %s has taken call code: %d!",pInfo[playerid][pFactionRankname],  RPName(playerid), target);
-                            SendClientMessage(i, SERVERCOLOR, string);
-                            pInfo[target][pAlertCall] = 0;
+                } else {
+                    if(pInfo[target][pAlertCall] == 1 || pInfo[target][pAlertCall] == 2){                        
+                        new Float:tX, Float:tY, Float:tZ;
+                        GetPlayerPos(target, tX, tY, tZ);
+                        policeCall[playerid] = CreateDynamicCP(tX, tY, tZ, 2, -1, -1, -1, 10000);
+                        for(new i = 0; i < MAX_PLAYERS; i++){
+                            if(pInfo[i][pFactionId] == 1 || pInfo[i][pFactionId] == 2){
+                                new string[256];
+                                format(string, sizeof(string), "{FFFFFF}Radio: %s %s has taken call code: %d!",pInfo[playerid][pFactionRankname],  RPName(playerid), target);
+                                SendClientMessage(i, SERVERCOLOR, string);
+                                pInfo[target][pAlertCall] = 0;
+                            }
                         }
+                    } else if(pInfo[target][pAlertCall] == 3){
+                        new Float:tX, Float:tY, Float:tZ;
+                        GetPlayerPos(target, tX, tY, tZ);
+                        towingCall[playerid] = CreateDynamicCP(tX, tY, tZ, 2, -1, -1, -1, 10000);
+                        for(new i = 0; i < MAX_PLAYERS; i++){
+                            if(pInfo[i][pFactionId] == 3){
+                                new string[256];
+                                format(string, sizeof(string), "{FFFFFF}Radio: %s %s has taken call code: %d!",pInfo[playerid][pFactionRankname],  RPName(playerid), target);
+                                SendClientMessage(i, SERVERCOLOR, string);
+                                pInfo[target][pAlertCall] = 0;
+                            }
+                        }
+                    } else if(pInfo[target][pAlertCall] == 4) {
+                        new string[256];
+                        pInfo[target][OnCall] = 3170;
+                        pInfo[target][pAlertCall] = 0;
+                        SendClientMessage(target, -1, "Call connected.");
+                        format(string, sizeof(string), "> You have accepted line: %d.", target);
+                        SendClientMessage(playerid, ADMINBLUE, string);                    
+                        KillTimer(callTimer[target]);
+                        return 1;
+                    } 
+                    else {
+                        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This is not a valid call code!");
+                        return 1;
                     }
-                } else if(pInfo[target][pAlertCall] == 4) {
-                    new string[256];
-                    pInfo[target][OnCall] = 3170;
-                    pInfo[target][pAlertCall] = 0;
-                    SendClientMessage(target, -1, "Call connected.");
-                    format(string, sizeof(string), "> You have accepted line: %d.", target);
-                    SendClientMessage(playerid, ADMINBLUE, string);                    
-                    KillTimer(callTimer[target]);
-                    return 1;
-                } 
-                else{
-                    SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This is not a valid call code!");
-                    return 1;
                 }
             } else {
                 TextDrawShowForPlayer(playerid, NotOnDuty);
@@ -5029,16 +5492,16 @@ CMD:lock(playerid, params[]){
     format(nname, sizeof(nname), "%s", GetName(playerid));
     for(new i = 0; i < MAX_VEHICLES; i++){
         GetVehiclePos(i, x, y, z);
-        if(IsPlayerInRangeOfPoint(playerid, 10,x,y,z)){
+        if(IsPlayerInRangeOfPoint(playerid, 6,x,y,z)){
             if(vInfo[i][vFacId] == pInfo[playerid][pFactionId] || !strcmp(vInfo[i][vOwner], nname, true)){
                 GetVehicleParamsEx(i, engine, lights, alarm, doors, bonnet, boot, objective);
                 if(doors == 1){
                     SetVehicleParamsEx(i, engine, lights, alarm, false, bonnet, boot, objective);
-                    format(string, sizeof(string), "* %s takes their keys and unlocks the vehicle.", RPName(playerid));
+                    format(string, sizeof(string), "* %s takes their keys and unlocks the %s.", RPName(playerid), VehicleNames[GetVehicleModel(i) - 400]);
                     nearByAction(playerid, NICESKY, string);
                 } else {
                     SetVehicleParamsEx(i, engine, lights, alarm, true, bonnet, boot, objective);
-                    format(string, sizeof(string), "* %s takes their keys and locks the vehicle.", RPName(playerid));
+                    format(string, sizeof(string), "* %s takes their keys and locks the %s.", RPName(playerid), VehicleNames[GetVehicleModel(i) - 400]);
                     nearByAction(playerid, NICESKY, string);
                 }
             }
@@ -5430,17 +5893,27 @@ public AlertPolice(playerid, message[50], Float:cX, Float:cY, Float:cZ){
     return 1;
 }
 
-forward public AlertMedics(playerid, message[50], Float:cX, Float:cY, Float:cZ);
-public AlertMedics(playerid, message[50], Float:cX, Float:cY, Float:cZ){
+forward public AlertMedics(playerid, message[50], address, Float:cX, Float:cY, Float:cZ);
+public AlertMedics(playerid, message[50],address, Float:cX, Float:cY, Float:cZ){
     new string[256];
-    pInfo[playerid][pAlertCall] = 2;
-    format(pInfo[playerid][pAlertMsg], 80, "%s", message);
+    if(playerid == 9999){
+        for(new i = 0; i < MAX_PLAYERS; i++){
+            if(pInfo[i][pFactionId] == 2){ // if player is a police officer
+                format(string, sizeof(string), "{FFFFFF}Radio: ALERT: %s, call code: %d", message, address);
+                printf("Medics alerted with msg: %s", message);
+                SendClientMessage(i, SERVERCOLOR, string);
+            }
+        }
+    } else {
+        pInfo[playerid][pAlertCall] = 2;
+        format(pInfo[playerid][pAlertMsg], 80, "%s", message);
 
-    for(new i = 0; i < MAX_PLAYERS; i++){
-        if(pInfo[i][pFactionId] == 2){ // if player is a police officer
-            format(string, sizeof(string), "{FFFFFF}Radio: ALERT: %s, call code: %d", message, playerid);
-            printf("Medics alerted with msg: %s", message);
-            SendClientMessage(i, SERVERCOLOR, string);
+        for(new i = 0; i < MAX_PLAYERS; i++){
+            if(pInfo[i][pFactionId] == 2){ // if player is a police officer
+                format(string, sizeof(string), "{FFFFFF}Radio: ALERT: %s, call code: %d", message, playerid);
+                printf("Medics alerted with msg: %s", message);
+                SendClientMessage(i, SERVERCOLOR, string);
+            }
         }
     }
     return 1;
@@ -5449,7 +5922,8 @@ public AlertMedics(playerid, message[50], Float:cX, Float:cY, Float:cZ){
 CMD:listallcalls(playerid, params[]){
     if(pInfo[playerid][pFactionId] == 1 || pInfo[playerid][pFactionId] == 2 || pInfo[playerid][pFactionId] == 3 || pInfo[playerid][pFactionId] == 4){
         new string[256], substring[256];
-        new available;
+        new firestr[256], subfirstr[256];
+        new available, firav;
         
         available = 0;
 
@@ -5470,6 +5944,48 @@ CMD:listallcalls(playerid, params[]){
                     strcat(string, substring);
                     available++;
                 }
+            }
+
+            if(sInfo[0][firePutOut] != 1){
+                if(sInfo[0][lastFireType] == 1){
+                    //Last stated fire was a faction fire...
+                    for(new i = 0; i < loadedFac; i++){
+                        if(fInfo[i][OnFire] == 1){
+                            format(subfirstr, sizeof(subfirstr), "Fire call: %d", fInfo[i][fAddress]);
+                            strcat(firestr, subfirstr);
+                            firav++;
+                        }
+                    }
+
+                }
+                if(sInfo[0][lastFireType] == 2){
+                    //Last stated fire was a business fire...
+                    for(new i = 0; i < loadedBus; i++){
+                        if(bInfo[i][OnFire] == 1){
+                            format(subfirstr, sizeof(subfirstr), "Fire call: %d", bInfo[i][bAddress]);
+                            strcat(firestr, subfirstr);
+                            firav++;
+                        }
+                    }
+                    
+                }
+                if(sInfo[0][lastFireType] == 3){
+                    //Last stated fire was a house fire...
+                    for(new i = 0; i < loadedHouse; i++){
+                        if(hInfo[i][OnFire] == 1){
+                            format(subfirstr, sizeof(subfirstr), "Fire call: %d", hInfo[i][hAddress]);
+                            strcat(firestr, subfirstr);
+                            firav++;
+                        }
+                    }
+                }
+                if(firav >= 1){
+                SendClientMessage(playerid, SERVERCOLOR, firestr);
+                } else {
+                    SendClientMessage(playerid, SERVERCOLOR, "No fire calls available.");
+                }
+            } else {            
+                SendClientMessage(playerid, SERVERCOLOR, "No fire calls available.");
             }
         }
         if(pInfo[playerid][pFactionId] == 3){
@@ -6339,8 +6855,10 @@ public OnPlayerInteriorChange(playerid, newinteriorid, oldinteriorid) {
     return 1;
 }
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
+    
     if(newkeys & KEY_SPRINT){
-        for(new i = 0; i < loadedFac; i++){
+        new i = 0;
+        for(i = 0; i < loadedFac; i++){
             if(IsPlayerInRangeOfPoint(playerid, 1.5, fInfo[i][fEntX], fInfo[i][fEntY], fInfo[i][fEntZ])){
                 TogglePlayerControllable(playerid, false);
                 SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
@@ -6349,18 +6867,16 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
                 SetPlayerPos(playerid, fInfo[i][fExitX], fInfo[i][fExitY], fInfo[i][fExitZ]);
                 return 1;
             }
-            if(GetPlayerVirtualWorld(playerid) == fInfo[i][fID]){
-                if(IsPlayerInRangeOfPoint(playerid, 1.5, fInfo[i][fExitX], fInfo[i][fExitY], fInfo[i][fExitZ])){
-                    TogglePlayerControllable(playerid, false);
-                    SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
-                    SetPlayerInterior(playerid, 0);               
-                    SetPlayerVirtualWorld(playerid, 0);            
-                    SetPlayerPos(playerid, fInfo[i][fEntX], fInfo[i][fEntY], fInfo[i][fEntZ]);
-                }
+            if(GetPlayerVirtualWorld(playerid) == fInfo[i][fID] && IsPlayerInRangeOfPoint(playerid, 1.5, fInfo[i][fExitX], fInfo[i][fExitY], fInfo[i][fExitZ])){
+                TogglePlayerControllable(playerid, false);
+                SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
+                SetPlayerInterior(playerid, 0);               
+                SetPlayerVirtualWorld(playerid, 0);            
+                SetPlayerPos(playerid, fInfo[i][fEntX], fInfo[i][fEntY], fInfo[i][fEntZ]);
                 return 1;
             }
         }
-        for(new i = 0; i < loadedBus; i++){
+        for(i = 0; i < loadedBus; i++){
             if(IsPlayerInRangeOfPoint(playerid, 1.5, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ])){
                 TogglePlayerControllable(playerid, false);
                 SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
@@ -6369,18 +6885,16 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
                 SetPlayerPos(playerid, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ]);
                 return 1;
             }
-            if(GetPlayerVirtualWorld(playerid) == bInfo[i][bId]){
-                if(IsPlayerInRangeOfPoint(playerid, 1.5, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ])){
+            if(GetPlayerVirtualWorld(playerid) == bInfo[i][bId] && IsPlayerInRangeOfPoint(playerid, 1.5, bInfo[i][bExitX], bInfo[i][bExitY], bInfo[i][bExitZ])){
                     TogglePlayerControllable(playerid, false);
                     SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
                     SetPlayerInterior(playerid, 0);               
                     SetPlayerVirtualWorld(playerid, 0);            
                     SetPlayerPos(playerid, bInfo[i][bEntX], bInfo[i][bEntY], bInfo[i][bEntZ]);
-                }
-                return 1;
+                    return 1;
             }
         }
-        for(new i = 0; i < loadedHouse; i++){
+        for(i = 0; i < loadedHouse; i++){
             if(IsPlayerInRangeOfPoint(playerid, 1.5, hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ])){       
                 if(hInfo[i][hLockedState] == 0){
                     if(hInfo[i][hType] == 5 || hInfo[i][hType] == 2 || hInfo[i][hType] == 1){
@@ -6400,15 +6914,13 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
                 }
                 return 1;
             }
-            if(GetPlayerVirtualWorld(playerid) == hInfo[i][hId]){// if they are in that vw
-                if(IsPlayerInRangeOfPoint(playerid, 3, hInfo[i][hExitX], hInfo[i][hExitY], hInfo[i][hExitZ])){ // and in range of the exit definition                
-                    TogglePlayerControllable(playerid, false);
-                    SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
-                    SetPlayerPos(playerid, hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ]);
-                    SetPlayerInterior(playerid, 0); 
-                    SetPlayerVirtualWorld(playerid, 0);
-                    return 1;
-                }
+            if(GetPlayerVirtualWorld(playerid) == hInfo[i][hId] && IsPlayerInRangeOfPoint(playerid, 3, hInfo[i][hExitX], hInfo[i][hExitY], hInfo[i][hExitZ])){ // and in range of the exit definition                
+                TogglePlayerControllable(playerid, false);
+                SetTimerEx("UnfreezeAfterTime", 5000, false, "d", playerid);
+                SetPlayerPos(playerid, hInfo[i][hEntX], hInfo[i][hEntY], hInfo[i][hEntZ]);
+                SetPlayerInterior(playerid, 0); 
+                SetPlayerVirtualWorld(playerid, 0);
+                return 1;
             }
         }
     }
@@ -6532,7 +7044,99 @@ public OnRconLoginAttempt(ip[], password[], success) {
 }
 
 public OnPlayerUpdate(playerid) {
+    new newkeys,l,u;
+	GetPlayerKeys(playerid, newkeys, l, u);
+	new i;
+	if(Holding(KEY_FIRE))
+	{
+        if(GetPlayerWeapon(playerid) == 42)
+        {
+            for(i = 0; i<MAX_FIRES; i++)
+ 	    	{
+ 	        	if(IsValidFire(i))
+ 	        	{
+ 	        	    if(PlayerFaces(playerid, FirePos[i][0],  FirePos[i][1],  FirePos[i][2], 1) && IsPlayerInRangeOfPoint(playerid, 4, FirePos[i][0],  FirePos[i][1],  FirePos[i][2]))
+ 	        		{
+                        new pay;
+			    		FireHealth[i]-=2;
+					    #if defined Labels
+				    		new string[128];
+					    	format(string, sizeof(string), "FIRE(%d)\n\n%d/%d", FireAddress[i], FireHealth[i], FireHealthMax[i]);
+							Update3DTextLabelText(FireText[i], 0xFFFFFFFF, string);
+					    	//Delete3DTextLabel(FireText[i]);
+						//FireText[i] = Create3DTextLabel(string, 0xFFFFFFFF, FirePos[i][0],  FirePos[i][1],  FirePos[i][2], 20, 0);
+					    #endif
+					    if(FireHealth[i] <= 0)
+					    {
+                            if(pInfo[playerid][pFactionId] == 2){
+                                new firehp;
+                                if(FireAddress[i] != 0){
+                                    GetAllFiresAtAddress(playerid, FireAddress[i]);
+                                }
+                                firehp = FireHealthMax[i];
+                                pay = (firehp / 255) * 100;
+                                pInfo[playerid][pFactionPay] += pay;
+                                format(string, sizeof(string), "> You have extinguished a fire! (+$%d)", pay);
+                                SendClientMessage(playerid, ADMINBLUE, string);
+							    DeleteFire(i);
+                            }
+							CallRemoteFunction("OnFireDeath", "dd", i, playerid);
+						}
+					}
+				}
+			}
+		}
+	}
     return 1;
+}
+
+stock GetAllFiresAtAddress(playerid, Address){
+    new remainingFires = 0;
+    for(new i = 0; i < TotalFires; i++){
+        if(FireAddress[i] == Address){
+            remainingFires++;
+        }
+    }
+    if(remainingFires == 0){
+        for(new i = 0; i < MAX_PLAYERS; i++){
+            if(pInfo[i][pFactionId] == 2){
+                new string[256];
+                format(string, sizeof(string), "Radio: %s %s has extinguished the fire, over.", pInfo[playerid][pFactionRankname], RPName(playerid));
+                SendClientMessage(playerid, -1, string);
+                
+                sInfo[0][firePutOut] = 1;
+                if(sInfo[0][lastFireType] == 1){
+                    for(new fi = 0; fi < loadedFac; fi++){
+                        if(fInfo[fi][OnFire] == 1){
+                            fInfo[fi][OnFire] = 0;
+                            return 1;
+                        }
+                    }
+                }
+                if(sInfo[0][lastFireType] == 2){
+                    for(new bi = 0; bi < loadedBus; bi++){
+                        if(bInfo[bi][OnFire] == 1){
+                            bInfo[bi][OnFire] = 0;
+                            return 1;
+                        }
+                    }
+                }
+                if(sInfo[0][lastFireType] == 3){
+                    for(new hi = 0; hi < loadedHouse; hi++){
+                        if(hInfo[hi][OnFire] == 1){
+                            hInfo[hi][OnFire] = 0;
+                            return 1;
+                        }
+                    }
+                }
+            }
+        }
+        return 1;
+    }
+    if(remainingFires != 0){
+
+    }
+
 }
 
 public OnPlayerStreamIn(playerid, forplayerid) {
@@ -7133,7 +7737,8 @@ public OnPlayerLoad(playerid) {
             for(new i = 0; i < loadedHouse; i++){
                 if(hInfo[i][hAddress] == pInfo[playerid][pPreferredSpawn]){
                     SetPlayerWantedLevel(playerid, pInfo[playerid][pWantedLevel]);
-                    SetPlayerVirtualWorld(playerid, hInfo[i][hId]);
+                    SetPlayerVirtualWorld(playerid, hInfo[i][hId]);    
+                    printf("%d", GetPlayerVirtualWorld(playerid));
                     SetPlayerInterior(playerid, hInfo[i][hType]);
                     SetSpawnInfo(playerid, 0, pInfo[playerid][pSkin], hInfo[i][hExitX], hInfo[i][hExitY], hInfo[i][hExitZ], 269.15, pInfo[playerid][pWeaponSlot1], pInfo[playerid][pWeaponSlot1Ammo], pInfo[playerid][pWeaponSlot2], pInfo[playerid][pWeaponSlot2Ammo], pInfo[playerid][pWeaponSlot3], pInfo[playerid][pWeaponSlot3Ammo]);
                     SpawnPlayer(playerid);
