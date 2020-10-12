@@ -826,7 +826,7 @@ public OnGameModeInit() {
     ManualVehicleEngineAndLights();
     DisableInteriorEnterExits();
     // Don't use these lines if it's a filterscript
-    SetGameModeText("Roleplay | v1.5.2");
+    SetGameModeText("Roleplay | v1.5.8");
     
     sInfo[0][firePutOut] = 0;
     sInfo[0][lastFireAddress] = 0;
@@ -2200,8 +2200,6 @@ public LoadMapIcons(playerid) {
     for(new i = 0; i < loadedHouse; i++){
         if(!strcmp(hInfo[i][hOwner], "NULL")){
             SetPlayerMapIcon(playerid, hInfo[i][hId]+10, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], 31, 0, MAPICON_GLOBAL);
-        } else {
-            SetPlayerMapIcon(playerid, hInfo[i][hId]+10, hInfo[i][hInfoX], hInfo[i][hInfoY], hInfo[i][hInfoZ], 32, 0, MAPICON_GLOBAL);
         }
     }
     return 1;
@@ -5832,7 +5830,7 @@ CMD:lock(playerid, params[]){
     for(new i = 0; i < MAX_VEHICLES; i++){
         GetVehiclePos(i, x, y, z);
         if(IsPlayerInRangeOfPoint(playerid, 6,x,y,z)){
-            if(vInfo[i][vFacId] == pInfo[playerid][pFactionId] || !strcmp(vInfo[i][vOwner], nname, true)){
+            if(vInfo[i][vFacId] == pInfo[playerid][pFactionId] || !strcmp(vInfo[i][vOwner], nname, true) || !strcmp(vInfo[i][vRentingPlayer], nname, true)){
                 GetVehicleParamsEx(i, engine, lights, alarm, doors, bonnet, boot, objective);
                 if(doors == 1){
                     SetVehicleParamsEx(i, engine, lights, alarm, false, bonnet, boot, objective);
