@@ -48,6 +48,8 @@ new Text3D:FireText[MAX_FIRES];
 #define ADMINBLUE 		0x1D7CF2FF //0059E8
 #define COLOR_AQUA 0xF0F8FFAA
 #define COLOR_GREENYELLOW 0xADFF2FAA
+#define PINK 			0xFE2EC8FF
+#define ADMINORANGE 	0xF6970CAA
 
 
 
@@ -586,6 +588,14 @@ new const BUS_DEALERSHIP[][ENUM_CARDEAL_DATA] = {
     {496, "Blista Compact", 18500, 496}
 };
 
+enum ADVERT_DATA {
+    advertID,
+    advertAvailable,
+    advertMsg[64],
+    contactNum
+};
+new adInfo[10][ADVERT_DATA];
+
 enum ENUM_PLAYER_DATA {
     ID[32],
         pName[MAX_PLAYER_NAME],
@@ -656,6 +666,10 @@ enum ENUM_PLAYER_DATA {
         pAdminLevel,
         pModerator,
         pHelper,
+        pAvStatus,
+        SentHelpme,
+        HelpmeMessage[64],
+        pTotalHelpmes,
 
         bool:LoggedIn,
         pMuted,
@@ -848,11 +862,11 @@ public OnGameModeInit() {
     LoadHouseData();
     LoadBusData();
     CreateBusStopObjects();
-    LoadVehicleData();
+    LoadVehicleData();  
     LoadDrugPrices();
     SetTimer("startARandomFire", 25000, false);
+    loadAdverts();
 
-    
 
     
     // FCPD
@@ -1317,6 +1331,15 @@ public OnGameModeInit() {
 }
 
 // load server data
+
+forward public loadAdverts();
+public loadAdverts(){
+    for(new ad = 0; ad < 10; ad++){
+        adInfo[ad][advertID] = ad;
+        adInfo[ad][advertAvailable] = 0;
+        printf("ad id %d set", ad);
+    }
+}
 
 forward public CreateBusStopObjects();
 public CreateBusStopObjects() {
@@ -2349,7 +2372,7 @@ public SavePlayerData(playerid) {
     mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pDutyClothes` = '%d' WHERE  `pName` = '%e'", pInfo[playerid][pDutyClothes], GetName(playerid));
     mysql_query(db_handle, query);
 
-    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAdminLevel` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pAdminLevel], GetName(playerid));
+    mysql_format(db_handle, query, sizeof(query), "UPDATE `accounts` SET `pAdminLevel` = '%d', `pModerator` = '%d', `pHelper` = '%d', `pTotalHelpmes` = '%d' WHERE `pName` = '%e'", pInfo[playerid][pAdminLevel], pInfo[playerid][pModerator], pInfo[playerid][pHelper],pInfo[playerid][pTotalHelpmes], GetName(playerid));
     mysql_query(db_handle, query);
     
     new weaponSlot[6][2];
@@ -4204,14 +4227,20 @@ CMD:arrest(playerid, params[]){
 Dialog:DIALOG_ADVERTS(playerid, response, listitem, inputtext[]){
     if(response){
         new list[256];
-        for (new i = 0; i < MAX_PLAYERS; i++) {
-            if(listitem == i) {
-                format(list, sizeof(list), "{FFCC00}*-----LOADED ADVERTISEMENT-----*{A9C4E4}\n\nContact Phone: %d\nAd Message: %s\n\nPlease either accept, or decline this advert!", pInfo[i][pPhoneNumber], pInfo[i][SentAdv]);
-                pInfo[playerid][SelectedAd] = i;
+        for (new i = 0; i < 10; i++) {
+            if(i == listitem) {
+                if(adInfo[i][advertAvailable] == 1){
+                    format(list, sizeof(list), "{FFCC00}*-----LOADED ADVERTISEMENT-----*{A9C4E4}\n\nContact Phone: %d\nAd Message: %s\n\nPlease either accept, or decline this advert!", adInfo[i][contactNum], adInfo[i][advertMsg]);
+                    pInfo[playerid][SelectedAd] = i;
+                    Dialog_Show(playerid, DIALOG_ADVERTCHOICE, DIALOG_STYLE_MSGBOX, "Advert", list, "Accept", "Decline");
+                }
+                if(adInfo[i][advertAvailable] == 0) {
+                    format(list, sizeof(list), "{FFCC00}*-----LOADED ADVERTISEMENT-----*{A9C4E4}\n\n This advert is yet to be assigned!");
+                    Dialog_Show(playerid, DIALOG_UNUSED, DIALOG_STYLE_MSGBOX, "Advert", list, "Accept");
+                }
             }
         }
         
-        Dialog_Show(playerid, DIALOG_ADVERTCHOICE, DIALOG_STYLE_MSGBOX, "Advert", list, "Accept", "Decline");
     }
     return 1;
 }
@@ -4219,38 +4248,48 @@ Dialog:DIALOG_ADVERTS(playerid, response, listitem, inputtext[]){
 Dialog:DIALOG_ADVERTCHOICE(playerid, response, listitem, inputtext[]){
     new string[256];
     if(response){
-        pInfo[pInfo[playerid][SelectedAd]][SentAdv] = 0;
-        pInfo[pInfo[playerid][SelectedAd]][pBank] -= 100;
+        adInfo[pInfo[playerid][SelectedAd]][advertAvailable] = 0;
         pInfo[playerid][pFactionPay] += 100;
         SendClientMessage(pInfo[playerid][SelectedAd], ADMINBLUE, "> Your advert has been accepted!");
         format(string, sizeof(string), "> You have accepted advert: %d! (+$100)", pInfo[playerid][SelectedAd]);
         SendClientMessage(playerid, ADMINBLUE, string);
-        format(string, sizeof(string), "{00bfff}[SANN Radio Advert]: %s, Contact Phone: %d.", pInfo[pInfo[playerid][SelectedAd]][AdvMsg], pInfo[pInfo[playerid][SelectedAd]][pPhoneNumber]);
+        format(string, sizeof(string), "{00bfff}[SANN Radio Advert]: %s, Contact Phone: %d.", adInfo[pInfo[playerid][SelectedAd]][advertMsg], adInfo[pInfo[playerid][SelectedAd]][contactNum]);
         SendClientMessageToAll(-1, string);
     } else {
-        pInfo[pInfo[playerid][SelectedAd]][SentAdv] = 0;
-        SendClientMessage(pInfo[playerid][SelectedAd], ADMINBLUE, "> Your advert has been declined!");
+        adInfo[pInfo[playerid][SelectedAd]][advertAvailable] = 0;
         format(string, sizeof(string), "> You have declined advert: %d!", pInfo[playerid][SelectedAd]);
         SendClientMessage(playerid, ADMINBLUE, string);
     }
     return 1;
 }
 
+stock ReturnAvailable(adId){
+    new string[25];
+    if(adInfo[adId][advertAvailable] == 1){
+        format(string, sizeof(string), "Unavailable");
+        return string;
+    } else if(adInfo[adId][advertAvailable] == 0){
+        format(string, sizeof(string), "Available");
+        return string;
+    }
+    return string;
+}
+
 CMD:listallads(playerid, params[]){
     new list[1000], string[200], available;
     if(pInfo[playerid][pFactionId] == 4){
-        for(new i = 0; i < MAX_PLAYERS; i++){
-            if(pInfo[i][SentAdv] == 1){
-                available++;
-                format(string, sizeof(string), "Advert ID: %d\n", i);
+        for(new i = 0; i < 10; i++){
+            if(adInfo[i][advertAvailable] == 1)
+            {
+                format(string, sizeof(string), "Advert ID: %d | Awaiting decision\n", i);
+                strcat(list, string);
+            }
+            if(adInfo[i][advertAvailable] == 0) {
+                format(string, sizeof(string), "Advert ID: %d | Awaiting an advert\n", i);
                 strcat(list, string);
             }
         }
-        if(available >= 1){
-            Dialog_Show(playerid, DIALOG_ADVERTS, DIALOG_STYLE_LIST, "Available Adverts", list, "Accept", "");
-        } else {
-            Dialog_Show(playerid, DIALOG_NOADV, DIALOG_STYLE_MSGBOX, "Available Adverts", "{FFCC00}*-----LOADED ADVERTISEMENT-----*{A9C4E4}\n\nThere are currently no available adverts.", "Accept", "");
-        }
+        Dialog_Show(playerid, DIALOG_ADVERTS, DIALOG_STYLE_LIST, "All Adverts", list, "Accept", "");
     }
     return 1;
 }
@@ -4259,18 +4298,15 @@ CMD:acceptad(playerid, params[]){
     if(pInfo[playerid][pFactionId] == 4){
         new targetid, string[256];
         if(sscanf(params, "d", targetid)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /acceptad [ID]");{
-            if(IsPlayerConnected(targetid)){
-                if(pInfo[targetid][SentAdv] == 1){
-                    pInfo[targetid][SentAdv] = 0;
-                    pInfo[targetid][pBank] -= 100;
-                    pInfo[playerid][pFactionPay] += 100;
-                    SendClientMessage(targetid, ADMINBLUE, "> Your advert has been accepted!");
-                    format(string, sizeof(string), "> You have accepted advert: %d! (+$100)", targetid);
-                    SendClientMessage(playerid, ADMINBLUE, string);
-                    format(string, sizeof(string), "{00bfff}[SANN Radio Advert]: %s, Contact Phone: %d.", pInfo[targetid][AdvMsg], pInfo[targetid][pPhoneNumber]);
-                    SendClientMessageToAll(-1, string);
-                    return 1;
-                }
+            if(adInfo[targetid][advertAvailable] == 1){
+                adInfo[targetid][advertAvailable] = 0;
+                pInfo[playerid][pFactionPay] += 100;
+                SendClientMessage(targetid, ADMINBLUE, "> Your advert has been accepted!");
+                format(string, sizeof(string), "> You have accepted advert: %d! (+$100)", targetid);
+                SendClientMessage(playerid, ADMINBLUE, string);
+                format(string, sizeof(string), "{00bfff}[SANN Radio Advert]: %s, Contact Phone: %d.", pInfo[targetid][AdvMsg], pInfo[targetid][pPhoneNumber]);
+                SendClientMessageToAll(-1, string);
+                return 1;
             }
         }
     } else {
@@ -4284,14 +4320,16 @@ CMD:declinead(playerid, params[]){
     if(pInfo[playerid][pFactionId] == 4){
         new targetid, string[256];
         if(sscanf(params, "d", targetid)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /declinead [ID]");{
-            if(IsPlayerConnected(targetid)){
-                if(pInfo[targetid][SentAdv] == 1){
-                    pInfo[targetid][SentAdv] = 0;
-                    SendClientMessage(targetid, ADMINBLUE, "> Your advert has been declined!");
-                    format(string, sizeof(string), "> You have declined advert: %d!", targetid);
-                    SendClientMessage(playerid, ADMINBLUE, string);
-                    return 1;
+            if(adInfo[targetid][advertAvailable] == 1){
+                adInfo[targetid][advertAvailable] = 0;
+                for(new i = 0; i < MAX_PLAYERS; i++){
+                    if(pInfo[i][pPhoneNumber] == adInfo[targetid][contactNum]){
+                        SendPlayerText(pInfo[playerid][pPhoneNumber], "Unfortunately, your advert was declined. Try again later!", 3170);
+                    }
                 }
+                format(string, sizeof(string), "> You have declined advert: %d!", targetid);
+                SendClientMessage(playerid, ADMINBLUE, string);
+                return 1;
             }
         }
     } else {
@@ -4306,15 +4344,29 @@ CMD:sms(playerid, params[]){
     if(pInfo[playerid][pPhoneNumber] != 0 && pInfo[playerid][pPhoneModel] != 0){
         if(sscanf(params, "ds[100]", number, msg)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /sms [NUMBER] [MESSAGE]");{
             if(number == 3170){
-                if(strlen(msg) >= 5 || strlen(msg) <= 75){             
-                    pInfo[playerid][SentAdv] = 1;
-                    format(pInfo[playerid][AdvMsg], 100, "%s", msg);
-                    SendClientMessage(playerid, ADMINBLUE, "> You have sent an advert to be reviewed!");
-                    for(new i = 0; i < MAX_PLAYERS; i++){
-                        if(pInfo[i][pFactionId] == 4){
-                            format(string, sizeof(string), "> Ad received: %s, /acceptad %d to accept this advert!", pInfo[playerid][AdvMsg], playerid);
-                            SendClientMessageA(playerid, ADMINBLUE, string);
+                if(strlen(msg) >= 5 || strlen(msg) <= 75){
+                    new nextavailable = 100;
+                    for(new i = 0; i < 10; i++){
+                        if(adInfo[i][advertAvailable] == 0){
+                            nextavailable = i;
                         }
+                    }
+                    if(nextavailable != 100){                        
+                        adInfo[nextavailable][advertAvailable] = 1;
+                        format(adInfo[nextavailable][advertMsg], 64, "%s", msg);
+                        adInfo[nextavailable][contactNum] = pInfo[playerid][pPhoneNumber];
+                        for(new i = 0; i < MAX_PLAYERS; i++){
+                            if(pInfo[playerid][pFactionId] == 4){
+                                format(string, sizeof(string), "> Ad received: %s, /acceptad %d to accept this advert!", msg, nextavailable);
+                                SendClientMessageA(i, ADMINBLUE, string);
+                            }
+                        }                    
+                        SendClientMessage(playerid, ADMINBLUE, "> You have sent an advert to be reviewed!");
+                        return 1;
+                    }
+                    if(nextavailable == 100){
+                        SendPlayerText(pInfo[playerid][pPhoneNumber], "There are no available advert slots. Try again later!", 3170);
+                        return 1;
                     }
                 } else {
                     SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} Your advert must be between 5 and 75 characters long!");
@@ -4957,6 +5009,10 @@ CMD:help(playerid, params[]) {
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/shop, /stats, /pockets, /rentcar, /unrentcar");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/properties, /buyproperty, /sellproperty");
             SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:/getcar, /park");
+        } else if(strcmp(Usage, "Chat", true) == 0){
+            SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Chat Commands ::.");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /me, /act, /pm, /helpme, /shout");
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]: /whisper, /low");
         } else if(strcmp(Usage, "Job", true) == 0) {
             SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} Job Commands ::.");
             if(pInfo[playerid][pJobId] == 4){
@@ -5031,6 +5087,162 @@ CMD:help(playerid, params[]) {
     return 1;
 }
 
+stock ReturnAVStatus(playerid){
+    new string[256];
+    if(pInfo[playerid][pAvStatus] == 0){
+        //available
+        format(string, sizeof(string), "{10bd2d}Available{A9C4E4}");
+    }
+    
+    if(pInfo[playerid][pAvStatus] == 1){
+        //away
+        format(string, sizeof(string), "{ddd403}Away{A9C4E4}");
+    }
+    
+    if(pInfo[playerid][pAvStatus] == 2){
+        //busy
+        format(string, sizeof(string), "{e50707}Busy{A9C4E4}");
+    }
+    return string;
+}
+
+//general commands
+CMD:staff(playerid, params[]){
+    if(IsPlayerConnected(playerid)){
+        new string[256];
+        SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} ADMINS :: .");
+        for(new i = 0; i < MAX_PLAYERS; i++){
+            if(pInfo[i][pAdminLevel] >= 1){
+                format(string, sizeof(string), "[SERVER]: %s (Level: %d) (%s)", RPName(i), pInfo[i][pAdminLevel], ReturnAVStatus(i));
+                SendClientMessage(playerid, SERVERCOLOR, string);
+            }
+        }
+        SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} MODERATORS :: .");
+        for(new i = 0; i < MAX_PLAYERS; i++){
+            if(pInfo[i][pModerator] >= 1){
+                format(string, sizeof(string), "[SERVER]: Moderator %s (%s)", RPName(i), ReturnAVStatus(i));
+                SendClientMessage(playerid, SERVERCOLOR, string);
+            }
+        }
+        SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} HELPERS :: .");
+        for(new i = 0; i < MAX_PLAYERS; i++){
+            if(pInfo[i][pHelper] >= 1){
+                format(string, sizeof(string), "[SERVER]: Helper %s (%s)", RPName(i), ReturnAVStatus(i));
+                SendClientMessage(playerid, SERVERCOLOR, string);
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:admins(playerid, params[]){
+    if(IsPlayerConnected(playerid)){
+        new string[256];
+        SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} ADMINS :: .");
+        for(new i = 0; i < MAX_PLAYERS; i++){
+            if(pInfo[i][pAdminLevel] >= 1){
+                format(string, sizeof(string), "[SERVER]: %s (Level: %d) (%s)", RPName(i), pInfo[i][pAdminLevel], ReturnAVStatus(i));
+                SendClientMessage(playerid, SERVERCOLOR, string);
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:moderators(playerid, params[]){
+    if(IsPlayerConnected(playerid)){
+        new string[256];
+        SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} MODERATORS :: .");
+        for(new i = 0; i < MAX_PLAYERS; i++){
+            if(pInfo[i][pModerator] >= 1){
+                format(string, sizeof(string), "[SERVER]: Moderator %s (%s)", RPName(i), ReturnAVStatus(i));
+                SendClientMessage(playerid, SERVERCOLOR, string);
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:helpers(playerid, params[]){
+    if(IsPlayerConnected(playerid)){
+        new string[256];
+        SendClientMessage(playerid, SPECIALORANGE, "[SERVER]:. ::{FFCC00} HELPERS :: .");
+        for(new i = 0; i < MAX_PLAYERS; i++){
+            if(pInfo[i][pHelper] >= 1){
+                format(string, sizeof(string), "[SERVER]: Helper %s (%s)", RPName(i), ReturnAVStatus(i));
+                SendClientMessage(playerid, SERVERCOLOR, string);
+            }
+        }
+    }
+    return 1;
+}
+
+CMD:helpme(playerid, params[]){
+    new string[64];
+    if(pInfo[playerid][SentHelpme] != 1){
+        if(sscanf(params, "s[64]", string)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /helpme [message]");{
+            format(pInfo[playerid][HelpmeMessage], 64, "%s", string);
+            pInfo[playerid][SentHelpme] = 1;
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have submitted a help request!");
+            for(new i = 0; i < MAX_PLAYERS; i++){
+                if(pInfo[i][pAdminLevel] >= 1 || pInfo[i][pHelper] >= 1 || pInfo[i][pModerator] >= 1){
+                    new helpmsg[255];
+                    format(helpmsg, sizeof(helpmsg), "HELPME ({FFFFFF}%d{FE2EC8}):{F6970C} %s, from %s.", playerid, pInfo[playerid][HelpmeMessage], RPName(playerid));
+                    SendClientMessage(i, PINK, helpmsg);
+                }
+            }
+        }
+    } else {
+        SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} You have already submitted a help request! /endhelp to end it!");
+        return 1;
+    }
+    return 1;
+}
+
+CMD:vah(playerid, params[]){
+    new helpmsglist[256],helpmsg[255], available;
+    if(pInfo[playerid][pHelper] >= 1 || pInfo[playerid][pModerator] >= 1 || pInfo[playerid][pAdminLevel] >= 1){
+        for(new i = 0; i < MAX_PLAYERS; i++){
+            if(pInfo[i][SentHelpme] == 1){
+                available++;
+                format(helpmsg, sizeof(helpmsg), "HELPME ({FFFFFF}%d{FE2EC8}):{F6970C} %s, from %s.\n", i, pInfo[i][HelpmeMessage], RPName(i));
+                strcat(helpmsglist, helpmsg);
+            }
+        }
+        if(available >= 1){
+            SendClientMessage(playerid, PINK, helpmsglist);
+            return 1;
+        } else {
+            SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} No available help requests.");
+            return 1;
+        }
+    }
+    return 1;
+}
+
+CMD:hr(playerid, params[]){
+    new target, reply[256], replystring[256];
+    if(pInfo[playerid][pHelper] >= 1 || pInfo[playerid][pModerator] >= 1 || pInfo[playerid][pAdminLevel] >= 1){
+        if(sscanf(params, "ds[256]", target, reply)) return SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} /h(elp)r(eply) [playerid] [message]");{
+            if(pInfo[target][SentHelpme] == 1){
+                format(replystring, sizeof(replystring), "Help reply: %s, from %s.", reply, RPName(playerid));
+                SendClientMessageA(target, ADMINORANGE, replystring);
+                pInfo[target][SentHelpme] = 0;
+                pInfo[playerid][pTotalHelpmes]++;
+                for(new i = 0; i < MAX_PLAYERS; i++){
+                    if(pInfo[i][pHelper] >= 1 || pInfo[i][pModerator] >= 1 || pInfo[i][pAdminLevel] >= 1){
+                        format(replystring, sizeof(replystring), "HELPME:{F6970C} %s replied %s to help request %d.", RPName(playerid), reply, target);
+                        SendClientMessage(i, PINK, replystring);
+                    }
+                }
+            } else {
+                SendClientMessage(playerid, SERVERCOLOR, "[SERVER]:{FFFFFF} This player has not requested help!");
+                return 1;
+            }
+        }
+    }
+    return 1;
+}
 
 CMD:makeleader(playerid, params[]) {
     new target, facid, string[256];
@@ -5512,11 +5724,18 @@ public SendPlayerText(tnumber, message[100], from){
             new string[256];
             if(from == 0){
                 format(string, sizeof(string), "Text msg received: %s, from: Unknown", message);
+
                 SendClientMessage(i, SERVERCOLOR, string);
+                
+                format(string, sizeof(string), "* Phone buzzing (( %s ))", RPName(i));
+                nearByAction(i, NICESKY, string);
             }
             else {                
                 format(string, sizeof(string), "Text msg received: %s, from: %d", message, from);
                 SendClientMessage(i, SERVERCOLOR, string);
+                
+                format(string, sizeof(string), "* Phone buzzing (( %s ))", RPName(i));
+                nearByAction(i, NICESKY, string);
             }
         }
     }
@@ -8072,6 +8291,9 @@ public OnPlayerLoad(playerid) {
     cache_get_value_int(0, "pPreferredSpawn", pInfo[playerid][pPreferredSpawn]);
 
     cache_get_value_int(0, "pAdminLevel", pInfo[playerid][pAdminLevel]);
+    cache_get_value_int(0, "pModerator", pInfo[playerid][pModerator]);
+    cache_get_value_int(0, "pHelper", pInfo[playerid][pHelper]);
+    cache_get_value_int(0, "pTotalHelpmes", pInfo[playerid][pTotalHelpmes]);
 
     pInfo[playerid][LoggedIn] = true;
     SendClientMessage(playerid, -1, "Logged in");
@@ -8558,6 +8780,10 @@ stock ReturnStats(playerid, target) {
     }
     format(string, sizeof(string), "[VEHICLES]:{ABCDEF} Vehicle slots: %d/%d", pInfo[target][pVehicleSlotsUsed], pInfo[target][pVehicleSlots]);
     SendClientMessage(playerid, SPECIALORANGE, string);
+    if(pInfo[target][pHelper] >= 1 || pInfo[target][pModerator] >= 1  || pInfo[target][pAdminLevel] >= 1){
+        format(string, sizeof(string), "[STAFF]:{ABCDEF} Total helpme replies: %d", pInfo[target][pTotalHelpmes]);
+        SendClientMessage(playerid, SPECIALORANGE, string);
+    }
     return 1;
 }
 
