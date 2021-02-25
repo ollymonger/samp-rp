@@ -1,7 +1,10 @@
 # samp-rp
-roleplay script w/ mysql
+A Roleplay Gamemode Script build for SA-MP version 0.3.7.
+This gamemode links with a mysql database so that all player data is saved and loaded independantly.
 
-## needed scripts:
+Please see below for any other information regarding creating factions, jobs, businesses and houses.
+
+## Requirements:
 MYSQL R41-4
 easyDialog.inc
 bcrypt.inc
@@ -42,6 +45,7 @@ Int ids: 16 // 24-7, 6 // ammunation or hardware store.
     Owner can gain money from players buying vehicles! 
 
 ## House Types
+    Please see wiki weedar website and match the interior ids to the ones below.
     5 - Ganghouse, exit point: 2350.339843,-1181.649902,1027.976562
     2,
     1
@@ -50,7 +54,7 @@ Int ids: 16 // 24-7, 6 // ammunation or hardware store.
 1, normal prison
 2, admin jail
 
-## States
+## Vehicle States
 * 0 VEHICLE_NOT_RENTABLE 0 (Vehcile is either already rented or not rentable in )
 * 1 VEHICLE_RENTABLE 1 (Vehicle is rentable, either a job rentcar or normal rentcar available for all players)
 * 2 VEHICLE_PLAYER_OWNED 2 (Vehicle player owned, not rentable)
