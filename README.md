@@ -1,4 +1,4 @@
-# samp-rp
+# samp-rp v 0.3.7
 A Roleplay Gamemode Script build for SA-MP version 0.3.7.
 This gamemode links with a mysql database so that all player data is saved and loaded independantly.
 
